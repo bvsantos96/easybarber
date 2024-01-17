@@ -1,6 +1,6 @@
 import React, { useRef } from 'react';
 import { View, TextInput, TouchableOpacity } from 'react-native';
-import {styles} from '../styles/input';
+import {styles} from '@styles/input';
 
 const Input = ({icon, placeholder = "", onInputChange=()=>{alert("No onInputChange passed in props")}, type="text"}) => {
   const textInputRef = useRef(null);
