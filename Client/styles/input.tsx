@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import {inputHeight, inputWidth, secondColor} from './main';
+import {inputHeight, inputWidth, secondColor, inputTextColor} from './main';
 
 export const iconSize = 23;
 
@@ -32,7 +32,7 @@ export const styles = StyleSheet.create({
         width: '100%',
         height: 40,
         borderWidth: 0, 
-        color: 'black', 
+        color: inputTextColor, 
         fontSize: 15, 
         fontFamily: 'Mazzard', 
         fontWeight: '400', 
