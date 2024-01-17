@@ -1,12 +1,11 @@
 import { StyleSheet } from 'react-native';
-import {inputHeight, inputWidth} from './main';
+import {inputHeight, inputWidth, mainColor} from './main';
 
 export const styles = StyleSheet.create({
     button: {
         width: inputWidth,
         height: inputHeight,
-        backgroundColor: '#DF2238',
-        boxShadow: '20px 20px 50px rgba(0, 0, 0, 0.12)',
+        backgroundColor: mainColor,
         borderRadius: 50,
         display: 'flex',
         justifyContent: 'center',
