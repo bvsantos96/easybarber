@@ -1,7 +1,10 @@
 import { StyleSheet } from 'react-native';
-import {inputHeight, inputWidth} from './main';
+import {inputHeight, inputWidth, secondColor} from './main';
 
 export const iconSize = 23;
+
+const _80IH = 0.8 * parseFloat(inputHeight);
+const _40IH = 0.5 * _80IH;
 
 export const styles = StyleSheet.create({
     container : {
@@ -13,18 +16,16 @@ export const styles = StyleSheet.create({
         height: '100%',
         flexDirection: 'row',
         alignItems: 'center',
-        boxShadow: '20px 20px 50px rgba(0, 0, 0, 0.12)',
         border: '1px rgba(0, 0, 0, 0.29) solid',
         borderRadius: 50,
     },
     iconView : {
-        width: 44,
-        height: 44,
-        borderRadius: 22, // Half of the width/height to create a circular shape
-        backgroundColor: 'rgba(109, 4, 4, 0.10)', 
+        width: _80IH,
+        height: _80IH, 
+        borderRadius: _40IH, 
+        backgroundColor: secondColor, 
         alignItems: 'center',
         justifyContent: 'center',
-        boxShadow: '20px 20px 50px rgba(0, 0, 0, 0.12)',
         margin: 5,
     },
     textInput : {
