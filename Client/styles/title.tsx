@@ -1,0 +1,40 @@
+import { StyleSheet } from 'react-native';
+import { inputHeight, inputWidth, mainColor } from './main';
+
+export const styles = StyleSheet.create({
+    titleLine: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    text: {
+        color: 'black', 
+        fontSize: 25, 
+        fontFamily: 'Poppins', 
+        fontWeight: '600', 
+        lineHeight: 33, 
+        letterSpacing: 0.25, 
+        wordWrap: 'break-word',
+    },
+    hText: {
+        color: 'white', 
+        fontSize: 25, 
+        fontFamily: 'Poppins', 
+        fontWeight: '600', 
+        lineHeight: 33, 
+        letterSpacing: 0.25, 
+        backgroundColor: mainColor,
+        fontWeight: 'bold',
+        paddingHorizontal: 5, // Add padding to the highlighted text
+        borderRadius: 50, // Add rounded border to the highlighted text
+        marginHorizontal: -5,
+    },
+    subtitle: {
+       color: 'rgba(0, 0, 0, 0.40)', 
+        fontSize: 16, 
+        fontFamily: 'Poppins', 
+        fontWeight: '400', 
+        lineHeight: 23, 
+        wordWrap: 'break-word',
+    },
+});
