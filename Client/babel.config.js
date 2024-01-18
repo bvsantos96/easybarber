@@ -13,6 +13,7 @@ module.exports = function(api) {
               "@screens": "./screens",
               "@styles": "./styles",
               "@icons": "./components/icons",
+              "@lang": "./langs",
             },
           }],
         ],
