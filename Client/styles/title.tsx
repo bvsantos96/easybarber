@@ -27,7 +27,8 @@ export const styles = StyleSheet.create({
         fontWeight: 'bold',
         paddingHorizontal: 5, // Add padding to the highlighted text
         borderRadius: 50, // Add rounded border to the highlighted text
-        marginHorizontal: -5,
+        marginLeft: -5,
+        paddingHorizontal: 10,
     },
     subtitle: {
        color: 'rgba(0, 0, 0, 0.40)', 
