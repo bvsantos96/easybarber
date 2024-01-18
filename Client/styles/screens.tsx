@@ -1,12 +1,14 @@
 import { StyleSheet, Dimensions } from 'react-native';
 import {inputHeight, inputWidth, mainColor, secondColor, width, height} from './main';
 
-const iconW = width * 0.9;
+const iconSize = Math.min( width, height ) * 0.9;
 
 export const styles = StyleSheet.create({
     imageContainer: {
-        width: iconW,
-        height: iconW,
+        width: iconSize,
+        height: iconSize,
+        maxWidth: 360,
+        maxHeight: 360,
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -17,7 +19,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
         height: '100%',
-        borderRadius: iconW / 2,
+        borderRadius: iconSize / 2,
         position: 'absolute',
         top: 0,
         left: 0,
