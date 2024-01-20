@@ -1,26 +1,26 @@
-import {View, Image} from 'react-native';
-import FirstLogin from '@components/FirstLogin';
+import { View, Image } from 'react-native';
+import FirstLogin from '../../components/FirstLogin';
 
-import {styles} from '@styles/screens';
-import {styles as mainStyle} from '@styles/main';
+import { styles } from '../../styles/Screens';
+import { styles as mainStyle } from '../../styles/Main';
 
 export default function Page2() {
-  const texts = require("@lang/en.json");
-  return (
-    <View style={mainStyle.container}>
-      <FirstLogin 
-        title={[
-          [{text: texts.firstPage.title2, highlight: false}],
-          [{text: texts.firstPage.title2_1, highlight: true},{text: texts.firstPage.title2_2, highlight: false}]
-        ]}
-        subTitle={[
-          texts.firstPage.subTitle2,
-          texts.firstPage.subTitle2_1
-        ]}
-        image={<Image style={styles.bigImage} source={require("@assets/images/firstPage2.png")}/>}
-        pageSelect={[false, true]}
-        button={{title: texts.getStarted, func: ()=>{alert("Continue to next page")}}}
-      />
-    </View>
-  );
+    const texts = require("@lang/en.json");
+    return (
+        <View style={mainStyle.container}>
+            <FirstLogin
+                title={[
+                    [{ text: texts.firstPage.title2, highlight: false }],
+                    [{ text: texts.firstPage.title2_1, highlight: true }, { text: texts.firstPage.title2_2, highlight: false }]
+                ]}
+                subTitle={[
+                    texts.firstPage.subTitle2,
+                    texts.firstPage.subTitle2_1
+                ]}
+                image={<Image style={styles.bigImage} source={require("@assets/images/firstPage2.png")} />}
+                pageSelect={[false, true]}
+                button={{ title: texts.getStarted, func: () => { alert("Continue to next page") } }}
+            />
+        </View>
+    );
 }

@@ -17,10 +17,14 @@
     "title": "User Login",
     "button": "Login",
     "newUser": "Are you a new user?",
-    "register": "Register",
     "loginWith": "Login with",
     "google": "Google",
     "apple": "Apple"
+  },
+  "register": {
+    "title": "Create Account",
+    "button": "Register",
+    "newUser": "Already a user?",
   },
   "phoneNumber": "Phone Number",
   "password": "Password",

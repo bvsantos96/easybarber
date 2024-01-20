@@ -72,7 +72,7 @@ export const styles = StyleSheet.create({
     },
     redBold: {
         color: mainColor,
-        fontWeight: 'bold',
+        fontWeight: '900',
     },
     padding15px: {
         padding: 15,
@@ -80,7 +80,7 @@ export const styles = StyleSheet.create({
     normalText: {
         fontSize: 16,
         fontFamily: 'Mazzard',
-        fontWeight: '500', 
+        fontWeight: '500',
     },
     fontSize18: {
         fontSize: 18,
