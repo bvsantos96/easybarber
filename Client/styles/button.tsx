@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import {inputHeight, inputWidth, mainColor} from './main';
+import { inputHeight, inputWidth, mainColor } from './Main';
 
 export const styles = StyleSheet.create({
     button: {
@@ -23,8 +23,8 @@ export const styles = StyleSheet.create({
         borderWidth: 1,
         borderStyle: 'solid',
         borderColor: 'rgba(0, 0, 0, 0.08)',
-        paddingTop:11,
-        paddingBottom:11,
+        paddingTop: 11,
+        paddingBottom: 11,
         paddingLeft: 20,
         paddingRight: 27,
     },
@@ -38,12 +38,12 @@ export const styles = StyleSheet.create({
         color: 'black',
         fontSize: 9,
         fontFamily: 'Poppins',
-        fontWeight: '400', 
+        fontWeight: '400',
     },
     brandTextButton: {
         color: 'black',
         fontSize: 13,
         fontFamily: 'Poppins',
-        fontWeight: '400', 
+        fontWeight: '400',
     },
 });
