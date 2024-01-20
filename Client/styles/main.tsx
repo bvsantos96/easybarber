@@ -10,6 +10,7 @@ export const backgroundColor = "white";
 export const width = window.width;
 export const height = window.height;
 export const minDimention = Math.min(width, height);
+export const lightTextColor = 'rgba(0, 0, 0, 0.66)';
 
 export const styles = StyleSheet.create({
     container: {
@@ -35,7 +36,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
     },
     noOverflow: {
-        overflow: 'none'
+        overflow: 'hidden'
     },
     loginContainer: {
         width: width,
@@ -50,13 +51,44 @@ export const styles = StyleSheet.create({
         paddingRight: '10%',
     },
     alignRight: {
-        alignItems: 'right',
+        alignItems: 'flex-end',
         textAlign: 'right',
     },
     alignCenter: {
         alignItems: 'center',
+        textAlign: 'center',
+    },
+    justifyCenter: {
+        justifyContent: 'center',
     },
     row: {
         flexDirection: 'row',
+    },
+    hMargin2: {
+        marginHorizontal: "2%"
+    },
+    hPadding2: {
+        paddingHorizontal: "2%"
+    },
+    redBold: {
+        color: mainColor,
+        fontWeight: 'bold',
+    },
+    padding15px: {
+        padding: 15,
+    },
+    normalText: {
+        fontSize: 16,
+        fontFamily: 'Mazzard',
+        fontWeight: '500', 
+    },
+    fontSize18: {
+        fontSize: 18,
+    },
+    fontSize17: {
+        fontSize: 17,
+    },
+    lightTextColor: {
+        color: lightTextColor,
     },
 });

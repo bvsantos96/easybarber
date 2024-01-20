@@ -1,8 +1,8 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { styles } from '@styles/title';
+import { styles } from '../styles/title';
 
-export default function Title({ line = [] }) {
+export default function Title({ line = [{text: "", highlight: false}] }) {
   return (
     <View style={styles.titleLine}>
       {line.map((item, i) => (

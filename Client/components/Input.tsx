@@ -1,9 +1,10 @@
 import React, { useRef } from 'react';
 import { View, TextInput, TouchableOpacity } from 'react-native';
-import {styles} from '@styles/input';
+import {styles} from '../styles/input';
+import { lightTextColor } from '../styles/main';
 
 // types can be found here: https://reactnative.dev/docs/textinput#autocomplete
-const Input = ({icon, placeholder = "", onInputChange=()=>{alert("No onInputChange passed in props")}, type="text"}) => {
+const Input = ({icon, placeholder = "", onInputChange=(e: string)=>{alert(`No onInputChange(${e}) passed in props`)}, type="text"}) => {
   const textInputRef = useRef(null);
 
   const handleViewPress = () => {
@@ -11,7 +12,7 @@ const Input = ({icon, placeholder = "", onInputChange=()=>{alert("No onInputChan
       textInputRef.current.focus();
   };
 
-  const handleChangeText = (text) => {
+  const handleChangeText = (text: string) => {
     if (onInputChange) {
       onInputChange(text);
     }
@@ -29,9 +30,10 @@ const Input = ({icon, placeholder = "", onInputChange=()=>{alert("No onInputChan
           ref={textInputRef}
           style={styles.textInput}
           placeholder={placeholder}
+          placeholderTextColor={lightTextColor}
           onChangeText={handleChangeText}
           secureTextEntry={type === "password"}
-          inputMode={type === "password" ? "text" : type }
+          inputMode={ type === "password" ? "text" : type }
         />
       </View>
     </TouchableOpacity>

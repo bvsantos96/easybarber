@@ -3,7 +3,7 @@ import {inputHeight, inputWidth, secondColor, inputTextColor} from './main';
 
 export const iconSize = 23;
 
-const _80IH = 0.8 * parseFloat(inputHeight);
+const _80IH = 0.8 * inputHeight;
 const _40IH = 0.5 * _80IH;
 
 export const styles = StyleSheet.create({
@@ -27,6 +27,7 @@ export const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         margin: 5,
+        marginRight: 10,
     },
     textInput : {
         width: '100%',
@@ -36,7 +37,6 @@ export const styles = StyleSheet.create({
         fontSize: 15, 
         fontFamily: 'Mazzard', 
         fontWeight: '400', 
-        wordWrap: 'break-word',
     },
     icon: {
         width: iconSize,
