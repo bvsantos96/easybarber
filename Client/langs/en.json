@@ -14,7 +14,8 @@
     "subTitle2_1": "customers, ready to shave!"
   },
   "login": {
-    "title": "User Login"
+    "title": "User Login",
+    "button": "Login"
   },
   "phoneNumber": "Phone Number",
   "password": "Password",

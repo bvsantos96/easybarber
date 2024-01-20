@@ -4,6 +4,7 @@ import Input from '@components/Input';
 import Title from '@components/Title';
 import {PhoneIcon, PasswordIcon} from '@components/Icons';
 import Divider from '@components/Divider';
+import Button from '@components/Button';
 
 import {styles, minDimention} from '@styles/main';
 
@@ -27,17 +28,27 @@ export default function Login() {
               type="tel" 
               onInputChange={setPhone}
             />
-            <Divider />
+            <Divider height={20}/>
             <Input 
               icon={<PasswordIcon />}
               placeholder={texts.password}
               type="password" 
               onInputChange={setPassword}
             />
+            <Divider height={20}/>
+            <View style={[styles.w100, styles.alignRight, styles.paddingRight10]}>
+              <Text style={styles.alignRight} onPress={()=>alert("Goto forget password page")}>{texts.forgotPassword}</Text>
+            </View>
+            <Divider height={20}/>
+            <Button title={texts.login.button} onPress={()=>alert("Login")}/>
           </View>
-          <View style={[styles.w100, styles.alignRight, styles.paddingRight10]}>
-            <Text style={styles.alignRight} onPress={()=>alert("Forget password page")}>{texts.forgotPassword}</Text>
+          <View style={[styles.w100c, styles.row]}>
+            <Text></Text> 
+            <Text style={styles.redBold} onPress={()=>alert("Goto register page")}></Text> 
           </View>
+          <View>
+          </View>
+          <Divider />
         </View>
     </ScrollView>
   );
