@@ -38,8 +38,8 @@ export const styles = StyleSheet.create({
         overflow: 'none'
     },
     loginContainer: {
-        width: '100vw',
-        height: '70vh',
+        width: width,
+        height: height * 0.7,
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: backgroundColor,
@@ -55,5 +55,8 @@ export const styles = StyleSheet.create({
     },
     alignCenter: {
         alignItems: 'center',
+    },
+    row: {
+        flexDirection: 'row',
     },
 });
