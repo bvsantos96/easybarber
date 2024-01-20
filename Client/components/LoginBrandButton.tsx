@@ -7,11 +7,11 @@ import texts from '../langs/en.json';
 
 export function GoogleLoginButton() {
   return (
-    <Pressable style={[styles.smallButton, mainStyles.row, mainStyles.hMargin2]} onPress={()=>alert("Google Login")}>
-      <View>
+    <Pressable style={[mainStyles.row, styles.smallButton, mainStyles.hMargin2]} onPress={()=>alert("Google Login")}>
+      <View style={mainStyles.hMargin2}>
         <Image source={require('../assets/icons/google.png')} style={styles.smallButtonIconImage} />
       </View>
-      <View>
+      <View style={mainStyles.hMargin2}>
         <Text style={styles.smallTextButton}>{texts.login.loginWith}</Text>
         <Text style={styles.brandTextButton}>{texts.login.google}</Text>
       </View>

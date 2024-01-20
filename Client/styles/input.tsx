@@ -16,8 +16,10 @@ export const styles = StyleSheet.create({
         height: '100%',
         flexDirection: 'row',
         alignItems: 'center',
-        border: '1px rgba(0, 0, 0, 0.29) solid',
+        borderWidth: 1,
+        borderColor: 'rgba(0, 0, 0, 0.29)',
         borderRadius: 50,
+        borderStyle: 'solid',
     },
     iconView : {
         width: _80IH,
