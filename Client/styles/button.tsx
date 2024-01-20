@@ -19,7 +19,6 @@ export const styles = StyleSheet.create({
         fontWeight: '600',
     },
     smallButton: {
-        minHeight: '100%',
         borderRadius: 9,
         borderWidth: 1,
         borderStyle: 'solid',
@@ -27,7 +26,7 @@ export const styles = StyleSheet.create({
         paddingTop:11,
         paddingBottom:11,
         paddingLeft: 20,
-        paddingRight: 35,
+        paddingRight: 27,
     },
     smallButtonIconImage: {
         width: 25,
