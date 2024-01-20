@@ -14,7 +14,6 @@ export const styles = StyleSheet.create({
         fontWeight: '600', 
         lineHeight: 33, 
         letterSpacing: 0.25, 
-        wordWrap: 'break-word',
     },
     hText: {
         color: 'white', 
@@ -24,8 +23,6 @@ export const styles = StyleSheet.create({
         lineHeight: 33, 
         letterSpacing: 0.25, 
         backgroundColor: mainColor,
-        fontWeight: 'bold',
-        paddingHorizontal: 5, // Add padding to the highlighted text
         borderRadius: 50, // Add rounded border to the highlighted text
         marginLeft: -5,
         paddingHorizontal: 10,
@@ -36,6 +33,5 @@ export const styles = StyleSheet.create({
         fontFamily: 'Poppins', 
         fontWeight: '400', 
         lineHeight: 23, 
-        wordWrap: 'break-word',
     },
 });
