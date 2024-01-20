@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { View, TextInput, TouchableOpacity } from 'react-native';
 import {styles} from '@styles/input';
 
+// types can be found here: https://reactnative.dev/docs/textinput#autocomplete
 const Input = ({icon, placeholder = "", onInputChange=()=>{alert("No onInputChange passed in props")}, type="text"}) => {
   const textInputRef = useRef(null);
 
@@ -22,7 +23,7 @@ const Input = ({icon, placeholder = "", onInputChange=()=>{alert("No onInputChan
         style={styles.inputView}
       >
         <View style={styles.iconView}>
-        {icon()}
+        {icon}
         </View>
         <TextInput
           ref={textInputRef}
@@ -30,7 +31,7 @@ const Input = ({icon, placeholder = "", onInputChange=()=>{alert("No onInputChan
           placeholder={placeholder}
           onChangeText={handleChangeText}
           secureTextEntry={type === "password"}
-          keyboardType={type === "password"? "default" : type}
+          inputMode={type === "password" ? "text" : type }
         />
       </View>
     </TouchableOpacity>

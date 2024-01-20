@@ -12,5 +12,11 @@
     "subTitle1_1": "wherever you are.",
     "subTitle2": "Get the opportunity to grab our network of ",
     "subTitle2_1": "customers, ready to shave!"
-  }
+  },
+  "login": {
+    "title": "User Login"
+  },
+  "phoneNumber": "Phone Number",
+  "password": "Password",
+  "forgotPassword": "Forgot password?"
 }

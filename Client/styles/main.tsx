@@ -9,6 +9,7 @@ export const inputTextColor = "black";
 export const backgroundColor = "white";
 export const width = window.width;
 export const height = window.height;
+export const minDimention = Math.min(width, height);
 
 export const styles = StyleSheet.create({
     container: {
@@ -16,6 +17,9 @@ export const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: backgroundColor,
+    },
+    backgroundMainColor: {
+        backgroundColor: mainColor,
     },
     hMargin5: {
         marginHorizontal: 5
@@ -25,6 +29,31 @@ export const styles = StyleSheet.create({
     },
     w100: {
         minWidth: '100%',
+    },
+    w100c: {
+        minWidth: '100%',
+        alignItems: 'center',
+    },
+    noOverflow: {
+        overflow: 'none'
+    },
+    loginContainer: {
+        width: '100vw',
+        height: '70vh',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: backgroundColor,
+        borderTopLeftRadius: 31,
+        borderTopRightRadius: 31,
+    },
+    paddingRight10: {
+        paddingRight: '10%',
+    },
+    alignRight: {
+        alignItems: 'right',
+        textAlign: 'right',
+    },
+    alignCenter: {
         alignItems: 'center',
     },
 });

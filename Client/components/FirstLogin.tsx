@@ -33,7 +33,7 @@ export default function FirstLogin({
         <View style={styles.roundBackground} />
         {image}
       </View>
-      <View style={mainStyle.w100}>
+      <View style={mainStyle.w100c}>
         <View style={styles.pageSelectionContainer}>
           {pageSelect.map((item, i)=>(
               <PageNumber key={i} selected={item} />

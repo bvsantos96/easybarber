@@ -1,11 +1,11 @@
 import {useState} from 'react';
 import { View } from 'react-native';
-import Page2 from '@screens/firstLogin/Page2';
 import {styles} from '@styles/main';
+import Login from '@components/Login';
 
 export default function App() {
   const [test, setTest] = useState("");
   return (
-    <Page2 />
+    <Login />
   );
 }
