@@ -9,7 +9,7 @@ import Button from '../components/Button';
 import { styles } from '../styles/Main';
 
 export default function Register() {
-    const texts = require("@lang/en.json");
+    const texts = require("../langs/en.json");
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
@@ -48,7 +48,7 @@ export default function Register() {
                 <Divider height={40} />
                 <Button title={texts.register.button} onPress={() => alert("Login")} />
             </View>
-            <TouchableOpacity style={styles.w100} onPress={() => alert("Goto register page")}>
+            <TouchableOpacity style={styles.w100} onPress={() => alert("Goto login page")}>
                 <View style={[styles.w100c, styles.row, styles.alignCenter, styles.justifyCenter]}>
                     <Text style={[styles.hPadding2, styles.normalText, styles.lightTextColor]}>{texts.register.newUser}</Text>
                     <Text style={[styles.redBold, styles.hPadding2, styles.normalText, styles.fontSize18]}>{texts.login.button}</Text>

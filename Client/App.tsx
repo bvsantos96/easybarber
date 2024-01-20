@@ -1,8 +1,8 @@
 import SignIn from './screens/SignIn';
-import Register from './components/Register';
+import Login from './components/Login';
 
 export default function App() {
     return (
-        <SignIn page={<Register />} />
+        <SignIn page={<Login/>} />
     );
 }
