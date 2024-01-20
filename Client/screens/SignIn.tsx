@@ -6,6 +6,7 @@ import { styles, minDimention, mainColor } from '../styles/Main';
 export default function SignIn({ page = <></> }) {
     return (
         <ScrollView contentContainerStyle={[styles.container, styles.backgroundMainColor, styles.noOverflow]} keyboardShouldPersistTaps="handled">
+            <Divider height={40} />
             <Image source={require("@assets/images/logoSmall.png")}
                 style={{ width: minDimention * 0.5, height: minDimention * 0.5, flex: 1 }}
                 resizeMode="contain"

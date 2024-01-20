@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
         paddingTop: 11,
         paddingBottom: 11,
         paddingLeft: 20,
-        paddingRight: 27,
+        paddingRight: 20,
     },
     smallButtonIconImage: {
         width: 25,
