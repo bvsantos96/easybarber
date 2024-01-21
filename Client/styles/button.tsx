@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { inputHeight, inputWidth, mainColor } from './Main';
+import { inputHeight, inputWidth, mainColor, buttonTextColor } from './Main';
 
 export const styles = StyleSheet.create({
     button: {
@@ -13,7 +13,7 @@ export const styles = StyleSheet.create({
     },
     textButton: {
         textAlign: 'center',
-        color: 'white',
+        color: buttonTextColor,
         fontSize: 18,
         fontFamily: 'Mazzard',
         fontWeight: '600',

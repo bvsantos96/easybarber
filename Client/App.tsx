@@ -1,8 +1,7 @@
-import SignIn from './screens/SignIn';
-import Login from './components/Login';
+import Home from './screens/Home';
 
 export default function App() {
     return (
-        <SignIn page={<Login/>} />
+        <Home />
     );
 }

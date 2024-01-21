@@ -2,7 +2,7 @@ import { StyleSheet, Dimensions } from 'react-native';
 
 const window = Dimensions.get("window");
 export const inputHeight = window.height * 0.07;
-export const inputWidth = '85%';
+export const inputWidth = window.width* 0.85;
 export const mainColor = "#DF2238";
 export const secondColor = "rgba(109, 4, 4, 0.10)";
 export const inputTextColor = "black";
@@ -11,6 +11,9 @@ export const width = window.width;
 export const height = window.height;
 export const minDimention = Math.min(width, height);
 export const lightTextColor = 'rgba(0, 0, 0, 0.66)';
+export const statusBarOnHome = 'light';
+export const buttonTextColor = 'white';
+export const lightColor = '#FFFFFF69'
 
 export const styles = StyleSheet.create({
     container: {
@@ -18,6 +21,9 @@ export const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: backgroundColor,
+    },
+    spaceBetween: {
+        justifyContent: 'space-between',
     },
     backgroundMainColor: {
         backgroundColor: mainColor,
@@ -27,6 +33,10 @@ export const styles = StyleSheet.create({
     },
     hMargin3: {
         marginHorizontal: 3
+    },
+    w50c: {
+        minWidth: '50%',
+        alignItems: 'center',
     },
     w100: {
         minWidth: '100%',
@@ -49,6 +59,10 @@ export const styles = StyleSheet.create({
     },
     paddingRight10: {
         paddingRight: '10%',
+    },
+    alignLeft: {
+        alignItems: 'flex-start',
+        textAlign: 'left',
     },
     alignRight: {
         alignItems: 'flex-end',
@@ -82,6 +96,9 @@ export const styles = StyleSheet.create({
         fontFamily: 'Mazzard',
         fontWeight: '500',
     },
+    fontSize19: {
+        fontSize: 19,
+    },
     fontSize18: {
         fontSize: 18,
     },
@@ -90,5 +107,23 @@ export const styles = StyleSheet.create({
     },
     lightTextColor: {
         color: lightTextColor,
+    },
+    rMargin10: {
+        marginRight: 10,
+    },
+    rMargin7: {
+        marginRight: 7,
+    },
+    rMargin5: {
+        marginRight: 5,
+    },
+    lMargin10: {
+        marginLeft: 10,
+    },
+    lMargin7: {
+        marginLeft: 7,
+    },
+    lMargin5: {
+        marginLeft: 5,
     },
 });

@@ -30,5 +30,7 @@
     "password": "Password",
     "forgotPassword": "Forgot password?",
     "name": "Name",
-    "confirmPassword": "Confirm Password"
+    "confirmPassword": "Confirm Password",
+    "hi": "Hi",
+    "search": "Search Barber Here"
 }
