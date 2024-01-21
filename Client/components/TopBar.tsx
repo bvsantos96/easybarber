@@ -29,7 +29,7 @@ export default function TopBar({ name = "Jonh Doe" }) {
                 </View>
             </View>
             <View style={[mainStyles.row, mainStyles.spaceBetween]}>
-                <SearchBar />
+                <SearchBar onTextChange={(e:string)=>{console.log(e)}}/>
                 <Pressable style={styles.filterView} onPress={()=>alert("Open filter")}>
                     <Image source={require("../assets/icons/filter.png")} style={styles.filter}/>
                 </Pressable>
