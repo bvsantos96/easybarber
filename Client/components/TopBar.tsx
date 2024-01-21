@@ -1,20 +1,23 @@
 import { StatusBar } from 'expo-status-bar';
-import { View, Image, Text, Pressable } from 'react-native';
+import { View, Image, Text } from 'react-native';
 import Divider from './Divider';
 import ProfileImage from './ProfileImage';
 import SearchBar from './SearchBar';
 import Constants from 'expo-constants';
+import Pressable from  './Pressable';
 
 import { styles } from '../styles/TopBar';
 import { mainColor, styles as mainStyles, statusBarOnHome } from '../styles/Main';
 
 export default function TopBar({ name = "Jonh Doe" }) {
     const texts = require("../langs/en.json");
+    let statusBarHeight = Constants.statusBarHeight / 2;
+
     return (
         <View style={styles.container}>
             <StatusBar style={statusBarOnHome} />
             <View>
-                <Divider color={mainColor} height={Constants.statusBarHeight}/>
+                <Divider color={mainColor} height={statusBarHeight}/>
                 <View style={[mainStyles.row, mainStyles.spaceBetween]}>
                     <View style={[mainStyles.row, mainStyles.w50c]} >
                         <Image source={require('../assets/icons/hamburger.png')} style={styles.icon} />

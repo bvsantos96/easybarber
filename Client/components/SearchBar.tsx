@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Image, TextInput, Pressable } from 'react-native';
+import { View, Image, TextInput } from 'react-native';
+import Pressable from '../components/Pressable';
 
 import { styles } from '../styles/TopBar';
 import { buttonTextColor } from '../styles/Main';

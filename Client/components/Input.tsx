@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, TextInput, Pressable, InputModeOptions } from 'react-native';
+import { View, TextInput, InputModeOptions } from 'react-native';
+import Pressable from '../components/Pressable';
 import { styles } from '../styles/Input';
 import { lightTextColor } from '../styles/Main';
 

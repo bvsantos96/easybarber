@@ -1,5 +1,6 @@
 import React from 'react';
-import { Pressable, Text, View, Image } from 'react-native';
+import { Text, View, Image } from 'react-native';
+import Pressable from '../components/Pressable';
 import { styles } from '../styles/Button';
 import { styles as mainStyles } from '../styles/Main';
 
