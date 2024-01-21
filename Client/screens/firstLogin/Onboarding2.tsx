@@ -1,14 +1,14 @@
 import { View, Image } from 'react-native';
-import FirstLogin from '../../components/FirstLogin';
+import Onboarding from '../../components/Onboarding';
 
 import { styles } from '../../styles/Screens';
 import { styles as mainStyle } from '../../styles/Main';
 
-export default function Page2() {
-    const texts = require("@lang/en.json");
+export default function Onboarding2() {
+    const texts = require("../../lang/en.json");
     return (
         <View style={mainStyle.container}>
-            <FirstLogin
+            <Onboarding
                 title={[
                     [{ text: texts.firstPage.title2, highlight: false }],
                     [{ text: texts.firstPage.title2_1, highlight: true }, { text: texts.firstPage.title2_2, highlight: false }]

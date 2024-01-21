@@ -8,7 +8,7 @@ type DividerProps = {
 }
 
 const Divider = ({ height = 10, color = backgroundColor }: DividerProps) => {
-    return <View style={[styles.divider, { height: height || 10, backgroundColor: color || backgroundColor }]} />;
+    return <View style={[styles.divider, { height: height, backgroundColor: color }]} />;
 };
 
 const styles = StyleSheet.create({

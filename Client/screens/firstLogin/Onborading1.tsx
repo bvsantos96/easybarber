@@ -4,7 +4,7 @@ import FirstLogin from '../../components/FirstLogin';
 import { styles } from '../../styles/Screens';
 import { styles as mainStyle } from '../../styles/Main';
 
-export default function Page1() {
+export default function Onboarding1() {
     const texts = require("../../lang/en.json");
     return (
         <View style={mainStyle.container}>

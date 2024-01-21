@@ -8,7 +8,7 @@ import Divider from '../components/Divider';
 import { styles } from '../styles/Screens';
 import { styles as mainStyle } from '../styles/Main';
 
-type FirstLoginProps = {
+type OnboardingProps = {
     title: Line[][],
     subTitle: string[],
     image: JSX.Element,
@@ -16,7 +16,7 @@ type FirstLoginProps = {
     button: { title: string, func: () => void }
 }
 
-export default function FirstLogin({
+export default function Onboarding({
     title = [],
     subTitle = [],
     image = <></>,
@@ -24,7 +24,7 @@ export default function FirstLogin({
     button = {
         title: "No title", func: () => { alert("No function") }
     }
-}: FirstLoginProps) {
+}: OnboardingProps) {
     return (
         <>
             <View>

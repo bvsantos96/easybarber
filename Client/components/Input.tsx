@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, TextInput, TouchableOpacity, InputModeOptions } from 'react-native';
+import { View, TextInput, Pressable, InputModeOptions } from 'react-native';
 import { styles } from '../styles/Input';
 import { lightTextColor } from '../styles/Main';
 
@@ -32,10 +32,8 @@ const Input = ({
     };
 
     return (
-        <TouchableOpacity style={styles.container} onPress={handleViewPress}>
-            <View
-                style={styles.inputView}
-            >
+        <Pressable style={styles.container} onPress={handleViewPress}>
+            <View style={styles.inputView}>
                 <View style={styles.iconView}>
                     {icon}
                 </View>
@@ -49,7 +47,7 @@ const Input = ({
                     inputMode={type}
                 />
             </View>
-        </TouchableOpacity>
+        </Pressable>
     );
 };
 
