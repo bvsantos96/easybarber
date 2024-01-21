@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Image, TextInput, Pressable } from 'react-native';
 
 import { styles } from '../styles/TopBar';
-import { styles as inputStyles } from '../styles/Input';
 import { buttonTextColor } from '../styles/Main';
 
 export default function SearchBar({ onTextChange = (e: string) => { alert(`No function call to search ${e}`) } }) {
@@ -20,7 +19,7 @@ export default function SearchBar({ onTextChange = (e: string) => { alert(`No fu
             </View>
             <TextInput
                 ref={textInputRef}
-                style={[inputStyles.textInput, styles.textColor]}
+                style={[styles.textInput, styles.textColor]}
                 placeholder={texts.search}
                 placeholderTextColor={buttonTextColor}
                 onChangeText={onTextChange}
