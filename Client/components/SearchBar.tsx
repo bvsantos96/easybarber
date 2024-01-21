@@ -20,7 +20,7 @@ export default function SearchBar({ onTextChange = (e: string) => { alert(`No fu
             </View>
             <TextInput
                 ref={textInputRef}
-                style={[inputStyles.textInput, styles.textColor ]}
+                style={[inputStyles.textInput, styles.textColor]}
                 placeholder={texts.search}
                 placeholderTextColor={buttonTextColor}
                 onChangeText={onTextChange}
