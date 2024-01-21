@@ -1,5 +1,6 @@
 import React from 'react';
-import { Pressable, Text } from 'react-native';
+import { Text } from 'react-native';
+import Pressable from '../components/Pressable';
 import { styles } from '../styles/Button';
 
 type ButtonProps = {

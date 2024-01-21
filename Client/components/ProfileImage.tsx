@@ -1,4 +1,5 @@
-import { Pressable, Image } from "react-native";
+import { Image } from "react-native";
+import Pressable from '../components/Pressable';
 import { profileIconSize, styles } from '../styles/TopBar';
 import { buttonTextColor, styles as mainStyles } from '../styles/Main';
 import { AntDesign } from '@expo/vector-icons';
