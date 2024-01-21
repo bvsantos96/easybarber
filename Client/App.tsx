@@ -1,7 +1,7 @@
 import { NavigationContainer, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import Home from './screens/Home';
+import Tabs from './screens/Tabs';
 import Signin from './screens/SignIn';
 import Onboarding1 from './screens/Onboarding1';
 import Onboarding2 from './screens/Onboarding2';
@@ -36,12 +36,12 @@ export default function App() {
 
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="Onboarding1">
+            <Stack.Navigator initialRouteName="Tabs">
                 <Stack.Screen name="Onboarding1" component={Onboarding1} options={{ headerShown: false }}/>
                 <Stack.Screen name="Onboarding2" component={Onboarding2} options={{ headerShown: false }}/>
                 <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }}/>
                 <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }}/>
-                <Stack.Screen name="Home" component={Home} options={{ headerShown: false }}/>
+                <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }}/>
             </Stack.Navigator>
         </NavigationContainer>
     );
