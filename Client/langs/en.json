@@ -32,5 +32,11 @@
     "name": "Name",
     "confirmPassword": "Confirm Password",
     "hi": "Hi",
-    "search": "Search Barber Here"
+    "search": "Search Barber Here",
+    "tabs": {
+        "home": "Home",
+        "appointments": "Appointments",
+        "alerts": "Alerts",
+        "chats": "Chats"
+    }
 }
