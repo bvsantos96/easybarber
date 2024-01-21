@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { height, width, mainColor, buttonTextColor, lightColor, inputHeight, inputWidth } from './Main';
+import { height, width, mainColor, buttonTextColor, lightColor, inputHeight, inputWidth, inputTextColor } from './Main';
 
 export const profileIconSize = 35;
 
@@ -24,8 +24,9 @@ export const styles = StyleSheet.create({
         backgroundColor: mainColor,
     },
     icon: {
-        width: 27,
-        height: 27,
+        width: 25,
+        height: 25,
+        padding: 5,
     },
     textColor: {
         color: buttonTextColor,
@@ -67,5 +68,14 @@ export const styles = StyleSheet.create({
     },
     inputWidth: {
         width: inputWidth - inputHeight * 0.8,
+    },
+    textInput: {
+        width: '100%',
+        height: 40,
+        borderWidth: 0,
+        color: inputTextColor,
+        fontSize: 15,
+        fontFamily: 'Mazzard',
+        fontWeight: '400',
     },
 });
