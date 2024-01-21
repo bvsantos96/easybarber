@@ -7,8 +7,9 @@ import Divider from '../components/Divider';
 import Button from '../components/Button';
 
 import { styles } from '../styles/Main';
+import { PropNavigation, resetNavigation } from '../App';
 
-export default function Register() {
+export default function Register({ navigation }: PropNavigation) {
     const texts = require("../langs/en.json");
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
@@ -46,9 +47,9 @@ export default function Register() {
                     onInputChange={setConfirmPassword}
                 />
                 <Divider height={40} />
-                <Button title={texts.register.button} onPress={() => alert("Login")} />
+                <Button title={texts.register.button} onPress={() => { alert("Register"); resetNavigation(navigation, "Home") }} />
             </View>
-            <TouchableOpacity style={styles.w100} onPress={() => alert("Goto login page")}>
+            <TouchableOpacity style={styles.w100} onPress={() => navigation.navigate("Login")}>
                 <View style={[styles.w100c, styles.row, styles.alignCenter, styles.justifyCenter]}>
                     <Text style={[styles.hPadding2, styles.normalText, styles.lightTextColor]}>{texts.register.newUser}</Text>
                     <Text style={[styles.redBold, styles.hPadding2, styles.normalText, styles.fontSize18]}>{texts.login.button}</Text>

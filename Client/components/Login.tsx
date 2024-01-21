@@ -8,8 +8,9 @@ import Button from '../components/Button';
 import { AppleLoginButton, GoogleLoginButton } from '../components/LoginBrandButton';
 
 import { styles } from '../styles/Main';
+import { PropNavigation, resetNavigation } from '../App';
 
-export default function Login() {
+export default function Login({ navigation }: PropNavigation) {
     const texts = require("@lang/en.json");
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
@@ -35,9 +36,9 @@ export default function Login() {
                     <Text style={[styles.alignRight, styles.normalText, styles.lightTextColor]} onPress={() => alert("Goto forget password page")}>{texts.forgotPassword}</Text>
                 </View>
                 <Divider height={20} />
-                <Button title={texts.login.button} onPress={() => alert("Login")} />
+                <Button title={texts.login.button} onPress={() => { alert("Login"); resetNavigation(navigation, 'Home') }} />
             </View>
-            <TouchableOpacity style={styles.w100} onPress={() => alert("Goto register page")}>
+            <TouchableOpacity style={styles.w100} onPress={() => navigation.navigate('Login')}>
                 <View style={[styles.w100c, styles.row, styles.alignCenter, styles.justifyCenter]}>
                     <Text style={[styles.hPadding2, styles.normalText, styles.lightTextColor]}>{texts.login.newUser}</Text>
                     <Text style={[styles.redBold, styles.hPadding2, styles.normalText, styles.fontSize18]}>{texts.register.button}</Text>

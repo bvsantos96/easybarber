@@ -1,7 +1,48 @@
+import { NavigationContainer, NavigationProp } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
 import Home from './screens/Home';
+import Signin from './screens/SignIn';
+import Onboarding1 from './screens/Onboarding1';
+import Onboarding2 from './screens/Onboarding2';
+import Login from './components/Login';
+import Register from './components/Register';
+
+export type PropNavigation = {
+    navigation: NavigationProp<any, any>
+};
+
+export const resetNavigation = (navigation: NavigationProp<any, any>, route: string) => {
+    navigation.reset({
+        index: 0,
+        routes: [{ name: route }],
+    });
+}
+
+const LoginScreen = ({ navigation }: PropNavigation) => {
+    return (
+        <Signin page={<Login navigation={navigation} />} />
+    );
+}
+
+const RegisterScreen = ({ navigation }: PropNavigation) => {
+    return (
+        <Signin page={<Register navigation={navigation}/>} />
+    );
+}
 
 export default function App() {
+    const Stack = createNativeStackNavigator();
+
     return (
-        <Home />
+        <NavigationContainer>
+            <Stack.Navigator initialRouteName="Onboarding1">
+                <Stack.Screen name="Onboarding1" component={Onboarding1} options={{ headerShown: false }}/>
+                <Stack.Screen name="Onboarding2" component={Onboarding2} options={{ headerShown: false }}/>
+                <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }}/>
+                <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }}/>
+                <Stack.Screen name="Home" component={Home} options={{ headerShown: false }}/>
+            </Stack.Navigator>
+        </NavigationContainer>
     );
 }
