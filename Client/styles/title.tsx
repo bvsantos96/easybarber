@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
     text: {
         color: 'black',
         fontSize: 25,
-        fontFamily: 'Poppins',
+        fontFamily: 'Mazzard',
         fontWeight: '600',
         lineHeight: 33,
         letterSpacing: 0.25,
@@ -18,7 +18,7 @@ export const styles = StyleSheet.create({
     hText: {
         color: 'white',
         fontSize: 25,
-        fontFamily: 'Poppins',
+        fontFamily: 'Mazzard',
         fontWeight: '600',
         lineHeight: 33,
         letterSpacing: 0.25,
@@ -30,7 +30,7 @@ export const styles = StyleSheet.create({
     subtitle: {
         color: 'rgba(0, 0, 0, 0.40)',
         fontSize: 16,
-        fontFamily: 'Poppins',
+        fontFamily: 'Mazzard',
         fontWeight: '400',
         lineHeight: 23,
     },
