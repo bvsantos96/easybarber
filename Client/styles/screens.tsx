@@ -1,7 +1,7 @@
 import { StyleSheet, DimensionValue, ViewStyle } from 'react-native';
 import {secondColor, width, height} from './Main';
 
-const iconSize = Math.min( width, height ) * 0.9;
+const iconSize = Math.min(width, height) * 0.9;
 
 export const styles = StyleSheet.create({
     imageContainer: {
