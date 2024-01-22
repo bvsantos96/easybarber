@@ -1,10 +1,11 @@
 import { StyleSheet } from 'react-native';
-import { backgroundColor, inputTextColor, lightTextColor, mainColor } from './Main';
+import { width, height, backgroundColor, inputTextColor, lightTextColor, mainColor } from './Main';
 
 export const styles = StyleSheet.create({
     container: {
-        width: '80%',
-        height: "16%",
+        marginVertical: 10,
+        width: width * 0.8,
+        height: height * 0.16,
         backgroundColor: backgroundColor,
         boxShadow: '2px 2px 19px rgba(0, 0, 0, 0.16)',
         borderRadius: 11,
@@ -54,8 +55,9 @@ export const styles = StyleSheet.create({
         position: 'absolute',
         top: 10,
         left: 10,
-        backgroundColor: mainColor,
         borderRadius: 50,
+        backgroundColor: mainColor,
+        padding: 2,
     },
     ratingIcon: {
         width: 11,
@@ -65,7 +67,7 @@ export const styles = StyleSheet.create({
         padding: 2,
         margin: 1,
     },
-    textRating: {
+    ratingText: {
         fontSize: 13.05, 
         fontFamily: 'Mazzard', 
         fontWeight: '500',

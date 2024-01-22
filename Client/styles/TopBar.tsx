@@ -5,6 +5,7 @@ export const profileIconSize = 35;
 
 export const styles = StyleSheet.create({
     container: {
+        zIndex: 1,
         justifyContent: 'space-between',
         position: 'absolute',
         top: 0,

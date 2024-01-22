@@ -36,9 +36,9 @@ export default function Login({ navigation }: PropNavigation) {
                     <Text style={[styles.alignRight, styles.normalText, styles.lightTextColor]} onPress={() => alert("Goto forget password page")}>{texts.forgotPassword}</Text>
                 </View>
                 <Divider height={20} />
-                <Button title={texts.login.button} onPress={() => { alert("Login"); resetNavigation(navigation, 'Home') }} />
+                <Button title={texts.login.button} onPress={() => { alert("Login"); resetNavigation(navigation, 'Tabs') }} />
             </View>
-            <TouchableOpacity style={styles.w100} onPress={() => navigation.navigate('Login')}>
+            <TouchableOpacity style={styles.w100} onPress={() => navigation.navigate('Register')}>
                 <View style={[styles.w100c, styles.row, styles.alignCenter, styles.justifyCenter]}>
                     <Text style={[styles.hPadding2, styles.normalText, styles.lightTextColor]}>{texts.login.newUser}</Text>
                     <Text style={[styles.redBold, styles.hPadding2, styles.normalText, styles.fontSize18]}>{texts.register.button}</Text>

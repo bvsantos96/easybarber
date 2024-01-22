@@ -126,4 +126,9 @@ export const styles = StyleSheet.create({
     lMargin5: {
         marginLeft: 5,
     },
+    homeListContainer: {
+        width: width,
+        height: height * 0.7,
+        zIndex: -10,
+    },
 });

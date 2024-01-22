@@ -21,7 +21,7 @@ export default function Home() {
     return (
         <View style={styles.container}>
             <TopBar />
-            <ScrollView>
+            <ScrollView contentContainerStyle={[styles.homeListContainer, styles.alignCenter, styles.justifyCenter]}>
                 {barberList && barberList.map((barber: BarberInfo) => {
                     return (
                         <ListItem key={barber.id} barber={barber} />

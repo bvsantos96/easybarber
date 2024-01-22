@@ -22,7 +22,7 @@ export type BarberInfo = {
     distance: number,
     rating: number,
     nVotes: number,
-    image: string,
+    photo: string,
 }
 
 export const getNearByBarbers = async (location: any) : Promise<BarberInfo[]>  => {

@@ -47,7 +47,7 @@ export default function Register({ navigation }: PropNavigation) {
                     onInputChange={setConfirmPassword}
                 />
                 <Divider height={40} />
-                <Button title={texts.register.button} onPress={() => { alert("Register"); resetNavigation(navigation, "Home") }} />
+                <Button title={texts.register.button} onPress={() => { resetNavigation(navigation, "Tabs") }} />
             </View>
             <TouchableOpacity style={styles.w100} onPress={() => navigation.navigate("Login")}>
                 <View style={[styles.w100c, styles.row, styles.alignCenter, styles.justifyCenter]}>
