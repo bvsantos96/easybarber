@@ -50,10 +50,10 @@ export default function App() {
             <Stack.Navigator initialRouteName="Tabs">
                 <Stack.Screen name="Onboarding1" component={Onboarding1} options={{ headerShown: false }}/>
                 <Stack.Screen name="Onboarding2" component={Onboarding2} options={{ headerShown: false }}/>
+                <Stack.Screen name="AccountTypeSelection" component={AccountTypeSelection} options={{ headerShown: false }}/>
                 <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }}/>
                 <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }}/>
                 <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }}/>
-                <Stack.Screen name="AccountTypeSelection" component={AccountTypeSelection} options={{ headerShown: false }}/>
             </Stack.Navigator>
         </NavigationContainer>
     );

@@ -17,6 +17,12 @@ export const buttonTextColor = 'white';
 export const lightColor = '#FFFFFF69'
 
 export const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        backgroundColor: backgroundColor,
+    },
     containerSpaceBetween: {
         flex: 1,
         justifyContent: 'space-between',
