@@ -20,7 +20,7 @@ export default function Onboarding2({ navigation }: PropNavigation) {
                 ]}
                 image={<Image style={styles.bigImage} source={require("@assets/images/firstPage2.png")} />}
                 pageSelect={[false, true]}
-                button={{ title: texts.getStarted, func: () => resetNavigation(navigation, 'Login') }}
+                button={{ title: texts.getStarted, func: () => resetNavigation(navigation, 'AccountTypeSelection') }}
             />
         </View>
     );
