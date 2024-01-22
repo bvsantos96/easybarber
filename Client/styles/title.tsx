@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { inputHeight, inputWidth, mainColor } from './main';
+import { inputHeight, inputWidth, mainColor } from './Main';
 
 export const styles = StyleSheet.create({
     titleLine: {

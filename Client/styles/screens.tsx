@@ -1,5 +1,5 @@
-import { StyleSheet, Dimensions } from 'react-native';
-import {inputHeight, inputWidth, mainColor, secondColor, width, height} from './main';
+import { StyleSheet, DimensionValue, ViewStyle } from 'react-native';
+import {secondColor, width, height} from './Main';
 
 const iconSize = Math.min( width, height ) * 0.9;
 
@@ -35,5 +35,10 @@ export const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
+    },
+    centeredLogo: {
+        flexShrink: 0,
+        width: '264.965px' as DimensionValue,
+        height: '264.965px' as DimensionValue
     }
 });

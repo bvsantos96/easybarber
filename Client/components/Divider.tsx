@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import {backgroundColor} from '@styles/main';
+import {backgroundColor} from '../styles/Main';
 
-const Divider = ({ height, color }) => {
-  return <View style={[styles.divider, { height: height || 10, backgroundColor: color || backgroundColor }]} />;
+const Divider = ({ height=10, color=backgroundColor }) => {
+  return <View style={[styles.divider, { height: height, backgroundColor: color }]} />;
 };
 
 const styles = StyleSheet.create({

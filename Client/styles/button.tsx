@@ -1,11 +1,13 @@
 import { StyleSheet } from 'react-native';
-import {inputHeight, inputWidth, mainColor} from './main';
+import {inputHeight, inputWidth} from './Main';
+
+export const whitheButtonColor = "#FFF";
+export const thinBorderBlack = "#263238";
 
 export const styles = StyleSheet.create({
     button: {
         width: inputWidth,
         height: inputHeight,
-        backgroundColor: mainColor,
         borderRadius: 50,
         display: 'flex',
         justifyContent: 'center',
@@ -13,7 +15,6 @@ export const styles = StyleSheet.create({
     },
     textButton: {
         textAlign: 'center',
-        color: 'white',
         fontSize: 18,
         fontFamily: 'Mazzard',
         fontWeight: '600',

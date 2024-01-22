@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import {inputHeight, inputWidth, secondColor, inputTextColor} from './main';
+import {inputHeight, inputWidth, secondColor, inputTextColor} from './Main';
 
 export const iconSize = 23;
 
