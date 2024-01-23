@@ -39,10 +39,12 @@ export default function App() {
     const Stack = createNativeStackNavigator();
 
     useEffect(() => {
-    
-        Font.loadAsync({
-          'Mazzard': require('./assets/fonts/mazzard/MazzardM-Regular.otf'),
-        });
+        const  loadFonts = async () => {
+            Font.loadAsync({
+              'Mazzard': require('./assets/fonts/mazzard/MazzardM-Regular.otf'),
+            });
+        }
+        loadFonts();
       }, []);
 
     return (
