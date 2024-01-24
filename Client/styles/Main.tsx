@@ -1,6 +1,8 @@
+import Constants from 'expo-constants';
 import { StyleSheet, Dimensions, DimensionValue } from 'react-native';
 
 const window = Dimensions.get("window");
+export const statusBarHeight =  Constants.statusBarHeight;
 export const inputHeight = window.height * 0.07;
 export const inputWidth = window.width * 0.85;
 export const mainColor = "#DF2238";
