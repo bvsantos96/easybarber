@@ -4,6 +4,7 @@ const window = Dimensions.get("window");
 export const inputHeight = window.height * 0.07;
 export const inputWidth = window.width * 0.85;
 export const mainColor = "#DF2238";
+export const textColorLight = "#666666";
 export const secondColor = "rgba(109, 4, 4, 0.10)";
 export const textBlackColor = "#263238";
 export const inputTextColor = "black";

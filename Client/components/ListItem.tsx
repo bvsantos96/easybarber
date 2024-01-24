@@ -8,11 +8,11 @@ export default function ListItem({ barber }: { barber: BarberInfo }) {
     const texts = require("../langs/en.json");
     return (
         <Pressable onPress={()=>{alert(`Open barber ${barber.name}`);}} style={[styles.container]}>
-            <View style={{paddingRight: 15}}>
+            <View style={{paddingRight: 5}}>
                 <View style={[styles.ratingContainer, mainStyles.zIndex10, mainStyles.alignCenter, mainStyles.justifyCenter]}>
                     <Image style={styles.ratingIcon} source={require('@assets/icons/star.png')} />
                     <View style={[mainStyles.row, mainStyles.alignCenter, mainStyles.justifyCenter]}>
-                        <Text style={styles.ratingText}>{barber.rating}</Text>
+                        <Text style={styles.ratingText}>{barber.rating.toFixed(1)}</Text>
                         <Text style={styles.numberOfVotes}>({barber.nVotes})</Text>
                     </View>
                 </View>
@@ -22,7 +22,7 @@ export default function ListItem({ barber }: { barber: BarberInfo }) {
                 <Text style={styles.title}>{barber.name}</Text>
                 <View style={styles.locationContainer}>
                     <Image style={styles.locationIcon} source={require('@assets/icons/location.png')} />
-                    <Text style={styles.locationText}>{barber.distance}{texts.kmAway}</Text>
+                    <Text style={styles.locationText}>{barber.distance.toFixed(1)}{texts.kmAway}</Text>
                 </View>
                 <Text style={styles.description}>{barber.description}</Text>
             </View>
