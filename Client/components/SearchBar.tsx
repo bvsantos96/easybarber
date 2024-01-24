@@ -14,8 +14,8 @@ export default function SearchBar({ onTextChange = (e: string) => { alert(`No fu
     };
 
     return (
-        <Pressable style={[styles.searchBarInput, styles.inputWidth]} onPress={handleViewPress}>
-            <View style={[styles.iconView, styles.iconView]}>
+        <Pressable style={styles.searchBarInput} onPress={handleViewPress}>
+            <View style={styles.iconView}>
                 <Image source={require("../assets/icons/search.png")} style={styles.icon} />
             </View>
             <TextInput

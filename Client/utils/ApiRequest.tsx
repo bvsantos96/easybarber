@@ -19,7 +19,7 @@ export type BarberInfo = {
     id: number,
     name: string,
     description: string,
-    distance: number,
+    distance: double,
     rating: number,
     nVotes: number,
     photo: string,
