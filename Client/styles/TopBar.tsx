@@ -2,7 +2,7 @@ import { StyleSheet } from 'react-native';
 import { width, mainColor, buttonTextColor, lightColor, inputHeight, inputTextColor, absoluteWidth, absoluteHeight, statusBarHeight } from './Main';
 
 export const profileIconSize = 35;
-const topMargin = statusBarHeight == 0 ? 44 : 0;
+const topMargin = statusBarHeight == 0 ? 44 : statusBarHeight;
 const height = (px : number): number => {
     return  px * absoluteHeight + topMargin;
 }
