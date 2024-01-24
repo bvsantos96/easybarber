@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import {inputHeight, inputWidth} from './Main';
+import {width, height, inputHeight, inputWidth} from './Main';
 
 export const whitheButtonColor = "#FFF";
 export const thinBorderBlack = "#263238";
@@ -46,5 +46,19 @@ export const styles = StyleSheet.create({
         fontSize: 13,
         fontFamily: 'Poppins',
         fontWeight: '400',
+    },
+    button11:{
+        position:'absolute',
+        width: (width*313)/390,
+        height:(height*58.7)/844,
+        top: (height*634)/844,
+        left: (width*39)/390
+    },
+    button12:{
+        position:'absolute',
+        width: (width*313)/390,
+        height:(height*58.7)/844,
+        top: (height*724)/844,
+        left: (width*39)/390
     },
 });

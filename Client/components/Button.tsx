@@ -4,9 +4,9 @@ import Pressable from '../components/Pressable';
 import { styles } from '../styles/Button';
 import { mainColor } from '../styles/Main';
 
-export default function Button({backgroundColor=mainColor, buttonTextColor='white', borderColor=mainColor ,onPress = ()=>{alert("onPress button function not passed in props")}, title = "No button tittle"}) {
+export default function Button({backgroundColor=mainColor, buttonTextColor='white', borderColor=mainColor , stylesInput={}, onPress = ()=>{alert("onPress button function not passed in props")}, title = "No button tittle"}) {
   return (
-    <Pressable style={[styles.button, {backgroundColor:backgroundColor, borderWidth:1, borderColor:borderColor}]} onPress={onPress}>
+    <Pressable style={[styles.button, {backgroundColor:backgroundColor, borderWidth:1, borderColor:borderColor}, stylesInput]} onPress={onPress}>
       <Text style={[styles.textButton, {color:buttonTextColor}]}>{title}</Text>
     </Pressable>
   );

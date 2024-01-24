@@ -34,7 +34,13 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: backgroundColor,
-        height: '100vh' as DimensionValue
+        height: height as DimensionValue
+    },
+    containerMax: {
+        flex: 1,
+        width: width as DimensionValue,
+        height: height as DimensionValue,
+        backgroundColor: backgroundColor
     },
     spaceBetween: {
         justifyContent: 'space-between',
@@ -55,7 +61,7 @@ export const styles = StyleSheet.create({
     w100: {
         minWidth: '100%',
     },
-    w100c: {
+    w100Center: {
         minWidth: '100%',
         alignItems: 'center',
     },

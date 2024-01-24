@@ -2,6 +2,7 @@ import { Image } from 'react-native';
 import Home from './Home';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { inputTextColor, mainColor } from '../styles/Main';
+import Appointments from './Appointments';
 
 export default function Tabs() {
     const Tab = createBottomTabNavigator();
@@ -27,9 +28,8 @@ export default function Tabs() {
                         />
                     )
                 }} />
-            <Tab.Screen name={texts.tabs.appointments} component={Home}
+            <Tab.Screen name={texts.tabs.appointments} component={Appointments}
                 options={{
-                    headerShown: false,
                     tabBarIcon: ({ focused }) => !focused ? (
                         <Image
                             source={require('../assets/icons/appointments.png')}

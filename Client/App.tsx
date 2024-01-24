@@ -2,11 +2,15 @@ import { NavigationContainer, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useEffect } from 'react';
 
+//screens
 import Tabs from './screens/Tabs';
 import AccountTypeSelection from './screens/AccountTypeSelection'
 import Signin from './screens/SignIn';
 import Onboarding1 from './screens/Onboarding1';
 import Onboarding2 from './screens/Onboarding2';
+import Appointments from './screens/Appointments';
+
+//components
 import Login from './components/Login';
 import Register from './components/Register';
 
