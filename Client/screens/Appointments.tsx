@@ -1,18 +1,16 @@
 import { ScrollView, View } from 'react-native';
-import TopBar from '../components/TopBar';
-
 import { styles } from '../styles/Main';
 import { useEffect, useState } from 'react';
-import { BarberInfo, getBarbersNearMe } from '../utils/ApiRequest';
-import ListItem from '../components/ListItem';
+import { Appointment, getAppointments } from '../utils/ApiRequest';
+import ListAppointments from '../components/ListAppointments';
 
 export default function Home() {
-    const [barberList, setBarberList] = useState<BarberInfo[]>([]);
+    const [appointmentList, setAppointmentList] = useState<Appointment[]>([]);
 
     useEffect(()=>{
         const fetchBarbers = async () => {
-            const barbers: BarberInfo[] = await getBarbersNearMe();
-            setBarberList(barbers);
+            const appointments: Appointment[] = await getAppointments();
+            setAppointmentList(appointments);
         }
 
         fetchBarbers();
@@ -20,11 +18,10 @@ export default function Home() {
 
     return (
         <View style={styles.container}>
-            <TopBar />
             <ScrollView contentContainerStyle={[styles.homeListContainer, styles.alignCenter, styles.justifyCenter]}>
-                {barberList && barberList.map((barber: BarberInfo) => {
+                {appointmentList && appointmentList.map((appointment: Appointment) => {
                     return (
-                        <ListItem key={barber.id} barber={barber} />
+                        <ListAppointments key={appointment.id} appointment={appointment} />
                     );
                 })}
             </ScrollView>
