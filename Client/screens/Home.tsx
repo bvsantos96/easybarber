@@ -4,7 +4,7 @@ import TopBar from '../components/TopBar';
 import { styles } from '../styles/Main';
 import { useEffect, useState } from 'react';
 import { BarberInfo, getBarbersNearMe } from '../utils/ApiRequest';
-import ListItem from '../components/ListItem';
+import ListItem from '../components/ListItemBarbershop';
 
 export default function Home() {
     const [barberList, setBarberList] = useState<BarberInfo[]>([]);
