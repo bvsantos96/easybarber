@@ -47,6 +47,11 @@ export const styles = StyleSheet.create({
         height: 14,
         marginRight: 5,
     },
+    appointmentTimeIcon: {
+        width: 13,
+        height: 14,
+        marginRight: 5,
+    },
     description: {
         color: lightTextColor,
         fontSize: 10,

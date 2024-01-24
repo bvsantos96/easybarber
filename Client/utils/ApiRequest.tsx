@@ -25,11 +25,22 @@ export type BarberInfo = {
     photo: string,
 }
 
+export type Appointment = {
+  id: number,
+  name: string,
+  from: string,
+  to: string,
+  photo: string,
+}
+
 export const getNearByBarbers = async (location: any) : Promise<BarberInfo[]>  => {
-    console.log(location);
     return require("../assets/fakeAPI/nearBarbers.json");
 }
 
 export const getBarbersNearMe = async () : Promise<BarberInfo[]> => {
     return getNearByBarbers(getLocation());
+}
+
+export const getAppointments = async () : Promise<Appointment[]>  => {
+  return require("../assets/fakeAPI/appointments.json");
 }
