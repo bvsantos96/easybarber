@@ -2,7 +2,7 @@ import { StyleSheet, Dimensions, DimensionValue } from 'react-native';
 
 const window = Dimensions.get("window");
 export const inputHeight = window.height * 0.07;
-export const inputWidth = window.width* 0.85;
+export const inputWidth = window.width * 0.85;
 export const mainColor = "#DF2238";
 export const secondColor = "rgba(109, 4, 4, 0.10)";
 export const textBlackColor = "#263238";
@@ -65,11 +65,11 @@ export const styles = StyleSheet.create({
         minWidth: '100%',
         alignItems: 'center',
     },
-    fixBottom:{
+    fixBottom: {
         position: 'absolute',
         bottom: 0
     },
-    paddingBottom10:{
+    paddingBottom10: {
         paddingBottom: '50%'
     },
     noOverflow: {
@@ -157,5 +157,8 @@ export const styles = StyleSheet.create({
         width: width,
         height: height * 0.7,
         zIndex: -10,
+    },
+    zIndex10: {
+        zIndex: 10,
     },
 });

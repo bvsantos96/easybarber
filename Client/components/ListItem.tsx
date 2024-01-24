@@ -2,14 +2,15 @@ import { View, Image, Text } from "react-native";
 import { styles } from "../styles/List";
 import {styles as mainStyles} from "../styles/Main";
 import { BarberInfo } from "../utils/ApiRequest";
+import Pressable from "../components/Pressable";
 
 export default function ListItem({ barber }: { barber: BarberInfo }) {
     const texts = require("../langs/en.json");
     return (
-        <View style={[styles.container]}>
-            <View>
-                <View style={styles.ratingContainer}>
-                    <Image  style={styles.ratingIcon} source={require('@assets/icons/star.png')} />
+        <Pressable onPress={()=>{alert(`Open barber ${barber.name}`);}} style={[styles.container]}>
+            <View style={{paddingRight: 15}}>
+                <View style={[styles.ratingContainer, mainStyles.zIndex10, mainStyles.alignCenter, mainStyles.justifyCenter]}>
+                    <Image style={styles.ratingIcon} source={require('@assets/icons/star.png')} />
                     <View style={[mainStyles.row, mainStyles.alignCenter, mainStyles.justifyCenter]}>
                         <Text style={styles.ratingText}>{barber.rating}</Text>
                         <Text style={styles.numberOfVotes}>({barber.nVotes})</Text>
@@ -25,6 +26,6 @@ export default function ListItem({ barber }: { barber: BarberInfo }) {
                 </View>
                 <Text style={styles.description}>{barber.description}</Text>
             </View>
-        </View>
+        </Pressable>
     );
 }
