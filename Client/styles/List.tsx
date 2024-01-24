@@ -1,24 +1,28 @@
 import { StyleSheet } from 'react-native';
-import { width, height, backgroundColor, inputTextColor, lightTextColor, mainColor } from './Main';
+import { width, height, backgroundColor, inputTextColor, lightTextColor, mainColor, secondColor } from './Main';
 
 export const styles = StyleSheet.create({
     container: {
         marginVertical: 10,
-        width: width * 0.8,
+        width: width * 0.85,
         height: height * 0.16,
         backgroundColor: backgroundColor,
-        boxShadow: '2px 2px 19px rgba(0, 0, 0, 0.16)',
+        shadowColor: '#000',
+        shadowOffset: { width: 2, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 5,
+        elevation: 5, // For Android
         borderRadius: 11,
         flexDirection: 'row',
     },
     imageStyle: {
-        width: '40%',
-        height: '100%',
+        width: width * 0.4,
+        height : height * 0.16,
         borderRadius: 11,
     },
     textContainer: {
-        width: '60%',
-        height: '100%',
+        width: width * 0.425,
+        height: height * 0.16,
         flexDirection: 'column',
         justifyContent: 'space-around',
     },
@@ -68,11 +72,13 @@ export const styles = StyleSheet.create({
         margin: 1,
     },
     ratingText: {
+        color: backgroundColor,
         fontSize: 13.05, 
         fontFamily: 'Mazzard', 
         fontWeight: '500',
     },
     numberOfVotes: {
+        color: backgroundColor,
         fontSize: 8.12, 
         fontFamily: 'Mazzard', 
         fontWeight: '500',
