@@ -37,8 +37,11 @@ export const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     centeredLogo: {
+        position: 'absolute',
         flexShrink: 0,
-        width: '264.965px' as DimensionValue,
-        height: '264.965px' as DimensionValue
+        width: (width * 264.965)/390,
+        height: (width * 264.965)/390,
+        left: (width*62.52)/390,
+        top: (height*238.52)/844,
     }
 });
