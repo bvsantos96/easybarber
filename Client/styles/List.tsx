@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { width, height, backgroundColor, inputTextColor, lightTextColor, mainColor, secondColor } from './Main';
+import { width, height, backgroundColor, inputTextColor, lightTextColor, mainColor, secondColor, textColorLight } from './Main';
 
 export const styles = StyleSheet.create({
     container: {
@@ -21,25 +21,29 @@ export const styles = StyleSheet.create({
         borderRadius: 11,
     },
     textContainer: {
+        marginBottom: 15,
+        marginTop: 10,
+        marginLeft: 10,
         width: width * 0.425,
-        height: height * 0.16,
+        height: height * 0.14,
         flexDirection: 'column',
         justifyContent: 'space-around',
     },
     title: {
         color: inputTextColor,
         fontSize: 18,
-        fontFamily: 'Mazzard',
+        fontFamily: 'Poppins',
         fontWeight: '600',
     },
     locationContainer: {
+        width: '100%',
         flexDirection: 'row',
         alignItems: 'flex-start',
     },
     locationText: {
-        color: '#666666',
+        color: textColorLight,
         fontSize: 11,
-        fontFamily: 'Mazzard',
+        fontFamily: 'Nunito',
         fontWeight: '400',
     },
     locationIcon: {
@@ -50,15 +54,15 @@ export const styles = StyleSheet.create({
     description: {
         color: lightTextColor,
         fontSize: 10,
-        fontFamily: 'Mazzard',
+        fontFamily: 'Poppins',
         fontWeight: '400',
         lineHeight: 18,
     },
     ratingContainer: {
         flexDirection: 'row',
         position: 'absolute',
-        top: 10,
-        left: 10,
+        top: 5,
+        left: 5,
         borderRadius: 50,
         backgroundColor: mainColor,
         padding: 2,
