@@ -28,7 +28,7 @@ export const styles = StyleSheet.create({
     },
     title: {
         color: inputTextColor,
-        fontSize: 15,
+        fontSize: 18,
         fontFamily: 'Mazzard',
         fontWeight: '600',
     },
