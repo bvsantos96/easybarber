@@ -1,6 +1,5 @@
 import { StyleSheet } from 'react-native';
 import { width, mainColor, buttonTextColor, lightColor, inputHeight, inputTextColor, absoluteWidth, absoluteHeight, statusBarHeight, height, textBlackColor } from './Main';
-import { topCategoriesExpanded, nearbyBarbersExpanded } from './Home';
 
 const topMargin = statusBarHeight == 0 ? 44 : statusBarHeight;
 
