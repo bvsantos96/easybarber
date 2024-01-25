@@ -1,11 +1,19 @@
 import { StyleSheet } from 'react-native';
-import { width, mainColor, buttonTextColor, lightColor, inputHeight, inputTextColor, absoluteWidth, absoluteHeight, statusBarHeight } from './Main';
+import { width, mainColor, buttonTextColor, lightColor, inputHeight, inputTextColor, absoluteWidth, absoluteHeight, statusBarHeight, height, textBlackColor } from './Main';
+import { topCategoriesExpanded, nearbyBarbersExpanded } from './Home';
+
+const topMargin = statusBarHeight == 0 ? 44 : statusBarHeight;
+
+const heightCalc = (px: number): number => {
+    return px * absoluteHeight + topMargin;
+}
 
 export const profileIconSize = 35;
-const topMargin = statusBarHeight == 0 ? 44 : statusBarHeight;
-const height = (px : number): number => {
-    return  px * absoluteHeight + topMargin;
-}
+export const topBarHeight = () => {
+    console.log("absoluteHeight: " + absoluteHeight);
+    console.log("topMargin" + topMargin);
+    return heightCalc(150);
+};
 
 export const styles = StyleSheet.create({
     container: {
@@ -13,37 +21,36 @@ export const styles = StyleSheet.create({
         position: 'absolute',
         top: 0,
         width: width,
-        height: height(150),
-        paddingTop: topMargin,
+        height: heightCalc(150),
         backgroundColor: mainColor,
         borderBottomLeftRadius: 31,
         borderBottomRightRadius: 31,
     },
     hamburguer: {
         position: 'absolute',
-        top: height(16),
+        top: heightCalc(16),
         left: 20 * absoluteWidth,
         width: 27,
         height: 27,
     },
     bellContainer: {
         position: 'absolute',
-        top: height(19),
+        top: heightCalc(19),
         right: 88 * absoluteWidth,
     },
     bell: {
-        width: 24 *  absoluteWidth,
-        height: 24  * absoluteHeight,
+        width: 24 * absoluteWidth,
+        height: 24 * absoluteHeight,
     },
     nameText: {
         position: 'absolute',
-        left: 62 *  absoluteWidth,
-        top: height(19),
+        left: 62 * absoluteWidth,
+        top: heightCalc(19),
         color: 'white',
         fontSize: 19,
         fontFamily: 'Poppins',
         fontWeight: '400',
-        lineHeight: 21, 
+        lineHeight: 21,
     },
     textColor: {
         color: buttonTextColor,
@@ -51,7 +58,7 @@ export const styles = StyleSheet.create({
     profileImageContainer: {
         position: 'absolute',
         right: 17 * absoluteWidth,
-        top: height(0.69),
+        top: heightCalc(0.69),
         padding: 5,
         borderWidth: 1,
         borderRadius: 50 * absoluteWidth / 2,
@@ -66,7 +73,7 @@ export const styles = StyleSheet.create({
     },
     filterView: {
         position: 'absolute',
-        top: height(77),
+        top: heightCalc(77),
         right: 17 * absoluteWidth,
         width: 48 * absoluteWidth,
         height: 49 * absoluteWidth,
@@ -82,9 +89,9 @@ export const styles = StyleSheet.create({
     },
     searchBarInput: {
         position: 'absolute',
-        bottom: 23 *  absoluteHeight,
+        bottom: 23 * absoluteHeight,
         left: 21 * absoluteWidth,
-        width: 296 *  absoluteWidth,
+        width: 296 * absoluteWidth,
         height: 50 * absoluteHeight,
         borderWidth: 1,
         borderColor: buttonTextColor,
@@ -113,8 +120,93 @@ export const styles = StyleSheet.create({
     },
     icon: {
         position: 'absolute',
-        width: 25 *  absoluteWidth,
-        height: 25  * absoluteHeight,
+        width: 25 * absoluteWidth,
+        height: 25 * absoluteHeight,
     },
+    homeContainer: {
+        position: 'absolute',
+        top: topBarHeight(),
+        width: width,
+        height: height - topBarHeight(),
+    },
+    topCategoriesContainerExpanded: {
+        position: 'absolute',
+        top: 28 * absoluteHeight,
+        height: 159 * absoluteHeight,
+    },
+    topCategoriesContainer: {
+        position: 'absolute',
+        top: 28 * absoluteHeight,
+        height: 30 * absoluteHeight,
+    },
+    categoriesContainer: {
+        display: 'none'
+    },
+    categoriesContainerExpanded: {
+        position: 'absolute',
+        top: 46 * absoluteHeight,
+        height: 31 * absoluteHeight,
+        width: width - 48 * absoluteWidth,
+        left: 24 * absoluteWidth,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    category: {
+        width: 60 * absoluteWidth,
+    },
+    categoryIconContainer: {
+        width: 60 * absoluteWidth,
+        height: 60 * absoluteWidth,
+        borderRadius: 30 * absoluteWidth,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: textBlackColor,
+    },
+    categoryIcon: {
+        width: 25 * absoluteWidth,
+        height: 25 * absoluteHeight,
 
+    },
+    categoryText: {
+        color: textBlackColor,
+        fontSize: 13,
+        fontFamily: 'Mazzard',
+        fontWeight: '500',
+        textAlign: 'center',
+    },
+    viewAllContainer: {
+        position: 'absolute',
+        right: 33 * absoluteWidth,
+    },
+    homeTitleContainer: {
+        position: 'absolute',
+        left: 24 * absoluteWidth,
+    },
+    nearByContainer: {
+        width: width,
+    },
+    nearByBarbersContainerExpanded: {
+        position: 'absolute',
+        top: 70 * absoluteHeight,
+        height: 505 * absoluteHeight,
+    },
+    homeListContainerExpanded: {
+        position: 'absolute',
+        top: 19 * absoluteHeight,
+        width: width,
+        height: height - topBarHeight() - 105 * absoluteHeight,
+        paddingBottom: 30 * absoluteHeight,
+    },
+    nearByBarbersContainer: {
+        position: 'absolute',
+        top: 180 * absoluteHeight,
+        height: 403 * absoluteHeight,
+    },
+    homeListContainer: {
+        position: 'absolute',
+        top: 19 * absoluteHeight,
+        width: width,
+        height: height - topBarHeight() - 213 * absoluteHeight,
+        paddingBottom: 30 * absoluteHeight,
+    },
 });
