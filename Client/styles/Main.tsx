@@ -180,16 +180,4 @@ export const styles = StyleSheet.create({
     colorDarkTitle: {
         color: textBlackColor,
     },
-    topCategoriesContainer: {
-        position: 'absolute',
-        top: 28 * absoluteHeight,
-    },
-    viewAllContainer: {
-        position: 'absolute',
-        right: 33 * absoluteWidth,
-    },
-    homeTitleContainer: {
-        position: 'absolute',
-        left: 24 * absoluteWidth,
-    },
 });
