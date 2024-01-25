@@ -39,5 +39,12 @@
         "alerts": "Alerts",
         "chats": "Chats"
     },
-    "kmAway": "km away"
+    "kmAway": "km away",
+    "topCategories": "Top Categories",
+    "viewAll": "View All",
+    "nearbyBarbers": "Nearby Barbers",
+    "haircut": "Haircut",
+    "spa": "Spa",
+    "creamBath": "Creambath",
+    "massage": "Massage"
 }

@@ -1,8 +1,9 @@
 import Constants from 'expo-constants';
 import { StyleSheet, Dimensions, DimensionValue } from 'react-native';
+import { topBarHeight } from './TopBar';
 
 const window = Dimensions.get("window");
-export const statusBarHeight =  Constants.statusBarHeight;
+export const statusBarHeight = Constants.statusBarHeight;
 export const inputHeight = window.height * 0.07;
 export const inputWidth = window.width * 0.85;
 export const mainColor = "#DF2238";
@@ -158,12 +159,37 @@ export const styles = StyleSheet.create({
     lMargin5: {
         marginLeft: 5,
     },
-    homeListContainer: {
-        width: width,
-        height: height * 0.7,
-        zIndex: -10,
-    },
     zIndex10: {
         zIndex: 10,
+    },
+    fontPoppins: {
+        fontFamily: 'Poppins',
+    },
+    fontWeight400: {
+        fontWeight: '400',
+    },
+    fontWeight600: {
+        fontWeight: '600',
+    },
+    fontWeight700: {
+        fontWeight: '700',
+    },
+    fonstSize18: {
+        fontSize: 18,
+    },
+    colorDarkTitle: {
+        color: textBlackColor,
+    },
+    topCategoriesContainer: {
+        position: 'absolute',
+        top: 28 * absoluteHeight,
+    },
+    viewAllContainer: {
+        position: 'absolute',
+        right: 33 * absoluteWidth,
+    },
+    homeTitleContainer: {
+        position: 'absolute',
+        left: 24 * absoluteWidth,
     },
 });

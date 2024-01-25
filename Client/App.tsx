@@ -8,7 +8,6 @@ import AccountTypeSelection from './screens/AccountTypeSelection'
 import Signin from './screens/SignIn';
 import Onboarding1 from './screens/Onboarding1';
 import Onboarding2 from './screens/Onboarding2';
-import Appointments from './screens/Appointments';
 
 //components
 import Login from './components/Login';
