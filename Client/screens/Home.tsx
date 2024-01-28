@@ -7,9 +7,8 @@ import { useEffect, useState } from 'react';
 import { BarberInfo, getBarbersNearMe } from '../utils/ApiRequest';
 import ListItem from '../components/ListItemBarbershop';
 import Pressable from '../components/Pressable';
-import { PropNavigation } from '../App';
 
-export default function Home({navigation}: PropNavigation) {
+export default function Home() {
     const [barberList, setBarberList] = useState<BarberInfo[]>([]);
     const [topCategoriesExpanded, setTopCategoriesExpanded] = useState(true);
     const [nearbyBarbersExpanded, setNearbyBarbersExpanded] = useState(false);
@@ -26,7 +25,7 @@ export default function Home({navigation}: PropNavigation) {
 
     return (
         <>
-            <TopBar navigation={navigation}/>
+            <TopBar/>
             <View style={topBarStyles.homeContainer}>
                 <View style={[styles.row, styles.w100, topCategoriesExpanded ? topBarStyles.topCategoriesContainerExpanded :  topBarStyles.topCategoriesContainer]}>
                     <Text style={[styles.fontPoppins, styles.fontWeight700, styles.fontSize18, styles.colorDarkTitle, topBarStyles.homeTitleContainer]}>{texts.topCategories}</Text>
