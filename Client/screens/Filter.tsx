@@ -1,9 +1,12 @@
 import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
 import { View, Text } from 'react-native';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
+import Stars from 'react-native-stars';
 
 import { styles } from '../styles/Filter';
 import Button from '../components/Button';
+import { absoluteWidth } from '../styles/Main';
+
 
 interface FilterProps { }
 
@@ -20,7 +23,6 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
         bottomSheetModalRef.current?.present();
     }, []);
     const handleSheetChanges = useCallback((index: number) => {
-        console.log('handleSheetChanges', index);
     }, []);
 
     useImperativeHandle(
@@ -62,12 +64,26 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
                     <Text style={styles.ratingTitle}>{texts.rating}</Text>
                     <Text style={styles.ratingStars}>{starsSelected} {texts.stars}</Text>
                 </View>
+                <View style={styles.starsContainer}>
+                    <View style={{ alignItems: 'center' }}>
+                        <Stars
+                            half={false}
+                            default={starsSelected}
+                            update={setStarsSelected}
+                            spacing={10 * absoluteWidth}
+                            starSize={50 * absoluteWidth}
+                            count={5}
+                            fullStar={require('@assets/icons/star.png')}
+                            emplyStar={require('@assets/icons/starEmpty.png')}
+                        />
+                    </View>
+                </View>
                 <Text style={styles.availableTimeTitle}>{texts.availableTime}</Text>
                 <View style={styles.timeSelectionContainer} />
                 <View style={styles.applyContainer}>
                     <Button title={texts.apply} />
                 </View>
-           </BottomSheetModal>
+            </BottomSheetModal>
         </BottomSheetModalProvider>
     );
 });
