@@ -6,17 +6,14 @@ import Pressable from  './Pressable';
 
 import { styles } from '../styles/TopBar';
 import { statusBarOnHome } from '../styles/Main';
-import { NavigationProp } from '@react-navigation/native';
-import Filter from '../screens/Filter';
 import { useState } from 'react';
 
-export default function TopBar({ navigation, name = "Jonh Doe" } : { navigation: NavigationProp<any, any>, name?: string }) {
+export default function TopBar({ name = "Jonh Doe" }) {
     const texts = require("../langs/en.json");
     const [modalVisible, setModalVisible] = useState(false);
 
     return (
         <View style={styles.container}>
-            <Filter modalVisible={modalVisible} setModalVisible={setModalVisible} />
             <StatusBar style={statusBarOnHome} />
             <Image source={require('../assets/icons/hamburger.png')} style={styles.hamburguer} />
             <Text style={styles.nameText}>{`${texts.hi}, ${name}`}</Text>
