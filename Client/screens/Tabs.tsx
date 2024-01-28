@@ -3,7 +3,6 @@ import Home from './Home';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { inputTextColor, mainColor } from '../styles/Main';
 import Appointments from './Appointments';
-import Filter from './Filter';
 
 export default function Tabs() {
     const Tab = createBottomTabNavigator();
@@ -43,7 +42,7 @@ export default function Tabs() {
                         />
                     )
                 }} />
-            <Tab.Screen name={texts.tabs.alerts} component={Filter}
+            <Tab.Screen name={texts.tabs.alerts} component={Home}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => !focused ? (

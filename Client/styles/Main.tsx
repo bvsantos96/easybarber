@@ -1,6 +1,5 @@
 import Constants from 'expo-constants';
 import { StyleSheet, Dimensions, DimensionValue } from 'react-native';
-import { topBarHeight } from './TopBar';
 
 const window = Dimensions.get("window");
 export const statusBarHeight = Constants.statusBarHeight;
@@ -179,5 +178,12 @@ export const styles = StyleSheet.create({
     },
     colorDarkTitle: {
         color: textBlackColor,
+    },
+    overlay: {
+        position: 'absolute',
+        width: width,
+        height: height,
+        backgroundColor: 'rgba(0,0,0,0.5)',
+        zIndex: 10,
     },
 });

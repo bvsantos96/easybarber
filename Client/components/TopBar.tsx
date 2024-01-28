@@ -6,11 +6,9 @@ import Pressable from  './Pressable';
 
 import { styles } from '../styles/TopBar';
 import { statusBarOnHome } from '../styles/Main';
-import { useState } from 'react';
 
-export default function TopBar({ name = "Jonh Doe" }) {
+export default function TopBar({ name = "Jonh Doe", toggleFilter = ()=>{} }) {
     const texts = require("../langs/en.json");
-    const [modalVisible, setModalVisible] = useState(false);
 
     return (
         <View style={styles.container}>
@@ -22,7 +20,7 @@ export default function TopBar({ name = "Jonh Doe" }) {
             </Pressable>
             <ProfileImage />
             <SearchBar onTextChange={(e:string)=>{console.log(e)}}/>
-            <Pressable style={styles.filterView} onPress={()=>setModalVisible(!modalVisible)}>
+            <Pressable style={styles.filterView} onPress={toggleFilter}>
                 <Image source={require("../assets/icons/filter.png")} style={styles.filter}/>
             </Pressable>
         </View>

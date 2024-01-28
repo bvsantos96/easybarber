@@ -1,17 +1,21 @@
 import { ScrollView, View, Text, Image } from 'react-native';
-import TopBar from '../components/TopBar';
+import { useEffect, useRef, useState } from 'react';
 
 import { styles } from '../styles/Main';
 import { styles as topBarStyles } from '../styles/TopBar';
-import { useEffect, useState } from 'react';
+
+import TopBar from '../components/TopBar';
 import { BarberInfo, getBarbersNearMe } from '../utils/ApiRequest';
 import ListItem from '../components/ListItemBarbershop';
 import Pressable from '../components/Pressable';
+import Filter, { FilterRef } from './Filter';
 
 export default function Home() {
+    const filterRef = useRef<FilterRef>(null);
     const [barberList, setBarberList] = useState<BarberInfo[]>([]);
     const [topCategoriesExpanded, setTopCategoriesExpanded] = useState(true);
     const [nearbyBarbersExpanded, setNearbyBarbersExpanded] = useState(false);
+    const [filterExpanded, setFilterExpanded] = useState(true);
     const texts = require("../langs/en.json");
 
     useEffect(() => {
@@ -23,9 +27,19 @@ export default function Home() {
         fetchBarbers();
     }, []);
 
+    const toggleFilter = () => {
+        setFilterExpanded(!filterExpanded);
+        filterRef.current?.handlePresentModalPress();
+    }
+
+    // TODO: defete this is just for easly test the modal
+    useEffect(() => {
+        toggleFilter();
+    },[filterRef]);
+
     return (
         <>
-            <TopBar/>
+            <TopBar toggleFilter={toggleFilter} />
             <View style={topBarStyles.homeContainer}>
                 <View style={[styles.row, styles.w100, topCategoriesExpanded ? topBarStyles.topCategoriesContainerExpanded :  topBarStyles.topCategoriesContainer]}>
                     <Text style={[styles.fontPoppins, styles.fontWeight700, styles.fontSize18, styles.colorDarkTitle, topBarStyles.homeTitleContainer]}>{texts.topCategories}</Text>
@@ -75,6 +89,7 @@ export default function Home() {
                     </ScrollView>
                 </View>
             </View>
+            <Filter ref={filterRef} />
         </>
     );
 }
