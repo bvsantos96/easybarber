@@ -9,14 +9,11 @@ const heightCalc = (px: number): number => {
 
 export const profileIconSize = 35;
 export const topBarHeight = () => {
-    console.log("absoluteHeight: " + absoluteHeight);
-    console.log("topMargin" + topMargin);
     return heightCalc(150);
 };
 
 export const styles = StyleSheet.create({
     container: {
-        zIndex: 1,
         position: 'absolute',
         top: 0,
         width: width,
