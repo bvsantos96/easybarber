@@ -1,9 +1,90 @@
 import { StyleSheet } from 'react-native';
+import { absoluteHeight, absoluteWidth, mainColor, textBlackColor, width } from './Main';
 
 export const styles = StyleSheet.create({
     container: {
         borderRadius: 40,
         overflow: 'hidden',
         zIndex: 20,
+    },
+    topBarContainer: {
+        position: 'absolute',
+        top: 34 * absoluteHeight,
+    },
+    title: {
+        position: 'absolute',
+        left: 36 * absoluteWidth,
+        fontSize: 17 * absoluteWidth,
+        fontFamily: 'Poppins',
+        fontWeight: '600',
+        lineHeight: 25.5 * absoluteHeight,
+        color: textBlackColor, 
+    },
+    clear: {
+        position: 'absolute',
+        left: 315 * absoluteWidth,
+        color: mainColor,
+        fontSize: 16 * absoluteWidth,
+        fontFamily: 'Poppins',
+        fontWeight: '400',
+        lineHeight: 24 * absoluteHeight,
+    },
+    input: {
+        width: 325 * absoluteWidth,
+        height: 64 * absoluteHeight,
+        position: 'absolute',
+        top: 88 * absoluteHeight,
+        left: 35 * absoluteWidth,
+    },
+    ratingTitleContainer: {
+        position: 'absolute',
+        top: 175 * absoluteHeight,
+    },
+    ratingTitle: {
+        fontSize: 16 * absoluteWidth,
+        fontFamily: 'Poppins',
+        fontWeight: '600',
+        lineHeight: 24 * absoluteHeight,
+        color: textBlackColor,
+        position: 'absolute',
+        left: 36 * absoluteWidth,
+    },
+    ratingStars: {
+        position: 'absolute',
+        left: 310 * absoluteWidth,
+        fontSize: 14 * absoluteWidth,
+        fontFamily: 'Poppins',
+        fontWeight: '400',
+        lineHeight: 21 * absoluteHeight,
+    }, 
+    starsContainer: {
+        position: 'absolute',
+        top: 210 * absoluteHeight,
+        left: 38 * absoluteWidth,
+    },
+    availableTimeTitle: {
+        position: 'absolute',
+        top: 280 * absoluteHeight,
+        left: 36 * absoluteWidth,
+        fontSize: 16 * absoluteWidth,
+        fontFamily: 'Mazzard',
+        fontWeight: '600',
+        lineHeight: 24 * absoluteHeight,
+    },
+    timeSelectionContainer: {
+        position: 'absolute',
+        top: 326* absoluteHeight,
+        left: 35 * absoluteWidth,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: width - 65,
+        backgroundColor: 'red',
+        height: 64 * absoluteHeight,
+    },
+    applyContainer: {
+        position: 'absolute',
+        top: 422 * absoluteHeight,
+        left: 35 * absoluteWidth,
+        width: width - 65,
     },
 });
