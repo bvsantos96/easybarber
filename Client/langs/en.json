@@ -46,5 +46,13 @@
     "haircut": "Haircut",
     "spa": "Spa",
     "creamBath": "Creambath",
-    "massage": "Massage"
+    "massage": "Massage",
+    "findBarber": "Find Desired Barber",
+    "clear": "Clear",
+    "stars": "Star",
+    "rating": "Rating",
+    "availableTime": "Available Time",
+    "from": "From",
+    "to": "To",
+    "applyFilter": "Apply Filters"
 }
