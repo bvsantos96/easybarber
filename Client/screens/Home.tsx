@@ -15,7 +15,7 @@ export default function Home() {
     const [barberList, setBarberList] = useState<BarberInfo[]>([]);
     const [topCategoriesExpanded, setTopCategoriesExpanded] = useState(true);
     const [nearbyBarbersExpanded, setNearbyBarbersExpanded] = useState(false);
-    const [filterExpanded, setFilterExpanded] = useState(true);
+    const [filterExpanded, setFilterExpanded] = useState(false);
     const texts = require("../langs/en.json");
 
     useEffect(() => {
@@ -31,11 +31,6 @@ export default function Home() {
         setFilterExpanded(!filterExpanded);
         filterRef.current?.handlePresentModalPress();
     }
-
-    // TODO: defete this is just for easly test the modal
-    useEffect(() => {
-        toggleFilter();
-    },[filterRef]);
 
     return (
         <>
