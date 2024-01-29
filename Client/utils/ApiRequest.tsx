@@ -1,46 +1,53 @@
 import { LocationObject, getCurrentPositionAsync, Accuracy, PermissionResponse, requestForegroundPermissionsAsync } from 'expo-location';
 
 async function getLocation(): Promise<void> {
-  let { status }: PermissionResponse = await requestForegroundPermissionsAsync();
-  if (status !== 'granted') {
-    console.error('Permission to access location was denied');
-    return;
-  }
+    let { status }: PermissionResponse = await requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+        console.error('Permission to access location was denied');
+        return;
+    }
 
-  try {
-    let location: LocationObject = await getCurrentPositionAsync({accuracy:Accuracy.High});
-    console.log(location);
-  } catch (error) {
-    console.log(error);
-  }
+    try {
+        let location: LocationObject = await getCurrentPositionAsync({ accuracy: Accuracy.High });
+        console.log(location);
+    } catch (error) {
+        console.log(error);
+    }
 }
 
 export type BarberInfo = {
     id: number,
     name: string,
     description: string,
-    distance: double,
+    distance: number,
     rating: number,
     nVotes: number,
     photo: string,
 }
 
 export type Appointment = {
-  id: number,
-  name: string,
-  from: string,
-  to: string,
-  photo: string,
+    id: number,
+    name: string,
+    from: string,
+    to: string,
+    photo: string,
 }
 
-export const getNearByBarbers = async (location: any) : Promise<BarberInfo[]>  => {
+export const getNearByBarbers = async (location: any): Promise<BarberInfo[]> => {
     return require("../assets/fakeAPI/nearBarbers.json");
 }
 
-export const getBarbersNearMe = async () : Promise<BarberInfo[]> => {
+export const getBarbersNearMe = async (): Promise<BarberInfo[]> => {
     return getNearByBarbers(getLocation());
 }
 
-export const getAppointments = async () : Promise<Appointment[]>  => {
-  return require("../assets/fakeAPI/appointments.json");
+export const getAppointments = async (): Promise<Appointment[]> => {
+    return require("../assets/fakeAPI/appointments.json");
+}
+
+import comboboxes from "../assets/fakeAPI/comboboxes.json";
+import { PickerItem } from '../components/Picker';
+
+export const getCategories = async (): Promise<PickerItem[]> => {
+    return comboboxes.categories;
 }
