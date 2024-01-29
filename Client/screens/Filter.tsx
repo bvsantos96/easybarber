@@ -7,7 +7,7 @@ import { styles } from '../styles/Filter';
 import Button from '../components/Button';
 import { absoluteWidth } from '../styles/Main';
 import Picker, { PickerItem } from '../components/Picker';
-import { getCategories } from '../utils/ApiRequest';
+import { getCategories, getTimes } from '../utils/ApiRequest';
 
 
 interface FilterProps { }
@@ -18,6 +18,10 @@ export interface FilterRef {
 
 const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
     const [categories, setCategories] = useState<PickerItem[]>([]);
+    const [fromTimes, setFromTimes] = useState<PickerItem[]>([]);
+    const [toTimes, setToTimes] = useState<PickerItem[]>([]);
+    const [from, setFrom] = useState('');
+    const [to, setTo] = useState('');
     const [category, setCategory] = useState('');
     const [starsSelected, setStarsSelected] = useState(5);
     const texts = require("@lang/en.json");
@@ -26,7 +30,6 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
     const handlePresentModalPress = useCallback(() => {
         bottomSheetModalRef.current?.present();
     }, []);
-    const handleSheetChanges = useCallback((index: number) => { }, []);
 
     useImperativeHandle(
         ref,
@@ -42,13 +45,27 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
         enableTouchThrough: false,
     }), []);
 
+    const fromChange = async(value: string) => {
+        setFrom(value);
+        setToTimes(await getTimes({ from: value}));
+    }
+
+    const toChange = async(value: string) => {
+        setTo(value);
+        setFromTimes(await getTimes({ to: value}));
+    }
+
     useEffect(() => {
-        const fetchCategories = async () => {
+        const fetchComboBoxes = async () => {
             const cats: PickerItem[] = await getCategories();
             setCategories(cats);
+            const fromTime: PickerItem[] = await getTimes({});
+            setFromTimes(fromTime);
+            const toTime: PickerItem[] = await getTimes({from: fromTime[0].value});
+            setToTimes(toTime);
         }
 
-        fetchCategories();
+        fetchComboBoxes();
     }, []);
 
     return (
@@ -66,7 +83,7 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
                             value: 0
                         }} {...backdropProps} />
                 )}
-                onChange={handleSheetChanges} >
+                onChange={()=>{}} >
                 <View style={styles.topBarContainer}>
                     <Text style={styles.title}>{texts.findBarber}</Text>
                     <Text style={styles.clear}>{texts.clear}</Text>
@@ -103,17 +120,17 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
                         <Picker
                             placeholder={texts.from}
                             style={{ viewContainer: styles.picker }}
-                            selectedValue={category}
-                            onValueChange={setCategory}
-                            items={categories} />
+                            selectedValue={from}
+                            onValueChange={fromChange}
+                            items={fromTimes} />
                     </View>
                     <View style={styles.to}>
                         <Picker
                             placeholder={texts.to}
                             style={{ viewContainer: styles.picker }}
-                            selectedValue={category}
-                            onValueChange={setCategory}
-                            items={categories} />
+                            selectedValue={to}
+                            onValueChange={toChange}
+                            items={toTimes} />
                     </View>
                 </View>
                 <View style={styles.applyContainer}>
