@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import { absoluteHeight, absoluteWidth, mainColor, textBlackColor, width } from './Main';
+import { absoluteHeight, absoluteWidth, backgroundColor, mainColor, textBlackColor, width } from './Main';
 
 export const styles = StyleSheet.create({
     container: {
@@ -30,11 +30,11 @@ export const styles = StyleSheet.create({
         lineHeight: 24 * absoluteHeight,
     },
     input: {
-        width: 325 * absoluteWidth,
-        height: 64 * absoluteHeight,
         position: 'absolute',
         top: 88 * absoluteHeight,
         left: 35 * absoluteWidth,
+        width: 325 * absoluteWidth,
+        height: 64 * absoluteHeight,
     },
     ratingTitleContainer: {
         position: 'absolute',
@@ -73,12 +73,8 @@ export const styles = StyleSheet.create({
     },
     timeSelectionContainer: {
         position: 'absolute',
-        top: 326* absoluteHeight,
-        left: 35 * absoluteWidth,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: width - 65,
-        backgroundColor: 'red',
+        top: 326 * absoluteHeight,
+        width: width,
         height: 64 * absoluteHeight,
     },
     applyContainer: {
@@ -87,4 +83,46 @@ export const styles = StyleSheet.create({
         left: 35 * absoluteWidth,
         width: width - 65,
     },
+    picker: {
+        width: '100%', 
+        height: '100%', 
+        background: 'white', 
+        borderRadius: 50, 
+        borderWidth: 1,
+        borderColor: 'rgba(0, 0, 0, 0.22)',
+        borderStyle: 'solid',
+    },
+    pickerItem:{
+        paddingLeft: 22 * absoluteWidth,
+        height: '100%',
+        width: '100%',
+        fontSize: 14 * absoluteWidth,
+        fontFamily: 'Poppins',
+        fontWeight: '400',
+        lineHeight: 21 * absoluteHeight,
+    },
+    pickerLabelContainer: {
+        position: "absolute",
+        top: -8 * absoluteHeight,
+        left: 30 * absoluteWidth,
+        backgroundColor: backgroundColor,
+    },
+    pickerLabel: {
+        fontSize: 12 * absoluteWidth,
+        fontFamily: 'Poppins',
+        fontWeight: '600',
+        lineHeight: 18 * absoluteHeight,
+    },
+    from: {
+        position: 'absolute',
+        left: 35 * absoluteWidth,
+        width: 152 * absoluteWidth,
+        height: "100%",
+    },
+    to: {
+        position: 'absolute',
+        left: 209 * absoluteWidth,
+        width: 152 * absoluteWidth,
+        height: "100%",
+    }
 });

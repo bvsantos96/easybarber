@@ -1,0 +1,20 @@
+{
+    "categories": [
+        {
+            "label": "Haircut",
+            "value": "haircut"
+        },
+        {
+            "label": "Beard",
+            "value": "beard"
+        },
+        {
+            "label": "Haircut & Beard",
+            "value": "haircut-beard"
+        },
+        {
+            "label": "Hair Color",
+            "value": "hair-color"
+        }
+    ]
+}

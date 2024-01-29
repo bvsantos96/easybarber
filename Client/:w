@@ -1,0 +1,19 @@
+import RNPickerSelect, { PickerStyle } from 'react-native-picker-select';
+
+export interface PickerItem {
+    label: string;
+    value: string;
+}
+
+export default function Picker({ style = {}, selectedValue = "", onValueChange = () => { }, items = [] }: { style?: PickerStyle, selectedValue: string, onValueChange: (value: string) => void, items: PickerItem[] }) {
+    return (
+        <RNPickerSelect
+            placeholder={{label: placehoder, value: null}}
+            value={selectedValue}
+            style={style}
+            onValueChange={onValueChange}
+            items={items}
+        >
+        </RNPickerSelect>
+    );
+}

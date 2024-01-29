@@ -54,5 +54,6 @@
     "availableTime": "Available Time",
     "from": "From",
     "to": "To",
-    "applyFilter": "Apply Filters"
+    "applyFilter": "Apply Filters",
+    "category": "Category"
 }

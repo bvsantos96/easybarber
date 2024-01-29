@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useImperativeHandle, useMemo, useRef } from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
 import { View, Text } from 'react-native';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import Stars from 'react-native-stars';
@@ -6,6 +6,8 @@ import Stars from 'react-native-stars';
 import { styles } from '../styles/Filter';
 import Button from '../components/Button';
 import { absoluteWidth } from '../styles/Main';
+import Picker, { PickerItem } from '../components/Picker';
+import { getCategories } from '../utils/ApiRequest';
 
 
 interface FilterProps { }
@@ -15,15 +17,16 @@ export interface FilterRef {
 }
 
 const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
-    const [starsSelected, setStarsSelected] = React.useState(5);
+    const [categories, setCategories] = useState<PickerItem[]>([]);
+    const [category, setCategory] = useState('');
+    const [starsSelected, setStarsSelected] = useState(5);
     const texts = require("@lang/en.json");
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ["70%"], []);
     const handlePresentModalPress = useCallback(() => {
         bottomSheetModalRef.current?.present();
     }, []);
-    const handleSheetChanges = useCallback((index: number) => {
-    }, []);
+    const handleSheetChanges = useCallback((index: number) => { }, []);
 
     useImperativeHandle(
         ref,
@@ -38,6 +41,15 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
         disappearsOnIndex: -1,
         enableTouchThrough: false,
     }), []);
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            const cats: PickerItem[] = await getCategories();
+            setCategories(cats);
+        }
+
+        fetchCategories();
+    }, []);
 
     return (
         <BottomSheetModalProvider>
@@ -59,7 +71,14 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
                     <Text style={styles.title}>{texts.findBarber}</Text>
                     <Text style={styles.clear}>{texts.clear}</Text>
                 </View>
-                <View style={styles.input} />
+                <View style={styles.input}>
+                    <Picker
+                        placeholder={texts.category}
+                        style={{ viewContainer: styles.picker }}
+                        selectedValue={category}
+                        onValueChange={setCategory}
+                        items={categories} />
+                </View>
                 <View style={styles.ratingTitleContainer}>
                     <Text style={styles.ratingTitle}>{texts.rating}</Text>
                     <Text style={styles.ratingStars}>{starsSelected} {texts.stars}</Text>
@@ -79,7 +98,24 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
                     </View>
                 </View>
                 <Text style={styles.availableTimeTitle}>{texts.availableTime}</Text>
-                <View style={styles.timeSelectionContainer} />
+                <View style={styles.timeSelectionContainer}>
+                    <View style={styles.from}>
+                        <Picker
+                            placeholder={texts.from}
+                            style={{ viewContainer: styles.picker }}
+                            selectedValue={category}
+                            onValueChange={setCategory}
+                            items={categories} />
+                    </View>
+                    <View style={styles.to}>
+                        <Picker
+                            placeholder={texts.to}
+                            style={{ viewContainer: styles.picker }}
+                            selectedValue={category}
+                            onValueChange={setCategory}
+                            items={categories} />
+                    </View>
+                </View>
                 <View style={styles.applyContainer}>
                     <Button title={texts.apply} />
                 </View>
