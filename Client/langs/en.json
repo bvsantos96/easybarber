@@ -55,5 +55,7 @@
     "from": "From",
     "to": "To",
     "applyFilter": "Apply Filters",
-    "category": "Category"
+    "category": "Category",
+    "gettingStarted": "Getting Started",
+    "mayTakeSecs": "This may take a few seconds"
 }

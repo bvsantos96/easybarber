@@ -86,7 +86,7 @@ export const styles = StyleSheet.create({
     picker: {
         width: '100%', 
         height: '100%', 
-        background: 'white', 
+        backgroundColor: 'white', 
         borderRadius: 50, 
         borderWidth: 1,
         borderColor: 'rgba(0, 0, 0, 0.22)',
