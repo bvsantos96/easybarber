@@ -1,29 +1,13 @@
-import { Text, View, StyleSheet } from "react-native";
+import { Image, Text, View, StyleSheet } from "react-native";
 import { PropNavigation } from "../App";
 
 import { absoluteHeight, absoluteWidth, backgroundColor, height, textBlackColor, width } from "../styles/Main";
 
-import { SvgUri } from 'react-native-svg';
-import { useState } from "react";
-
 export default function Loading({ navigation }: PropNavigation) {
     const texts = require("@lang/en.json");
-
-    const [uri, setUri] = useState(
-        'https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/not_existing.svg'
-    );
     return (
         <View style={styles.container}>
-            <View style={styles.icon}>
-                <SvgUri
-                    onError={() =>
-                        setUri('https://dev.w3.org/SVG/tools/svgweb/samples/svg-files/ruby.svg')
-                    }
-                    width="100%"
-                    height="100%"
-                    uri={uri}
-                />
-            </View>
+            <Image  style={styles.icon} source={require('../assets/icons/loading.gif')} />
             <Text style={styles.textTitle}>{texts.gettingStarted}</Text>
             <Text style={styles.textSubtitle}>{texts.mayTakeSecs}</Text>
         </View>
