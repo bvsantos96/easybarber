@@ -1,13 +1,14 @@
-import { Image } from 'react-native';
 import { styles as inputStyle } from '../styles/Input';
-import { styles as mainStyle } from '../styles/Main';
+import { mainColor, styles as mainStyle } from '../styles/Main';
+
+import TabIcon from "@assets/icons/inactivePage.svg";
 
 export default function PageNumber({ selected = false }) {
     return (
         selected ? (
-            <Image style={[inputStyle.icon, mainStyle.hMargin3]} source={require('@assets/icons/activePage.png')} />
+            <TabIcon style={[inputStyle.icon, mainStyle.hMargin3]} fill={mainColor} />
         ) : (
-            <Image style={[inputStyle.icon, mainStyle.hMargin3]} source={require('@assets/icons/inactivePage.png')} />
+            <TabIcon style={[inputStyle.icon, mainStyle.hMargin3]} fill="#2632383D" />
         )
     );
 }
