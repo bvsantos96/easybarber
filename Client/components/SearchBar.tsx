@@ -1,6 +1,8 @@
 import React from 'react';
-import { View, Image, TextInput } from 'react-native';
+import { View, TextInput } from 'react-native';
 import Pressable from '../components/Pressable';
+
+import SearchIcon from "@assets/icons/search.svg";
 
 import { styles } from '../styles/TopBar';
 import { buttonTextColor } from '../styles/Main';
@@ -16,7 +18,7 @@ export default function SearchBar({ onTextChange = (e: string) => { alert(`No fu
     return (
         <Pressable style={styles.searchBarInput} onPress={handleViewPress}>
             <View style={styles.iconView}>
-                <Image source={require("../assets/icons/search.png")} style={styles.icon} />
+                <SearchIcon style={styles.icon} />
             </View>
             <TextInput
                 ref={textInputRef}

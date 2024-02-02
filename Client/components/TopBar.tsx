@@ -4,6 +4,9 @@ import ProfileImage from './ProfileImage';
 import SearchBar from './SearchBar';
 import Pressable from  './Pressable';
 
+import HamburgerIcon from '@assets/icons/hamburger.svg';
+import FilterIcon from '@assets/icons/filter.svg';
+
 import { styles } from '../styles/TopBar';
 import { statusBarOnHome } from '../styles/Main';
 
@@ -13,7 +16,7 @@ export default function TopBar({ name = "Jonh Doe", toggleFilter = ()=>{} }) {
     return (
         <View style={styles.container}>
             <StatusBar style={statusBarOnHome} />
-            <Image source={require('../assets/icons/hamburger.png')} style={styles.hamburguer} />
+            <HamburgerIcon style={styles.hamburguer} />
             <Text style={styles.nameText}>{`${texts.hi}, ${name}`}</Text>
             <Pressable onPress={() => { alert("See notification") }} style={styles.bellContainer}>
                 <Image source={require('../assets/icons/bell.png')} style={styles.bell} />
@@ -21,7 +24,7 @@ export default function TopBar({ name = "Jonh Doe", toggleFilter = ()=>{} }) {
             <ProfileImage />
             <SearchBar onTextChange={(e:string)=>{console.log(e)}}/>
             <Pressable style={styles.filterView} onPress={toggleFilter}>
-                <Image source={require("../assets/icons/filter.png")} style={styles.filter}/>
+                <FilterIcon style={styles.filter}/>
             </Pressable>
         </View>
     );
