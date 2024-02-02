@@ -55,7 +55,7 @@ export default function App() {
     return (
         <GestureHandlerRootView style={{ flex: 1 }}>
             <NavigationContainer>
-                <Stack.Navigator initialRouteName="Loading">
+                <Stack.Navigator initialRouteName="Onboarding1">
                     <Stack.Screen name="Onboarding1" component={Onboarding1} options={{ headerShown: false }} />
                     <Stack.Screen name="Onboarding2" component={Onboarding2} options={{ headerShown: false }} />
                     <Stack.Screen name="AccountTypeSelection" component={AccountTypeSelection} options={{ headerShown: false }} />
