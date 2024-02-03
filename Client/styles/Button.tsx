@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
         textAlign: 'center',
         fontSize: 18,
         fontFamily: 'Mazzard',
-        fontWeight: '600',
+        fontWeight: '900',
     },
     smallButton: {
         borderRadius: 9,

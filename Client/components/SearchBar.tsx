@@ -5,7 +5,7 @@ import Pressable from '../components/Pressable';
 import SearchIcon from "@assets/icons/search.svg";
 
 import { styles } from '../styles/TopBar';
-import { buttonTextColor } from '../styles/Main';
+import { absoluteWidth, buttonTextColor } from '../styles/Main';
 
 export default function SearchBar({ onTextChange = (e: string) => { alert(`No function call to search ${e}`) } }) {
     const texts = require('../langs/en.json');
@@ -18,7 +18,7 @@ export default function SearchBar({ onTextChange = (e: string) => { alert(`No fu
     return (
         <Pressable style={styles.searchBarInput} onPress={handleViewPress}>
             <View style={styles.iconView}>
-                <SearchIcon style={styles.icon} />
+                <SearchIcon style={styles.icon} width={25 * absoluteWidth} height={25 * absoluteWidth} />
             </View>
             <TextInput
                 ref={textInputRef}

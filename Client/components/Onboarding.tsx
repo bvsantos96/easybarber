@@ -6,7 +6,7 @@ import Button from '../components/Button';
 import Divider from '../components/Divider';
 
 import { styles } from '../styles/Screens';
-import { styles as mainStyle } from '../styles/Main';
+import { absoluteHeight, styles as mainStyle } from '../styles/Main';
 
 type OnboardingProps = {
     title: Line[][],
@@ -27,12 +27,13 @@ export default function Onboarding({
 }: OnboardingProps) {
     return (
         <>
-            <View>
-                <Divider height={60} />
+            <View style={styles.titleContainer}>
                 {title.map((item, i) => (
                     <Title key={i} line={item} />
                 ))}
-                <Divider height={20} />
+            </View>
+
+            <View style={styles.subTitleContainer}>
                 {subTitle.map((item, i) => (
                     <SubTitle key={i} text={item} />
                 ))}
@@ -41,14 +42,13 @@ export default function Onboarding({
                 <View style={styles.roundBackground} />
                 {image}
             </View>
-            <View style={mainStyle.w100c}>
-                <View style={styles.pageSelectionContainer}>
-                    {pageSelect.map((item, i) => (
-                        <PageNumber key={i} selected={item} />
-                    ))}
-                </View>
+            <View style={styles.pageSelectionContainer}>
+                {pageSelect.map((item, i) => (
+                    <PageNumber key={i} selected={item} />
+                ))}
+            </View>
+            <View style={styles.buttonContainer}>
                 <Button title={button.title} onPress={button.func} />
-                <Divider height={50} />
             </View>
         </>
     );

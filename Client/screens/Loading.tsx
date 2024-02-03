@@ -3,7 +3,7 @@ import { PropNavigation } from "../App";
 
 import { absoluteHeight, absoluteWidth, backgroundColor, height, textBlackColor, width } from "../styles/Main";
 
-export default function Loading({ navigation }: PropNavigation) {
+export default function Loading() {
     const texts = require("@lang/en.json");
     return (
         <View style={styles.container}>

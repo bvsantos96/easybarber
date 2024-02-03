@@ -42,7 +42,6 @@ export const styles = StyleSheet.create({
         height: height as DimensionValue
     },
     containerMax: {
-        flex: 1,
         width: width as DimensionValue,
         height: height as DimensionValue,
         backgroundColor: backgroundColor
@@ -186,4 +185,14 @@ export const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.5)',
         zIndex: 10,
     },
+    shadow: {
+        elevation: 8,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 4,
+    }
 });

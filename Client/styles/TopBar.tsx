@@ -24,14 +24,14 @@ export const styles = StyleSheet.create({
     },
     hamburguer: {
         position: 'absolute',
-        top: heightCalc(16),
+        top: heightCalc(10),
         left: 20 * absoluteWidth,
         width: 27,
         height: 27,
     },
     bellContainer: {
         position: 'absolute',
-        top: heightCalc(19),
+        top: heightCalc(16),
         right: 88 * absoluteWidth,
     },
     bell: {
@@ -41,7 +41,7 @@ export const styles = StyleSheet.create({
     nameText: {
         position: 'absolute',
         left: 62 * absoluteWidth,
-        top: heightCalc(19),
+        top: heightCalc(16),
         color: 'white',
         fontSize: 19,
         fontFamily: 'Poppins',
@@ -54,7 +54,7 @@ export const styles = StyleSheet.create({
     profileImageContainer: {
         position: 'absolute',
         right: 17 * absoluteWidth,
-        top: heightCalc(0.69),
+        top: heightCalc(6),
         padding: 5,
         borderWidth: 1,
         borderRadius: 50 * absoluteWidth / 2,
@@ -79,7 +79,6 @@ export const styles = StyleSheet.create({
         borderRadius: 8,
     },
     filter: {
-
         width: 31,
         height: 32,
     },
@@ -169,6 +168,7 @@ export const styles = StyleSheet.create({
         fontFamily: 'Mazzard',
         fontWeight: '500',
         textAlign: 'center',
+        marginTop: 10 * absoluteHeight,
     },
     viewAllContainer: {
         position: 'absolute',

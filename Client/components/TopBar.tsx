@@ -1,14 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
-import { View, Image, Text } from 'react-native';
+import { View, Text } from 'react-native';
 import ProfileImage from './ProfileImage';
 import SearchBar from './SearchBar';
 import Pressable from  './Pressable';
 
 import HamburgerIcon from '@assets/icons/hamburger.svg';
 import FilterIcon from '@assets/icons/filter.svg';
+import BellIcon from '@assets/icons/bell.svg';
 
 import { styles } from '../styles/TopBar';
-import { statusBarOnHome } from '../styles/Main';
+import { absoluteWidth, backgroundColor, statusBarOnHome } from '../styles/Main';
 
 export default function TopBar({ name = "Jonh Doe", toggleFilter = ()=>{} }) {
     const texts = require("../langs/en.json");
@@ -16,15 +17,15 @@ export default function TopBar({ name = "Jonh Doe", toggleFilter = ()=>{} }) {
     return (
         <View style={styles.container}>
             <StatusBar style={statusBarOnHome} />
-            <HamburgerIcon style={styles.hamburguer} />
+            <HamburgerIcon width={27 * absoluteWidth} height={27 * absoluteWidth} style={styles.hamburguer} />
             <Text style={styles.nameText}>{`${texts.hi}, ${name}`}</Text>
             <Pressable onPress={() => { alert("See notification") }} style={styles.bellContainer}>
-                <Image source={require('../assets/icons/bell.png')} style={styles.bell} />
+                <BellIcon width={24 * absoluteWidth} height={24 * absoluteWidth} style={styles.bell} fill={backgroundColor} />
             </Pressable>
             <ProfileImage />
             <SearchBar onTextChange={(e:string)=>{console.log(e)}}/>
             <Pressable style={styles.filterView} onPress={toggleFilter}>
-                <FilterIcon style={styles.filter}/>
+                <FilterIcon width={31 * absoluteWidth} height={31 * absoluteWidth} style={styles.filter}/>
             </Pressable>
         </View>
     );

@@ -57,5 +57,7 @@
     "applyFilter": "Apply Filters",
     "category": "Category",
     "gettingStarted": "Getting Started",
-    "mayTakeSecs": "This may take a few seconds"
+    "mayTakeSecs": "This may take a few seconds",
+    "imUser": "I'm a User",
+    "imBarber": "I'm a Barber"
 }

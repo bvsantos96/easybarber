@@ -1,7 +1,7 @@
 import { ScrollView, View, Text, Image } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 
-import { styles } from '../styles/Main';
+import { absoluteHeight, styles } from '../styles/Main';
 import { styles as topBarStyles } from '../styles/TopBar';
 
 import TopBar from '../components/TopBar';
@@ -9,6 +9,12 @@ import { BarberInfo, getBarbersNearMe } from '../utils/ApiRequest';
 import ListItem from '../components/ListItemBarbershop';
 import Pressable from '../components/Pressable';
 import Filter, { FilterRef } from './Filter';
+
+import BarberIcon from '@assets/icons/haircut.svg';
+import SpaIcon from '@assets/icons/spa.svg';
+import CreamBathIcon from '@assets/icons/creamBath.svg';
+import MassageIcon from '@assets/icons/massage.svg';
+import Divider from '../components/Divider';
 
 export default function Home() {
     const filterRef = useRef<FilterRef>(null);
@@ -44,25 +50,25 @@ export default function Home() {
                     <View style={topCategoriesExpanded ? topBarStyles.categoriesContainerExpanded : topBarStyles.categoriesContainer}>
                         <View>
                             <View style={topBarStyles.categoryIconContainer}>
-                                <Image style={[topBarStyles.categoryIcon, styles.alignCenter]} source={require('@assets/icons/haircut.png')} />
+                                <BarberIcon style={[topBarStyles.categoryIcon, styles.alignCenter]} />
                             </View>
                             <Text style={topBarStyles.categoryText}>{texts.haircut}</Text>
                         </View>
                         <View>
                             <View style={topBarStyles.categoryIconContainer}>
-                                <Image style={[topBarStyles.categoryIcon, styles.alignCenter]} source={require('@assets/icons/spa.png')} />
+                                <SpaIcon style={[topBarStyles.categoryIcon, styles.alignCenter]} />
                             </View>
                             <Text style={topBarStyles.categoryText}>{texts.spa}</Text>
                         </View>
                         <View>
                             <View style={topBarStyles.categoryIconContainer}>
-                                <Image style={[topBarStyles.categoryIcon, styles.alignCenter]} source={require('@assets/icons/creamBath.png')} />
+                                <CreamBathIcon style={[topBarStyles.categoryIcon, styles.alignCenter]} />
                             </View>
                             <Text style={topBarStyles.categoryText}>{texts.creamBath}</Text>
                         </View>
                         <View>
                             <View style={topBarStyles.categoryIconContainer}>
-                                <Image style={[topBarStyles.categoryIcon, styles.alignCenter]} source={require('@assets/icons/massage.png')} />
+                                <MassageIcon style={[topBarStyles.categoryIcon, styles.alignCenter]} />
                             </View>
                             <Text style={topBarStyles.categoryText}>{texts.massage}</Text>
                         </View>
@@ -76,11 +82,13 @@ export default function Home() {
                         </Pressable>
                     </View>
                     <ScrollView style={nearbyBarbersExpanded ? topBarStyles.homeListContainerExpanded : topBarStyles.homeListContainer} contentContainerStyle={[styles.alignCenter, styles.justifyCenter]}>
-                        {barberList && barberList.map((barber: BarberInfo) => {
+                        <Divider height={5 * absoluteHeight} />
+                        {barberList && barberList.map((barber: BarberInfo, idx: number) => {
                             return (
-                                <ListItem key={barber.id} barber={barber} />
+                                <ListItem key={idx} barber={barber} />
                             );
                         })}
+                        <Divider height={70 * absoluteHeight} />
                     </ScrollView>
                 </View>
             </View>
