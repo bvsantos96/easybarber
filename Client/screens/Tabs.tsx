@@ -1,8 +1,11 @@
-import { Image } from 'react-native';
 import Home from './Home';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { inputTextColor, mainColor } from '../styles/Main';
+import { absoluteWidth, inputTextColor, mainColor } from '../styles/Main';
 import Appointments from './Appointments';
+import HomeIcon from "@assets/icons/home.svg";
+import AppointmentsIcon from "@assets/icons/appointments.svg";
+import AlertsIcon from "@assets/icons/alerts.svg";
+import ChatsIcon from "@assets/icons/chats.svg";
 
 export default function Tabs() {
     const Tab = createBottomTabNavigator();
@@ -17,59 +20,35 @@ export default function Tabs() {
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => !focused ? (
-                        <Image
-                            source={require('../assets/icons/home.png')}
-                            style={{ width: 20, height: 20 }}
-                        />
+                        <HomeIcon width={20 * absoluteWidth} height={20 * absoluteWidth} />
                     ) : (
-                        <Image
-                            source={require('../assets/icons/home-selected.png')}
-                            style={{ width: 20, height: 20 }}
-                        />
+                        <HomeIcon width={20 * absoluteWidth} height={20 * absoluteWidth} fill={mainColor} />
                     )
                 }} />
             <Tab.Screen name={texts.tabs.appointments} component={Appointments}
                 options={{
                     tabBarIcon: ({ focused }) => !focused ? (
-                        <Image
-                            source={require('../assets/icons/appointments.png')}
-                            style={{ width: 20, height: 20 }}
-                        />
+                        <AppointmentsIcon width={20 * absoluteWidth} height={20 * absoluteWidth} />
                     ) : (
-                        <Image
-                            source={require('../assets/icons/appointments-selected.png')}
-                            style={{ width: 20, height: 20 }}
-                        />
+                        <AppointmentsIcon width={20 * absoluteWidth} height={20 * absoluteWidth} fill={mainColor} />
                     )
                 }} />
             <Tab.Screen name={texts.tabs.alerts} component={Home}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => !focused ? (
-                        <Image
-                            source={require('../assets/icons/alerts.png')}
-                            style={{ width: 20, height: 20 }}
-                        />
+                        <AlertsIcon width={20 * absoluteWidth} height={20 * absoluteWidth} />
                     ) : (
-                        <Image
-                            source={require('../assets/icons/alerts-selected.png')}
-                            style={{ width: 20, height: 20 }}
-                        />
+                        <AlertsIcon width={20 * absoluteWidth} height={20 * absoluteWidth} fill={mainColor} />
                     )
                 }} />
             <Tab.Screen name={texts.tabs.chats} component={Home}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => !focused ? (
-                        <Image
-                            source={require('../assets/icons/chats.png')}
-                            style={{ width: 20, height: 20 }}
-                        />
+                        <ChatsIcon width={20 * absoluteWidth} height={20 * absoluteWidth} />
                     ) : (
-                        <Image
-                            source={require('../assets/icons/chats-selected.png')}
-                            style={{ width: 20, height: 20 }}
-                        />
+                        <ChatsIcon width={20 * absoluteWidth} height={20 * absoluteWidth} fill={mainColor} />
                     )
                 }} />
         </Tab.Navigator>

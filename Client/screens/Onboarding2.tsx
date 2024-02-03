@@ -5,6 +5,8 @@ import { styles } from '../styles/Screens';
 import { styles as mainStyle } from '../styles/Main';
 import { PropNavigation, resetNavigation } from '../App';
 
+import FirstPage2 from '@assets/images/firstPage2.svg';
+
 export default function Onboarding2({ navigation }: PropNavigation) {
     const texts = require("../langs/en.json");
     return (
@@ -18,7 +20,7 @@ export default function Onboarding2({ navigation }: PropNavigation) {
                     texts.firstPage.subTitle2,
                     texts.firstPage.subTitle2_1
                 ]}
-                image={<Image style={styles.bigImage} source={require("@assets/images/firstPage2.png")} />}
+                image={<FirstPage2 style={styles.bigImage} />}
                 pageSelect={[false, true]}
                 button={{ title: texts.getStarted, func: () => resetNavigation(navigation, 'AccountTypeSelection') }}
             />

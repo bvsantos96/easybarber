@@ -1,30 +1,25 @@
 import React from 'react';
-import { Image } from 'react-native';
-import { styles } from '../styles/Input';
+import { iconSize } from '../styles/Input';
+
+import Phone from "../assets/icons/phone.svg";
+import Password from "../assets/icons/password.svg";
+import User from "../assets/icons/user.svg";
+import { absoluteWidth } from '../styles/Main';
 
 export const PhoneIcon = () => {
     return (
-        <Image
-            style={styles.icon}
-            source={require('../assets/icons/phone.png')}
-        />
+        <Phone width={iconSize * absoluteWidth} height={iconSize * absoluteWidth} />
     );
 };
 
 export const PasswordIcon = () => {
     return (
-        <Image
-            style={styles.icon}
-            source={require('../assets/icons/password.png')}
-        />
+        <Password width={iconSize * absoluteWidth} height={iconSize * absoluteWidth} />
     );
 };
 
 export const NameIcon = () => {
     return (
-        <Image
-            style={styles.icon}
-            source={require('../assets/icons/user.png')}
-        />
+        <User width={iconSize * absoluteWidth} height={iconSize * absoluteWidth} />
     );
 };
