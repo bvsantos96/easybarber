@@ -24,7 +24,6 @@ export const lightColor = '#FFFFFF69'
 export const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'space-between',
         alignItems: 'center',
         backgroundColor: backgroundColor,
     },
@@ -42,6 +41,7 @@ export const styles = StyleSheet.create({
         height: height as DimensionValue
     },
     containerMax: {
+        flex: 1,
         width: width as DimensionValue,
         height: height as DimensionValue,
         backgroundColor: backgroundColor

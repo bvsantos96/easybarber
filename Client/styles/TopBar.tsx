@@ -191,7 +191,7 @@ export const styles = StyleSheet.create({
         top: 19 * absoluteHeight,
         width: width,
         height: height - topBarHeight() - 105 * absoluteHeight,
-        paddingBottom: 30 * absoluteHeight,
+        marginTop: 5 * absoluteHeight,
     },
     nearByBarbersContainer: {
         position: 'absolute',
@@ -203,6 +203,6 @@ export const styles = StyleSheet.create({
         top: 19 * absoluteHeight,
         width: width,
         height: height - topBarHeight() - 213 * absoluteHeight,
-        paddingBottom: 30 * absoluteHeight,
+        marginTop: 5 * absoluteHeight,
     },
 });

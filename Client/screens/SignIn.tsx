@@ -7,7 +7,7 @@ import LogoSmall from "../assets/images/logo.svg";
 
 export default function SignIn({ page = <></> }) {
     return (
-        <ScrollView contentContainerStyle={[styles.container, styles.backgroundMainColor, styles.noOverflow]} keyboardShouldPersistTaps="handled">
+        <ScrollView contentContainerStyle={[styles.container, styles.backgroundMainColor, styles.noOverflow, styles.spaceBetween]} keyboardShouldPersistTaps="handled">
             <Divider height={40} color={mainColor} />
             <View style={myStyles.logoContainer} >
                 <LogoSmall width="95%" height="95%" />
