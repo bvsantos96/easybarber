@@ -20,7 +20,7 @@ export default function TopBar({ name = "Jonh Doe", toggleFilter = ()=>{} }) {
             <HamburgerIcon width={27 * absoluteWidth} height={27 * absoluteWidth} style={styles.hamburguer} />
             <Text style={styles.nameText}>{`${texts.hi}, ${name}`}</Text>
             <Pressable onPress={() => { alert("See notification") }} style={styles.bellContainer}>
-                <BellIcon width={24 * absoluteWidth} height={24 * absoluteWidth} style={styles.bell} fill={backgroundColor} />
+                <BellIcon width={24 * absoluteWidth} height={24 * absoluteWidth} style={styles.bell} fill={"none"} />
             </Pressable>
             <ProfileImage />
             <SearchBar onTextChange={(e:string)=>{console.log(e)}}/>
