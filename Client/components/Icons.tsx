@@ -14,7 +14,7 @@ export const PhoneIcon = () => {
 
 export const PasswordIcon = () => {
     return (
-        <Password width={iconSize * absoluteWidth} height={iconSize * absoluteWidth} />
+        <Password fill={"none"} width={iconSize * absoluteWidth} height={iconSize * absoluteWidth} />
     );
 };
 
