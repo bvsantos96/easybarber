@@ -9,7 +9,7 @@ import FilterIcon from '@assets/icons/filter.svg';
 import BellIcon from '@assets/icons/bell.svg';
 
 import { styles } from '../styles/TopBar';
-import { absoluteWidth, backgroundColor, statusBarOnHome } from '../styles/Main';
+import { absoluteWidth, statusBarOnHome } from '../styles/Main';
 
 export default function TopBar({ name = "Jonh Doe", toggleFilter = ()=>{} }) {
     const texts = require("../langs/en.json");
