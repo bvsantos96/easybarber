@@ -1,4 +1,4 @@
-import { StyleSheet, DimensionValue, ViewStyle } from 'react-native';
+import { StyleSheet } from 'react-native';
 import { secondColor, width, height, absoluteWidth, absoluteHeight } from './Main';
 
 const iconSize = Math.min(width, height) * 0.9;

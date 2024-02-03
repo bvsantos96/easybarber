@@ -9,6 +9,7 @@ SplashScreen.preventAutoHideAsync();
 
 //screens
 import Signin from './screens/SignIn';
+import { backgroundColor, height, width } from './styles/Main';
 
 //components
 
@@ -65,7 +66,7 @@ export default function App() {
     }
 
     return (
-        <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView} >
+        <GestureHandlerRootView style={{ flex: 1, width: width, height:height, backgroundColor: backgroundColor }} onLayout={onLayoutRootView} >
             <NavigationContainer>
                 <Stack.Navigator initialRouteName="Onboarding1">
                     <Stack.Screen name="Onboarding1" component={Onboarding1} options={{ headerShown: false }} />
