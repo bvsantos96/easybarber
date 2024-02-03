@@ -3,10 +3,8 @@ import Title, { Line } from '../components/Title';
 import SubTitle from '../components/SubTitle';
 import PageNumber from '../components/PageNumber';
 import Button from '../components/Button';
-import Divider from '../components/Divider';
 
 import { styles } from '../styles/Screens';
-import { absoluteHeight, styles as mainStyle } from '../styles/Main';
 
 type OnboardingProps = {
     title: Line[][],
