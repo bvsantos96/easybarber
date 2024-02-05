@@ -8,10 +8,11 @@ import HamburgerIcon from '@assets/icons/hamburger.svg';
 import FilterIcon from '@assets/icons/filter.svg';
 import BellIcon from '@assets/icons/bell.svg';
 
-import { styles } from '../styles/TopBar';
+import { getStyles } from '../styles/TopBar';
 import { absoluteWidth, statusBarOnHome } from '../styles/Main';
 
 export default function TopBar({ name = "Jonh Doe", toggleFilter = ()=>{} }) {
+    const styles = getStyles();
     const texts = require("../langs/en.json");
 
     return (

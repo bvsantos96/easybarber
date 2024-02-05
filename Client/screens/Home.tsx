@@ -1,8 +1,8 @@
-import { ScrollView, View, Text, Image } from 'react-native';
+import { ScrollView, View, Text } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 
 import { absoluteHeight, styles } from '../styles/Main';
-import { styles as topBarStyles } from '../styles/TopBar';
+import { getStyles } from '../styles/TopBar';
 
 import TopBar from '../components/TopBar';
 import { BarberInfo, getBarbersNearMe } from '../utils/ApiRequest';
@@ -17,6 +17,7 @@ import MassageIcon from '@assets/icons/massage.svg';
 import Divider from '../components/Divider';
 
 export default function Home() {
+    const topBarStyles = getStyles();
     const filterRef = useRef<FilterRef>(null);
     const [barberList, setBarberList] = useState<BarberInfo[]>([]);
     const [topCategoriesExpanded, setTopCategoriesExpanded] = useState(true);

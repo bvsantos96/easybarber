@@ -10,6 +10,7 @@ SplashScreen.preventAutoHideAsync();
 //screens
 import Signin from './screens/SignIn';
 import { backgroundColor, height, width } from './styles/Main';
+import { ThemeProvider } from './styles/ThemeContext';
 
 //components
 
@@ -66,18 +67,20 @@ export default function App() {
     }
 
     return (
-        <GestureHandlerRootView style={{ flex: 1, width: width, height:height, backgroundColor: backgroundColor }} onLayout={onLayoutRootView} >
-            <NavigationContainer>
-                <Stack.Navigator initialRouteName="Onboarding1">
-                    <Stack.Screen name="Onboarding1" component={Onboarding1} options={{ headerShown: false }} />
-                    <Stack.Screen name="Onboarding2" component={Onboarding2} options={{ headerShown: false }} />
-                    <Stack.Screen name="AccountTypeSelection" component={AccountTypeSelection} options={{ headerShown: false }} />
-                    <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-                    <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
-                    <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
-                    <Stack.Screen name="Loading" component={Loading} options={{ headerShown: false }} />
-                </Stack.Navigator>
-            </NavigationContainer>
-        </GestureHandlerRootView>
+        <ThemeProvider>
+            <GestureHandlerRootView style={{ flex: 1, width: width, height: height, backgroundColor: backgroundColor }} onLayout={onLayoutRootView} >
+                <NavigationContainer>
+                    <Stack.Navigator initialRouteName="Onboarding1">
+                        <Stack.Screen name="Onboarding1" component={Onboarding1} options={{ headerShown: false }} />
+                        <Stack.Screen name="Onboarding2" component={Onboarding2} options={{ headerShown: false }} />
+                        <Stack.Screen name="AccountTypeSelection" component={AccountTypeSelection} options={{ headerShown: false }} />
+                        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
+                        <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
+                        <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
+                        <Stack.Screen name="Loading" component={Loading} options={{ headerShown: false }} />
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </GestureHandlerRootView>
+        </ThemeProvider>
     );
 }
