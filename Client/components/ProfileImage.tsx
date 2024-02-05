@@ -1,10 +1,11 @@
 import { Image } from "react-native";
 import Pressable from '../components/Pressable';
-import { profileIconSize, styles } from '../styles/TopBar';
+import { profileIconSize, getStyles } from '../styles/TopBar';
 import { buttonTextColor } from '../styles/Main';
 import { AntDesign } from '@expo/vector-icons';
 
 export default function ProfileImage({ uri = "" }: { uri?: string }) {
+    const styles = getStyles();
     return (
         <Pressable onPress={() => { alert("Goto profile") }} style={styles.profileImageContainer}>
             {uri && uri.length > 0 ?

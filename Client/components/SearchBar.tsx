@@ -4,10 +4,11 @@ import Pressable from '../components/Pressable';
 
 import SearchIcon from "@assets/icons/search.svg";
 
-import { styles } from '../styles/TopBar';
+import { getStyles } from '../styles/TopBar';
 import { absoluteWidth, buttonTextColor } from '../styles/Main';
 
 export default function SearchBar({ onTextChange = (e: string) => { alert(`No function call to search ${e}`) } }) {
+    const  styles = getStyles();
     const texts = require('../langs/en.json');
     const textInputRef = React.useRef<TextInput>(null);
 
