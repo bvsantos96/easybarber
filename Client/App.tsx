@@ -9,8 +9,8 @@ SplashScreen.preventAutoHideAsync();
 
 //screens
 import Signin from './screens/SignIn';
-import { backgroundColor, height, width } from './styles/Main';
-import { ThemeProvider } from './styles/ThemeContext';
+import { ThemeProvider, useTheme } from './styles/ThemeContext';
+import { View } from 'react-native';
 
 //components
 
@@ -41,7 +41,9 @@ const RegisterScreen = ({ navigation }: PropNavigation) => {
     );
 }
 
-export default function App() {
+const Router = () => {
+    // Theme
+    const theme = useTheme();
     // Tabs
     const Loading = require('./screens/Loading').default;
     const Onboarding1 = require("./screens/Onboarding1").default;
@@ -66,21 +68,50 @@ export default function App() {
         return null;
     }
 
+    const containerizedComponent = (component: JSX.Element) => {
+        return (
+            <View style={{ flex: 1, width: theme.dimensions.width, height: theme.dimensions.height, backgroundColor: "blue" }}>
+                {component}
+            </View>
+        );
+    }
+
+    return (
+        <GestureHandlerRootView style={{flex: 1}}onLayout={onLayoutRootView} >
+            <NavigationContainer>
+                <Stack.Navigator initialRouteName="Onboarding1">
+                    <Stack.Screen name="Onboarding1" options={{ headerShown: false }}>
+                        {props => containerizedComponent(<Onboarding1 {...props} />)}
+                    </Stack.Screen>
+                    <Stack.Screen name="Onboarding2" options={{ headerShown: false }}>
+                        {props => containerizedComponent(<Onboarding2 {...props} />)}
+                    </Stack.Screen>
+                    <Stack.Screen name="AccountTypeSelection" options={{ headerShown: false }} >
+                        {props => containerizedComponent(<AccountTypeSelection {...props} />)}
+                    </Stack.Screen>
+                    <Stack.Screen name="Login" options={{ headerShown: false }} >
+                        {props => containerizedComponent(<LoginScreen {...props} />)}
+                    </Stack.Screen>
+                    <Stack.Screen name="Register" options={{ headerShown: false }} >
+                        {props => containerizedComponent(<RegisterScreen {...props} />)}
+                    </Stack.Screen>
+                    <Stack.Screen name="Tabs" options={{ headerShown: false }} >
+                        {props => containerizedComponent(<Tabs {...props} />)}
+                    </Stack.Screen>
+                    <Stack.Screen name="Loading" options={{ headerShown: false }} >
+                        {props => containerizedComponent(<Loading {...props} />)}
+                    </Stack.Screen>
+                </Stack.Navigator>
+            </NavigationContainer>
+        </GestureHandlerRootView>
+    );
+}
+
+export default function App() {
+
     return (
         <ThemeProvider>
-            <GestureHandlerRootView style={{ flex: 1, width: width, height: height, backgroundColor: backgroundColor }} onLayout={onLayoutRootView} >
-                <NavigationContainer>
-                    <Stack.Navigator initialRouteName="Onboarding1">
-                        <Stack.Screen name="Onboarding1" component={Onboarding1} options={{ headerShown: false }} />
-                        <Stack.Screen name="Onboarding2" component={Onboarding2} options={{ headerShown: false }} />
-                        <Stack.Screen name="AccountTypeSelection" component={AccountTypeSelection} options={{ headerShown: false }} />
-                        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="Register" component={RegisterScreen} options={{ headerShown: false }} />
-                        <Stack.Screen name="Tabs" component={Tabs} options={{ headerShown: false }} />
-                        <Stack.Screen name="Loading" component={Loading} options={{ headerShown: false }} />
-                    </Stack.Navigator>
-                </NavigationContainer>
-            </GestureHandlerRootView>
+            <Router />
         </ThemeProvider>
     );
 }
