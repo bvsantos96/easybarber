@@ -1,4 +1,4 @@
-import Onboarding from '../components/Onboarding';
+import OnBoarding from '../components/Onboarding';
 
 import { getStyles } from '../styles/OnBoarding';
 import { PropNavigation, resetNavigation } from '../App';
@@ -9,7 +9,7 @@ export default function Onboarding2({ navigation }: PropNavigation) {
     const styles = getStyles();
     const texts = require("../langs/en.json");
     return (
-        <Onboarding
+        <OnBoarding
             title={[
                 [{ text: texts.firstPage.title2, highlight: false }],
                 [{ text: texts.firstPage.title2_1, highlight: true }, { text: texts.firstPage.title2_2, highlight: false }]

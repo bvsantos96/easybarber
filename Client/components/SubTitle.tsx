@@ -1,7 +1,8 @@
 import { View, Text } from 'react-native';
-import { styles } from '../styles/Title';
+import { getStyles } from '../styles/Title';
 
 export default function SubTitle({ text = "" }) {
+    const styles = getStyles();
     return (
         <View style={styles.titleLine}>
             <Text style={styles.subtitle}>

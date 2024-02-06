@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, TextInput, InputModeOptions } from 'react-native';
 import Pressable from '../components/Pressable';
-import { styles } from '../styles/Input';
+import { getStyles } from '../styles/Input';
 import { lightTextColor } from '../styles/Main';
 
 type InputProps = {
@@ -20,6 +20,7 @@ const Input = ({
     type = "text",
     password = false
 }: InputProps) => {
+    const styles = getStyles();
     const textInputRef = React.useRef<TextInput>(null);
 
     const handleViewPress = () => {
