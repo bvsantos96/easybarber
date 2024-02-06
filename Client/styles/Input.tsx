@@ -32,7 +32,7 @@ export const getStyles = () => {
             width: '100%',
             height: 40 * theme.dimensions.absoluteHeight,
             borderWidth: 0,
-            color: theme.colors.text,
+            color: theme.colors.text.main,
             fontSize: theme.fonts.size._15,
             fontFamily: 'Mazzard',
             fontWeight: '400',

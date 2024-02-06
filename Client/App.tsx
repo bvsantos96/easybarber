@@ -70,16 +70,25 @@ const Router = () => {
 
     const containerizedComponent = (component: JSX.Element) => {
         return (
-            <View style={{ flex: 1, width: theme.dimensions.width, height: theme.dimensions.height, backgroundColor: "blue" }}>
+            <View style={{
+                flex: 1,
+                width: theme.dimensions.width,
+                height: theme.dimensions.height,
+                backgroundColor: theme.colors.backgroundColor,
+                justifyContent: 'center',
+                alignSelf: 'center',
+                alignContent: 'center',
+                alignItems: 'center',
+            }}>
                 {component}
             </View>
         );
     }
 
     return (
-        <GestureHandlerRootView style={{flex: 1}}onLayout={onLayoutRootView} >
+        <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView} >
             <NavigationContainer>
-                <Stack.Navigator initialRouteName="Onboarding1">
+                <Stack.Navigator initialRouteName="AccountTypeSelection">
                     <Stack.Screen name="Onboarding1" options={{ headerShown: false }}>
                         {props => containerizedComponent(<Onboarding1 {...props} />)}
                     </Stack.Screen>

@@ -1,14 +1,15 @@
 import { StyleSheet } from 'react-native';
-import { absoluteWidth, absoluteHeight } from './Main';
+import { useTheme } from './ThemeContext';
 
-export const styles = StyleSheet.create({
-    centeredLogo: {
-        position: 'absolute',
-        width: 264.965 * absoluteWidth,
-        height: 264.965 * absoluteWidth,
-        top: 238.52 * absoluteHeight,
-        alignItems: 'center',
-        alignSelf: 'center',
-        justifyContent: 'center',
-    }
-});
+export const getStyles = () => {
+    const theme = useTheme();
+    return StyleSheet.create({
+        centeredLogo: {
+            position: 'absolute',
+            top: 238.52 * theme.dimensions.absoluteHeight,
+            alignItems: 'center',
+            alignSelf: 'center',
+            justifyContent: 'center',
+        }
+    })
+};

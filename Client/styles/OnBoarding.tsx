@@ -3,6 +3,7 @@ import { useTheme } from './ThemeContext';
 
 export const getStyles = () => {
     const theme = useTheme();
+    console.log(728 * theme.dimensions.absoluteHeight);
     return StyleSheet.create({
         image: {
             width: 348 * theme.dimensions.absoluteMinDimension,
@@ -23,7 +24,7 @@ export const getStyles = () => {
             alignItems: 'center',
             width: '90%',
             height: '90%',
-            borderRadius: 55,
+            borderRadius: 174 * theme.dimensions.absoluteMinDimension,
             position: 'absolute',
         },
         pageSelectionContainer: {
@@ -44,11 +45,12 @@ export const getStyles = () => {
         },
         subTitleContainer: {
             position: "absolute",
-            width: 300 * theme.dimensions.absoluteWidth,
-            height: 66 * theme.dimensions.absoluteHeight,
-            top: 160 * theme.dimensions.absoluteHeight,
+            width: 314 * theme.dimensions.absoluteWidth,
+            height: 46 * theme.dimensions.absoluteHeight,
+            top: 184.93 * theme.dimensions.absoluteHeight,
             justifyContent: 'center',
             alignItems: 'center',
+            lineHeight: 23 * theme.dimensions.absoluteHeight,
         },
         buttonContainer: {
             position: "absolute",

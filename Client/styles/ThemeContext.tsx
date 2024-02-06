@@ -3,7 +3,7 @@ import { Dimensions } from 'react-native';
 import Constants from 'expo-constants';
 
 const width = Dimensions.get('window').width;
-const height = Dimensions.get('window').height;
+const height = Dimensions.get('window').height + Constants.statusBarHeight;
 const minDimension = Math.min(width, height);
 
 interface Colors {
@@ -19,6 +19,7 @@ interface Colors {
     button: {
         main: string;
         alt: string;
+        border: string;
     };
 }
 
@@ -49,6 +50,8 @@ interface Shadow {
 
 interface Fonts {
     size: {
+        _8: number;
+        _9: number;
         _10: number;
         _11: number;
         _12: number;
@@ -105,6 +108,7 @@ const defaultTheme: Theme = {
         button: {
             main: '#DF2238',
             alt: 'white',
+            border: 'rgba(0, 0, 0, 0.08)',
         },
     },
     dimensions: {
@@ -132,6 +136,8 @@ const defaultTheme: Theme = {
     },
     fonts: {
         size: {
+            _8: 8 * minDimension / 390,
+            _9: 9 * minDimension / 390,
             _10: 10 * minDimension / 390,
             _11: 11 * minDimension / 390,
             _12: 12 * minDimension / 390,

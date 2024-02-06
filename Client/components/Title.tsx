@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text, View } from 'react-native';
-import { styles } from '../styles/Title';
+import { getStyles } from '../styles/Title';
 
 export type Line = {
     text: string,
@@ -12,6 +12,7 @@ export type Title = {
 }
 
 export default function Title({ line = [] }: Title) {
+    const styles = getStyles();
     return (
         <View style={styles.titleLine}>
             {line.map((item: Line, i: number) => (
