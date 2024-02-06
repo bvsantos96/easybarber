@@ -3,8 +3,7 @@ import Title, { Line } from '../components/Title';
 import SubTitle from '../components/SubTitle';
 import PageNumber from '../components/PageNumber';
 import Button from '../components/Button';
-
-import { styles } from '../styles/Screens';
+import { getStyles } from '../styles/OnBoarding';
 
 type OnboardingProps = {
     title: Line[][],
@@ -23,6 +22,7 @@ export default function Onboarding({
         title: "No title", func: () => { alert("No function") }
     }
 }: OnboardingProps) {
+    const styles = getStyles();
     return (
         <>
             <View style={styles.titleContainer}>
