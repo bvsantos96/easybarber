@@ -88,7 +88,7 @@ const Router = () => {
     return (
         <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView} >
             <NavigationContainer>
-                <Stack.Navigator initialRouteName="AccountTypeSelection">
+                <Stack.Navigator initialRouteName="Login">
                     <Stack.Screen name="Onboarding1" options={{ headerShown: false }}>
                         {props => containerizedComponent(<Onboarding1 {...props} />)}
                     </Stack.Screen>
