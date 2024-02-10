@@ -1,23 +1,24 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-import { backgroundColor } from '../styles/Main';
+import { View } from 'react-native';
+import { useTheme } from '../styles/ThemeContext';
 
 type DividerProps = {
-    height?: number,
-    color?: string
+    size?: number,
+    color?: string,
+    horizontal?: boolean
 }
 
-const Divider = ({ height = 10, color = backgroundColor }: DividerProps) => {
-    return <View style={[styles.divider, { height: height, backgroundColor: color }]} />;
+const Divider = ({ size = 10, color = undefined, horizontal = false }: DividerProps) => {
+    const theme = useTheme();
+    const sizeStyle= horizontal ?
+        { width: size * theme.dimensions.absoluteWidth, height: 1 } : 
+        { width: 1, height: size * theme.dimensions.absoluteHeight };
+    return (
+        <View style={[
+            sizeStyle,
+            { alignSelf: 'stretch', backgroundColor: color ?? theme.colors.backgroundColor }
+        ]} />
+    );
 };
-
-const styles = StyleSheet.create({
-    divider: {
-        width: 1,
-        alignSelf: 'stretch',
-        backgroundColor: backgroundColor,
-        color: backgroundColor
-    },
-});
 
 export default Divider;

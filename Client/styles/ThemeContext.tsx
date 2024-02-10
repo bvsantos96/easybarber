@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { Dimensions } from 'react-native';
+import { Dimensions, StyleProp, ViewStyle } from 'react-native';
 import Constants from 'expo-constants';
 
 const width = Dimensions.get('window').width;
@@ -15,6 +15,8 @@ interface Colors {
         secondary: string;
         alt: string;
         link: string;
+        black: string;
+        lightBlack: string;
     };
     button: {
         main: string;
@@ -35,17 +37,6 @@ interface DimensionsData {
         width: number;
         height: number;
     };
-}
-
-interface Shadow {
-    elevation: number;
-    shadowColor: string;
-    shadowOffset: {
-        width: number;
-        height: number;
-    };
-    shadowOpacity: number;
-    shadowRadius: number;
 }
 
 interface Fonts {
@@ -80,7 +71,7 @@ interface Fonts {
 interface Theme {
     colors: Colors;
     dimensions: DimensionsData;
-    shadow: Shadow;
+    shadow: StyleProp<ViewStyle>;
     fonts: Fonts;
 }
 
@@ -104,6 +95,8 @@ const defaultTheme: Theme = {
             secondary: 'rgba(0, 0, 0, 0.4)',
             alt: 'white',
             link: '#DF2238',
+            black: 'black',
+            lightBlack: 'rgba(0, 0, 0, 0.66)',
         },
         button: {
             main: '#DF2238',
@@ -121,7 +114,7 @@ const defaultTheme: Theme = {
         absoluteMinDimension: minDimension / 390,
         input: {
             width: (320 * width) / 390,
-            height: (60 * height) / 844,
+            height: (58.75 * height) / 844,
         },
     },
     shadow: {

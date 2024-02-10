@@ -7,45 +7,51 @@ import Divider from '../components/Divider';
 import Button from '../components/Button';
 import { AppleLoginButton, GoogleLoginButton } from '../components/LoginBrandButton';
 
-import { styles } from '../styles/Main';
-import { PropNavigation, resetNavigation } from '../App';
+import{ getStyles } from '../styles/Sign';
+import { resetNavigation } from '../App';
+import { Props } from '../screens/SignIn';
 
-export default function Login({ navigation }: PropNavigation) {
+export default function Login({ navigation, toggleNewUser = ()=>{} }: Props) {
+    const styles =  getStyles();
     const texts = require("@lang/en.json");
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
     return (
         <>
-            <Title line={[{ text: texts.login.title, highlight: false }]} />
-            <View style={{ width: '100%', alignItems: 'center' }}>
+            <View style={styles.titleContainer} >
+                <Divider size={11} />
+                <Title line={[{ text: texts.login.title, highlight: false }]} />
+            </View>
+            <View style={styles.inputsContainer}>
                 <Input
                     icon={<PhoneIcon />}
                     placeholder={texts.phoneNumber}
                     type="tel"
                     onInputChange={setPhone}
                 />
-                <Divider height={20} />
+                <Divider size={20} />
                 <Input
                     icon={<PasswordIcon />}
                     placeholder={texts.password}
                     password={true}
                     onInputChange={setPassword}
                 />
-                <Divider height={20} />
-                <View style={[styles.w100, styles.alignRight, styles.paddingRight10]}>
-                    <Text style={[styles.alignRight, styles.normalText, styles.lightTextColor]} onPress={() => alert("Goto forget password page")}>{texts.forgotPassword}</Text>
-                </View>
-                <Divider height={20} />
+            </View>
+            <View style={styles.forgotPassContainer}>
+                <Text style={styles.forgotPass} onPress={() => alert("Goto forget password page")}>{texts.forgotPassword}</Text>
+            </View>
+            <View style={styles.buttonContainer}>
                 <Button title={texts.login.button} onPress={() => { alert("Login"); resetNavigation(navigation, 'Tabs') }} />
             </View>
-            <TouchableOpacity style={styles.w100} onPress={() => navigation.navigate('Register')}>
-                <View style={[styles.w100c, styles.row, styles.alignCenter, styles.justifyCenter]}>
-                    <Text style={[styles.hPadding2, styles.normalText, styles.lightTextColor]}>{texts.login.newUser}</Text>
-                    <Text style={[styles.redBold, styles.hPadding2, styles.normalText, styles.fontSize18]}>{texts.register.button}</Text>
-                </View>
+            <TouchableOpacity style={styles.newUserContainer} onPress={toggleNewUser}>
+                <Text style={styles.newUserText}>{texts.login.newUser}</Text>
+                <Divider horizontal size={13} />
+                <Text style={styles.newUserRedText}>{texts.register.button}</Text>
             </TouchableOpacity>
-            <View style={[styles.row, styles.w100, styles.alignCenter, styles.justifyCenter, styles.padding15px]}>
+            <View style={styles.appleButtonContainer}>
                 <AppleLoginButton />
+            </View>
+            <View style={styles.googleButtonContainer}>
                 <GoogleLoginButton />
             </View>
         </>

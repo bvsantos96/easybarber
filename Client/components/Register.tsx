@@ -6,10 +6,12 @@ import { PhoneIcon, PasswordIcon, NameIcon } from '../components/Icons';
 import Divider from '../components/Divider';
 import Button from '../components/Button';
 
-import { styles } from '../styles/Main';
-import { PropNavigation, resetNavigation } from '../App';
+import { getStyles } from '../styles/Sign';
+import { resetNavigation } from '../App';
+import { Props } from '../screens/SignIn';
 
-export default function Register({ navigation }: PropNavigation) {
+export default function Register({ navigation, toggleNewUser = () => { } }: Props) {
+    const styles = getStyles();
     const texts = require("../langs/en.json");
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
@@ -17,44 +19,45 @@ export default function Register({ navigation }: PropNavigation) {
     const [confirmPassword, setConfirmPassword] = useState("");
     return (
         <>
-            <Title line={[{ text: texts.register.title, highlight: false }]} />
-            <View style={{ width: '100%', alignItems: 'center' }}>
+            <View style={styles.titleContainer} >
+                <Title line={[{ text: texts.register.title, highlight: false }]} />
+                <Divider size={23} />
                 <Input
                     icon={<NameIcon />}
                     placeholder={texts.name}
                     type="text"
                     onInputChange={setName}
                 />
-                <Divider height={20} />
+                <Divider size={19.25} />
                 <Input
                     icon={<PhoneIcon />}
                     placeholder={texts.phoneNumber}
                     type="tel"
                     onInputChange={setPhone}
                 />
-                <Divider height={20} />
+                <Divider size={19.25} />
                 <Input
                     icon={<PasswordIcon />}
                     placeholder={texts.password}
                     password={true}
                     onInputChange={setPassword}
                 />
-                <Divider height={20} />
+                <Divider size={19.25} />
                 <Input
                     icon={<PasswordIcon />}
                     placeholder={texts.confirmPassword}
                     password={true}
                     onInputChange={setConfirmPassword}
                 />
-                <Divider height={40} />
+                <Divider size={36.25} />
                 <Button title={texts.register.button} onPress={() => { resetNavigation(navigation, "Tabs") }} />
+                <Divider size={35.25} />
+                <TouchableOpacity style={styles.alreadyRegisteredContainer} onPress={toggleNewUser}>
+                    <Text style={styles.newUserText}>{texts.register.newUser}</Text>
+                    <Divider horizontal size={13} />
+                    <Text style={styles.newUserRedText}>{texts.login.button}</Text>
+                </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.w100} onPress={() => navigation.navigate("Login")}>
-                <View style={[styles.w100c, styles.row, styles.alignCenter, styles.justifyCenter]}>
-                    <Text style={[styles.hPadding2, styles.normalText, styles.lightTextColor]}>{texts.register.newUser}</Text>
-                    <Text style={[styles.redBold, styles.hPadding2, styles.normalText, styles.fontSize18]}>{texts.login.button}</Text>
-                </View>
-            </TouchableOpacity>
         </>
     )
 }

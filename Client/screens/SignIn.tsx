@@ -1,39 +1,57 @@
-import { View, ScrollView, StyleSheet } from 'react-native';
-import Divider from '../components/Divider';
-
-import { styles, mainColor, absoluteWidth, absoluteHeight, backgroundColor } from '../styles/Main';
-
+import { View, ScrollView, Animated } from 'react-native';
 import LogoSmall from "../assets/images/logo.svg";
+import Login from '../components/Login';
+import Register from '../components/Register';
 
-export default function SignIn({ page = <></> }) {
-    return (
-        <ScrollView contentContainerStyle={[styles.container, styles.backgroundMainColor, styles.noOverflow, styles.spaceBetween]} keyboardShouldPersistTaps="handled">
-            <Divider height={40} color={mainColor} />
-            <View style={myStyles.logoContainer} >
-                <LogoSmall width="95%" height="95%" />
-            </View>
-            <View style={[styles.loginContainer]}>
-                <Divider color={mainColor} />
-                {page}
-                <Divider height={20} />
-            </View>
-        </ScrollView>
-    );
+import { getStyles } from '../styles/Sign';
+import { useRef, useState } from 'react';
+import { PropNavigation } from '../App';
+import { NavigationProp } from '@react-navigation/native';
+
+export type Props = {
+    navigation: NavigationProp<any, any>,
+    toggleNewUser?: () => void
 }
 
-const myStyles = StyleSheet.create({
-    logoContainer: {
-        width: 130 * absoluteWidth,
-        height: 130 * absoluteHeight,
-        backgroundColor: backgroundColor,
-        borderRadius: 15,
-        alignItems: 'center',
-        justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 2, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 5,
-        elevation: 5, 
-    }
-});
+export default function SignIn({ navigation }: PropNavigation) {
+    const styles = getStyles();
+    const [newUser, setNewUser] = useState(false);
+    const translateYAnimation = useRef(new Animated.Value(0)).current;
 
+    const changeNewUser = () => {
+        Animated.timing(translateYAnimation, {
+            toValue: 1,
+            duration: 400,
+            useNativeDriver: true,
+        }).start(() => {
+            setNewUser(!newUser)
+            Animated.timing(translateYAnimation, {
+                toValue: 0,
+                duration: 400,
+                useNativeDriver: true,
+            }).start();
+        });
+    }
+
+    return (
+        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+            <View style={[styles.logoContainer, styles.shadow]} >
+                <LogoSmall width={styles.logo.width} height={styles.logo.height} />
+            </View>
+            <Animated.View style={[styles.bottomTabContainer,
+            {
+                transform: [{
+                    translateY: translateYAnimation.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [0, styles.bottomTabContainer.height],
+                    })
+                }],
+            }]}>
+                {!newUser ?
+                    <Login toggleNewUser={changeNewUser} navigation={navigation} /> :
+                    <Register toggleNewUser={changeNewUser} navigation={navigation} />
+                }
+            </Animated.View>
+        </ScrollView >
+    );
+}
