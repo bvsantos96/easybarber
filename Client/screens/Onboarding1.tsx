@@ -1,10 +1,9 @@
 import OnBoarding from '../components/Onboarding';
 
 import { getStyles } from '../styles/OnBoarding';
-import { PropNavigation } from '../App';
 import Image from '@assets/images/firstPage1.svg';
 
-export default function Onboarding1({ navigation }: PropNavigation) {
+export default function Onboarding1({ nextPage=()=>{} } ) {
     const styles = getStyles();
     const texts = require("../langs/en.json");
     return (
@@ -19,7 +18,7 @@ export default function Onboarding1({ navigation }: PropNavigation) {
             ]}
             image={<Image style={styles.image} />}
             pageSelect={[true, false]}
-            button={{ title: texts.continue, func: () => navigation.navigate('Onboarding2') }}
+            button={{ title: texts.continue, func: nextPage }}
         />
     );
 }
