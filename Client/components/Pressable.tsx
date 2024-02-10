@@ -1,15 +1,18 @@
 import React, { ReactNode } from 'react';
-import { Pressable as DefaultPressable } from 'react-native';
+import { Pressable as DefaultPressable, StyleProp, ViewStyle } from 'react-native';
+import { useTheme } from '../styles/ThemeContext';
 
 interface MyPressableProps {
-  style?: any; // You can replace 'any' with a more specific type if needed
-  onPress: () => void;
-  children: ReactNode | ReactNode[];
+    style?: StyleProp<ViewStyle>; 
+    onPress: () => void;
+    children: ReactNode | ReactNode[];
+    shadow?: boolean;
 }
 
-export default function Pressable({style = {}, onPress = ()=> {} , children = <></>}: MyPressableProps ) {
+export default function Pressable({ style = {}, onPress = () => { }, children = <></>, shadow = false }: MyPressableProps) {
+    const theme = useTheme();
     return (
-        <DefaultPressable style={({pressed})=>[style, {opacity: pressed ? 0.5 : 1}]} onPress={onPress}>
+        <DefaultPressable style={({ pressed }) => [style, { opacity: pressed ? 0.5 : 1 }, shadow ? theme.shadow : undefined]} onPress={onPress}>
             {Array.isArray(children) ? children : [children]}
         </DefaultPressable>
     );

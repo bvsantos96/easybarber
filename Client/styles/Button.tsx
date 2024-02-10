@@ -51,15 +51,60 @@ export const getStyles = () => {
             position: 'absolute',
             width: 313 * theme.dimensions.absoluteWidth,
             height: 58.7 * theme.dimensions.absoluteHeight,
-            top : 634 * theme.dimensions.absoluteHeight,
+            top: 634 * theme.dimensions.absoluteHeight,
             left: 39 * theme.dimensions.absoluteWidth,
         },
         button12: {
             position: 'absolute',
             width: 313 * theme.dimensions.absoluteWidth,
             height: 58.7 * theme.dimensions.absoluteHeight,
-            top : 724 * theme.dimensions.absoluteHeight,
+            top: 724 * theme.dimensions.absoluteHeight,
             left: 39 * theme.dimensions.absoluteWidth,
+        },
+        brandButton: {
+            backgroundColor: theme.colors.backgroundColor,
+            borderWidth: 1,
+            borderRadius: 10,
+            borderColor: theme.colors.button.border,
+            height: 59 * theme.dimensions.absoluteHeight,
+            width: 153 * theme.dimensions.absoluteWidth,
+        },
+        brandButtonIcon: {
+            position: 'absolute',
+            left: 27 * theme.dimensions.absoluteWidth,
+            top: 11 * theme.dimensions.absoluteHeight,
+        },
+        brandIcon: {
+            width: 33 * theme.dimensions.absoluteWidth,
+            height: 33 * theme.dimensions.absoluteHeight,
+        },
+        brandButtonTextContainer: {
+            position: 'absolute',
+            top: 0,
+            left: 71 * theme.dimensions.absoluteWidth,
+            height: 59 * theme.dimensions.absoluteHeight,
+        },
+        brandButtonTitleContainer: {
+            position: 'absolute',
+            left: 0,
+            top: 12 * theme.dimensions.absoluteHeight,
+        },
+        brandButtonText: {
+            fontFamily: 'Poppins',
+            fontSize: theme.fonts.size._9,
+            fontWeight: '500',
+            color: theme.colors.text.black,
+        },
+        brandButtonNameContainer: {
+            position: 'absolute',
+            left: 0,
+            bottom: 14 * theme.dimensions.absoluteHeight,
+        },
+        brandText: {
+            fontFamily: 'Poppins',
+            fontSize: theme.fonts.size._13,
+            fontWeight: '500',
+            color: theme.colors.text.black,
         },
     })
 };

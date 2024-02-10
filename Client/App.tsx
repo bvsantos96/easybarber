@@ -8,11 +8,8 @@ import * as SplashScreen from 'expo-splash-screen';
 SplashScreen.preventAutoHideAsync();
 
 //screens
-import Signin from './screens/SignIn';
 import { ThemeProvider, useTheme } from './styles/ThemeContext';
 import { View } from 'react-native';
-
-//components
 
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
@@ -25,31 +22,14 @@ export const resetNavigation = (navigation: NavigationProp<any, any>, route: str
     });
 }
 
-const LoginScreen = ({ navigation }: PropNavigation) => {
-    const Login = require('./components/Login').default;
-
-    return (
-        <Signin page={<Login navigation={navigation} />} />
-    );
-}
-
-const RegisterScreen = ({ navigation }: PropNavigation) => {
-    const Register = require('./components/Register').default;
-
-    return (
-        <Signin page={<Register navigation={navigation} />} />
-    );
-}
-
 const Router = () => {
-    // Theme
-    const theme = useTheme();
     // Tabs
     const Loading = require('./screens/Loading').default;
     const Onboarding1 = require("./screens/Onboarding1").default;
     const Onboarding2 = require("./screens/Onboarding2").default;
     const Tabs = require('./screens/Tabs').default;
     const AccountTypeSelection = require('./screens/AccountTypeSelection').default;
+    const SignIn = require('./screens/SignIn').default;
 
     const Stack = createNativeStackNavigator();
     const [fontsLoaded, fontError] = Font.useFonts({
@@ -69,6 +49,7 @@ const Router = () => {
     }
 
     const containerizedComponent = (component: JSX.Element) => {
+        const theme = useTheme();
         return (
             <View style={{
                 flex: 1,
@@ -88,7 +69,7 @@ const Router = () => {
     return (
         <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView} >
             <NavigationContainer>
-                <Stack.Navigator initialRouteName="Login">
+                <Stack.Navigator initialRouteName="Sign">
                     <Stack.Screen name="Onboarding1" options={{ headerShown: false }}>
                         {props => containerizedComponent(<Onboarding1 {...props} />)}
                     </Stack.Screen>
@@ -98,11 +79,8 @@ const Router = () => {
                     <Stack.Screen name="AccountTypeSelection" options={{ headerShown: false }} >
                         {props => containerizedComponent(<AccountTypeSelection {...props} />)}
                     </Stack.Screen>
-                    <Stack.Screen name="Login" options={{ headerShown: false }} >
-                        {props => containerizedComponent(<LoginScreen {...props} />)}
-                    </Stack.Screen>
-                    <Stack.Screen name="Register" options={{ headerShown: false }} >
-                        {props => containerizedComponent(<RegisterScreen {...props} />)}
+                    <Stack.Screen name="Sign" options={{ headerShown: false }} >
+                        {props => <SignIn {...props} />}
                     </Stack.Screen>
                     <Stack.Screen name="Tabs" options={{ headerShown: false }} >
                         {props => containerizedComponent(<Tabs {...props} />)}
@@ -117,7 +95,6 @@ const Router = () => {
 }
 
 export default function App() {
-
     return (
         <ThemeProvider>
             <Router />

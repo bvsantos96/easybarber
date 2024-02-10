@@ -5,21 +5,22 @@ import Password from "../assets/icons/password.svg";
 import User from "../assets/icons/user.svg";
 import { useTheme } from '../styles/ThemeContext';
 
-const theme = useTheme(); 
-
 export const PhoneIcon = () => {
+    const theme = useTheme();
     return (
         <Phone width={13 * theme.dimensions.absoluteWidth} height={23 * theme.dimensions.absoluteWidth} />
     );
 };
 
 export const PasswordIcon = () => {
+    const theme = useTheme();
     return (
         <Password fill={"none"} width={18 * theme.dimensions.absoluteWidth} height={18 * theme.dimensions.absoluteWidth} />
     );
 };
 
 export const NameIcon = () => {
+    const theme = useTheme();
     return (
         <User width={28 * theme.dimensions.absoluteWidth} height={28 * theme.dimensions.absoluteWidth} />
     );

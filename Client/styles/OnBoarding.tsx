@@ -3,7 +3,6 @@ import { useTheme } from './ThemeContext';
 
 export const getStyles = () => {
     const theme = useTheme();
-    console.log(728 * theme.dimensions.absoluteHeight);
     return StyleSheet.create({
         image: {
             width: 348 * theme.dimensions.absoluteMinDimension,
