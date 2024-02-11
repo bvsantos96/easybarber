@@ -1,23 +1,24 @@
 import { ScrollView, View, Text } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 
-import { absoluteHeight, styles } from '../styles/Main';
-import { getStyles } from '../styles/TopBar';
+import { getStyles as topBarGetStyles } from '../styles/TopBar';
+import { getStyles as getHomeGetStyles } from '../styles/Home';
 
 import TopBar from '../components/TopBar';
 import { BarberInfo, getBarbersNearMe } from '../utils/ApiRequest';
 import ListItem from '../components/ListItemBarbershop';
-import Pressable from '../components/Pressable';
 import Filter, { FilterRef } from './Filter';
 
 import BarberIcon from '@assets/icons/haircut.svg';
 import SpaIcon from '@assets/icons/spa.svg';
 import CreamBathIcon from '@assets/icons/creamBath.svg';
 import MassageIcon from '@assets/icons/massage.svg';
+import ExpandableView from '../components/ExpandableView';
 import Divider from '../components/Divider';
 
 export default function Home() {
-    const topBarStyles = getStyles();
+    const topBarStyles = topBarGetStyles();
+    const homeStyles = getHomeGetStyles();
     const filterRef = useRef<FilterRef>(null);
     const [barberList, setBarberList] = useState<BarberInfo[]>([]);
     const [topCategoriesExpanded, setTopCategoriesExpanded] = useState(true);
@@ -43,55 +44,62 @@ export default function Home() {
         <>
             <TopBar toggleFilter={toggleFilter} />
             <View style={topBarStyles.homeContainer}>
-                <View style={[styles.row, styles.w100, topCategoriesExpanded ? topBarStyles.topCategoriesContainerExpanded :  topBarStyles.topCategoriesContainer]}>
-                    <Text style={[styles.fontPoppins, styles.fontWeight700, styles.fontSize18, styles.colorDarkTitle, topBarStyles.homeTitleContainer]}>{texts.topCategories}</Text>
-                    <Pressable style={[topBarStyles.viewAllContainer, styles.w100, styles.alignRight]} onPress={() => {setNearbyBarbersExpanded(topCategoriesExpanded);setTopCategoriesExpanded(!topCategoriesExpanded)}}>
-                        <Text style={[styles.fontPoppins, styles.fontSize18, styles.colorDarkTitle, styles.fontWeight400]} >{texts.viewAll}</Text>
-                    </Pressable>
-                    <View style={topCategoriesExpanded ? topBarStyles.categoriesContainerExpanded : topBarStyles.categoriesContainer}>
+                <Divider size={28.44} color="transparent"  />
+                <ExpandableView
+                    style={homeStyles.topCategoriesContainer}
+                    maxHeight={homeStyles.topCategoriesHeights.maxHeight}
+                    expanded={topCategoriesExpanded}
+                    onExpand={() => {setNearbyBarbersExpanded(topCategoriesExpanded);setTopCategoriesExpanded(!topCategoriesExpanded)}}
+                    title={texts.topCategories}>
+                    <Divider size={19} />
+                    <View style={homeStyles.topCategoriesList}>
                         <View>
                             <View style={topBarStyles.categoryIconContainer}>
-                                <BarberIcon style={[topBarStyles.categoryIcon, styles.alignCenter]} />
+                                <BarberIcon style={[topBarStyles.categoryIcon, homeStyles.alignCenter]} />
                             </View>
+                            <Divider size={8} />
                             <Text style={topBarStyles.categoryText}>{texts.haircut}</Text>
                         </View>
                         <View>
                             <View style={topBarStyles.categoryIconContainer}>
-                                <SpaIcon style={[topBarStyles.categoryIcon, styles.alignCenter]} />
+                                <SpaIcon style={[topBarStyles.categoryIcon, homeStyles.alignCenter]} />
                             </View>
+                            <Divider size={8} />
                             <Text style={topBarStyles.categoryText}>{texts.spa}</Text>
                         </View>
                         <View>
                             <View style={topBarStyles.categoryIconContainer}>
-                                <CreamBathIcon style={[topBarStyles.categoryIcon, styles.alignCenter]} />
+                                <CreamBathIcon style={[topBarStyles.categoryIcon, homeStyles.alignCenter]} />
                             </View>
+                            <Divider size={8} />
                             <Text style={topBarStyles.categoryText}>{texts.creamBath}</Text>
                         </View>
                         <View>
                             <View style={topBarStyles.categoryIconContainer}>
-                                <MassageIcon style={[topBarStyles.categoryIcon, styles.alignCenter]} />
+                                <MassageIcon style={[topBarStyles.categoryIcon, homeStyles.alignCenter]} />
                             </View>
+                            <Divider size={8} />
                             <Text style={topBarStyles.categoryText}>{texts.massage}</Text>
                         </View>
                     </View>
-                </View>
-                <View style={ nearbyBarbersExpanded ? topBarStyles.nearByBarbersContainerExpanded : topBarStyles.nearByBarbersContainer}>
-                    <View style={[styles.row, topBarStyles.nearByContainer]}>
-                        <Text style={[styles.fontPoppins, styles.fontWeight600, styles.fontSize18, styles.colorDarkTitle, topBarStyles.homeTitleContainer]}>{texts.nearbyBarbers}</Text>
-                        <Pressable style={[topBarStyles.viewAllContainer, styles.w100, styles.alignRight]} onPress={() => {setTopCategoriesExpanded(nearbyBarbersExpanded);setNearbyBarbersExpanded(!nearbyBarbersExpanded)}}>
-                            <Text style={[styles.fontPoppins, styles.fontSize18, styles.colorDarkTitle, styles.fontWeight400]} >{texts.viewAll}</Text>
-                        </Pressable>
-                    </View>
-                    <ScrollView style={nearbyBarbersExpanded ? topBarStyles.homeListContainerExpanded : topBarStyles.homeListContainer} contentContainerStyle={[styles.alignCenter, styles.justifyCenter]}>
-                        <Divider size={5 * absoluteHeight} />
+                    <Divider size={19} />
+                </ExpandableView>
+                <ExpandableView
+                    style={homeStyles.nearByBarbersContainer}
+                    maxHeight={homeStyles.nearByBarbersContainerHeights.maxHeight}
+                    minHeight={homeStyles.nearByBarbersContainerHeights.minHeight}
+                    expanded={nearbyBarbersExpanded}
+                    onExpand={() => { setTopCategoriesExpanded(nearbyBarbersExpanded); setNearbyBarbersExpanded(!nearbyBarbersExpanded) }}
+                    title={texts.nearbyBarbers}>
+                    <Divider size={10} />
+                    <ScrollView style={homeStyles.homeListContainer}>
                         {barberList && barberList.map((barber: BarberInfo, idx: number) => {
                             return (
                                 <ListItem key={idx} barber={barber} />
                             );
                         })}
-                        <Divider size={70 * absoluteHeight} />
                     </ScrollView>
-                </View>
+                </ExpandableView>
             </View>
             <Filter ref={filterRef} />
         </>

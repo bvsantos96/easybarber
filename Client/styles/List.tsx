@@ -4,7 +4,7 @@ import { backgroundColor, inputTextColor, lightTextColor, mainColor, textColorLi
 export const styles = StyleSheet.create({
     container: {
         marginVertical: 10,
-        width: 332 * absoluteWidth,
+        width: '100%',
         height: 138 * absoluteHeight,
         backgroundColor: backgroundColor,
         shadowColor: '#000',
