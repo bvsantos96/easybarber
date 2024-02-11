@@ -16,7 +16,7 @@ const Divider = ({ size = 10, color = undefined, horizontal = false }: DividerPr
     return (
         <View style={[
             sizeStyle,
-            { alignSelf: 'stretch', backgroundColor: color ?? theme.colors.backgroundColor }
+            { alignSelf: 'stretch', backgroundColor: color ?? "transparent" }
         ]} />
     );
 };

@@ -124,7 +124,8 @@ export const getStyles = () => {
         homeContainer: {
             position: 'absolute',
             top: topBarHeight,
-            width: theme.dimensions.width,
+            left: 24 * theme.dimensions.absoluteWidth,
+            width: 342 * theme.dimensions.absoluteWidth,
             height: theme.dimensions.height - topBarHeight,
         },
         topCategoriesContainerExpanded: {
@@ -171,7 +172,6 @@ export const getStyles = () => {
             fontFamily: 'Mazzard',
             fontWeight: '500',
             textAlign: 'center',
-            marginTop: 10 * theme.dimensions.absoluteHeight,
         },
         viewAllContainer: {
             position: 'absolute',
@@ -181,25 +181,12 @@ export const getStyles = () => {
             position: 'absolute',
             left: 24 * theme.dimensions.absoluteWidth,
         },
-        nearByContainer: {
-            width: theme.dimensions.width,
-        },
-        nearByBarbersContainerExpanded: {
-            position: 'absolute',
-            top: 70 * theme.dimensions.absoluteHeight,
-            height: 505 * theme.dimensions.absoluteHeight,
-        },
         homeListContainerExpanded: {
             position: 'absolute',
             top: 19 * theme.dimensions.absoluteHeight,
             width: theme.dimensions.width,
             height: theme.dimensions.height - topBarHeight - 105 * theme.dimensions.absoluteHeight,
             marginTop: 5 * theme.dimensions.absoluteHeight,
-        },
-        nearByBarbersContainer: {
-            position: 'absolute',
-            top: 180 * theme.dimensions.absoluteHeight,
-            height: 403 * theme.dimensions.absoluteHeight,
         },
         homeListContainer: {
             position: 'absolute',
