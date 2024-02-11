@@ -118,8 +118,8 @@ const Router = () => {
     return (
         <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView} >
             <NavigationContainer>
-                <Stack.Navigator initialRouteName="Onboarding">
-                    <Stack.Screen name="Onboarding" options={{ headerShown: false }}>
+                <Stack.Navigator initialRouteName="Tabs">
+                    <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
                         {props => containerizedComponent(<OnBoarding {...props} />)}
                     </Stack.Screen>
                     <Stack.Screen name="AccountTypeSelection" options={{ headerShown: false }} >
@@ -129,7 +129,7 @@ const Router = () => {
                         {props => <SignIn {...props} />}
                     </Stack.Screen>
                     <Stack.Screen name="Tabs" options={{ headerShown: false }} >
-                        {props => containerizedComponent(<Tabs {...props} />)}
+                        {props => <Tabs {...props} />}
                     </Stack.Screen>
                     <Stack.Screen name="Loading" options={{ headerShown: false }} >
                         {props => containerizedComponent(<Loading {...props} />)}
