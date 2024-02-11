@@ -83,13 +83,13 @@ export default function Home() {
                         </Pressable>
                     </View>
                     <ScrollView style={nearbyBarbersExpanded ? topBarStyles.homeListContainerExpanded : topBarStyles.homeListContainer} contentContainerStyle={[styles.alignCenter, styles.justifyCenter]}>
-                        <Divider height={5 * absoluteHeight} />
+                        <Divider size={5 * absoluteHeight} />
                         {barberList && barberList.map((barber: BarberInfo, idx: number) => {
                             return (
                                 <ListItem key={idx} barber={barber} />
                             );
                         })}
-                        <Divider height={70 * absoluteHeight} />
+                        <Divider size={70 * absoluteHeight} />
                     </ScrollView>
                 </View>
             </View>
