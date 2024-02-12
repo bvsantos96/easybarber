@@ -15,6 +15,7 @@ import CreamBathIcon from '@assets/icons/creamBath.svg';
 import MassageIcon from '@assets/icons/massage.svg';
 import ExpandableView from '../components/ExpandableView';
 import Divider from '../components/Divider';
+import Category from '../components/Category';
 
 export default function Home() {
     const topBarStyles = topBarGetStyles();
@@ -44,43 +45,47 @@ export default function Home() {
         <>
             <TopBar toggleFilter={toggleFilter} />
             <View style={topBarStyles.homeContainer}>
-                <Divider size={28.44} color="transparent"  />
+                <Divider size={28.44} color="transparent" />
                 <ExpandableView
                     style={homeStyles.topCategoriesContainer}
                     maxHeight={homeStyles.topCategoriesHeights.maxHeight}
                     expanded={topCategoriesExpanded}
-                    onExpand={() => {setNearbyBarbersExpanded(topCategoriesExpanded);setTopCategoriesExpanded(!topCategoriesExpanded)}}
+                    onExpand={() => { setNearbyBarbersExpanded(topCategoriesExpanded); setTopCategoriesExpanded(!topCategoriesExpanded) }}
                     title={texts.topCategories}>
                     <Divider size={19} />
                     <View style={homeStyles.topCategoriesList}>
-                        <View>
-                            <View style={topBarStyles.categoryIconContainer}>
-                                <BarberIcon style={[topBarStyles.categoryIcon, homeStyles.alignCenter]} />
-                            </View>
-                            <Divider size={8} />
-                            <Text style={topBarStyles.categoryText}>{texts.haircut}</Text>
-                        </View>
-                        <View>
-                            <View style={topBarStyles.categoryIconContainer}>
-                                <SpaIcon style={[topBarStyles.categoryIcon, homeStyles.alignCenter]} />
-                            </View>
-                            <Divider size={8} />
-                            <Text style={topBarStyles.categoryText}>{texts.spa}</Text>
-                        </View>
-                        <View>
-                            <View style={topBarStyles.categoryIconContainer}>
-                                <CreamBathIcon style={[topBarStyles.categoryIcon, homeStyles.alignCenter]} />
-                            </View>
-                            <Divider size={8} />
-                            <Text style={topBarStyles.categoryText}>{texts.creamBath}</Text>
-                        </View>
-                        <View>
-                            <View style={topBarStyles.categoryIconContainer}>
-                                <MassageIcon style={[topBarStyles.categoryIcon, homeStyles.alignCenter]} />
-                            </View>
-                            <Divider size={8} />
-                            <Text style={topBarStyles.categoryText}>{texts.massage}</Text>
-                        </View>
+                        <Category
+                            icon={
+                                <BarberIcon width={topBarStyles.categoryIcon.width}
+                                    height={topBarStyles.categoryIcon.height}
+                                    style={homeStyles.alignCenter} />}
+                            title={texts.haircut}
+                            expanded={topCategoriesExpanded}
+                        />
+                        <Category
+                            icon={
+                                <SpaIcon width={topBarStyles.categoryIcon.width}
+                                    height={topBarStyles.categoryIcon.height}
+                                    style={homeStyles.alignCenter} />}
+                            title={texts.spa}
+                            expanded={topCategoriesExpanded}
+                        />
+                        <Category
+                            icon={
+                                <CreamBathIcon width={topBarStyles.categoryIcon.width}
+                                    height={topBarStyles.categoryIcon.height}
+                                    style={homeStyles.alignCenter} />}
+                            title={texts.creamBath}
+                            expanded={topCategoriesExpanded}
+                        />
+                        <Category
+                            icon={
+                                <MassageIcon width={topBarStyles.categoryIcon.width}
+                                    height={topBarStyles.categoryIcon.height}
+                                    style={homeStyles.alignCenter} />}
+                            title={texts.massage}
+                            expanded={topCategoriesExpanded}
+                        />
                     </View>
                     <Divider size={19} />
                 </ExpandableView>
