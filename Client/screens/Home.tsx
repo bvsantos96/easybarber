@@ -1,4 +1,4 @@
-import { ScrollView, View, Text } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 
 import { getStyles as topBarGetStyles } from '../styles/TopBar';
