@@ -8,6 +8,9 @@ export const getStyles = () => {
             alignItems: 'center',
             textAlign: 'center',
         },
+        categoryContainer: {
+            height: 80 * theme.dimensions.absoluteHeight,
+        },
         topCategoriesContainer: {
             width: "100%",
             alignItems: 'center',
