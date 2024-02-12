@@ -1,6 +1,6 @@
 import { NavigationContainer, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
