@@ -1,14 +1,15 @@
 import RNPickerSelect, { PickerStyle } from 'react-native-picker-select';
 import { View, Text } from 'react-native';
 
-import { styles } from '../styles/Filter';
+import { getStyles } from '../styles/Filter';
 
 export interface PickerItem {
     label: string;
     value: string;
 }
 
-export default function Picker({ style = {},
+export default function Picker({ 
+    style = {},
     placeholder,
     selectedValue = "",
     onValueChange = () => { },
@@ -21,6 +22,7 @@ export default function Picker({ style = {},
     items: PickerItem[]
 }
 ) {
+    const styles = getStyles();
     return (
         <>
             <RNPickerSelect

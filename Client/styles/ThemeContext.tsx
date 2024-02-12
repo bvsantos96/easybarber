@@ -1,6 +1,7 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { Dimensions, StyleProp, ViewStyle } from 'react-native';
 import Constants from 'expo-constants';
+import { StatusBarStyle } from 'expo-status-bar';
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height + Constants.statusBarHeight;
@@ -10,6 +11,7 @@ interface Colors {
     mainColor: string;
     backgroundColor: string;
     imageBackground: string;
+    statusBarOnHome: StatusBarStyle;
     text: {
         main: string;
         secondary: string;
@@ -90,6 +92,7 @@ const defaultTheme: Theme = {
         mainColor: '#DF2238',
         backgroundColor: 'white',
         imageBackground: "rgba(109, 4, 4, 0.10)",
+        statusBarOnHome: "light",
         text: {
             main: '#263238',
             secondary: 'rgba(0, 0, 0, 0.4)',
