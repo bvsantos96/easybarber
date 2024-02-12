@@ -8,15 +8,16 @@ import FilterIcon from '@assets/icons/filter.svg';
 import BellIcon from '@assets/icons/bell.svg';
 
 import { getStyles } from '../styles/TopBar';
-import { statusBarOnHome } from '../styles/Main';
+import { useTheme } from '../styles/ThemeContext';
 
 export default function TopBar({ name = "Jonh Doe", toggleFilter = () => { } }) {
     const styles = getStyles();
     const texts = require("../langs/en.json");
+    const theme = useTheme();
 
     return (
         <View style={styles.container}>
-            <StatusBar style={statusBarOnHome} />
+            <StatusBar style={theme.colors.statusBarOnHome} />
             <View style={styles.elementsContainer}>
                 <View style={styles.topElements}>
                     <Text style={styles.nameText}>{`${texts.hi}, ${name}`}</Text>

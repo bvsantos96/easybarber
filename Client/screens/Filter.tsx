@@ -3,7 +3,7 @@ import { View, Text } from 'react-native';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import Stars from 'react-native-stars';
 
-import { styles } from '../styles/Filter';
+import { getStyles } from '../styles/Filter';
 import Button from '../components/Button';
 import Picker, { PickerItem } from '../components/Picker';
 import { getCategories, getTimes } from '../utils/ApiRequest';
@@ -17,6 +17,7 @@ export interface FilterRef {
 }
 
 const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
+    const styles = getStyles();
     const theme = useTheme();
     const [categories, setCategories] = useState<PickerItem[]>([]);
     const [fromTimes, setFromTimes] = useState<PickerItem[]>([]);
@@ -135,7 +136,7 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
                     </View>
                 </View>
                 <View style={styles.applyContainer}>
-                    <Button title={texts.apply} />
+                    <Button title={texts.applyFilter} />
                 </View>
             </BottomSheetModal>
         </BottomSheetModalProvider>
