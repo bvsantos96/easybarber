@@ -9,7 +9,7 @@ export const getStyles = () => {
             textAlign: 'center',
         },
         categoryContainer: {
-            height: 80 * theme.dimensions.absoluteHeight,
+            height: 128 * theme.dimensions.absoluteHeight,
         },
         topCategoriesContainer: {
             width: "100%",
@@ -28,8 +28,8 @@ export const getStyles = () => {
             width: "100%",
         },
         nearByBarbersContainerHeights: {
-            minHeight: 328 * theme.dimensions.absoluteHeight,
-            maxHeight: 455 * theme.dimensions.absoluteHeight,
+            minHeight: theme.dimensions.height - (338 - theme.dimensions.statusBarHeight) * theme.dimensions.absoluteHeight,
+            maxHeight: theme.dimensions.height - (225 - theme.dimensions.statusBarHeight) * theme.dimensions.absoluteHeight,
         },
         homeListContainer: {
             width: "100%",

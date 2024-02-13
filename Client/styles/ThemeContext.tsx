@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { Dimensions, StyleProp, ViewStyle } from 'react-native';
+import { Dimensions, Platform, StyleProp, ViewStyle } from 'react-native';
 import Constants from 'expo-constants';
 import { StatusBarStyle } from 'expo-status-bar';
 
@@ -111,7 +111,7 @@ const defaultTheme: Theme = {
         width,
         height,
         minDimension,
-        statusBarHeight: Constants.statusBarHeight,
+        statusBarHeight: Platform.OS === 'ios' ? Constants.statusBarHeight/2 : Constants.statusBarHeight,
         absoluteHeight: height / 844,
         absoluteWidth: width / 390,
         absoluteMinDimension: minDimension / 390,

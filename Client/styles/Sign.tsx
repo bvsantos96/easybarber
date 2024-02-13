@@ -16,7 +16,7 @@ export const getStyles = () => {
         },
         logoContainer:{
             position: 'absolute',
-            top: (42 + theme.dimensions.statusBarHeight / 2) * theme.dimensions.absoluteHeight,
+            top: (42 + theme.dimensions.statusBarHeight) * theme.dimensions.absoluteHeight,
             width: 113 * theme.dimensions.absoluteWidth,
             height: 113* theme.dimensions.absoluteHeight,
             backgroundColor: theme.colors.backgroundColor,
