@@ -25,7 +25,8 @@ export const getStyles = () => {
             maxHeight: 120 * theme.dimensions.absoluteHeight,
         },
         nearByBarbersContainer: {
-            width: "100%",
+            width: 360 * theme.dimensions.absoluteWidth,
+            alignItems: 'center',
         },
         nearByBarbersContainerHeights: {
             minHeight: theme.dimensions.height - (338 - theme.dimensions.statusBarHeight) * theme.dimensions.absoluteHeight,
@@ -33,6 +34,7 @@ export const getStyles = () => {
         },
         homeListContainer: {
             width: "100%",
+            alighItems: 'center',
         },
     })
 };

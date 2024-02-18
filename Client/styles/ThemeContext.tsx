@@ -12,6 +12,7 @@ interface Colors {
     backgroundColor: string;
     imageBackground: string;
     statusBarOnHome: StatusBarStyle;
+    borderAlt: string;
     text: {
         main: string;
         secondary: string;
@@ -93,6 +94,7 @@ const defaultTheme: Theme = {
         backgroundColor: 'white',
         imageBackground: "rgba(109, 4, 4, 0.10)",
         statusBarOnHome: "light",
+        borderAlt: 'rgba(109, 4, 4, 0.1)',
         text: {
             main: '#263238',
             secondary: 'rgba(0, 0, 0, 0.4)',

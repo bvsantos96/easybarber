@@ -6,7 +6,7 @@ export const getStyles = () => {
     const heightCalc = (px: number): number => {
         return px * theme.dimensions.absoluteHeight + theme.dimensions.statusBarHeight;
     }
-    const topBarHeight = heightCalc(150);
+    const topBarHeight = heightCalc(160);
     return StyleSheet.create({
         container: {
             position: 'absolute',
@@ -70,9 +70,9 @@ export const getStyles = () => {
         },
         searchContainer: {
             position: 'absolute',
-            top: 70 * theme.dimensions.absoluteHeight,
+            top: 80 * theme.dimensions.absoluteHeight,
             width: "100%",
-            height: 50 * theme.dimensions.absoluteHeight,
+            height: 55 * theme.dimensions.absoluteHeight,
         },
         filterView: {
             position: 'absolute',
@@ -127,6 +127,7 @@ export const getStyles = () => {
             left: 24 * theme.dimensions.absoluteWidth,
             width: 342 * theme.dimensions.absoluteWidth,
             height: theme.dimensions.height - topBarHeight,
+            alignItems: 'center',
         },
         topCategoriesContainerExpanded: {
             position: 'absolute',

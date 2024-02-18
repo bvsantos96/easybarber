@@ -4,16 +4,18 @@ import { useTheme } from './ThemeContext';
 export const getStyles = () => {
     const theme = useTheme();
     return StyleSheet.create({
-        container: {
-            marginVertical: 10,
+        shadow: {
+            ...theme.shadow as any,
+        },
+        itemContainer:{
             width: '100%',
+            alignItems: 'center',
+        },
+        container: {
+            marginVertical: 10 * theme.dimensions.absoluteHeight,
+            width: '95%',
             height: 138 * theme.dimensions.absoluteHeight,
             backgroundColor: theme.colors.backgroundColor,
-            shadowColor: '#000',
-            shadowOffset: { width: 2, height: 2 },
-            shadowOpacity: 0.2,
-            shadowRadius: 5,
-            elevation: 5,
             borderRadius: 11,
             flexDirection: 'row',
         },
