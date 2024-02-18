@@ -1,7 +1,16 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { Dimensions, Platform, StyleProp, ViewStyle } from 'react-native';
+import { StatusBar, Dimensions, Platform, StyleProp, ViewStyle } from 'react-native';
 import Constants from 'expo-constants';
 import { StatusBarStyle } from 'expo-status-bar';
+
+const getStatusBarHeight = () : number  => {
+    if (Platform.OS === 'ios') {
+        return StatusBar.currentHeight || 20; // Default iOS status bar height
+    } else if (Platform.OS === 'android') {
+        return StatusBar.currentHeight || StatusBar.currentHeight === 0 || StatusBar.currentHeight === undefined ? 24 : StatusBar.currentHeight;
+    }
+    return 0; // Default status bar height
+}
 
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height + Constants.statusBarHeight;
@@ -113,7 +122,8 @@ const defaultTheme: Theme = {
         width,
         height,
         minDimension,
-        statusBarHeight: Platform.OS === 'ios' ? Constants.statusBarHeight/2 : Constants.statusBarHeight,
+        statusBarHeight: getStatusBarHeight(),
+        // statusBarHeight: Platform.OS === 'ios' ? Constants.statusBarHeight/2 : Constants.statusBarHeight,
         absoluteHeight: height / 844,
         absoluteWidth: width / 390,
         absoluteMinDimension: minDimension / 390,
