@@ -21,12 +21,12 @@ export const getStyles = () => {
             position: 'absolute',
             top: heightCalc(10),
             left: 20 * theme.dimensions.absoluteWidth,
-            height: 126.77 * theme.dimensions.absoluteHeight,
+            height: 136.77 * theme.dimensions.absoluteHeight,
             width: 350 * theme.dimensions.absoluteWidth,
         },
         topElements: {
             position: 'absolute',
-            top: 0,
+            top: 15 * theme.dimensions.absoluteHeight,
             width: "100%",
             height: 50 * theme.dimensions.absoluteHeight,
             justifyContent: "center",
@@ -70,9 +70,9 @@ export const getStyles = () => {
         },
         searchContainer: {
             position: 'absolute',
-            top: 80 * theme.dimensions.absoluteHeight,
+            bottom: 5 * theme.dimensions.absoluteHeight,
             width: "100%",
-            height: 55 * theme.dimensions.absoluteHeight,
+            height: 50 * theme.dimensions.absoluteHeight,
         },
         filterView: {
             position: 'absolute',
