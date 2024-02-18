@@ -26,7 +26,7 @@ export const getStyles = () => {
         },
         topElements: {
             position: 'absolute',
-            top: 15 * theme.dimensions.absoluteHeight,
+            top: heightCalc(0),
             width: "100%",
             height: 50 * theme.dimensions.absoluteHeight,
             justifyContent: "center",
