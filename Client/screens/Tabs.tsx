@@ -32,8 +32,10 @@ export default function Tabs() {
                         <AppointmentsIcon width={20 * theme.dimensions.absoluteWidth} height={20 * theme.dimensions.absoluteWidth} />
                     ) : (
                         <AppointmentsIcon width={20 * theme.dimensions.absoluteWidth} height={20 * theme.dimensions.absoluteWidth} fill={theme.colors.mainColor} />
-                    )
-                }} />
+                    ),
+                    headerTitleAlign: 'center'
+                }
+                } />
             <Tab.Screen name={texts.tabs.alerts} component={Home}
                 options={{
                     headerShown: false,
