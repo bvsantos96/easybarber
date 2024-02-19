@@ -32,8 +32,8 @@ export const getStyles = () => {
             alignItems: 'center',
         },
         nearByBarbersContainerHeights: {
-            minHeight: theme.dimensions.height - topBarHeight - 187 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,
-            maxHeight: theme.dimensions.height - topBarHeight - 65 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,
+            minHeight: theme.dimensions.height - topBarHeight - 200 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,
+            maxHeight: theme.dimensions.height - topBarHeight - 80 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,
         },
         homeListContainer: {
             width: "100%",

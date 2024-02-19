@@ -127,7 +127,7 @@ const defaultTheme: Theme = {
         absoluteHeight: height / 844,
         absoluteWidth: width / 390,
         absoluteMinDimension: minDimension / 390,
-        tabHeight: 70 * height / 844,
+        tabHeight: 50 * height / 844,
         input: {
             width: (320 * width) / 390,
             height: (58.75 * height) / 844,

@@ -7,18 +7,20 @@ import AlertsIcon from "@assets/icons/alerts.svg";
 import ChatsIcon from "@assets/icons/chats.svg";
 import { useTheme } from '../styles/ThemeContext';
 import SafeFullScreen from '../components/SafeFullScreen';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Tabs() {
     const Tab = createBottomTabNavigator();
     const texts = require('../langs/en.json');
     const theme = useTheme();
+    const inserts = useSafeAreaInsets();
 
     return (
         <Tab.Navigator screenOptions={{
             tabBarActiveTintColor: theme.colors.mainColor,
             tabBarInactiveTintColor: theme.colors.text.main,
             tabBarStyle: [{
-                height: theme.dimensions.tabHeight,
+                height: theme.dimensions.tabHeight + inserts.bottom,
             }, theme.shadow],
         }} >
             <Tab.Screen name={texts.tabs.home}
