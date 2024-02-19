@@ -19,7 +19,7 @@ export const getStyles = () => {
         },
         elementsContainer: {
             position: 'absolute',
-            top: heightCalc(0),
+            top: heightCalc(5),
             left: 20 * theme.dimensions.absoluteWidth,
             bottom: 23 * theme.dimensions.absoluteHeight,
             width: 350 * theme.dimensions.absoluteWidth,

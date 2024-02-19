@@ -10,7 +10,7 @@ SplashScreen.preventAutoHideAsync();
 //screens
 import { ThemeProvider, useTheme } from './styles/ThemeContext';
 import { Animated, View } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
@@ -142,8 +142,10 @@ const Router = () => {
 
 export default function App() {
     return (
-        <ThemeProvider>
-            <Router />
-        </ThemeProvider>
+        <SafeAreaProvider>
+            <ThemeProvider>
+                <Router />
+            </ThemeProvider>
+        </SafeAreaProvider>
     );
 }

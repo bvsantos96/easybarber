@@ -16,6 +16,7 @@ import MassageIcon from '@assets/icons/massage.svg';
 import ExpandableView from '../components/ExpandableView';
 import Divider from '../components/Divider';
 import Category from '../components/Category';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Home() {
     const topBarStyles = topBarGetStyles();
@@ -26,6 +27,7 @@ export default function Home() {
     const [nearbyBarbersExpanded, setNearbyBarbersExpanded] = useState(false);
     const [filterExpanded, setFilterExpanded] = useState(false);
     const texts = require("../langs/en.json");
+    const inserts = useSafeAreaInsets();
 
     useEffect(() => {
         const fetchBarbers = async () => {
@@ -91,8 +93,8 @@ export default function Home() {
                 </ExpandableView>
                 <ExpandableView
                     style={homeStyles.nearByBarbersContainer}
-                    maxHeight={homeStyles.nearByBarbersContainerHeights.maxHeight}
-                    minHeight={homeStyles.nearByBarbersContainerHeights.minHeight}
+                    maxHeight={homeStyles.nearByBarbersContainerHeights.maxHeight - inserts.bottom * 2}
+                    minHeight={homeStyles.nearByBarbersContainerHeights.minHeight - inserts.bottom * 2}
                     expanded={nearbyBarbersExpanded}
                     onExpand={() => { setTopCategoriesExpanded(nearbyBarbersExpanded); setNearbyBarbersExpanded(!nearbyBarbersExpanded) }}
                     title={texts.nearbyBarbers}>
