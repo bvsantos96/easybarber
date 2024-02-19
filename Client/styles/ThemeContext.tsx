@@ -95,7 +95,6 @@ export const useTheme = (): Theme => {
     if (!context) {
         throw new Error('useTheme must be used within a ThemeProvider');
     }
-    console.log(defaultTheme);
     return context;
 };
 
