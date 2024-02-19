@@ -9,7 +9,6 @@ async function getLocation(): Promise<void> {
 
     try {
         let location: LocationObject = await getCurrentPositionAsync({ accuracy: Accuracy.High });
-        console.log(location);
     } catch (error) {
         console.log(error);
     }

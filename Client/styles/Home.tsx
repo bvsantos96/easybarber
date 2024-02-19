@@ -1,6 +1,6 @@
 import { StyleSheet } from 'react-native';
 import { useTheme } from './ThemeContext';
-import {getStyles as TopBarStyles} from './TopBar';
+import { getStyles as TopBarStyles } from './TopBar';
 
 export const getStyles = () => {
     const theme = useTheme();
@@ -32,8 +32,8 @@ export const getStyles = () => {
             alignItems: 'center',
         },
         nearByBarbersContainerHeights: {
-            minHeight: theme.dimensions.height -  topBarHeight - 187 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,
-            maxHeight: theme.dimensions.height -  topBarHeight - 65 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,
+            minHeight: theme.dimensions.height - topBarHeight - 187 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,
+            maxHeight: theme.dimensions.height - topBarHeight - 65 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,
         },
         homeListContainer: {
             width: "100%",

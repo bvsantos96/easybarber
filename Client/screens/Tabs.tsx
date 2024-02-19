@@ -6,6 +6,7 @@ import AppointmentsIcon from "@assets/icons/appointments.svg";
 import AlertsIcon from "@assets/icons/alerts.svg";
 import ChatsIcon from "@assets/icons/chats.svg";
 import { useTheme } from '../styles/ThemeContext';
+import SafeFullScreen from '../components/SafeFullScreen';
 
 export default function Tabs() {
     const Tab = createBottomTabNavigator();
@@ -18,9 +19,9 @@ export default function Tabs() {
             tabBarInactiveTintColor: theme.colors.text.main,
             tabBarStyle: [{
                 height: theme.dimensions.tabHeight,
-            },theme.shadow],
+            }, theme.shadow],
         }} >
-            <Tab.Screen name={texts.tabs.home} component={Home}
+            <Tab.Screen name={texts.tabs.home}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => !focused ? (
@@ -28,8 +29,10 @@ export default function Tabs() {
                     ) : (
                         <HomeIcon width={20 * theme.dimensions.absoluteWidth} height={20 * theme.dimensions.absoluteWidth} fill={theme.colors.mainColor} />
                     )
-                }} />
-            <Tab.Screen name={texts.tabs.appointments} component={Appointments}
+                }} >
+                {() => (<SafeFullScreen><Home /></SafeFullScreen>)}
+            </Tab.Screen>
+            <Tab.Screen name={texts.tabs.appointments}
                 options={{
                     tabBarIcon: ({ focused }) => !focused ? (
                         <AppointmentsIcon width={20 * theme.dimensions.absoluteWidth} height={20 * theme.dimensions.absoluteWidth} />
@@ -38,7 +41,9 @@ export default function Tabs() {
                     ),
                     headerTitleAlign: 'center'
                 }
-                } />
+                } >
+                {() => (<SafeFullScreen><Appointments /></SafeFullScreen>)}
+            </Tab.Screen>
             <Tab.Screen name={texts.tabs.alerts} component={Home}
                 options={{
                     headerShown: false,
