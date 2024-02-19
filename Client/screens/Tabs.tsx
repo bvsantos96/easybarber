@@ -16,7 +16,10 @@ export default function Tabs() {
         <Tab.Navigator screenOptions={{
             tabBarActiveTintColor: theme.colors.mainColor,
             tabBarInactiveTintColor: theme.colors.text.main,
-        }}>
+            tabBarStyle: [{
+                height: theme.dimensions.tabHeight,
+            },theme.shadow],
+        }} >
             <Tab.Screen name={texts.tabs.home} component={Home}
                 options={{
                     headerShown: false,

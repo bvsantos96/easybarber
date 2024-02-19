@@ -6,7 +6,7 @@ export const getStyles = () => {
     const heightCalc = (px: number): number => {
         return px * theme.dimensions.absoluteHeight + theme.dimensions.statusBarHeight;
     }
-    const topBarHeight = heightCalc(160);
+    const topBarHeight = heightCalc(170);
     return StyleSheet.create({
         container: {
             position: 'absolute',
@@ -19,9 +19,9 @@ export const getStyles = () => {
         },
         elementsContainer: {
             position: 'absolute',
-            top: heightCalc(10),
+            top: heightCalc(0),
             left: 20 * theme.dimensions.absoluteWidth,
-            height: 136.77 * theme.dimensions.absoluteHeight,
+            bottom: 23 * theme.dimensions.absoluteHeight,
             width: 350 * theme.dimensions.absoluteWidth,
         },
         topElements: {
@@ -70,7 +70,7 @@ export const getStyles = () => {
         },
         searchContainer: {
             position: 'absolute',
-            bottom: 5 * theme.dimensions.absoluteHeight,
+            bottom: 0 * theme.dimensions.absoluteHeight,
             width: "100%",
             height: 50 * theme.dimensions.absoluteHeight,
         },
@@ -126,7 +126,7 @@ export const getStyles = () => {
             top: topBarHeight,
             left: 24 * theme.dimensions.absoluteWidth,
             width: 342 * theme.dimensions.absoluteWidth,
-            height: theme.dimensions.height - topBarHeight,
+            height: theme.dimensions.height - topBarHeight - theme.dimensions.statusBarHeight,
             alignItems: 'center',
         },
         topCategoriesContainerExpanded: {

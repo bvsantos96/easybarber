@@ -1,8 +1,11 @@
 import { StyleSheet } from 'react-native';
 import { useTheme } from './ThemeContext';
+import {getStyles as TopBarStyles} from './TopBar';
 
 export const getStyles = () => {
     const theme = useTheme();
+    const styles = TopBarStyles();
+    const topBarHeight = styles.container.height;
     return StyleSheet.create({
         alignCenter: {
             alignItems: 'center',
@@ -29,8 +32,8 @@ export const getStyles = () => {
             alignItems: 'center',
         },
         nearByBarbersContainerHeights: {
-            minHeight: theme.dimensions.height - (338 - theme.dimensions.statusBarHeight) * theme.dimensions.absoluteHeight,
-            maxHeight: theme.dimensions.height - (225 - theme.dimensions.statusBarHeight) * theme.dimensions.absoluteHeight,
+            minHeight: theme.dimensions.height -  topBarHeight - 187 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,
+            maxHeight: theme.dimensions.height -  topBarHeight - 65 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,
         },
         homeListContainer: {
             width: "100%",

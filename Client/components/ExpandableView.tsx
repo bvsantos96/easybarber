@@ -23,7 +23,6 @@ export default function ExpandableView({ children = <></>, style = {}, minHeight
     const [heightAnim] = useState(new Animated.Value(expanded ? maxHeight : _minHeight));
 
     useEffect(() => {
-        console.log(`expanded: ${expanded}, maxHeight: ${maxHeight}, _minHeight: ${_minHeight}`);
         Animated.timing(
             heightAnim,
             {

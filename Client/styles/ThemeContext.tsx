@@ -45,6 +45,7 @@ interface DimensionsData {
     absoluteMinDimension: number;
     absoluteHeight: number;
     absoluteWidth: number;
+    tabHeight: number;
     input: {
         width: number;
         height: number;
@@ -123,10 +124,10 @@ const defaultTheme: Theme = {
         height,
         minDimension,
         statusBarHeight: getStatusBarHeight(),
-        // statusBarHeight: Platform.OS === 'ios' ? Constants.statusBarHeight/2 : Constants.statusBarHeight,
         absoluteHeight: height / 844,
         absoluteWidth: width / 390,
         absoluteMinDimension: minDimension / 390,
+        tabHeight: 50 * height / 844,
         input: {
             width: (320 * width) / 390,
             height: (58.75 * height) / 844,
