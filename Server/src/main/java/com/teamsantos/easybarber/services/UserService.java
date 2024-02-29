@@ -14,6 +14,7 @@ import com.teamsantos.easybarber.DTO.UsersDTO;
 import com.teamsantos.easybarber.Exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.repositories.UserRepository;
+import com.teamsantos.easybarber.security.services.PasswordEncoding;
 
 @Service
 public class UserService {
@@ -34,6 +35,7 @@ public class UserService {
     }
 
     public UserDTO createUser(UserCreateDTO userCreateDTO) throws Exception{
+        userCreateDTO.setPassword(PasswordEncoding.encode(userCreateDTO.getPassword()));
         User user = modelMapper.map(userCreateDTO, User.class);
         if (user != null) {
             userRepository.save(user);

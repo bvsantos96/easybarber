@@ -3,27 +3,25 @@ package com.teamsantos.easybarber.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
 import com.teamsantos.easybarber.DTO.UsersDTO;
 import com.teamsantos.easybarber.services.UserService;
 
-@RestController
-@RequestMapping("/user")
+@Controller
 public class UserController {
     
     @Autowired 
     private UserService userService;
 
-    @GetMapping()
+    @GetMapping("/users")
     public ResponseEntity<UsersDTO> getAllUsers() {
         UsersDTO response = new UsersDTO();
         try {
@@ -35,7 +33,7 @@ public class UserController {
         }
     }
 
-    @PostMapping()
+    @PostMapping("/register")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserCreateDTO userDTO) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDTO));
@@ -46,7 +44,7 @@ public class UserController {
         }
     }
 
-    @PutMapping()
+    @PutMapping("/user")
     public ResponseEntity<String> updateUser(@RequestBody UserCreateDTO userDTO) {
         try {
             userService.updateUser(userDTO);
@@ -56,7 +54,7 @@ public class UserController {
         }
     }
 
-    @DeleteMapping()
+    @DeleteMapping("/user")
     public ResponseEntity<String> deleteUser(@RequestBody UserCreateDTO userDTO) {
         try {
             userService.deleteUser(userDTO);
