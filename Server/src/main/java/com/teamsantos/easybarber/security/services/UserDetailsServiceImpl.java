@@ -1,17 +1,16 @@
 package com.teamsantos.easybarber.security.services;
 
-import java.util.Collections;
-import java.util.Optional;
-
+import com.teamsantos.easybarber.Exceptions.UserNotFoundException;
+import com.teamsantos.easybarber.entities.User;
+import com.teamsantos.easybarber.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamsantos.easybarber.repositories.UserRepository;
-import com.teamsantos.easybarber.Exceptions.UserNotFoundException;
-import com.teamsantos.easybarber.entities.User;
+import java.util.Collections;
+import java.util.Optional;
 
 @Service
 public class UserDetailsServiceImpl implements org.springframework.security.core.userdetails.UserDetailsService {
