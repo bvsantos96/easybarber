@@ -1,31 +1,25 @@
 package com.teamsantos.easybarber.security.filters;
 
-import java.io.IOException;
-import java.util.Date;
-
+import com.teamsantos.easybarber.security.services.UserDetailsServiceImpl;
 import com.teamsantos.easybarber.security.utils.JwtUtils;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.teamsantos.easybarber.security.services.UserDetailsServiceImpl;
-
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-
-import javax.crypto.SecretKey;
+import java.io.IOException;
 
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsServiceImpl userDetailsService;
+    private final JwtUtils jwtUtils;
 
-    public JwtAuthenticationFilter(UserDetailsServiceImpl userDetailsService) {
+    public JwtAuthenticationFilter(UserDetailsServiceImpl userDetailsService, JwtUtils jwtUtils) {
         this.userDetailsService = userDetailsService;
-
+        this.jwtUtils = jwtUtils;
     }
 
     @Override
@@ -33,8 +27,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         String token = extractTokenFromRequest(request);
 
-        if (token != null && JwtUtils.validateToken(token)) {
-            String mobileInformation = JwtUtils.extractMobileNumber(token);
+        if (token != null && jwtUtils.validateToken(token)) {
+            String mobileInformation = jwtUtils.extractMobileNumber(token);
 
             UserDetails userDetails = userDetailsService.loadUserByUsername(mobileInformation);
             UsernamePasswordAuthenticationToken authenticationToken =

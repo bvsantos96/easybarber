@@ -1,19 +1,18 @@
 package com.teamsantos.easybarber.services;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import com.teamsantos.easybarber.security.utils.JwtUtils;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.repositories.UserRepository;
+import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.security.utils.PasswordEncoding;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -22,6 +21,9 @@ public class UserService {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    @Autowired
+    private JwtUtils jwtUtils;
 
     public List<UserDTO> getAllUsers(){
         List<User> users = userRepository.findAll();
@@ -36,7 +38,7 @@ public class UserService {
         Optional<User> user = userRepository.findByMobileInformation(userCreateDTO.getMobileInformation());
         if (user.isPresent())
             if (PasswordEncoding.getPasswordEncoder().matches(userCreateDTO.getPassword(), user.get().getPassword())) {
-                return JwtUtils.generateToken(user.get().getMobileInformation());
+                return jwtUtils.generateToken(user.get().getMobileInformation());
             } else {
                 throw new IllegalArgumentException("Password is incorrect");
             }
