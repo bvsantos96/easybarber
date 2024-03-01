@@ -4,21 +4,19 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.teamsantos.easybarber.security.utils.JwtUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
-import com.teamsantos.easybarber.DTO.UsersDTO;
-import com.teamsantos.easybarber.Exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.repositories.UserRepository;
-import com.teamsantos.easybarber.security.services.PasswordEncoding;
+import com.teamsantos.easybarber.security.utils.PasswordEncoding;
 
 @Service
 public class UserService {
-    
     @Autowired
     private UserRepository userRepository;
 
@@ -32,6 +30,19 @@ public class UserService {
                                     .collect(Collectors.toList());
 
         return userDTOs;
+    }
+
+    public String loginUser(UserCreateDTO userCreateDTO) {
+        Optional<User> user = userRepository.findByMobileInformation(userCreateDTO.getMobileInformation());
+        if (user.isPresent())
+            if (PasswordEncoding.getPasswordEncoder().matches(userCreateDTO.getPassword(), user.get().getPassword())) {
+                return JwtUtils.generateToken(user.get().getMobileInformation());
+            } else {
+                throw new IllegalArgumentException("Password is incorrect");
+            }
+         else {
+            throw new IllegalArgumentException("User was not found");
+        }
     }
 
     public UserDTO createUser(UserCreateDTO userCreateDTO) throws Exception{
