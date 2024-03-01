@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.security;
 
+import com.teamsantos.easybarber.security.filters.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,9 +11,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.teamsantos.easybarber.security.services.PasswordEncoding;
+import com.teamsantos.easybarber.security.utils.PasswordEncoding;
 import com.teamsantos.easybarber.security.services.UserDetailsServiceImpl;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -28,11 +30,17 @@ public class ApplicationSecurity {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                                .requestMatchers(HttpMethod.GET, "/users").permitAll()
+                                .anyRequest().authenticated()
                         )
                 .cors(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults());
+                .httpBasic(Customizer.withDefaults())
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
+    }
+
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() {
+        return new JwtAuthenticationFilter(userDetailsService);
     }
 
     @Bean

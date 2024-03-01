@@ -18,7 +18,7 @@ public class UserDetailsServiceImpl implements org.springframework.security.core
     @Autowired
     private UserRepository userRepository;
 
-    @Transactional(readOnly=true)
+    @Transactional(readOnly = true)
     @Override
     public UserDetails loadUserByUsername(String mobileInformation) throws UsernameNotFoundException {
         Optional<User> userOptional = userRepository.findByMobileInformation(mobileInformation);
