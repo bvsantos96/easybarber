@@ -32,24 +32,6 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
-    @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody UserCreateDTO userDTO) {
-        try {
-            return ResponseEntity.ok(userService.loginUser(userDTO));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
-    }
-    @PostMapping("/register")
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserCreateDTO userDTO) {
-        try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDTO));
-        } catch (Exception e) {
-            UserDTO response = new UserDTO();
-            response.setResponseMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }
 
     @PutMapping("/user")
     public ResponseEntity<String> updateUser(@RequestBody UserCreateDTO userDTO) {
