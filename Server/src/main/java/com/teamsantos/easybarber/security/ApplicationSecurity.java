@@ -33,15 +33,18 @@ public class ApplicationSecurity {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/hello").permitAll()
                         .anyRequest().authenticated())
-                .cors(cors->cors.disable())
+                .cors(cors -> cors.disable())
                 // TODO: update this to use cors properly (use expo url as allowed origin)
                 // .cors(cors -> cors.configurationSource(request -> {
-                //     var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
-                //     corsConfiguration.setAllowedOrigins(java.util.List.of("http://localhost:3000", "http:192.168.1.225:3000", "http://127.0.0.1:3000"));
-                //     corsConfiguration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-                //     corsConfiguration.setAllowedHeaders(java.util.List.of("*"));
-                //     return corsConfiguration;
+                // var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
+                // corsConfiguration.setAllowedOrigins(java.util.List.of("http://localhost:3000",
+                // "http:192.168.1.225:3000", "http://127.0.0.1:3000"));
+                // corsConfiguration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT",
+                // "DELETE", "OPTIONS"));
+                // corsConfiguration.setAllowedHeaders(java.util.List.of("*"));
+                // return corsConfiguration;
                 // }))
                 // .httpBasic(Customizer.withDefaults())
                 .httpBasic(httpBasic -> httpBasic.disable())

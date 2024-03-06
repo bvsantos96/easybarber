@@ -132,20 +132,43 @@ const _fetch = async (url: string, method: string, body: any, successMessage: st
     let separator = apiUrl.endsWith("/") ? "" : "/";
     let token = await getData("token");
 
+    console.log(`${apiUrl}${separator}${url}`);
+    console.log({
+        method: method,
+        ...(method !== "GET" && {
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token !== null && token !== undefined && { 'Authorization': `Bearer ${token}` })
+            },
+            body: JSON.stringify(body)
+        })
+    });
+
+
     return fetch(`${apiUrl}${separator}${url}`, {
         method: method,
-        headers: {
-            'Content-Type': 'application/json',
-            ...(token !== null && token !== undefined && { 'Authorization': `Bearer ${token}` })
-        },
-        body: JSON.stringify(body)
+        ...(method !== "GET" && {
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json',
+                ...(token !== null && token !== undefined && { 'Authorization': `Bearer ${token}` })
+            },
+            body: JSON.stringify(body)
+        })
     }).then(async response => {
+        console.log(response);
         if (response.status != 200 && response.status != 201) {
-            const json = await response.json();
-            if (json.responseMessage)
-                return { success: false, message: json.responseMessage };
-            return { success: false, message: errorMessage };
-        } else
+            try {
+                const json = await response.json();
+                if (json.responseMessage)
+                    return { success: false, message: json.responseMessage };
+                return { success: false, message: errorMessage };
+            } catch (e) {
+                return { success: false, message: response }
+            }
+        }
+        else
             return { success: true, message: successMessage };
     }).catch(error => {
         console.log(error);
@@ -176,8 +199,9 @@ export const doLogin = async (phone: string, password: string): Promise<Result> 
     phone = phone.trim();
     if (!isValidNumberString(phone))
         return { success: false, message: langs.apiMessages.invalidPhone };
+
+    _fetch("hello", "GET", null, "Hello", "Failed");
     const result = await _fetch("login", "POST", { countryMobile: "+351", mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed);
-    console.log(result.message)
     if (result.success)
         storeData("token", result.message);
     return result;
