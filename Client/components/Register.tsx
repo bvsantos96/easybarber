@@ -9,14 +9,24 @@ import Button from '../components/Button';
 import { getStyles } from '../styles/Sign';
 import { resetNavigation } from '../App';
 import { Props } from '../screens/SignIn';
+import { Result, doRegister } from '../utils/ApiRequest';
 
-export default function Register({ navigation, toggleNewUser = () => { } }: Props) {
+export default function Register({ navigation, toggleNewUser }: Props) {
     const styles = getStyles();
     const texts = require("../langs/en.json");
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+
+    const register = async() => {
+        const result: Result = await doRegister(phone, password, confirmPassword, name);
+        if(result.success)
+            resetNavigation(navigation, 'Tabs');
+        else
+            alert(result.message);
+    }
+
     return (
         <>
             <View style={styles.titleContainer} >
@@ -50,7 +60,7 @@ export default function Register({ navigation, toggleNewUser = () => { } }: Prop
                     onInputChange={setConfirmPassword}
                 />
                 <Divider size={36.25} />
-                <Button title={texts.register.button} onPress={() => { resetNavigation(navigation, "Tabs") }} />
+                <Button title={texts.register.button} onPress={register} />
                 <Divider size={35.25} />
                 <TouchableOpacity style={styles.alreadyRegisteredContainer} onPress={toggleNewUser}>
                     <Text style={styles.newUserText}>{texts.register.newUser}</Text>

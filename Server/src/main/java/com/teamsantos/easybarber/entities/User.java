@@ -19,6 +19,7 @@ public class User {
     private String password;
     private String countryMobile;
     private String mobile;
+    private String name;
     private String mobileInformation;
     private String tokenFacebook;
     private String tokenTwitter;

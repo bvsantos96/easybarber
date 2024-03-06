@@ -7,15 +7,26 @@ import Divider from '../components/Divider';
 import Button from '../components/Button';
 import { AppleLoginButton, GoogleLoginButton } from '../components/LoginBrandButton';
 
+import { doLogin, Result } from '../utils/ApiRequest';
+
 import{ getStyles } from '../styles/Sign';
 import { resetNavigation } from '../App';
 import { Props } from '../screens/SignIn';
 
-export default function Login({ navigation, toggleNewUser = ()=>{} }: Props) {
+export default function Login({ navigation, toggleNewUser }: Props) {
     const styles =  getStyles();
     const texts = require("@lang/en.json");
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
+
+    const login = async() => {
+        const result: Result = await doLogin(phone, password);
+        if(result.success)
+            resetNavigation(navigation, 'Tabs');
+        else
+            alert(result.message);
+    }
+
     return (
         <>
             <View style={styles.titleContainer} >
@@ -41,7 +52,7 @@ export default function Login({ navigation, toggleNewUser = ()=>{} }: Props) {
                 <Text style={styles.forgotPass} onPress={() => alert("Goto forget password page")}>{texts.forgotPassword}</Text>
             </View>
             <View style={styles.buttonContainer}>
-                <Button title={texts.login.button} onPress={() => { alert("Login"); resetNavigation(navigation, 'Tabs') }} />
+                <Button title={texts.login.button} onPress={login} />
             </View>
             <TouchableOpacity style={styles.newUserContainer} onPress={toggleNewUser}>
                 <Text style={styles.newUserText}>{texts.login.newUser}</Text>
