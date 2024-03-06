@@ -13,7 +13,7 @@ public class JwtUtils {
     private String secretKey;
     @Value("${jwt.hashingAlgorithm}")
     private String hashingAlg;
-    @Value("{$jwt.expirationTime}")
+    @Value("${jwt.expirationTime}")
     private String expirationTime;
 
     private long EXPIRATION_TIME = 0L;
@@ -30,7 +30,7 @@ public class JwtUtils {
 
     private SecretKey getSecretKey() {
         if(SECRET_KEY == null) {
-            return new SecretKeySpec(secretKey.getBytes(), hashingAlg);
+            SECRET_KEY = new SecretKeySpec(secretKey.getBytes(), hashingAlg);
         }
         return SECRET_KEY;
     }

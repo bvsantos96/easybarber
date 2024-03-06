@@ -2,6 +2,7 @@ package com.teamsantos.easybarber.services;
 
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
+import com.teamsantos.easybarber.Exceptions.UserAlreadyExists;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.security.utils.JwtUtils;
@@ -51,6 +52,13 @@ public class UserService {
         userCreateDTO.setPassword(PasswordEncoding.encode(userCreateDTO.getPassword()));
         User user = modelMapper.map(userCreateDTO, User.class);
         if (user != null) {
+            try{
+                if(userRepository.findByMobileInformation(user.getMobileInformation()).isPresent()){
+                    throw new UserAlreadyExists();
+                }
+            } catch(Exception e){
+                throw new UserAlreadyExists();
+            }
             userRepository.save(user);
             return modelMapper.map(user, UserDTO.class);
         } else {
