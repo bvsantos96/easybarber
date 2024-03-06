@@ -9,22 +9,23 @@ import { AppleLoginButton, GoogleLoginButton } from '../components/LoginBrandBut
 
 import { doLogin, Result } from '../utils/ApiRequest';
 
-import{ getStyles } from '../styles/Sign';
+import { getStyles } from '../styles/Sign';
 import { resetNavigation } from '../App';
 import { Props } from '../screens/SignIn';
 
 export default function Login({ navigation, toggleNewUser }: Props) {
-    const styles =  getStyles();
+    const styles = getStyles();
     const texts = require("@lang/en.json");
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
 
-    const login = async() => {
+    const login = async () => {
         const result: Result = await doLogin(phone, password);
-        if(result.success)
+        if (result.success)
             resetNavigation(navigation, 'Tabs');
-        else
+        else {
             alert(result.message);
+        }
     }
 
     return (

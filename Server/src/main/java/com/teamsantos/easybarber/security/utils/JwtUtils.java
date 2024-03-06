@@ -1,18 +1,16 @@
 package com.teamsantos.easybarber.security.utils;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
+
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 import java.util.Date;
 
 public class JwtUtils {
     @Value("${jwt.secretKey}")
     private String secretKey;
-    @Value("${jwt.hashingAlgorithm}")
-    private String hashingAlg;
     @Value("${jwt.expirationTime}")
     private String expirationTime;
 
@@ -29,8 +27,8 @@ public class JwtUtils {
     }
 
     private SecretKey getSecretKey() {
-        if(SECRET_KEY == null) {
-            SECRET_KEY = new SecretKeySpec(secretKey.getBytes(), hashingAlg);
+        if (SECRET_KEY == null) {
+            SECRET_KEY = Keys.hmacShaKeyFor(secretKey.getBytes());
         }
         return SECRET_KEY;
     }
@@ -48,14 +46,17 @@ public class JwtUtils {
     public String extractMobileNumber(String token) {
         return Jwts.parser()
                 .verifyWith(getSecretKey())
-                .build().parseSignedClaims(token).getBody().getSubject();
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .getSubject();
     }
 
     public String generateToken(String mobileNumber) {
         return Jwts.builder()
-                .setSubject(mobileNumber)
-                .setExpiration(new Date(System.currentTimeMillis() + getExpirationTime()))
-                .signWith(SignatureAlgorithm.valueOf(hashingAlg), getSecretKey())
+                .subject(mobileNumber)
+                .expiration(new Date(System.currentTimeMillis() + getExpirationTime()))
+                .signWith(getSecretKey())
                 .compact();
     }
 }
