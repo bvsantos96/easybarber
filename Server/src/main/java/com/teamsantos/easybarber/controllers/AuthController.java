@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
 import com.teamsantos.easybarber.DTO.UsersDTO;
-import com.teamsantos.easybarber.Exceptions.UserAlreadyExists;
+import com.teamsantos.easybarber.exceptions.UserAlreadyExists;
 import com.teamsantos.easybarber.services.UserService;
 
 @Controller
