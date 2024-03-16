@@ -1,4 +1,4 @@
-package com.teamsantos.easybarber.Exceptions;
+package com.teamsantos.easybarber.exceptions;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 

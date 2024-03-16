@@ -59,5 +59,23 @@
     "gettingStarted": "Getting Started",
     "mayTakeSecs": "This may take a few seconds",
     "imUser": "I'm a User",
-    "imBarber": "I'm a Barber"
+    "imBarber": "I'm a Barber",
+    "apiMessages": {
+        "success": "Success in processing the request",
+        "failed": "Failed to process the request",
+        "connectionError": "Cannor connect to the server",
+        "invalidPhone": "Invalid Phone Number",
+        "login": {
+            "success": "Login Success",
+            "failed": "Login Failed",
+            "invalid": "Invalid Credentials"
+        },
+        "register": {
+            "success": "Register Success",
+            "failed": "Register Failed",
+            "invalidPassword": "Check if the password meets the following criteria: \n- At least 8 characters long \n- Contains at least one uppercase letter \n- Contains at least one lowercase letter \n- Contains at least one digit",
+            "passwordMismatch": "Password Mismatch",
+            "invalidName": "Invalid Name Format (name should be at least 3 characters long)"
+        }
+    }
 }
