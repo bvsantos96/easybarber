@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
 import com.teamsantos.easybarber.DTO.UsersDTO;
-import com.teamsantos.easybarber.exceptions.UserAlreadyExists;
+import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.services.UserService;
 
 @Controller
@@ -39,7 +39,7 @@ public class AuthController {
             response.setResponseMessage(e.getMessage());
             if (e instanceof IllegalArgumentException) {
                 status = HttpStatus.BAD_REQUEST;
-            } else if (e instanceof UserAlreadyExists) {
+            } else if (e instanceof UserAlreadyExistsException) {
                 status = HttpStatus.CONFLICT;
             } else {
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
