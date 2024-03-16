@@ -10,7 +10,7 @@ import { NavigationProp } from '@react-navigation/native';
 
 export type Props = {
     navigation: NavigationProp<any, any>,
-    toggleNewUser?: () => void
+    toggleNewUser?: () => void,
 }
 
 export default function SignIn({ navigation }: PropNavigation) {

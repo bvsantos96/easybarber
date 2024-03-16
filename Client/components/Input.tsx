@@ -2,7 +2,7 @@ import React from 'react';
 import { View, TextInput, InputModeOptions } from 'react-native';
 import Pressable from '../components/Pressable';
 import { getStyles } from '../styles/Input';
-import { lightTextColor } from '../styles/Main';
+import { useTheme } from '../styles/ThemeContext';
 
 type InputProps = {
     icon?: JSX.Element,
@@ -20,6 +20,7 @@ const Input = ({
     type = "text",
     password = false
 }: InputProps) => {
+    const theme = useTheme();
     const styles = getStyles();
     const textInputRef = React.useRef<TextInput>(null);
 
@@ -43,7 +44,7 @@ const Input = ({
                     ref={textInputRef}
                     style={styles.textInput}
                     placeholder={placeholder}
-                    placeholderTextColor={lightTextColor}
+                    placeholderTextColor={theme.colors.text.lightBlack}
                     onChangeText={handleChangeText}
                     secureTextEntry={password}
                     inputMode={type}

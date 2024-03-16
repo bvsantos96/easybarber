@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
 import com.teamsantos.easybarber.DTO.UsersDTO;
+import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.services.UserService;
 
 @Controller
@@ -30,12 +31,20 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<UserDTO> createUser(@RequestBody UserCreateDTO userDTO) {
+        HttpStatus status = HttpStatus.CREATED;
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDTO));
+            return ResponseEntity.status(status).body(userService.createUser(userDTO));
         } catch (Exception e) {
             UserDTO response = new UserDTO();
             response.setResponseMessage(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+            if (e instanceof IllegalArgumentException) {
+                status = HttpStatus.BAD_REQUEST;
+            } else if (e instanceof UserAlreadyExistsException) {
+                status = HttpStatus.CONFLICT;
+            } else {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+            return ResponseEntity.status(status).body(response);
         }
     }
 }
