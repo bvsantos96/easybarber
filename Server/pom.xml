@@ -18,9 +18,11 @@
         <java.version>21</java.version>
     </properties>
     <dependencies>
-<!--TODO: Spring and their dependencies should have a fixed version that is shared between them and not repeting the version for every dep. Same goes for:
-            - jsonwebtokens deps
--->
+        <!--TODO:
+            Spring and their dependencies should have a fixed version that is shared between them and
+            not repeting the version for every dep. Same goes for:
+                - jsonwebtokens deps
+        -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
