@@ -10,4 +10,5 @@ import com.teamsantos.easybarber.entities.User;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>{
     Optional<User> findByMobileInformation(String mobileInformation);
+	Optional<Long> getIdByMobileInformation(String name);
 }

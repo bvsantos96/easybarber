@@ -1,5 +1,7 @@
 package com.teamsantos.easybarber.controllers;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
@@ -13,12 +15,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.services.EstablishmentService;
+import com.teamsantos.easybarber.services.UserService;
 
 @Controller
 @RequestMapping("/establishment")
 public class EstablishmentController {
     @Autowired
     private EstablishmentService establishmentService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("{id}")
     public ResponseEntity<BaseEstablishmentDTO> getEstablishment(@PathVariable Long id) {
@@ -35,9 +40,10 @@ public class EstablishmentController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseEstablishmentDTO> createEstablishment(@RequestBody BaseEstablishmentDTO establishmentDTO) {
+    public ResponseEntity<BaseEstablishmentDTO> createEstablishment(@RequestBody BaseEstablishmentDTO establishmentDTO, Principal principal) {
         try {
-            establishmentDTO = establishmentService.createEstablishment(establishmentDTO);
+            Long userId = userService.getUserId(principal);
+            establishmentDTO = establishmentService.createEstablishment(establishmentDTO, userId);
             return ResponseEntity.ok(establishmentDTO);
         } catch (Exception e) {
             establishmentDTO.setResponseMessage(e.getMessage());

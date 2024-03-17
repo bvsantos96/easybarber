@@ -19,27 +19,23 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-	@Column
+    @Column
     private Long userTypeId;
-	@Column
+    @Column
     private String email;
-	@Column
+    @Column
     private String password;
-	@Column
+    @Column
     private String countryMobile;
-	@Column
+    @Column
     private String mobile;
-	@Column
+    @Column
     private String name;
-	@Column
+    @Column
     private String mobileInformation;
-	@Column
+    @Column
     private LocalDateTime tokenExpiration;
-	@ManyToMany
-	@JoinTable(
-		name = "user_establishment",
-		joinColumns = @JoinColumn(name = "user_id"),
-		inverseJoinColumns = @JoinColumn(name = "establishment_id")
-	)
-	private Set<Establishment> owned_establishments;
+    @ManyToMany
+    @JoinTable(name = "user_establishment", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "establishment_id"))
+    private Set<Establishment> owned_establishments;
 }
