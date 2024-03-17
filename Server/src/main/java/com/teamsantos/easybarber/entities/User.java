@@ -36,6 +36,6 @@ public class User {
     @Column
     private LocalDateTime tokenExpiration;
     @ManyToMany
-    @JoinTable(name = "user_establishment", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "establishment_id"))
+    @JoinTable(name = "owner_establishment", joinColumns = @JoinColumn(name = "owner_id"), inverseJoinColumns = @JoinColumn(name = "establishment_id"))
     private Set<Establishment> owned_establishments;
 }

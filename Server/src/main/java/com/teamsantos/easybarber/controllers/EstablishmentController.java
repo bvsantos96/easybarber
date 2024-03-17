@@ -4,6 +4,7 @@ import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.services.EstablishmentService;
 import com.teamsantos.easybarber.services.UserService;
 
@@ -22,8 +24,6 @@ import com.teamsantos.easybarber.services.UserService;
 public class EstablishmentController {
     @Autowired
     private EstablishmentService establishmentService;
-    @Autowired
-    private UserService userService;
 
     @GetMapping("{id}")
     public ResponseEntity<BaseEstablishmentDTO> getEstablishment(@PathVariable Long id) {
@@ -42,12 +42,24 @@ public class EstablishmentController {
     @PostMapping
     public ResponseEntity<BaseEstablishmentDTO> createEstablishment(@RequestBody BaseEstablishmentDTO establishmentDTO, Principal principal) {
         try {
-            Long userId = userService.getUserId(principal);
-            establishmentDTO = establishmentService.createEstablishment(establishmentDTO, userId);
+            establishmentService.create(establishmentDTO, principal);
             return ResponseEntity.ok(establishmentDTO);
         } catch (Exception e) {
             establishmentDTO.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(establishmentDTO);
+        }
+    }
+    
+    // GET /establishments?page=0&size=15&sort=id,desc
+    @GetMapping("/list")
+    public ResponseEntity<BaseListDTO<BaseEstablishmentDTO>> listEstablishments(Pageable pageable) {
+        BaseListDTO<BaseEstablishmentDTO> listDTO = new BaseListDTO<BaseEstablishmentDTO>();
+        try {
+            listDTO.setItems(establishmentService.findAllBase(pageable));
+            return ResponseEntity.ok(listDTO);
+        } catch (Exception e) {
+            listDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(listDTO);
         }
     }
 }
