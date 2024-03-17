@@ -3,6 +3,7 @@ package com.teamsantos.easybarber.services;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
+import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.security.utils.JwtUtils;
@@ -11,6 +12,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -100,4 +102,8 @@ public class UserService {
     private UserDTO userEntityToDTO(User user) {
         return modelMapper.map(user, UserDTO.class);
     }
+
+	public Long getUserId(Principal principal) {
+        return userRepository.getIdByMobileInformation(principal.getName()).orElseThrow(UserNotFoundException::new);
+	}
 }
