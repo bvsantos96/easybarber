@@ -1,50 +1,61 @@
 package com.teamsantos.easybarber.services;
 
+import java.security.Principal;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.entities.Establishment;
+import com.teamsantos.easybarber.entities.User;
+import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.EstablishmentRepository;
+import com.teamsantos.easybarber.repositories.UserRepository;
 
 @Service
 public class EstablishmentService {
     @Autowired
+    private ModelMapper modelMapper;
+    @Autowired
     private EstablishmentRepository establishmentRepository;
     @Autowired
-    private ModelMapper modelMapper;
+    private UserRepository userRepository;
 
     public BaseEstablishmentDTO getEstablishment(Long id) throws NotFoundException {
-        return establishmentRepository.findByIDNoOwner(id).orElseThrow(NotFoundException::new);
+        return userRepository.findOwnedEstablishmentsById(id).map(establishment -> modelMapper.map(establishment, BaseEstablishmentDTO.class))
+                .orElseThrow(NotFoundException::new);
     }
 
-	public BaseEstablishmentDTO createEstablishment(BaseEstablishmentDTO establishmentDTO, Long userId) {
+    public boolean create(BaseEstablishmentDTO establishmentDTO, Principal principal) {
+        User owner = userRepository.findByMobileInformation(principal.getName()).orElseThrow(UserNotFoundException::new);
+        return create(establishmentDTO, owner);
+    }
+
+    public boolean create(BaseEstablishmentDTO establishmentDTO, Long userId) {
+        User owner = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        return create(establishmentDTO, owner);
+    }
+
+    public boolean create(BaseEstablishmentDTO establishmentDTO, User owner) {
         Establishment establishment = modelMapper.map(establishmentDTO, Establishment.class);
         if (establishment != null) {
-            establishment.setOwnerId(userId);
             establishmentRepository.save(establishment);
-            return modelMapper.map(establishment, BaseEstablishmentDTO.class);
+            Set<Establishment> establishments = owner.getOwned_establishments();
+            if (establishments == null) 
+                establishments = new HashSet<>();
+            establishments.add(establishment);
+            userRepository.save(owner);
+            return true; 
         } else
             throw new IllegalArgumentException("Establishment cannot be null");
+    }
 
-        User user = modelMapper.map(userCreateDTO, User.class);
-        if (user != null) {
-            try {
-                Optional<User> oUser = userRepository.findByMobileInformation(user.getMobileInformation());
-                if (oUser.isPresent()) {
-                    user = oUser.get();
-                    if (!isEmployee || InitializedBean.isEmployee(user))
-                        throw new UserAlreadyExistsException();
-                }
-            } catch (Exception e) {
-                throw new UserAlreadyExistsException();
-            }
-            user.setUserTypeId(InitializedBean
-                    .getUserType(isEmployee ? InitializedBean.UserTypes.EMPLOYEE : InitializedBean.UserTypes.CLIENT));
-            userRepository.save(user);
-            return modelMapper.map(user, UserDTO.class);
-        } else
-            throw new IllegalArgumentException("User cannot be null");
-	}
+    public List<BaseEstablishmentDTO> findAllBase(Pageable pageable) {
+        return establishmentRepository.findAllBase(pageable);
+    }
 }
