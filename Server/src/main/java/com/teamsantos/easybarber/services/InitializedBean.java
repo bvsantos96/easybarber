@@ -1,19 +1,15 @@
 package com.teamsantos.easybarber.services;
 
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.teamsantos.easybarber.entities.User;
+import com.teamsantos.easybarber.entities.UserType;
+import com.teamsantos.easybarber.repositories.UserTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
-import com.teamsantos.easybarber.entities.User;
-import com.teamsantos.easybarber.entities.UserType;
-import com.teamsantos.easybarber.repositories.UserTypeRepository;
-
-import jakarta.annotation.PostConstruct;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class InitializedBean implements ApplicationListener<ApplicationReadyEvent> {

@@ -1,19 +1,16 @@
 package com.teamsantos.easybarber.controllers;
 
+import com.teamsantos.easybarber.DTO.UserCreateDTO;
+import com.teamsantos.easybarber.DTO.UsersDTO;
+import com.teamsantos.easybarber.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import com.teamsantos.easybarber.DTO.UserCreateDTO;
-import com.teamsantos.easybarber.DTO.UserDTO;
-import com.teamsantos.easybarber.DTO.UsersDTO;
-import com.teamsantos.easybarber.services.UserService;
 
 @Controller
 public class UserController {

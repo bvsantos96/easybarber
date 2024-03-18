@@ -1,13 +1,12 @@
 package com.teamsantos.easybarber.repositories;
 
-import java.util.Optional;
-import java.util.Set;
-
+import com.teamsantos.easybarber.entities.Establishment;
+import com.teamsantos.easybarber.entities.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.teamsantos.easybarber.entities.Establishment;
-import com.teamsantos.easybarber.entities.User;
+import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
