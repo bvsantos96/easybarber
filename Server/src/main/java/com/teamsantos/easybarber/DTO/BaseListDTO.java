@@ -1,9 +1,9 @@
 package com.teamsantos.easybarber.DTO;
 
-import java.util.List;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

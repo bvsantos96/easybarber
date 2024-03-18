@@ -1,7 +1,7 @@
 package com.teamsantos.easybarber.security.services;
 
-import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.entities.User;
+import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

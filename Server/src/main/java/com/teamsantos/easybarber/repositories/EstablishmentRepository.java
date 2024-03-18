@@ -1,14 +1,14 @@
 package com.teamsantos.easybarber.repositories;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.entities.Establishment;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.data.domain.Pageable;
-import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
-import com.teamsantos.easybarber.entities.Establishment;
+
+import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EstablishmentRepository extends JpaRepository<Establishment, Long> {

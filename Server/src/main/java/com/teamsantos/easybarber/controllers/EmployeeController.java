@@ -7,11 +7,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.teamsantos.easybarber.DTO.BaseResponseDTO;
-import com.teamsantos.easybarber.DTO.UserCreateDTO;
-import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
-import com.teamsantos.easybarber.services.UserService;
-
 @Controller
 @RequestMapping("/employee")
 public class EmployeeController {
