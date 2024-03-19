@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/employee")
 public class EmployeeController {
+    private UserService userService;
 
     @Autowired
-    private UserService userService;
+    public EmployeeController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<BaseResponseDTO> createEmployee(@RequestBody UserCreateDTO user) {
