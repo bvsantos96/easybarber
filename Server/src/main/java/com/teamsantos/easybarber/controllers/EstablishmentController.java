@@ -2,7 +2,10 @@ package com.teamsantos.easybarber.controllers;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.BaseListDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.services.EstablishmentService;
+import com.teamsantos.easybarber.services.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Pageable;
@@ -18,18 +21,19 @@ import java.security.Principal;
 public class EstablishmentController {
     @Autowired
     private EstablishmentService establishmentService;
+    @Autowired
+    private UserService userService;
 
     @GetMapping("{id}")
-    public ResponseEntity<BaseEstablishmentDTO> getEstablishment(@PathVariable Long id) {
-        BaseEstablishmentDTO establishmentDTO = new BaseEstablishmentDTO();
+    public ResponseEntity<EstablishmentDTO> getEstablishment(@PathVariable Long id) {
+        EstablishmentDTO establishments = new EstablishmentDTO();
         try {
-            establishmentDTO = establishmentService.getEstablishment(id);
-            return ResponseEntity.ok(establishmentDTO);
+            return ResponseEntity.ok(establishmentService.getEstablishment(id));
         } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(establishmentDTO);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(establishments);
         } catch (Exception e) {
-            establishmentDTO.setResponseMessage(e.getMessage());
-            return ResponseEntity.badRequest().body(establishmentDTO);
+            establishments.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(establishments);
         }
     }
 
