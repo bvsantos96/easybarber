@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.services;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
@@ -16,6 +17,7 @@ import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class EstablishmentService {
@@ -26,9 +28,12 @@ public class EstablishmentService {
     @Autowired
     private UserRepository userRepository;
 
-    public BaseEstablishmentDTO getEstablishment(Long id) throws NotFoundException {
-        return userRepository.findOwnedEstablishmentsById(id).map(establishment -> modelMapper.map(establishment, BaseEstablishmentDTO.class))
-                .orElseThrow(NotFoundException::new);
+    public EstablishmentDTO getEstablishment(Long id) throws NotFoundException {
+        return establishmentRepository.findById(id).map((element) -> modelMapper.map(element, EstablishmentDTO.class)).orElseThrow(NotFoundException::new);
+    }
+
+    public List<EstablishmentDTO> listUserEstablishments(Long id) throws NotFoundException {
+        return userRepository.findOwnedEstablishmentsById(id).stream().map((element) -> modelMapper.map(element, EstablishmentDTO.class)).toList();
     }
 
     public boolean create(BaseEstablishmentDTO establishmentDTO, Principal principal) {
@@ -44,7 +49,7 @@ public class EstablishmentService {
     public boolean create(BaseEstablishmentDTO establishmentDTO, User owner) {
         Establishment establishment = modelMapper.map(establishmentDTO, Establishment.class);
         if (establishment != null) {
-            establishmentRepository.save(establishment);
+            establishmentDTO.setId(establishmentRepository.save(establishment).getId());
             Set<Establishment> establishments = owner.getOwned_establishments();
             if (establishments == null) 
                 establishments = new HashSet<>();

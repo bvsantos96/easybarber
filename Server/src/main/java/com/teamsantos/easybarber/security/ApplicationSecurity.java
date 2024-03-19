@@ -32,7 +32,7 @@ public class ApplicationSecurity {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/register").permitAll()
                         .requestMatchers(HttpMethod.POST, "/login").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/hello").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/hello", "/establishment/list").permitAll()
                         .anyRequest().authenticated())
                 .cors(cors -> cors.disable())
                 // TODO: update this to use cors properly (use expo url as allowed origin)
