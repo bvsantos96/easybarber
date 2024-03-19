@@ -19,10 +19,12 @@ import java.security.Principal;
 @Controller
 @RequestMapping("/establishment")
 public class EstablishmentController {
-    @Autowired
     private EstablishmentService establishmentService;
+
     @Autowired
-    private UserService userService;
+    public EstablishmentController(EstablishmentService establishmentService) {
+        this.establishmentService = establishmentService;
+    }
 
     @GetMapping("{id}")
     public ResponseEntity<EstablishmentDTO> getEstablishment(@PathVariable Long id) {

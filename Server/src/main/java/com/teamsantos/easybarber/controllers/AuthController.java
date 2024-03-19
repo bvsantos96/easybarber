@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 public class AuthController {
+    private UserService userService;
 
     @Autowired
-    private UserService userService;
+    public AuthController(UserService userService) {
+        this.userService = userService;
+    }
 
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody UserCreateDTO userDTO) {

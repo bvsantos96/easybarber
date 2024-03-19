@@ -19,11 +19,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 public class UserController {
-    @Autowired
     private EstablishmentService establishmentService;
-    @Autowired 
     private UserService userService;
 
+    @Autowired
+    public UserController(EstablishmentService establishmentService, UserService userService) {
+        this.establishmentService = establishmentService;
+        this.userService = userService;
+    }
     @GetMapping("/users")
     public ResponseEntity<UsersDTO> getAllUsers() {
         UsersDTO response = new UsersDTO();
@@ -58,7 +61,7 @@ public class UserController {
 
     @GetMapping("/user/establishment/list")
     public ResponseEntity<BaseListDTO<EstablishmentDTO>> getEstablishment(Principal principal) {
-        BaseListDTO<EstablishmentDTO> establishments = new BaseListDTO<EstablishmentDTO>();
+        BaseListDTO<EstablishmentDTO> establishments = new BaseListDTO<>();
         try {
             establishments.setItems(establishmentService.listUserEstablishments(userService.getUserId(principal)));
             return ResponseEntity.ok(establishments);
