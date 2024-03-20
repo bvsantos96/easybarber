@@ -39,7 +39,8 @@ public class EstablishmentController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseEstablishmentDTO> createEstablishment(@RequestBody BaseEstablishmentDTO establishmentDTO, Principal principal) {
+    public ResponseEntity<BaseEstablishmentDTO> createEstablishment(@RequestBody BaseEstablishmentDTO establishmentDTO,
+            Principal principal) {
         try {
             establishmentService.create(establishmentDTO, principal);
             return ResponseEntity.ok(establishmentDTO);
@@ -48,7 +49,7 @@ public class EstablishmentController {
             return ResponseEntity.badRequest().body(establishmentDTO);
         }
     }
-    
+
     // GET /establishments?page=0&size=15&sort=id,desc
     @GetMapping("/list")
     public ResponseEntity<BaseListDTO<BaseEstablishmentDTO>> listEstablishments(Pageable pageable) {
@@ -61,8 +62,10 @@ public class EstablishmentController {
             return ResponseEntity.badRequest().body(listDTO);
         }
     }
+
     @PostMapping("/{id}/employee")
-    public ResponseEntity<BaseResponseDTO> addEmployee(@RequestParam Long establishmentId, @RequestBody Long userId, Principal principal) {
+    public ResponseEntity<BaseResponseDTO> addEmployee(@RequestParam Long establishmentId, @RequestBody Long userId,
+            Principal principal) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
             establishmentService.addEmployee(establishmentId, userId, principal);
