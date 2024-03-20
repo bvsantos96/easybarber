@@ -3,6 +3,9 @@ package com.teamsantos.easybarber.controllers;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.services.UserService;
+
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -21,8 +24,10 @@ public class EmployeeController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<BaseResponseDTO> createEmployee(@RequestBody UserCreateDTO user) {
+    public ResponseEntity<BaseResponseDTO> createEmployee(@RequestBody UserCreateDTO user, Principal principal) {
         try {
+            if(principal != null && !userService.userChangePermissions(principal, user.getMobileInformation())
+                return  ResponseEntity.badRequest().body(new BaseResponseDTO("You are not allowed to create this user"));
             userService.createUser(user, true);
             return ResponseEntity.ok(new BaseResponseDTO("Employee created successfully"));
         } catch (Exception e) {
