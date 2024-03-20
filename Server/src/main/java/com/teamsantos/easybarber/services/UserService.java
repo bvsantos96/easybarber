@@ -62,14 +62,14 @@ public class UserService {
                 Optional<User> oUser = userRepository.findByMobileInformation(user.getMobileInformation());
                 if (oUser.isPresent()) {
                     user = oUser.get();
-                    if (!isEmployee || InitializedBean.isEmployee(user))
+                    if (!isEmployee || UserTypeService.isEmployee(user))
                         throw new UserAlreadyExistsException();
                 }
             } catch (Exception e) {
                 throw new UserAlreadyExistsException();
             }
-            user.setUserTypeId(InitializedBean
-                    .getUserType(isEmployee ? InitializedBean.UserTypes.EMPLOYEE : InitializedBean.UserTypes.CLIENT));
+            user.setUserTypeId(UserTypeService
+                    .getUserType(isEmployee ? UserTypeService.UserTypes.EMPLOYEE : UserTypeService.UserTypes.CLIENT));
             userRepository.save(user);
             return modelMapper.map(user, UserDTO.class);
         } else

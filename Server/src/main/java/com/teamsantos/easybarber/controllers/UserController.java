@@ -67,7 +67,7 @@ public class UserController {
     public ResponseEntity<BaseListDTO<EstablishmentDTO>> getEstablishment(Principal principal) {
         BaseListDTO<EstablishmentDTO> establishments = new BaseListDTO<>();
         try {
-            establishments.setItems(establishmentService.listUserEstablishments(userService.getUserId(principal)));
+            establishments.setItems(establishmentService.listEstablishmentStaff(userService.getUserId(principal)));
             return ResponseEntity.ok(establishments);
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(establishments);
