@@ -34,4 +34,46 @@ public class User {
     private LocalDateTime tokenExpiration;
     @OneToMany(mappedBy = "user")
     private Set<EstablishmentStaff> establishments;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (id != null && ((User) o).id != null)
+            return id.equals(((User) o).id);
+        return email.equals(((User) o).email)
+                && password.equals(((User) o).password)
+                && countryMobile.equals(((User) o).countryMobile)
+                && mobile.equals(((User) o).mobile)
+                && name.equals(((User) o).name);
+    }
+
+    public boolean equalsIgnoreEmptyValues(Object o) {
+        if (this == o)
+            return true;
+        if (id != null && ((User) o).id != null)
+            return id.equals(((User) o).id);
+        return isNullOrEqual(email, ((User) o).email)
+                && isNullOrEqual(password, ((User) o).password)
+                && isNullOrEqual(countryMobile, ((User) o).countryMobile)
+                && isNullOrEqual(mobile, ((User) o).mobile)
+                && isNullOrEqual(name, ((User) o).name)
+                && isNullOrEqual(mobileInformation, ((User) o).mobileInformation);
+    }
+
+    /**
+     * This method checks if value2 is null or empty, if it is, it returns true, if
+     * not, it checks if value1 is equal to value2
+     * 
+     * @param value1
+     * @param value2
+     * @return boolean representing the comparison
+     */
+    private boolean isNullOrEqual(String value1, String value2) {
+        return isNullOrEmpty(value2) || value1.equals(value2);
+    }
+
+    private boolean isNullOrEmpty(String value) {
+        return value == null || value.isEmpty();
+    }
 }

@@ -9,4 +9,5 @@ public class UserDTO extends BaseResponseDTO {
     private Long userTypeId;
     private String countryMobile;
     private String mobile;
+    private String name;
 }
