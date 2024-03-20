@@ -4,10 +4,10 @@ import lombok.Data;
 
 @Data
 public class UserCreateDTO {
-    private String          password;
-    private String          countryMobile;
-    private String          mobile;
-    private String          name;
+    private String password;
+    private String countryMobile;
+    private String mobile;
+    private String name;
 
     public String getMobileInformation() {
         return countryMobile + mobile;

@@ -28,6 +28,7 @@ public class UserController {
         this.establishmentService = establishmentService;
         this.userService = userService;
     }
+
     @GetMapping("/users")
     public ResponseEntity<UsersDTO> getAllUsers() {
         UsersDTO response = new UsersDTO();
@@ -46,7 +47,8 @@ public class UserController {
             userService.updateUser(userDTO);
             return ResponseEntity.ok("User updated successfully.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to update user: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to update user: " + e.getMessage());
         }
     }
 
@@ -56,7 +58,8 @@ public class UserController {
             userService.deleteUser(userDTO);
             return ResponseEntity.ok("User deleted successfully.");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to delete user: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to delete user: " + e.getMessage());
         }
     }
 

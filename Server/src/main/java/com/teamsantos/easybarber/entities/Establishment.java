@@ -19,6 +19,6 @@ public class Establishment {
     private String name;
     @Column
     private String description;
-	@OneToMany(mappedBy = "establishment")
-	private Set<EstablishmentStaff> staff;
+    @OneToMany(mappedBy = "establishment")
+    private Set<EstablishmentStaff> staff;
 }

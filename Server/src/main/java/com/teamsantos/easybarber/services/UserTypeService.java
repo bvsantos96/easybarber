@@ -16,7 +16,7 @@ public class UserTypeService implements ApplicationListener<ApplicationReadyEven
     private UserTypeRepository userTypeRepository;
     private UserRepository userRepository;
 
-    public  UserTypeService(UserTypeRepository userTypeRepository, UserRepository userRepository) {
+    public UserTypeService(UserTypeRepository userTypeRepository, UserRepository userRepository) {
         this.userTypeRepository = userTypeRepository;
         this.userRepository = userRepository;
     }

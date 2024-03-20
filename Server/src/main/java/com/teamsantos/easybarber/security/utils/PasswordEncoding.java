@@ -6,7 +6,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class PasswordEncoding {
     private static final PasswordEncoder passwordEncoder = Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
 
-    public static  String encode(String cleanTxt) {
+    public static String encode(String cleanTxt) {
         return getPasswordEncoder().encode(cleanTxt);
     }
 

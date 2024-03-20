@@ -17,11 +17,11 @@ public class TestController {
     @GetMapping("/test/user")
     public String getMyInfo(Authentication auth, Principal principal) {
         return new StringBuilder()
-            .append("MobileInformation: ")
-            .append(principal.getName())
-            .append("\n")
-            .append("Authorities: ")
-            .append(auth.getAuthorities())
-            .toString();
+                .append("MobileInformation: ")
+                .append(principal.getName())
+                .append("\n")
+                .append("Authorities: ")
+                .append(auth.getAuthorities())
+                .toString();
     }
 }

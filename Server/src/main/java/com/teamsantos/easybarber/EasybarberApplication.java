@@ -8,18 +8,18 @@ import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class EasybarberApplication {
-	@Bean
-	public ModelMapper modelMapper() {
-		return new ModelMapper();
-	}
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 
-	@Bean
-	public JwtUtils jwtUtils() {
-		return new JwtUtils();
-	}
+    @Bean
+    public JwtUtils jwtUtils() {
+        return new JwtUtils();
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(EasybarberApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(EasybarberApplication.class, args);
+    }
 
 }

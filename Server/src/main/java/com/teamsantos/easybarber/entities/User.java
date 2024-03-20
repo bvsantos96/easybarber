@@ -32,6 +32,6 @@ public class User {
     private String mobileInformation;
     @Column
     private LocalDateTime tokenExpiration;
-	@OneToMany(mappedBy = "user")
-	private Set<EstablishmentStaff> establishments;
+    @OneToMany(mappedBy = "user")
+    private Set<EstablishmentStaff> establishments;
 }
