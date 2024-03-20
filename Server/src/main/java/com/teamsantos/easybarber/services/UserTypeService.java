@@ -2,8 +2,8 @@ package com.teamsantos.easybarber.services;
 
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.entities.UserType;
+import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.repositories.UserTypeRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
@@ -12,13 +12,18 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class InitializedBean implements ApplicationListener<ApplicationReadyEvent> {
+public class UserTypeService implements ApplicationListener<ApplicationReadyEvent> {
+    private UserTypeRepository userTypeRepository;
+    private UserRepository userRepository;
+
+    public  UserTypeService(UserTypeRepository userTypeRepository, UserRepository userRepository) {
+        this.userTypeRepository = userTypeRepository;
+        this.userRepository = userRepository;
+    }
+
     public enum UserTypes {
         EMPLOYEE, CLIENT
     }
-
-    @Autowired
-    private UserTypeRepository userTypeRepository;
 
     private static Map<String, Long> userTypes;
 
@@ -39,6 +44,13 @@ public class InitializedBean implements ApplicationListener<ApplicationReadyEven
             throw new RuntimeException("UserTypes not initialized");
         }
         return user.getUserTypeId() == userTypes.get(UserTypes.EMPLOYEE);
+    }
+
+    public boolean isEmployee(Long userId) {
+        if (userTypes == null || userTypes.isEmpty()) {
+            throw new RuntimeException("UserTypes not initialized");
+        }
+        return userRepository.existsByIdAndUserTypeId(userId, getUserType(UserTypes.EMPLOYEE));
     }
 
     @Override
