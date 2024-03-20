@@ -19,22 +19,24 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+
+    private final ModelMapper modelMapper;
+
+    private final JwtUtils jwtUtils;
 
     @Autowired
-    private ModelMapper modelMapper;
-
-    @Autowired
-    private JwtUtils jwtUtils;
+    public UserService(UserRepository userRepository, ModelMapper modelMapper, JwtUtils jwtUtils) {
+        this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
+        this.jwtUtils = jwtUtils;
+    }
 
     public List<UserDTO> getAllUsers() {
         List<User> users = userRepository.findAll();
-        List<UserDTO> userDTOs = users.stream()
+        return users.stream()
                 .map(this::userEntityToDTO)
                 .collect(Collectors.toList());
-
-        return userDTOs;
     }
 
     public String loginUser(UserCreateDTO userCreateDTO) {
@@ -62,7 +64,7 @@ public class UserService {
                 Optional<User> oUser = userRepository.findByMobileInformation(user.getMobileInformation());
                 if (oUser.isPresent()) {
                     user = oUser.get();
-                    if (!isEmployee || UserTypeService.isEmployee(user))
+                    if (!isEmployee || UserTypeService.isEmployee(user) || user.equalsIgnoreEmptyValues(userCreateDTO))
                         throw new UserAlreadyExistsException();
                 }
             } catch (Exception e) {
