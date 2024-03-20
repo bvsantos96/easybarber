@@ -37,7 +37,7 @@ public class EstablishmentService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public List<EstablishmentDTO> listUserEstablishments(Long id) throws NotFoundException {
+    public List<EstablishmentDTO> listEstablishmentStaff(Long id) throws NotFoundException {
         return userRepository.findOwnedEstablishmentsById(id).stream()
                 .map((element) -> modelMapper.map(element, EstablishmentDTO.class)).toList();
     }

@@ -16,10 +16,6 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
     @NonNull
     Optional<Establishment> findById(@NonNull Long id);
 
-    Optional<Establishment> findByName(@NonNull String name);
-
     @Query("SELECT new com.teamsantos.easybarber.DTO.BaseEstablishmentDTO(e.id, e.name, e.description) FROM Establishment e")
     List<BaseEstablishmentDTO> findAllBase(Pageable pageable);
-
-    void addEmployee(Long establishmentId, Long userId);
 }
