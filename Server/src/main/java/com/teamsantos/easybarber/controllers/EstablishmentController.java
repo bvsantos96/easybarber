@@ -2,10 +2,9 @@ package com.teamsantos.easybarber.controllers;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.BaseListDTO;
+import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.services.EstablishmentService;
-import com.teamsantos.easybarber.services.UserService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Pageable;
@@ -60,6 +59,17 @@ public class EstablishmentController {
         } catch (Exception e) {
             listDTO.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(listDTO);
+        }
+    }
+    @PostMapping("/{id}/employee")
+    public ResponseEntity<BaseResponseDTO> addEmployee(@RequestParam Long establishmentId, @RequestBody Long userId, Principal principal) {
+        BaseResponseDTO responseDTO = new BaseResponseDTO();
+        try {
+            establishmentService.addEmployee(establishmentId, userId, principal);
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            responseDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(responseDTO);
         }
     }
 }

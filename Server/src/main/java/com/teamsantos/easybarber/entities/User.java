@@ -1,10 +1,14 @@
 package com.teamsantos.easybarber.entities;
 
-import jakarta.persistence.*;
 import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.util.Set;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 
 @Data
 @Entity
@@ -28,7 +32,6 @@ public class User {
     private String mobileInformation;
     @Column
     private LocalDateTime tokenExpiration;
-    @ManyToMany
-    @JoinTable(name = "owner_establishment", joinColumns = @JoinColumn(name = "owner_id"), inverseJoinColumns = @JoinColumn(name = "establishment_id"))
-    private Set<Establishment> owned_establishments;
+	@OneToMany(mappedBy = "user")
+	private Set<EstablishmentStaff> establishments;
 }
