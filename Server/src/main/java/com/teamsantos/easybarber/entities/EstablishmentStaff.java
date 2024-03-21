@@ -25,10 +25,11 @@ public class EstablishmentStaff {
     @JoinColumn(name = "invitor_id")
     private User invitor;
 
-    public EstablishmentStaff(User user, Establishment establishment, boolean admin, User invitor) {
+    public EstablishmentStaff(User user, Establishment establishment, boolean admin, boolean approved, User invitor) {
         this.user = user;
         this.establishment = establishment;
         this.admin = admin;
+        this.approved = approved;
         this.invitor = invitor;
     }
 

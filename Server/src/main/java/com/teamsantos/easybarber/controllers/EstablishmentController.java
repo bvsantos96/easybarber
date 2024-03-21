@@ -10,6 +10,7 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -64,7 +65,9 @@ public class EstablishmentController {
     }
 
     @PostMapping("/{id}/employee")
-    public ResponseEntity<BaseResponseDTO> addEmployee(@RequestParam Long establishmentId, @RequestBody Long userId,
+    @PreAuthorize("hasPermission(#establishmentId, 'ESTABLISHMENT-ADMIN')")
+    public ResponseEntity<BaseResponseDTO> addEmployee(@PathVariable("id") Long establishmentId,
+            @RequestBody Long userId,
             Principal principal) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
