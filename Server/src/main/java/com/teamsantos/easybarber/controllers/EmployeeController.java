@@ -26,8 +26,8 @@ public class EmployeeController {
     @PostMapping("/register")
     public ResponseEntity<BaseResponseDTO> createEmployee(@RequestBody UserCreateDTO user, Principal principal) {
         try {
-            if(principal != null && !userService.userChangePermissions(principal, user.getMobileInformation())
-                return  ResponseEntity.badRequest().body(new BaseResponseDTO("You are not allowed to create this user"));
+            if (principal != null && !userService.userChangePermissions(principal, user.getMobileInformation()))
+                return ResponseEntity.badRequest().body(new BaseResponseDTO("You are not allowed to create this user"));
             userService.createUser(user, true);
             return ResponseEntity.ok(new BaseResponseDTO("Employee created successfully"));
         } catch (Exception e) {

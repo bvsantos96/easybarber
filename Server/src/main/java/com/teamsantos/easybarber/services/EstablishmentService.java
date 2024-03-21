@@ -7,8 +7,10 @@ import com.teamsantos.easybarber.entities.EstablishmentStaff;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.EstablishmentRepository;
+import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,13 +23,17 @@ import java.util.List;
 public class EstablishmentService {
     private final ModelMapper modelMapper;
     private final EstablishmentRepository establishmentRepository;
+    private final EstablishmentStaffRepository establishmentStaffRepository;
     private final UserRepository userRepository;
     private final UserTypeService userTypeService;
 
+    @Autowired
     public EstablishmentService(ModelMapper modelMapper, EstablishmentRepository establishmentRepository,
-            UserRepository userRepository, UserTypeService userTypeService) {
+            UserRepository userRepository, UserTypeService userTypeService,
+            EstablishmentStaffRepository establishmentStaffRepository) {
         this.modelMapper = modelMapper;
         this.establishmentRepository = establishmentRepository;
+        this.establishmentStaffRepository = establishmentStaffRepository;
         this.userRepository = userRepository;
         this.userTypeService = userTypeService;
     }
@@ -50,11 +56,12 @@ public class EstablishmentService {
         Establishment establishment = modelMapper.map(establishmentDTO, Establishment.class);
         if (establishment != null) {
             establishmentDTO.setId(establishmentRepository.save(establishment).getId());
-            EstablishmentStaff establishmentOwner = new EstablishmentStaff(owner, establishment, true, owner);
+            EstablishmentStaff establishmentOwned = new EstablishmentStaff(owner, establishment, true, true, owner);
             if (owner.getEstablishments() == null)
                 owner.setEstablishments(new HashSet<>());
-            owner.getEstablishments().add(establishmentOwner);
+            owner.getEstablishments().add(establishmentOwned);
             userRepository.save(owner);
+            establishmentStaffRepository.save(establishmentOwned);
         } else
             throw new IllegalArgumentException("Establishment cannot be null");
     }
@@ -81,7 +88,9 @@ public class EstablishmentService {
                 establishment.setStaff(new HashSet<>());
             establishment.getStaff()
                     .add(new EstablishmentStaff(userRepository.findById(userId).orElseThrow(UserNotFoundException::new),
-                            establishment, false, invitor));
+                            establishment, false, true, invitor));
+            // TODO: note that the we might want to start an employee approval process here,
+            // so we might want to set approved to false
         }
     }
 }
