@@ -7,7 +7,6 @@ import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.services.EstablishmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -53,10 +52,24 @@ public class EstablishmentController {
 
     // GET /establishments?page=0&size=15&sort=id,desc
     @GetMapping("/list")
-    public ResponseEntity<BaseListDTO<BaseEstablishmentDTO>> listEstablishments(Pageable pageable) {
+    public ResponseEntity<BaseListDTO<BaseEstablishmentDTO>> listEstablishments(@RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude) {
         BaseListDTO<BaseEstablishmentDTO> listDTO = new BaseListDTO<BaseEstablishmentDTO>();
         try {
-            listDTO.setItems(establishmentService.findAllBase(pageable));
+            listDTO.setItems(establishmentService.findByLocation(latitude, longitude, null));
+            return ResponseEntity.ok(listDTO);
+        } catch (Exception e) {
+            listDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(listDTO);
+        }
+    }
+    @PostMapping("/test")
+    public ResponseEntity<BaseListDTO<BaseEstablishmentDTO>> listEstablishments(@RequestBody LocationDTO locationDTO) {
+        double latitude = locationDTO.getLatitude();
+        double longitude = locationDTO.getLongitude();
+
+        BaseListDTO<BaseEstablishmentDTO> listDTO = new BaseListDTO<>();
+        try {
+            listDTO.setItems(establishmentService.findByLocation(latitude, longitude, null));
             return ResponseEntity.ok(listDTO);
         } catch (Exception e) {
             listDTO.setResponseMessage(e.getMessage());
@@ -76,6 +89,26 @@ public class EstablishmentController {
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+    class LocationDTO {
+        private double latitude;
+        private double longitude;
+
+        public double getLatitude() {
+            return latitude;
+        }
+
+        public void setLatitude(double latitude) {
+            this.latitude = latitude;
+        }
+
+        public double getLongitude() {
+            return longitude;
+        }
+
+        public void setLongitude(double longitude) {
+            this.longitude = longitude;
         }
     }
 }
