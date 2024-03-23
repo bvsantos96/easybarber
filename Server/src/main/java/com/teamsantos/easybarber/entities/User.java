@@ -1,14 +1,15 @@
 package com.teamsantos.easybarber.entities;
 
-import lombok.Data;
 import java.time.LocalDateTime;
 import java.util.Set;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import lombok.Data;
 
 @Data
 @Entity
@@ -34,6 +35,11 @@ public class User {
     private LocalDateTime tokenExpiration;
     @OneToMany(mappedBy = "user")
     private Set<EstablishmentStaff> establishments;
+
+    @Override
+    public int hashCode() {
+        return email.hashCode() + password.hashCode() + countryMobile.hashCode() + mobile.hashCode() + name.hashCode();
+    }
 
     @Override
     public boolean equals(Object o) {

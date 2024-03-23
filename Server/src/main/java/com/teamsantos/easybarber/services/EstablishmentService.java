@@ -39,7 +39,7 @@ public class EstablishmentService {
     }
 
     public EstablishmentDTO getEstablishment(Long id) throws NotFoundException {
-        return establishmentRepository.findById(id).map((element) -> modelMapper.map(element, EstablishmentDTO.class))
+        return establishmentRepository.findById(id).map((element) -> element.convertToDto(element))
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -93,4 +93,9 @@ public class EstablishmentService {
             // so we might want to set approved to false
         }
     }
+
+	public List<BaseEstablishmentDTO> findByLocation(double latitude, double longitude, Pageable pageable) {
+        return establishmentRepository.findClosestEstablishments(latitude, longitude).stream()
+                .map((element) -> modelMapper.map(element, BaseEstablishmentDTO.class)).toList();
+	}
 }
