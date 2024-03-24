@@ -105,6 +105,12 @@ public class UserService {
         return modelMapper.map(user, UserDTO.class);
     }
 
+    public UserDTO getUser(Principal principal) {
+        return userRepository.findByMobileInformation(principal.getName())
+                .map((element) -> modelMapper.map(element, UserDTO.class))
+                .orElseThrow(UserNotFoundException::new);
+    }
+
     public Long getUserId(Principal principal) {
         return userRepository.getIdByMobileInformation(principal.getName()).orElseThrow(UserNotFoundException::new);
     }
