@@ -9,6 +9,8 @@ import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.EstablishmentRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.UserRepository;
+import com.teamsantos.easybarber.utils.GeometryUtils;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -55,7 +57,8 @@ public class EstablishmentService {
     public void create(BaseEstablishmentDTO establishmentDTO, User owner) {
         Establishment establishment = modelMapper.map(establishmentDTO, Establishment.class);
         if (establishment != null) {
-            establishmentDTO.setId(establishmentRepository.save(establishment).getId());
+            establishment = establishmentRepository.save(establishment);
+            establishmentDTO.setId(establishment.getId());
             EstablishmentStaff establishmentOwned = new EstablishmentStaff(owner, establishment, true, true, owner);
             if (owner.getEstablishments() == null)
                 owner.setEstablishments(new HashSet<>());
@@ -94,8 +97,9 @@ public class EstablishmentService {
         }
     }
 
-	public List<BaseEstablishmentDTO> findByLocation(double latitude, double longitude, Pageable pageable) {
-        return establishmentRepository.findClosestEstablishments(latitude, longitude).stream()
-                .map((element) -> modelMapper.map(element, BaseEstablishmentDTO.class)).toList();
-	}
+    public List<EstablishmentDTO> findByLocation(double latitude, double longitude, Pageable pageable) {
+        System.out.println(GeometryUtils.parseLocation(latitude, longitude));
+        return establishmentRepository.findClosestEstablishments(GeometryUtils.parseLocation(latitude, longitude))
+                .stream().map((element) -> element.convertToDto()).toList();
+    }
 }
