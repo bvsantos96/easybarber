@@ -41,7 +41,7 @@ public class EstablishmentService {
     }
 
     public EstablishmentDTO getEstablishment(Long id) throws NotFoundException {
-        return establishmentRepository.findById(id).map((element) -> element.convertToDto(element))
+        return establishmentRepository.findById(id).map((element) -> element.convertToDto())
                 .orElseThrow(NotFoundException::new);
     }
 
@@ -98,6 +98,7 @@ public class EstablishmentService {
     }
 
     public List<EstablishmentDTO> findByLocation(double latitude, double longitude, Pageable pageable) {
-        return establishmentRepository.findClosestEstablishments(GeometryUtils.parseLocation(latitude, longitude));
+        return establishmentRepository.findClosestEstablishments(GeometryUtils.parseLocation(latitude, longitude),
+                pageable);
     }
 }
