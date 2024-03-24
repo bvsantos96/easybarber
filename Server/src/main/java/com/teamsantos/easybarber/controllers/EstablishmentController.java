@@ -4,6 +4,7 @@ import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.security.services.EstablishmentPermissionEvaluator;
 import com.teamsantos.easybarber.services.EstablishmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -19,6 +20,7 @@ import java.security.Principal;
 @Controller
 @RequestMapping("/establishment")
 public class EstablishmentController {
+    private final static String ESTABLISHMENT_ADMIN = EstablishmentPermissionEvaluator.ESTABLISHMENT_ADMIN;
     private EstablishmentService establishmentService;
 
     @Autowired
@@ -66,7 +68,7 @@ public class EstablishmentController {
     }
 
     @PostMapping("/{id}/employee")
-    @PreAuthorize("hasPermission(#establishmentId, 'ESTABLISHMENT-ADMIN')")
+    @PreAuthorize(EstablishmentPermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addEmployee(@PathVariable("id") Long establishmentId,
             @RequestBody Long userId,
             Principal principal) {

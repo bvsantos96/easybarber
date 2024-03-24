@@ -28,16 +28,18 @@ public class EstablishmentService {
     private final EstablishmentStaffRepository establishmentStaffRepository;
     private final UserRepository userRepository;
     private final UserTypeService userTypeService;
+    private final UserService userService;
 
     @Autowired
     public EstablishmentService(ModelMapper modelMapper, EstablishmentRepository establishmentRepository,
             UserRepository userRepository, UserTypeService userTypeService,
-            EstablishmentStaffRepository establishmentStaffRepository) {
+            EstablishmentStaffRepository establishmentStaffRepository, UserService userService) {
         this.modelMapper = modelMapper;
         this.establishmentRepository = establishmentRepository;
         this.establishmentStaffRepository = establishmentStaffRepository;
         this.userRepository = userRepository;
         this.userTypeService = userTypeService;
+        this.userService = userService;
     }
 
     public EstablishmentDTO getEstablishment(Long id) throws NotFoundException {
@@ -51,7 +53,7 @@ public class EstablishmentService {
     }
 
     public void create(BaseEstablishmentDTO establishmentDTO, Principal principal) {
-        create(establishmentDTO, getUser(principal));
+        create(establishmentDTO, userService.getUser(principal));
     }
 
     public void create(BaseEstablishmentDTO establishmentDTO, User owner) {
@@ -73,13 +75,9 @@ public class EstablishmentService {
         return establishmentRepository.findAllBase(pageable);
     }
 
-    private User getUser(Principal principal) {
-        return userRepository.findByMobileInformation(principal.getName()).orElseThrow(UserNotFoundException::new);
-    }
-
     public void addEmployee(Long establishmentId, Long userId, Principal principal)
             throws NotFoundException, UnsupportedOperationException {
-        addEmployee(establishmentId, userId, getUser(principal));
+        addEmployee(establishmentId, userId, userService.getUser(principal));
     }
 
     public void addEmployee(Long establishmentId, Long userId, User invitor)

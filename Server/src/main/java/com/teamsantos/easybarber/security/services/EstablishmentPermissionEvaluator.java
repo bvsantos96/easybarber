@@ -15,6 +15,9 @@ public class EstablishmentPermissionEvaluator implements PermissionEvaluator {
     private final UserRepository userRepository;
     private final EstablishmentStaffRepository establishmentStaffRepository;
 
+    public static final String _ESTABLISHMENT_ADMIN = "ESTABLISHMENT-ADMIN";
+    public static final String ESTABLISHMENT_ADMIN = "hasPermission(#establishmentId, " + _ESTABLISHMENT_ADMIN + ")";
+
     @Autowired
     public EstablishmentPermissionEvaluator(UserRepository userRepository,
             EstablishmentStaffRepository establishmentStaffRepository) {
@@ -29,7 +32,7 @@ public class EstablishmentPermissionEvaluator implements PermissionEvaluator {
         }
         String strPermission = ((String) permission).toUpperCase();
         switch (strPermission) {
-            case "ESTABLISHMENT-ADMIN":
+            case _ESTABLISHMENT_ADMIN:
                 EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
                         userRepository, establishmentStaffRepository);
                 return root.hasAdminPermission((Long) targetDomainObject);
