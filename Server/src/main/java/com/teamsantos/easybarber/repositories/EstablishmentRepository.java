@@ -21,7 +21,6 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
     @Query("SELECT new com.teamsantos.easybarber.DTO.BaseEstablishmentDTO(e.id, e.name, e.description) FROM Establishment e")
     List<BaseEstablishmentDTO> findAllBase(Pageable pageable);
 
-
     @Query(value = "SELECT *, ST_Distance_Sphere(location, :location) AS distance " +
                    "FROM establishment " +
                    "ORDER BY distance ASC " +
