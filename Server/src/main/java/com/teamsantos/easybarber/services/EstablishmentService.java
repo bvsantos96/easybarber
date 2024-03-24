@@ -98,8 +98,6 @@ public class EstablishmentService {
     }
 
     public List<EstablishmentDTO> findByLocation(double latitude, double longitude, Pageable pageable) {
-        System.out.println(GeometryUtils.parseLocation(latitude, longitude));
-        return establishmentRepository.findClosestEstablishments(GeometryUtils.parseLocation(latitude, longitude))
-                .stream().map((element) -> element.convertToDto()).toList();
+        return establishmentRepository.findClosestEstablishments(GeometryUtils.parseLocation(latitude, longitude));
     }
 }
