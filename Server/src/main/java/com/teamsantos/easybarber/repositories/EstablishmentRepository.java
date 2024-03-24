@@ -21,9 +21,9 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
     @Query("SELECT new com.teamsantos.easybarber.DTO.BaseEstablishmentDTO(e.id, e.name, e.description) FROM Establishment e")
     List<BaseEstablishmentDTO> findAllBase(Pageable pageable);
 
-    @Query("SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location, :location)) " +
+    @Query("SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location, :location)) "
+            +
             "FROM Establishment e " +
-            "ORDER BY ST_Distance_Sphere(e.location, :location) ASC " +
-            "LIMIT 10")
-    List<EstablishmentDTO> findClosestEstablishments(Point location);
+            "ORDER BY ST_Distance_Sphere(e.location, :location) ASC ")
+    List<EstablishmentDTO> findClosestEstablishments(Point location, Pageable pageable);
 }
