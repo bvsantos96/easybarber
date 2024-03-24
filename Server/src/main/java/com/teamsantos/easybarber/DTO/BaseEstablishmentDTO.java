@@ -23,7 +23,7 @@ public class BaseEstablishmentDTO extends BaseResponseDTO {
     // https://chat.openai.com/share/724876ff-1846-4be0-8a49-f4199b3eb7a2
     @JsonIgnore
     public Point getLocation() {
-        return GeometryUtils.parseLocation(longitude, latitude);
+        return GeometryUtils.parseLocation(latitude, longitude);
     }
 
     public BaseEstablishmentDTO() {
@@ -39,5 +39,21 @@ public class BaseEstablishmentDTO extends BaseResponseDTO {
         this.id = id;
         this.name = name;
         this.description = description;
+    }
+
+    public BaseEstablishmentDTO(Long id, String name, String description, String address, Point location) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.address = address;
+        this.latitude = location.getY();
+        this.longitude = location.getX();
+    }
+
+    public BaseEstablishmentDTO(Long id, String name, String description, String address) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.address = address;
     }
 }
