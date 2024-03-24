@@ -31,12 +31,18 @@ public class Establishment {
     @Column
     private Point location;
 
-    public EstablishmentDTO convertToDto(Establishment establishment) {
+    public EstablishmentDTO convertToDto() {
+        return convertToDto(this);
+    }
+
+    public static EstablishmentDTO convertToDto(Establishment establishment) {
         EstablishmentDTO dto = new EstablishmentDTO();
         dto.setId(establishment.getId());
         dto.setName(establishment.getName());
         dto.setDescription(establishment.getDescription());
         dto.setAddress(establishment.getAddress());
+        dto.setLatitude(establishment.getLocation().getY());
+        dto.setLongitude(establishment.getLocation().getX());
         return dto;
     }
 }

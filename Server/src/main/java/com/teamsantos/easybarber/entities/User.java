@@ -36,9 +36,14 @@ public class User {
     @OneToMany(mappedBy = "user")
     private Set<EstablishmentStaff> establishments;
 
+    private int hashCodeWithNullCheck(String item) {
+        return item != null ? item.hashCode() : 0;
+    }
+
     @Override
     public int hashCode() {
-        return email.hashCode() + password.hashCode() + countryMobile.hashCode() + mobile.hashCode() + name.hashCode();
+        return hashCodeWithNullCheck(email) + hashCodeWithNullCheck(password) + hashCodeWithNullCheck(countryMobile)
+                + hashCodeWithNullCheck(mobile) + hashCodeWithNullCheck(name);
     }
 
     @Override

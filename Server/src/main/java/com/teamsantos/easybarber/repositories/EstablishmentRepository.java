@@ -2,6 +2,8 @@ package com.teamsantos.easybarber.repositories;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.entities.Establishment;
+
+import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -19,15 +21,16 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
     @Query("SELECT new com.teamsantos.easybarber.DTO.BaseEstablishmentDTO(e.id, e.name, e.description) FROM Establishment e")
     List<BaseEstablishmentDTO> findAllBase(Pageable pageable);
 
-    @Query(value = "SELECT *, ST_Distance_Sphere(location, POINT(:longitude, :latitude)) AS distance " +
-                   "FROM Establishment " +
+
+    @Query(value = "SELECT *, ST_Distance_Sphere(location, :location) AS distance " +
+                   "FROM establishment " +
                    "ORDER BY distance ASC " +
                    "LIMIT 10", nativeQuery = true)
-    List<Establishment> findClosestEstablishments(double latitude, double longitude);
+    List<Establishment> findClosestEstablishments(Point location);
 
-    @Query(value = "SELECT *, ST_Distance_Sphere(location, POINT(:longitude, :latitude)) AS distance " +
-                   "FROM Establishment " +
+    @Query(value = "SELECT *, ST_Distance_Sphere(location, :location) AS distance " +
+                   "FROM establishment " +
                    "ORDER BY distance ASC " +
                    "LIMIT 1", nativeQuery = true)
-    Establishment findClosestEstablishment(double latitude, double longitude);
+    Establishment findClosestEstablishment(Point location);
 }
