@@ -31,6 +31,30 @@ CREATE TABLE `employee` (
 	PRIMARY KEY (`id`,`user_id`)
 );
 
+CREATE TABLE `service_type` (
+	`id` int NOT NULL,
+	`name` varchar(50) NOT NULL,
+	`descritpion` varchar(255) NOT NULL,
+	`image_url` varchar(255) -- Optional 
+	PRIMARY KEY (`id`)
+);
+
+CREATE TABLE `employee_service` (
+	`id` int NOT NULL,
+	`employee_id` int NOT NULL,
+	`service_type_id` int NOT NULL,
+	`name` int NOT NULL,
+	`description` int NOT NULL,
+	`image_url` varchar(255), 
+	PRIMARY KEY (`id`, `employee_id`, `service_type_id`)
+);
+
+CREATE TABLE establishment_service (
+	`employe_service_id` NOT NULL,
+	`price` number NOT NULL,
+	`active` boolean NOT NULL
+);
+
 CREATE TABLE `appointment` (
 	`id` int NOT NULL,
 	`appointment_type_id` int NOT NULL,
