@@ -39,7 +39,7 @@ CREATE TABLE `service_type` (
 	PRIMARY KEY (`id`)
 );
 
-CREATE TABLE `employee_service` (
+CREATE TABLE `service` (
 	`id` int NOT NULL,
 	`employee_id` int NOT NULL,
 	`service_type_id` int NOT NULL,
@@ -50,7 +50,8 @@ CREATE TABLE `employee_service` (
 );
 
 CREATE TABLE establishment_service (
-	`employe_service_id` NOT NULL,
+	`establishment_id` int NOT NULL,
+	`employe_service_id` int NOT NULL,
 	`price` number NOT NULL,
 	`active` boolean NOT NULL
 );
