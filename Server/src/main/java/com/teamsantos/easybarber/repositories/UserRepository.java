@@ -21,5 +21,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.id = :userId AND u.userTypeId = :userTypeId")
     boolean existsByIdAndUserTypeId(Long userId, Long userTypeId);
 
-    boolean existsByMobileInformation(String mobileInformation);
 }

@@ -7,7 +7,6 @@ import com.teamsantos.easybarber.DTO.UsersDTO;
 import com.teamsantos.easybarber.services.EstablishmentService;
 import com.teamsantos.easybarber.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,8 +19,8 @@ import java.security.Principal;
 
 @Controller
 public class UserController {
-    private EstablishmentService establishmentService;
-    private UserService userService;
+    private final EstablishmentService establishmentService;
+    private final UserService userService;
 
     @Autowired
     public UserController(EstablishmentService establishmentService, UserService userService) {
@@ -69,8 +68,6 @@ public class UserController {
         try {
             establishments.setItems(establishmentService.listEstablishmentStaff(userService.getUserId(principal)));
             return ResponseEntity.ok(establishments);
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(establishments);
         } catch (Exception e) {
             establishments.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(establishments);

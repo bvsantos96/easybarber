@@ -80,7 +80,7 @@ public class UserService {
     }
 
     public UserDTO updateUser(UserCreateDTO userCreateDTO) throws Exception {
-        /**
+        /*
          * Optional<User> optionalUser = userRepository.findById(userId);
          * if (optionalUser.isPresent()) {
          * User user = optionalUser.get();
@@ -93,7 +93,7 @@ public class UserService {
          * else{
          * throw new UserNotFoundException("User was not founded");
          * }
-         **/
+         */
         return null;
     }
 
@@ -105,9 +105,9 @@ public class UserService {
         return modelMapper.map(user, UserDTO.class);
     }
 
-    public UserDTO getUser(Principal principal) {
+    public User getUser(Principal principal) {
         return userRepository.findByMobileInformation(principal.getName())
-                .map((element) -> modelMapper.map(element, UserDTO.class))
+                .map((element) -> modelMapper.map(element, User.class))
                 .orElseThrow(UserNotFoundException::new);
     }
 

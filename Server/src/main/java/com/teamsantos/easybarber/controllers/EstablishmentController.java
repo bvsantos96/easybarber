@@ -4,7 +4,8 @@ import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import com.teamsantos.easybarber.security.services.EstablishmentPermissionEvaluator;
+import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
+import com.teamsantos.easybarber.security.services.RolePermissionEvaluator;
 import com.teamsantos.easybarber.services.EstablishmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -20,8 +21,7 @@ import java.security.Principal;
 @Controller
 @RequestMapping("/establishment")
 public class EstablishmentController {
-    private final static String ESTABLISHMENT_ADMIN = EstablishmentPermissionEvaluator.ESTABLISHMENT_ADMIN;
-    private EstablishmentService establishmentService;
+    private final EstablishmentService establishmentService;
 
     @Autowired
     public EstablishmentController(EstablishmentService establishmentService) {
@@ -57,7 +57,7 @@ public class EstablishmentController {
     @GetMapping("/list")
     public ResponseEntity<BaseListDTO<EstablishmentDTO>> listEstablishments(
             @RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude, Pageable pageable) {
-        BaseListDTO<EstablishmentDTO> listDTO = new BaseListDTO<EstablishmentDTO>();
+        BaseListDTO<EstablishmentDTO> listDTO = new BaseListDTO<>();
         try {
             listDTO.setItems(establishmentService.findByLocation(latitude, longitude, pageable));
             return ResponseEntity.ok(listDTO);
@@ -68,7 +68,7 @@ public class EstablishmentController {
     }
 
     @PostMapping("/{id}/employee")
-    @PreAuthorize(EstablishmentPermissionEvaluator.ESTABLISHMENT_ADMIN)
+    @PreAuthorize(RolePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addEmployee(@PathVariable("id") Long establishmentId,
             @RequestBody Long userId,
             Principal principal) {
@@ -82,24 +82,42 @@ public class EstablishmentController {
         }
     }
 
-    class LocationDTO {
-        private double latitude;
-        private double longitude;
-
-        public double getLatitude() {
-            return latitude;
+    @GetMapping("{id}/services")
+    public ResponseEntity<BaseListDTO<EstablishmentServiceDTO>> listServices(@PathVariable Long id) {
+        BaseListDTO<EstablishmentServiceDTO> listDTO = new BaseListDTO<>();
+        try {
+            listDTO.setItems(establishmentService.listServices(id));
+            return ResponseEntity.ok(listDTO);
+        } catch (Exception e) {
+            listDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(listDTO);
         }
+    }
 
-        public void setLatitude(double latitude) {
-            this.latitude = latitude;
+    @PostMapping("{id}/services")
+    @PreAuthorize(RolePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long id,
+            @RequestBody EstablishmentServiceDTO serviceDTO) {
+        BaseResponseDTO responseDTO = new BaseResponseDTO();
+        try {
+            establishmentService.addService(id, serviceDTO);
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            responseDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(responseDTO);
         }
+    }
 
-        public double getLongitude() {
-            return longitude;
-        }
-
-        public void setLongitude(double longitude) {
-            this.longitude = longitude;
+    @DeleteMapping("{id}/services/{serviceId}")
+    @PreAuthorize(RolePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    public ResponseEntity<BaseResponseDTO> removeService(@PathVariable Long id, @PathVariable Long serviceId) {
+        BaseResponseDTO responseDTO = new BaseResponseDTO();
+        try {
+            establishmentService.removeService(id, serviceId);
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            responseDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(responseDTO);
         }
     }
 }
