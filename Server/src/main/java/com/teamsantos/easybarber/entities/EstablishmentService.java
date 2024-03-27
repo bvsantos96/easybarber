@@ -2,27 +2,27 @@ package com.teamsantos.easybarber.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Data
 @Entity
-public class ServiceType {
+public class EstablishmentService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ManyToOne
+    @JoinColumn(name = "establishment_id")
+    private Establishment establishment;
+    @ManyToOne
+    @JoinColumn(name = "employee_id")
+    private User employee;
     @Column
-    private String name;
+    private double price;
     @Column
-    private String description;
-    @Column
-    private String imageUrl;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", nullable = false)
-    private Service service;
+    private boolean active;
 }

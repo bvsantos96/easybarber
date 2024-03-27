@@ -7,8 +7,10 @@ import org.locationtech.jts.geom.Point;
 
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,8 +26,10 @@ public class Establishment {
     private String name;
     @Column
     private String description;
-    @OneToMany(mappedBy = "establishment")
+    @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<EstablishmentStaff> staff;
+    @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<EstablishmentService> services;
     @Column
     private String address;
     @Column
