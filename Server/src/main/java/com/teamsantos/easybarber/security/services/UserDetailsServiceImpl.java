@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Service
 public class UserDetailsServiceImpl implements org.springframework.security.core.userdetails.UserDetailsService {
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserDetailsServiceImpl(UserRepository userRepository) {
@@ -26,7 +26,7 @@ public class UserDetailsServiceImpl implements org.springframework.security.core
     public UserDetails loadUserByUsername(String mobileInformation) throws UsernameNotFoundException {
         Optional<User> userOptional = userRepository.findByMobileInformation(mobileInformation);
 
-        User user = userOptional.orElseThrow(() -> new UserNotFoundException());
+        User user = userOptional.orElseThrow(UserNotFoundException::new);
 
         return new org.springframework.security.core.userdetails.User(
                 user.getMobileInformation(),

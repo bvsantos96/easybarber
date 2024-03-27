@@ -2,6 +2,7 @@ package com.teamsantos.easybarber.services;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.EstablishmentStaff;
 import com.teamsantos.easybarber.entities.User;
@@ -11,6 +12,7 @@ import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.utils.GeometryUtils;
 
+import org.locationtech.jts.io.ParseException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -47,7 +49,7 @@ public class EstablishmentService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public List<EstablishmentDTO> listEstablishmentStaff(Long id) throws NotFoundException {
+    public List<EstablishmentDTO> listEstablishmentStaff(Long id) {
         return userRepository.findOwnedEstablishmentsById(id).stream()
                 .map((element) -> modelMapper.map(element, EstablishmentDTO.class)).toList();
     }
@@ -95,8 +97,34 @@ public class EstablishmentService {
         }
     }
 
-    public List<EstablishmentDTO> findByLocation(double latitude, double longitude, Pageable pageable) {
+    public List<EstablishmentDTO> findByLocation(double latitude, double longitude, Pageable pageable)
+            throws ParseException {
         return establishmentRepository.findClosestEstablishments(GeometryUtils.parseLocation(latitude, longitude),
                 pageable);
+    }
+
+    public List<EstablishmentServiceDTO> listServices(Long id) {
+        return establishmentRepository.findById(id).map((element) -> element.getServices().stream()
+                .map((service) -> modelMapper.map(service, EstablishmentServiceDTO.class)).toList()).orElseThrow();
+    }
+
+    public void addService(Long id, EstablishmentServiceDTO serviceDTO) {
+        if (serviceDTO != null) {
+            Establishment establishment = establishmentRepository.findById(id).orElseThrow();
+            establishment.getStaff().stream()
+                    .filter((staff) -> staff.getUser().getId().equals(serviceDTO.getEmployeeId()))
+                    .findFirst().orElseThrow();
+            establishment.getServices()
+                    .add(modelMapper.map(serviceDTO, com.teamsantos.easybarber.entities.EstablishmentService.class));
+            establishmentRepository.save(establishment);
+        }
+    }
+
+    public void removeService(Long id, Long serviceId) {
+        if (serviceId != null) {
+            Establishment establishment = establishmentRepository.findById(id).orElseThrow();
+            establishment.getServices().removeIf((service) -> service.getId().equals(serviceId));
+            establishmentRepository.save(establishment);
+        }
     }
 }

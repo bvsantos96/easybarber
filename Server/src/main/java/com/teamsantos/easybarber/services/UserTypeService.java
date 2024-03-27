@@ -13,8 +13,8 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserTypeService implements ApplicationListener<ApplicationReadyEvent> {
-    private UserTypeRepository userTypeRepository;
-    private UserRepository userRepository;
+    private final UserTypeRepository userTypeRepository;
+    private final UserRepository userRepository;
 
     public UserTypeService(UserTypeRepository userTypeRepository, UserRepository userRepository) {
         this.userTypeRepository = userTypeRepository;
@@ -36,14 +36,14 @@ public class UserTypeService implements ApplicationListener<ApplicationReadyEven
         if (userTypes == null || userTypes.isEmpty()) {
             throw new RuntimeException("UserTypes not initialized");
         }
-        return userTypes.get(userType.toString().toUpperCase());
+        return userTypes.get(userType.name().toUpperCase());
     }
 
     public static boolean isEmployee(User user) {
         if (userTypes == null || userTypes.isEmpty()) {
             throw new RuntimeException("UserTypes not initialized");
         }
-        return user.getUserTypeId() == userTypes.get(UserTypes.EMPLOYEE);
+        return user.getUserTypeId().equals(userTypes.get(UserTypes.EMPLOYEE.name()));
     }
 
     public boolean isEmployee(Long userId) {

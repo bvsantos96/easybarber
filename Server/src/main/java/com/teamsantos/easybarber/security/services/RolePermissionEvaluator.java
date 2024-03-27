@@ -9,17 +9,20 @@ import org.springframework.stereotype.Service;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.security.filters.EstablishmentSecurityExpressionRoot;
+import com.teamsantos.easybarber.security.filters.UserSecurityExpressionRoot;
 
 @Service
-public class EstablishmentPermissionEvaluator implements PermissionEvaluator {
+public class RolePermissionEvaluator implements PermissionEvaluator {
     private final UserRepository userRepository;
     private final EstablishmentStaffRepository establishmentStaffRepository;
 
     public static final String _ESTABLISHMENT_ADMIN = "ESTABLISHMENT-ADMIN";
     public static final String ESTABLISHMENT_ADMIN = "hasPermission(#establishmentId, " + _ESTABLISHMENT_ADMIN + ")";
+    public static final String _IS_EMPLOYEE = "IS-EMPLOYEE";
+    public static final String IS_EMPLOYEE = "hasPermission(" + _IS_EMPLOYEE + ")";
 
     @Autowired
-    public EstablishmentPermissionEvaluator(UserRepository userRepository,
+    public RolePermissionEvaluator(UserRepository userRepository,
             EstablishmentStaffRepository establishmentStaffRepository) {
         this.userRepository = userRepository;
         this.establishmentStaffRepository = establishmentStaffRepository;
@@ -31,15 +34,19 @@ public class EstablishmentPermissionEvaluator implements PermissionEvaluator {
             return false;
         }
         String strPermission = ((String) permission).toUpperCase();
-        switch (strPermission) {
-            case _ESTABLISHMENT_ADMIN:
+        return switch (strPermission) {
+            case _ESTABLISHMENT_ADMIN -> {
                 EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
                         userRepository, establishmentStaffRepository);
-                return root.hasAdminPermission((Long) targetDomainObject);
-            default:
-                throw new UnsupportedOperationException(
-                        "hasPermission is not supported for permission " + strPermission);
-        }
+                yield root.hasAdminPermission((Long) targetDomainObject);
+            }
+            case _IS_EMPLOYEE -> {
+                UserSecurityExpressionRoot userRoot = new UserSecurityExpressionRoot(authentication, userRepository);
+                yield userRoot.isEmployee();
+            }
+            default -> throw new UnsupportedOperationException(
+                    "hasPermission is not supported for permission " + strPermission);
+        };
     }
 
     @Override
@@ -49,13 +56,18 @@ public class EstablishmentPermissionEvaluator implements PermissionEvaluator {
             return false;
         }
         String sPermission = ((String) permission).toUpperCase();
-        switch (sPermission) {
-            case "ESTABLISHMENT-ADMIN":
+        return switch (sPermission) {
+            case _ESTABLISHMENT_ADMIN -> {
                 EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
                         userRepository, establishmentStaffRepository);
-                return root.hasAdminPermission(Long.parseLong(targetType));
-            default:
+                yield root.hasAdminPermission(Long.parseLong(targetType));
+            }
+            case _IS_EMPLOYEE -> {
+                UserSecurityExpressionRoot userRoot = new UserSecurityExpressionRoot(authentication, userRepository);
+                yield userRoot.isEmployee();
+            }
+            default ->
                 throw new UnsupportedOperationException("hasPermission is not supported for permission " + sPermission);
-        }
+        };
     }
 }

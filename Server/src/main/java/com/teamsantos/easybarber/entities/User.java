@@ -1,20 +1,16 @@
 package com.teamsantos.easybarber.entities;
 
+import jakarta.persistence.*;
+import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import lombok.Data;
-
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Entity
 public class User {
     @Id
@@ -37,11 +33,14 @@ public class User {
     @Column
     private LocalDateTime tokenExpiration;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Set<EstablishmentStaff> establishments;
-    @OneToMany(targetEntity = Service.class, mappedBy = "employee_id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Service> children;
+    @OneToMany(targetEntity = Service.class, mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<Service> services;
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<EstablishmentService> services;
+    @ToString.Exclude
+    private Set<EstablishmentService> establishmentServices;
 
     private int hashCodeWithNullCheck(String item) {
         return item != null ? item.hashCode() : 0;
@@ -83,8 +82,8 @@ public class User {
      * This method checks if value2 is null or empty, if it is, it returns true, if
      * not, it checks if value1 is equal to value2
      * 
-     * @param value1
-     * @param value2
+     * @param value1 string 1
+     * @param value2 string 2
      * @return boolean representing the comparison
      */
     private boolean isNullOrEqual(String value1, String value2) {
