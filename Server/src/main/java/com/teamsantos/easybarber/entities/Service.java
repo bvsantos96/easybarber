@@ -7,22 +7,25 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import lombok.Data;
 
 @Data
 @Entity
-public class ServiceType {
+public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "employee_id", nullable = false)
+    private User employee;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "service")
+    private ServiceType serviceType;
     @Column
-    private String name;
+    private int name;
     @Column
-    private String description;
+    private int description;
     @Column
     private String imageUrl;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", nullable = false)
-    private Service service;
 }

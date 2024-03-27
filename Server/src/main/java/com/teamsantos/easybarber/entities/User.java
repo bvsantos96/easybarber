@@ -1,10 +1,13 @@
 package com.teamsantos.easybarber.entities;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -33,8 +36,12 @@ public class User {
     private String mobileInformation;
     @Column
     private LocalDateTime tokenExpiration;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<EstablishmentStaff> establishments;
+    @OneToMany(targetEntity = Service.class, mappedBy = "employee_id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Service> children;
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<EstablishmentService> services;
 
     private int hashCodeWithNullCheck(String item) {
         return item != null ? item.hashCode() : 0;
