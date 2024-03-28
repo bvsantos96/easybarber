@@ -1,6 +1,5 @@
 package com.teamsantos.easybarber.entities;
 
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -47,15 +46,19 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private Set<EstablishmentStaff> establishments;
-    @OneToMany(targetEntity = Service.class, mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Service> services;
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private Set<EstablishmentService> establishmentServices;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Set<Appointment> appointment;
     @OneToOne
-    @JoinColumn(name = "employee")
-    private Employee employee;   
+    @JoinColumn(name = "user")
+    @ToString.Exclude
+    private Employee employee;
 
     private int hashCodeWithNullCheck(String item) {
         return item != null ? item.hashCode() : 0;
