@@ -2,6 +2,9 @@ package com.teamsantos.easybarber.entities;
 
 import java.time.LocalDateTime;
 import java.util.Set;
+
+import com.teamsantos.easybarber.DTO.UserCreateDTO;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -48,7 +51,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private Set<Appointment> appointment;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "user")
     @ToString.Exclude
     private Employee employee;
@@ -103,5 +106,18 @@ public class User {
 
     private boolean isNullOrEmpty(String value) {
         return value == null || value.isEmpty();
+    }
+
+    /**
+     * Updates the user with the non-null values of the userDTO
+     * Note: This method does not update the passoword, mobileInformation or
+     * userTypeId. This is because these values should not be updated by a global
+     * user update.
+     * 
+     * @param userDTO the userDTO with the new values
+     */
+    public void updateNonNullValues(UserCreateDTO userDTO) {
+        if (userDTO.getName() != null)
+            name = userDTO.getName();
     }
 }

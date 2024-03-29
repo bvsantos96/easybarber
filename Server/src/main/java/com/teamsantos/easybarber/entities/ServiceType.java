@@ -21,7 +21,7 @@ public class ServiceType {
     private String description;
     @Column
     private String imageUrl;
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "service_id", nullable = false)
     @ToString.Exclude
     private Service service;
