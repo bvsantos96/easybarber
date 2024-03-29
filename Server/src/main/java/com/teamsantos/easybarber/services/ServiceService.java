@@ -1,5 +1,7 @@
 package com.teamsantos.easybarber.services;
 
+import java.security.Principal;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,25 +16,31 @@ import com.teamsantos.easybarber.repositories.ServiceTypeRepository;
 public class ServiceService {
     private final ServiceRepository serviceRepository;
     private final ServiceTypeRepository serviceTypeRepository;
+    private final UserTypeService userTypeService;
     private final ModelMapper modelMapper;
 
     @Autowired
     public ServiceService(ServiceRepository serviceRepository, ServiceTypeRepository serviceTypeRepository,
+            UserTypeService userTypeService,
             ModelMapper modelMapper) {
         this.serviceRepository = serviceRepository;
         this.serviceTypeRepository = serviceTypeRepository;
+        this.userTypeService = userTypeService;
         this.modelMapper = modelMapper;
     }
 
-    public void createService(ServiceDTO service) {
-        serviceRepository.save(modelMapper.map(service, com.teamsantos.easybarber.entities.Service.class));
+    public void createService(ServiceDTO serviceDTO, Principal principal) {
+        com.teamsantos.easybarber.entities.Service service = modelMapper.map(serviceDTO,
+                com.teamsantos.easybarber.entities.Service.class);
+        service.setEmployee(userTypeService.getEmployee(principal));
+        serviceRepository.save(service);
     }
 
-    public void updateService(ServiceDTO service) {
-        serviceRepository.save(modelMapper.map(service, com.teamsantos.easybarber.entities.Service.class));
+    public void updateService(ServiceDTO serviceDTO) {
+        serviceRepository.save(modelMapper.map(serviceDTO, com.teamsantos.easybarber.entities.Service.class));
     }
 
-    public void createType(ServiceTypeDTO serviceDTO) {
+    public void createType(ServiceTypeDTO serviceDTO, Principal principal) {
         serviceTypeRepository.save(modelMapper.map(serviceDTO, ServiceType.class));
     }
 

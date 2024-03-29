@@ -6,26 +6,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+
+import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
+import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.security.filters.EstablishmentSecurityExpressionRoot;
+import com.teamsantos.easybarber.security.filters.ServiceSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.filters.UserSecurityExpressionRoot;
 
 @Service
-public class RolePermissionEvaluator implements PermissionEvaluator {
+public class PrePermissionEvaluator implements PermissionEvaluator {
     private final UserRepository userRepository;
     private final EstablishmentStaffRepository establishmentStaffRepository;
+    private final EmployeeRepository employeeRepository;
+    private final ServiceRepository serviceRepository;
 
     public static final String _ESTABLISHMENT_ADMIN = "ESTABLISHMENT-ADMIN";
     public static final String ESTABLISHMENT_ADMIN = "hasPermission(#establishmentId, " + _ESTABLISHMENT_ADMIN + ")";
     public static final String _IS_EMPLOYEE = "IS-EMPLOYEE";
     public static final String IS_EMPLOYEE = "hasPermission(" + _IS_EMPLOYEE + ")";
+    public static final String _SERVICE_OWNER = "SERVICE-OWNER";
+    public static final String SERVICE_OWNER = "hasPermission(#serviceId, " + _SERVICE_OWNER + ")";
 
     @Autowired
-    public RolePermissionEvaluator(UserRepository userRepository,
-            EstablishmentStaffRepository establishmentStaffRepository) {
+    public PrePermissionEvaluator(UserRepository userRepository,
+            EstablishmentStaffRepository establishmentStaffRepository, EmployeeRepository employeeRepository,
+            ServiceRepository serviceRepository) {
         this.userRepository = userRepository;
         this.establishmentStaffRepository = establishmentStaffRepository;
+        this.employeeRepository = employeeRepository;
+        this.serviceRepository = serviceRepository;
     }
 
     @Override
@@ -41,8 +52,14 @@ public class RolePermissionEvaluator implements PermissionEvaluator {
                 yield root.hasAdminPermission((Long) targetDomainObject);
             }
             case _IS_EMPLOYEE -> {
-                UserSecurityExpressionRoot userRoot = new UserSecurityExpressionRoot(authentication, userRepository);
+                UserSecurityExpressionRoot userRoot = new UserSecurityExpressionRoot(authentication, userRepository,
+                        employeeRepository);
                 yield userRoot.isEmployee();
+            }
+            case _SERVICE_OWNER -> {
+                ServiceSecurityExpressionRoot root = new ServiceSecurityExpressionRoot(authentication,
+                        serviceRepository);
+                yield root.hasServiceOwnerPermission((Long) targetDomainObject);
             }
             default -> throw new UnsupportedOperationException(
                     "hasPermission is not supported for permission " + strPermission);
@@ -63,8 +80,13 @@ public class RolePermissionEvaluator implements PermissionEvaluator {
                 yield root.hasAdminPermission(Long.parseLong(targetType));
             }
             case _IS_EMPLOYEE -> {
-                UserSecurityExpressionRoot userRoot = new UserSecurityExpressionRoot(authentication, userRepository);
+                UserSecurityExpressionRoot userRoot = new UserSecurityExpressionRoot(authentication, userRepository, employeeRepository);
                 yield userRoot.isEmployee();
+            }
+            case _SERVICE_OWNER -> {
+                ServiceSecurityExpressionRoot root = new ServiceSecurityExpressionRoot(authentication,
+                        serviceRepository);
+                yield root.hasServiceOwnerPermission(Long.parseLong(targetType));
             }
             default ->
                 throw new UnsupportedOperationException("hasPermission is not supported for permission " + sPermission);

@@ -1,5 +1,7 @@
 package com.teamsantos.easybarber.controllers;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
-import com.teamsantos.easybarber.security.services.RolePermissionEvaluator;
+import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.ServiceService;
 
 @Controller
@@ -25,11 +27,11 @@ public class ServiceController {
     }
 
     @PostMapping
-    @PreAuthorize(RolePermissionEvaluator.IS_EMPLOYEE)
-    public ResponseEntity<BaseResponseDTO> createServiceType(@RequestBody ServiceTypeDTO serviceDTO) {
+    @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
+    public ResponseEntity<BaseResponseDTO> createServiceType(@RequestBody ServiceTypeDTO serviceDTO, Principal principal) {
         BaseResponseDTO response = new BaseResponseDTO();
         try {
-            serviceService.createType(serviceDTO);
+            serviceService.createType(serviceDTO, principal);
             response.setResponseMessage("Service type created successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -39,7 +41,7 @@ public class ServiceController {
     }
 
     @PutMapping
-    @PreAuthorize(RolePermissionEvaluator.IS_EMPLOYEE)
+    @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
     public ResponseEntity<BaseResponseDTO> updateServiceType(@RequestBody ServiceTypeDTO serviceDTO) {
         BaseResponseDTO response = new BaseResponseDTO();
         try {

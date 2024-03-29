@@ -1,9 +1,12 @@
 package com.teamsantos.easybarber.entities;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -15,7 +18,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Entity
 public class Employee {
     @Id
@@ -25,9 +31,20 @@ public class Employee {
     private User user;
     @Column
     private String description;
-    @Column
+    @Column(nullable = false, columnDefinition = "DOUBLE DEFAULT 0.0")
     private double rating;
+    @Column(nullable = false, columnDefinition = "SMALLINT DEFAULT 0")
+    private short nRating;
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Appointment> appointments;
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Set<EstablishmentStaff> establishments;
+    @OneToMany(mappedBy = "invitor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Set<EstablishmentStaff> invitations;
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private List<Service> services;
 }

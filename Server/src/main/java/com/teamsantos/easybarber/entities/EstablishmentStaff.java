@@ -15,8 +15,8 @@ public class EstablishmentStaff {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "employee_id")
+    private Employee employee;
     @ManyToOne
     @JoinColumn(name = "establishment_id")
     private Establishment establishment;
@@ -28,10 +28,11 @@ public class EstablishmentStaff {
     private boolean deleted;
     @ManyToOne
     @JoinColumn(name = "invitor_id")
-    private User invitor;
+    private Employee invitor;
 
-    public EstablishmentStaff(User user, Establishment establishment, boolean admin, boolean approved, User invitor) {
-        this.user = user;
+    public EstablishmentStaff(Employee employee, Establishment establishment, boolean admin, boolean approved,
+            Employee invitor) {
+        this.employee = employee;
         this.establishment = establishment;
         this.admin = admin;
         this.approved = approved;

@@ -1,13 +1,17 @@
 package com.teamsantos.easybarber.services;
 
+import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.entities.UserType;
+import com.teamsantos.easybarber.exceptions.UserNotFoundException;
+import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.repositories.UserTypeRepository;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -15,10 +19,13 @@ import java.util.stream.Collectors;
 public class UserTypeService implements ApplicationListener<ApplicationReadyEvent> {
     private final UserTypeRepository userTypeRepository;
     private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
 
-    public UserTypeService(UserTypeRepository userTypeRepository, UserRepository userRepository) {
+    public UserTypeService(UserTypeRepository userTypeRepository, UserRepository userRepository,
+            EmployeeRepository employeeRepository) {
         this.userTypeRepository = userTypeRepository;
         this.userRepository = userRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     public enum UserTypes {
@@ -46,11 +53,24 @@ public class UserTypeService implements ApplicationListener<ApplicationReadyEven
         return user.getUserTypeId().equals(userTypes.get(UserTypes.EMPLOYEE.name()));
     }
 
+    /**
+     * DEPRECATED: Note this method might nolonger be good enough, as it does not
+     * check if the user is connected to an employee entity
+     * 
+     * @param userId the id of the user
+     * @return true if the user has user type employee
+     */
     public boolean isEmployee(Long userId) {
         if (userTypes == null || userTypes.isEmpty()) {
             throw new RuntimeException("UserTypes not initialized");
         }
-        return userRepository.existsByIdAndUserTypeId(userId, getUserType(UserTypes.EMPLOYEE));
+        return userRepository.existsByIdAndUserTypeId(userId, getUserType(UserTypes.EMPLOYEE))
+                && employeeRepository.existsByUserId(userId);
+    }
+
+    public Employee getEmployee(Principal principal) {
+        return employeeRepository.findByUserId(userRepository.findByMobileInformation(principal.getName())
+                .orElseThrow(UserNotFoundException::new).getId()).orElseThrow(UserNotFoundException::new);
     }
 
     @Override

@@ -18,7 +18,7 @@ public class Service {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "employee_id", nullable = false)
     @ToString.Exclude
-    private User employee;
+    private Employee employee;
     @OneToOne(mappedBy = "service")
     private ServiceType serviceType;
     @Column

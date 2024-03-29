@@ -1,7 +1,6 @@
 package com.teamsantos.easybarber.entities;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -43,12 +42,6 @@ public class User {
     private String mobileInformation;
     @Column
     private LocalDateTime tokenExpiration;
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Set<EstablishmentStaff> establishments;
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private List<Service> services;
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private Set<EstablishmentService> establishmentServices;
