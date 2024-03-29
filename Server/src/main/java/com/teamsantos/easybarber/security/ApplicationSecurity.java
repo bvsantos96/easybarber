@@ -1,7 +1,7 @@
 package com.teamsantos.easybarber.security;
 
 import com.teamsantos.easybarber.security.filters.JwtAuthenticationFilter;
-import com.teamsantos.easybarber.security.services.RolePermissionEvaluator;
+import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.security.services.UserDetailsServiceImpl;
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.security.utils.PasswordEncoding;
@@ -26,12 +26,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class ApplicationSecurity {
 
     private final UserDetailsServiceImpl userDetailsService;
-    private final RolePermissionEvaluator rolePermissionEvaluator;
+    private final PrePermissionEvaluator rolePermissionEvaluator;
     private final JwtUtils jwtUtils;
 
     @Autowired
     public ApplicationSecurity(UserDetailsServiceImpl userDetailsService, JwtUtils jwtUtils,
-            RolePermissionEvaluator establishmentPermissionEvaluator) {
+            PrePermissionEvaluator establishmentPermissionEvaluator) {
         this.userDetailsService = userDetailsService;
         this.jwtUtils = jwtUtils;
         this.rolePermissionEvaluator = establishmentPermissionEvaluator;

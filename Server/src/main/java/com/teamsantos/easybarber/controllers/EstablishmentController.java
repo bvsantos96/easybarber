@@ -5,7 +5,7 @@ import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
-import com.teamsantos.easybarber.security.services.RolePermissionEvaluator;
+import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.EstablishmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -68,13 +68,13 @@ public class EstablishmentController {
     }
 
     @PostMapping("/{id}/employee")
-    @PreAuthorize(RolePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addEmployee(@PathVariable("id") Long establishmentId,
-            @RequestBody Long userId,
+            @RequestBody Long employeeId,
             Principal principal) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.addEmployee(establishmentId, userId, principal);
+            establishmentService.addEmployee(establishmentId, employeeId, principal);
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());
@@ -95,7 +95,7 @@ public class EstablishmentController {
     }
 
     @PostMapping("{id}/services")
-    @PreAuthorize(RolePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long id,
             @RequestBody EstablishmentServiceDTO serviceDTO) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
@@ -109,7 +109,7 @@ public class EstablishmentController {
     }
 
     @DeleteMapping("{id}/services/{serviceId}")
-    @PreAuthorize(RolePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> removeService(@PathVariable Long id, @PathVariable Long serviceId) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {

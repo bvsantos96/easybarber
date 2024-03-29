@@ -1,10 +1,13 @@
 package com.teamsantos.easybarber.services;
 
+import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
+import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
+import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.security.utils.PasswordEncoding;
@@ -20,14 +23,15 @@ import java.util.stream.Collectors;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-
+    private final EmployeeRepository employeeRepository;
     private final ModelMapper modelMapper;
-
     private final JwtUtils jwtUtils;
 
     @Autowired
-    public UserService(UserRepository userRepository, ModelMapper modelMapper, JwtUtils jwtUtils) {
+    public UserService(UserRepository userRepository, EmployeeRepository employeeRepository, ModelMapper modelMapper,
+            JwtUtils jwtUtils) {
         this.userRepository = userRepository;
+        this.employeeRepository = employeeRepository;
         this.modelMapper = modelMapper;
         this.jwtUtils = jwtUtils;
     }
@@ -56,6 +60,12 @@ public class UserService {
         return createUser(userCreateDTO, false);
     }
 
+    private void createEmployee(EmployeeDTO employeeDTO, Long userId) throws UserAlreadyExistsException {
+        if (employeeRepository.existsByUserId(userId))
+            throw new UserAlreadyExistsException();
+        employeeRepository.save(modelMapper.map(employeeDTO, Employee.class));
+    }
+
     public UserDTO createUser(UserCreateDTO userCreateDTO, boolean isEmployee) throws Exception {
         userCreateDTO.setPassword(PasswordEncoding.encode(userCreateDTO.getPassword()));
         User user = modelMapper.map(userCreateDTO, User.class);
@@ -64,7 +74,9 @@ public class UserService {
                 Optional<User> oUser = userRepository.findByMobileInformation(user.getMobileInformation());
                 if (oUser.isPresent()) {
                     user = oUser.get();
-                    if (!isEmployee || UserTypeService.isEmployee(user) || user.equalsIgnoreEmptyValues(userCreateDTO))
+                    if (!isEmployee
+                            || (UserTypeService.isEmployee(user) && employeeRepository.existsByUserId(user.getId()))
+                            || user.equalsIgnoreEmptyValues(userCreateDTO))
                         throw new UserAlreadyExistsException();
                 }
             } catch (Exception e) {
@@ -72,11 +84,12 @@ public class UserService {
             }
             user.setUserTypeId(UserTypeService
                     .getUserType(isEmployee ? UserTypeService.UserTypes.EMPLOYEE : UserTypeService.UserTypes.CLIENT));
-            userRepository.save(user);
+            user = userRepository.save(user);
+            if (isEmployee)
+                createEmployee((EmployeeDTO) userCreateDTO, user.getId());
             return modelMapper.map(user, UserDTO.class);
         } else
             throw new IllegalArgumentException("User cannot be null");
-
     }
 
     public UserDTO updateUser(UserCreateDTO userCreateDTO) throws Exception {
@@ -109,6 +122,10 @@ public class UserService {
         return userRepository.findByMobileInformation(principal.getName())
                 .map((element) -> modelMapper.map(element, User.class))
                 .orElseThrow(UserNotFoundException::new);
+    }
+
+    public Employee getEmployee(Principal principal) {
+        return employeeRepository.findByUserId(getUserId(principal)).orElseThrow(UserNotFoundException::new);
     }
 
     public Long getUserId(Principal principal) {
