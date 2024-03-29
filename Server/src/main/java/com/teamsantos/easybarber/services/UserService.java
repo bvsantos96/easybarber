@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.services;
 
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
 import com.teamsantos.easybarber.entities.Employee;
@@ -8,6 +9,7 @@ import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
+import com.teamsantos.easybarber.repositories.EstablishmentRepository;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.security.utils.PasswordEncoding;
@@ -24,14 +26,17 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final EmployeeRepository employeeRepository;
+    private final EstablishmentRepository establishmentRepository;
     private final ModelMapper modelMapper;
     private final JwtUtils jwtUtils;
 
     @Autowired
-    public UserService(UserRepository userRepository, EmployeeRepository employeeRepository, ModelMapper modelMapper,
+    public UserService(UserRepository userRepository, EmployeeRepository employeeRepository,
+            EstablishmentRepository establishmentRepository, ModelMapper modelMapper,
             JwtUtils jwtUtils) {
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
+        this.establishmentRepository = establishmentRepository;
         this.modelMapper = modelMapper;
         this.jwtUtils = jwtUtils;
     }
@@ -134,5 +139,10 @@ public class UserService {
 
     public boolean userChangePermissions(Principal principal, String mobileInformation) {
         return principal.getName().equals(mobileInformation);
+    }
+
+    public List<EstablishmentDTO> getEstablishments(Principal principal, boolean owned) {
+        return establishmentRepository.findEstablishmentsByEmployeeId(getUserId(principal), owned).stream()
+                .map(establishment -> modelMapper.map(establishment, EstablishmentDTO.class)).toList();
     }
 }

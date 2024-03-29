@@ -80,7 +80,8 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
                 yield root.hasAdminPermission(Long.parseLong(targetType));
             }
             case _IS_EMPLOYEE -> {
-                UserSecurityExpressionRoot userRoot = new UserSecurityExpressionRoot(authentication, userRepository, employeeRepository);
+                UserSecurityExpressionRoot userRoot = new UserSecurityExpressionRoot(authentication, userRepository,
+                        employeeRepository);
                 yield userRoot.isEmployee();
             }
             case _SERVICE_OWNER -> {

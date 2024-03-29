@@ -11,8 +11,8 @@ Restructure employee related code (from user type to employee class)
 - [x] Add employee to establishment
 - [x] Validations for isEmployee and can employee change establishment
 - [x] Register services to employee 
-- [ ] List employee services
-- [ ] List employee establishments
+- [x] List employee services
+- [x] List employee establishments
 ## Create requests postman
 Create request in postman for every available endpoint
 ## Create tests

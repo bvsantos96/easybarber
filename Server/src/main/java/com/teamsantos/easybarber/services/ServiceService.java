@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.services;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
+import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.ServiceType;
 import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.repositories.ServiceTypeRepository;
@@ -46,5 +48,11 @@ public class ServiceService {
 
     public void updateType(ServiceTypeDTO serviceDTO) {
         serviceTypeRepository.save(modelMapper.map(serviceDTO, ServiceType.class));
+    }
+
+    public List<ServiceDTO> getServices(Principal principal) {
+        Employee employee = userTypeService.getEmployee(principal);
+        return serviceRepository.findByEmployeeId(employee.getId()).stream()
+                .map(service -> modelMapper.map(service, ServiceDTO.class)).toList();
     }
 }

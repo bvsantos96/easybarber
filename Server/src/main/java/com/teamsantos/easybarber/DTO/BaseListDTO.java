@@ -9,4 +9,12 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 public class BaseListDTO<T> extends BaseResponseDTO {
     private List<T> items;
+
+    public BaseListDTO(List<T> items) {
+        this.items = items;
+    }
+
+    public BaseListDTO(String message) {
+        super(message);
+    }
 }
