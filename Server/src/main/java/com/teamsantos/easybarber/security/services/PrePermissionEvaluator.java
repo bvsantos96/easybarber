@@ -28,6 +28,8 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
     public static final String IS_EMPLOYEE = "hasPermission(" + _IS_EMPLOYEE + ")";
     public static final String _SERVICE_OWNER = "SERVICE-OWNER";
     public static final String SERVICE_OWNER = "hasPermission(#serviceId, " + _SERVICE_OWNER + ")";
+    public static final String _IS_USER = "IS-USER";
+    public static final String IS_USER = "hasPermission(#userId, " + _IS_USER + ")";
 
     @Autowired
     public PrePermissionEvaluator(UserRepository userRepository,
@@ -61,6 +63,11 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
                         serviceRepository);
                 yield root.hasServiceOwnerPermission((Long) targetDomainObject);
             }
+            case _IS_USER -> {
+                UserSecurityExpressionRoot userRoot = new UserSecurityExpressionRoot(authentication, userRepository,
+                        employeeRepository);
+                yield userRoot.isUser((Long) targetDomainObject);
+            }
             default -> throw new UnsupportedOperationException(
                     "hasPermission is not supported for permission " + strPermission);
         };
@@ -88,6 +95,11 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
                 ServiceSecurityExpressionRoot root = new ServiceSecurityExpressionRoot(authentication,
                         serviceRepository);
                 yield root.hasServiceOwnerPermission(Long.parseLong(targetType));
+            }
+            case _IS_USER -> {
+                UserSecurityExpressionRoot userRoot = new UserSecurityExpressionRoot(authentication, userRepository,
+                        employeeRepository);
+                yield userRoot.isUser(Long.parseLong(targetType));
             }
             default ->
                 throw new UnsupportedOperationException("hasPermission is not supported for permission " + sPermission);

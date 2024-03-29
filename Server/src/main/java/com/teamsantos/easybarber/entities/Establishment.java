@@ -25,7 +25,7 @@ public class Establishment {
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private Set<EstablishmentStaff> staff;
-    @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "establishment", fetch = FetchType.LAZY)
     @ToString.Exclude
     private Set<EstablishmentService> services;
     @Column

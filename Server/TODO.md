@@ -13,19 +13,29 @@ Restructure employee related code (from user type to employee class)
 - [x] Register services to employee 
 - [x] List employee services
 - [x] List employee establishments
+- [x] Update user info
+- [x] Delete user
 
 ## Create requests postman (DONE)
 Create request in postman for every available endpoint
 
-## Create tests
-Create a group of tests that for a clean database run all the functionality (same as the requests available) as checks if the result is what we expected
-
-## Define public requests
-Make requests that should be public available with no authentication
+## Transactional methods
+Make it so every method that does more than one write from DB has a @Transaction flag
 
 ## Make list requests pageable
 - [ ] Make all list requests pageable
 - [ ] Update all list requests in postman to use the pageable methodology
 
-### Questions:
+## User deletion
+- Deletion of users and employee should not really delete the entities, simple disable them.
+    - We need to have information regarding the appointments they had. Users can still see with who they had their appointment even if the Employee is no longer present in the application
+- We need to alert the users that their appointments will be deleted since the employee that they are booked with will be deleted
+
+## Define public requests
+Make requests that should be public available with no authentication
+
+## Create tests
+Create a group of tests that for a clean database run all the functionality (same as the requests available) as checks if the result is what we expected
+
+## Questions:
 - Do we really need a table for user_type and a field for user_type_id if we already have a Employee table?

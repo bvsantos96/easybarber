@@ -16,6 +16,7 @@ import com.teamsantos.easybarber.security.utils.PasswordEncoding;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.Principal;
 import java.util.List;
@@ -97,26 +98,19 @@ public class UserService {
             throw new IllegalArgumentException("User cannot be null");
     }
 
-    public UserDTO updateUser(UserCreateDTO userCreateDTO) throws Exception {
-        /*
-         * Optional<User> optionalUser = userRepository.findById(userId);
-         * if (optionalUser.isPresent()) {
-         * User user = optionalUser.get();
-         * user.setPassword(userCreateDTO.getPassword());
-         * user.setCountryMobile(userCreateDTO.getCountryMobile());
-         * user.setMobile(userCreateDTO.getMobile());
-         * userRepository.save(user);
-         * return modelMapper.map(user, UserDTO.class);
-         * }
-         * else{
-         * throw new UserNotFoundException("User was not founded");
-         * }
-         */
-        return null;
+    public void updateUser(UserCreateDTO userCreateDTO) throws Exception {
+        User oldUser = userRepository.findByMobileInformation(userCreateDTO.getMobileInformation())
+                .orElseThrow(UserNotFoundException::new);
+        oldUser.updateNonNullValues(userCreateDTO);
+        userRepository.save(oldUser);
     }
 
+    @Transactional
     public void deleteUser(Long id) {
-
+        // TODO: We need to alert the users that their appointments will be deleted since the employee that they are booked with will be deleted
+        // This should cascade to the employee and establishment staff and consequently
+        // to services
+        userRepository.deleteById(id);
     }
 
     private UserDTO userEntityToDTO(User user) {

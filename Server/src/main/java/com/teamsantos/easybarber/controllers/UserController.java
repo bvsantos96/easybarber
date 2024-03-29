@@ -4,11 +4,13 @@ import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UsersDTO;
+import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.EstablishmentService;
 import com.teamsantos.easybarber.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,6 +40,7 @@ public class UserController {
     }
 
     @PutMapping("/user")
+    @PreAuthorize(PrePermissionEvaluator.IS_USER)
     public ResponseEntity<String> updateUser(@RequestBody UserCreateDTO userDTO) {
         try {
             userService.updateUser(userDTO);
@@ -49,6 +52,7 @@ public class UserController {
     }
 
     @DeleteMapping("/user")
+    @PreAuthorize(PrePermissionEvaluator.IS_USER)
     public ResponseEntity<String> deleteUser(@RequestParam Long id) {
         try {
             userService.deleteUser(id);
