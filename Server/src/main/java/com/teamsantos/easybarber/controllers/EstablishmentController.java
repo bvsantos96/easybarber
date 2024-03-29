@@ -67,10 +67,10 @@ public class EstablishmentController {
         }
     }
 
-    @PostMapping("/{id}/employee")
+    @PostMapping("/{id}/employee/{employeeId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addEmployee(@PathVariable("id") Long establishmentId,
-            @RequestBody Long employeeId,
+            @PathVariable Long employeeId,
             Principal principal) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
@@ -94,7 +94,7 @@ public class EstablishmentController {
         }
     }
 
-    @PostMapping("{id}/services")
+    @PostMapping("{id}/service")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long id,
             @RequestBody EstablishmentServiceDTO serviceDTO) {
@@ -108,7 +108,7 @@ public class EstablishmentController {
         }
     }
 
-    @DeleteMapping("{id}/services/{serviceId}")
+    @DeleteMapping("{id}/service/{serviceId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> removeService(@PathVariable Long id, @PathVariable Long serviceId) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();

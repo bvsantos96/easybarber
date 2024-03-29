@@ -78,12 +78,32 @@ public class EmployeeController {
         }
     }
 
+    @GetMapping("/{id}/services")
+    public ResponseEntity<BaseListDTO<ServiceDTO>> getServices(@PathVariable("id") Long id) {
+        try {
+            return ResponseEntity.ok(new BaseListDTO<ServiceDTO>(serviceService.getServices(id)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BaseListDTO<ServiceDTO>(e.getMessage()));
+        }
+    }
+
     @GetMapping("/establishments")
     public ResponseEntity<BaseListDTO<EstablishmentDTO>> getEstablishments(Principal principal,
-            @RequestParam boolean owned) {
+            @RequestParam(defaultValue = "false") boolean owned) {
         try {
             return ResponseEntity
                     .ok(new BaseListDTO<EstablishmentDTO>(userService.getEstablishments(principal, owned)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BaseListDTO<EstablishmentDTO>(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/{id}/establishments")
+    public ResponseEntity<BaseListDTO<EstablishmentDTO>> getEstablishments(@PathVariable("id") Long id,
+            @RequestParam(defaultValue = "false") boolean owned) {
+        try {
+            return ResponseEntity
+                    .ok(new BaseListDTO<EstablishmentDTO>(userService.getEstablishments(id, owned)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseListDTO<EstablishmentDTO>(e.getMessage()));
         }

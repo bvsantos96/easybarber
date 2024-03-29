@@ -73,6 +73,10 @@ public class UserTypeService implements ApplicationListener<ApplicationReadyEven
                 .orElseThrow(UserNotFoundException::new).getId()).orElseThrow(UserNotFoundException::new);
     }
 
+    public Employee getEmployee(Long id) {
+        return employeeRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    }
+
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         init();

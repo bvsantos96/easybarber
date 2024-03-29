@@ -115,7 +115,7 @@ public class UserService {
         return null;
     }
 
-    public void deleteUser(UserCreateDTO user) {
+    public void deleteUser(Long id) {
 
     }
 
@@ -142,7 +142,11 @@ public class UserService {
     }
 
     public List<EstablishmentDTO> getEstablishments(Principal principal, boolean admin) {
-        return establishmentRepository.findEstablishmentsByEmployeeId(getUserId(principal), admin).stream()
+        return getEstablishments(getUserId(principal), admin);
+    }
+
+    public List<EstablishmentDTO> getEstablishments(Long id, boolean admin) {
+        return establishmentRepository.findEstablishmentsByEmployeeId(id, admin).stream()
                 .map(establishment -> modelMapper.map(establishment, EstablishmentDTO.class)).toList();
     }
 }

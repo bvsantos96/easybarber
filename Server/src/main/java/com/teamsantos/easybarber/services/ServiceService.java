@@ -52,7 +52,11 @@ public class ServiceService {
 
     public List<ServiceDTO> getServices(Principal principal) {
         Employee employee = userTypeService.getEmployee(principal);
-        return serviceRepository.findByEmployeeId(employee.getId()).stream()
+        return getServices(employee.getId());
+    }
+
+    public List<ServiceDTO> getServices(Long id) {
+        return serviceRepository.findByEmployeeId(id).stream()
                 .map(service -> modelMapper.map(service, ServiceDTO.class)).toList();
     }
 }
