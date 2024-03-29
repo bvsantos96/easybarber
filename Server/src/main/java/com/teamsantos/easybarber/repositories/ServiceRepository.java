@@ -1,5 +1,7 @@
 package com.teamsantos.easybarber.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -17,4 +19,6 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
             WHERE s.id = :serviceId
             AND u.mobileInformation = :mobileInformation""")
     boolean checkIfEmployeeIsServiceOwner(Long serviceId, String mobileInformation);
+
+    List<Service> findByEmployeeId(Long id);
 }

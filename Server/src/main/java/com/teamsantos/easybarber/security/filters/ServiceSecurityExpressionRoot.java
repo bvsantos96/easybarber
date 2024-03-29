@@ -8,12 +8,12 @@ import com.teamsantos.easybarber.repositories.ServiceRepository;
 public class ServiceSecurityExpressionRoot extends SecurityExpressionRoot {
     private final ServiceRepository serviceRepository;
 
-	public ServiceSecurityExpressionRoot(Authentication authentication, ServiceRepository serviceRepository) {
-		super(authentication);
+    public ServiceSecurityExpressionRoot(Authentication authentication, ServiceRepository serviceRepository) {
+        super(authentication);
         this.serviceRepository = serviceRepository;
-	}
+    }
 
-	public boolean hasServiceOwnerPermission(Long targetDomainObject) {
+    public boolean hasServiceOwnerPermission(Long targetDomainObject) {
         return serviceRepository.checkIfEmployeeIsServiceOwner(targetDomainObject, this.getAuthentication().getName());
-	}
+    }
 }

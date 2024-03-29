@@ -6,13 +6,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.ServiceService;
@@ -61,6 +66,26 @@ public class EmployeeController {
             return ResponseEntity.ok(new BaseResponseDTO("Service updated successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/services")
+    public ResponseEntity<BaseListDTO<ServiceDTO>> getServices(Principal principal) {
+        try {
+            return ResponseEntity.ok(new BaseListDTO<ServiceDTO>(serviceService.getServices(principal)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BaseListDTO<ServiceDTO>(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/establishments")
+    public ResponseEntity<BaseListDTO<EstablishmentDTO>> getEstablishments(Principal principal,
+            @RequestParam boolean owned) {
+        try {
+            return ResponseEntity
+                    .ok(new BaseListDTO<EstablishmentDTO>(userService.getEstablishments(principal, owned)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BaseListDTO<EstablishmentDTO>(e.getMessage()));
         }
     }
 }

@@ -28,7 +28,8 @@ public class ServiceController {
 
     @PostMapping
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
-    public ResponseEntity<BaseResponseDTO> createServiceType(@RequestBody ServiceTypeDTO serviceDTO, Principal principal) {
+    public ResponseEntity<BaseResponseDTO> createServiceType(@RequestBody ServiceTypeDTO serviceDTO,
+            Principal principal) {
         BaseResponseDTO response = new BaseResponseDTO();
         try {
             serviceService.createType(serviceDTO, principal);
