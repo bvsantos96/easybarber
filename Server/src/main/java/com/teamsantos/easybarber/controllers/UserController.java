@@ -14,17 +14,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-
-import java.security.Principal;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class UserController {
-    private final EstablishmentService establishmentService;
     private final UserService userService;
 
     @Autowired
-    public UserController(EstablishmentService establishmentService, UserService userService) {
-        this.establishmentService = establishmentService;
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
@@ -52,25 +49,13 @@ public class UserController {
     }
 
     @DeleteMapping("/user")
-    public ResponseEntity<String> deleteUser(@RequestBody UserCreateDTO userDTO) {
+    public ResponseEntity<String> deleteUser(@RequestParam Long id) {
         try {
-            userService.deleteUser(userDTO);
+            userService.deleteUser(id);
             return ResponseEntity.ok("User deleted successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to delete user: " + e.getMessage());
-        }
-    }
-
-    @GetMapping("/user/establishment/list")
-    public ResponseEntity<BaseListDTO<EstablishmentDTO>> getEstablishment(Principal principal) {
-        BaseListDTO<EstablishmentDTO> establishments = new BaseListDTO<>();
-        try {
-            establishments.setItems(establishmentService.listEstablishmentStaff(userService.getUserId(principal)));
-            return ResponseEntity.ok(establishments);
-        } catch (Exception e) {
-            establishments.setResponseMessage(e.getMessage());
-            return ResponseEntity.badRequest().body(establishments);
         }
     }
 }
