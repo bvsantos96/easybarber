@@ -10,6 +10,9 @@ import java.util.List;
 public class BaseListDTO<T> extends BaseResponseDTO {
     private List<T> items;
 
+    public BaseListDTO() {
+    }
+
     public BaseListDTO(List<T> items) {
         this.items = items;
     }
