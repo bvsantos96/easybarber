@@ -33,5 +33,5 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
             JOIN e.staff es
             WHERE es.employee.id = :employeeId
             AND es.admin = :admin""")
-    List<Establishment> findEstablishmentsByEmployeeId(Long userId, boolean owned);
+    List<Establishment> findEstablishmentsByEmployeeId(Long employeeId, boolean admin);
 }

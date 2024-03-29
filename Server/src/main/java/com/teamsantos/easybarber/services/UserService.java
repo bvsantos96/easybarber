@@ -141,8 +141,8 @@ public class UserService {
         return principal.getName().equals(mobileInformation);
     }
 
-    public List<EstablishmentDTO> getEstablishments(Principal principal, boolean owned) {
-        return establishmentRepository.findEstablishmentsByEmployeeId(getUserId(principal), owned).stream()
+    public List<EstablishmentDTO> getEstablishments(Principal principal, boolean admin) {
+        return establishmentRepository.findEstablishmentsByEmployeeId(getUserId(principal), admin).stream()
                 .map(establishment -> modelMapper.map(establishment, EstablishmentDTO.class)).toList();
     }
 }
