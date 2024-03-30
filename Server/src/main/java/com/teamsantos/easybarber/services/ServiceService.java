@@ -31,6 +31,7 @@ public class ServiceService {
         this.modelMapper = modelMapper;
     }
 
+    @Transactional
     public void createService(ServiceDTO serviceDTO, Principal principal) {
         com.teamsantos.easybarber.entities.Service service = modelMapper.map(serviceDTO,
                 com.teamsantos.easybarber.entities.Service.class);
