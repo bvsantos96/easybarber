@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.teamsantos.easybarber.DTO.BaseListDTO;
+import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
@@ -71,42 +71,42 @@ public class EmployeeController {
     }
 
     @GetMapping("/services")
-    public ResponseEntity<BaseListDTO<ServiceDTO>> getServices(Principal principal, Pageable pageable) {
+    public ResponseEntity<BasePageDTO<ServiceDTO>> getServices(Principal principal, Pageable pageable) {
         try {
-            return ResponseEntity.ok(new BaseListDTO<ServiceDTO>(serviceService.getServices(principal, pageable)));
+            return ResponseEntity.ok(new BasePageDTO<ServiceDTO>(serviceService.getServices(principal, pageable)));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new BaseListDTO<ServiceDTO>(e.getMessage()));
+            return ResponseEntity.badRequest().body(new BasePageDTO<ServiceDTO>(e.getMessage()));
         }
     }
 
     @GetMapping("/{id}/services")
-    public ResponseEntity<BaseListDTO<ServiceDTO>> getServices(@PathVariable("id") Long id, Pageable pageable) {
+    public ResponseEntity<BasePageDTO<ServiceDTO>> getServices(@PathVariable("id") Long id, Pageable pageable) {
         try {
-            return ResponseEntity.ok(new BaseListDTO<ServiceDTO>(serviceService.getServices(id, pageable)));
+            return ResponseEntity.ok(new BasePageDTO<ServiceDTO>(serviceService.getServices(id, pageable)));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new BaseListDTO<ServiceDTO>(e.getMessage()));
+            return ResponseEntity.badRequest().body(new BasePageDTO<ServiceDTO>(e.getMessage()));
         }
     }
 
     @GetMapping("/establishments")
-    public ResponseEntity<BaseListDTO<EstablishmentDTO>> getEstablishments(Principal principal,
+    public ResponseEntity<BasePageDTO<EstablishmentDTO>> getEstablishments(Principal principal,
             @RequestParam(defaultValue = "false") boolean owned, Pageable pageable) {
         try {
             return ResponseEntity
-                    .ok(new BaseListDTO<EstablishmentDTO>(userService.getEstablishments(principal, owned, pageable)));
+                    .ok(new BasePageDTO<EstablishmentDTO>(userService.getEstablishments(principal, owned, pageable)));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new BaseListDTO<EstablishmentDTO>(e.getMessage()));
+            return ResponseEntity.badRequest().body(new BasePageDTO<EstablishmentDTO>(e.getMessage()));
         }
     }
 
     @GetMapping("/{id}/establishments")
-    public ResponseEntity<BaseListDTO<EstablishmentDTO>> getEstablishments(@PathVariable("id") Long id,
+    public ResponseEntity<BasePageDTO<EstablishmentDTO>> getEstablishments(@PathVariable("id") Long id,
             @RequestParam(defaultValue = "false") boolean owned, Pageable pageable) {
         try {
             return ResponseEntity
-                    .ok(new BaseListDTO<EstablishmentDTO>(userService.getEstablishments(id, owned, pageable)));
+                    .ok(new BasePageDTO<EstablishmentDTO>(userService.getEstablishments(id, owned, pageable)));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new BaseListDTO<EstablishmentDTO>(e.getMessage()));
+            return ResponseEntity.badRequest().body(new BasePageDTO<EstablishmentDTO>(e.getMessage()));
         }
     }
 }

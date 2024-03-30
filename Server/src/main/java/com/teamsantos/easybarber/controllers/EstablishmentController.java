@@ -83,8 +83,8 @@ public class EstablishmentController {
     }
 
     @GetMapping("{id}/services")
-    public ResponseEntity<BasePageDTO<EstablishmentServiceDTO>> listServices(@PathVariable Long id, Pageable pageable) {
-        BasePageDTO<EstablishmentServiceDTO> listDTO = new BasePageDTO<>();
+    public ResponseEntity<BasePageDTO<com.teamsantos.easybarber.entities.EstablishmentService>> listServices(@PathVariable Long id, Pageable pageable) {
+        BasePageDTO<com.teamsantos.easybarber.entities.EstablishmentService> listDTO = new BasePageDTO<>();
         try {
             listDTO.setItems(establishmentService.listServices(id, pageable));
             return ResponseEntity.ok(listDTO);
