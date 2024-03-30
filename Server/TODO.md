@@ -26,6 +26,9 @@ Make it so every method that does more than one write from DB has a @Transaction
 - [x] Make all list requests pageable
 - [ ] Update all list requests in postman to use the pageable methodology
 
+## TODO's:
+See TODO's present in the code and fix them
+
 ## User deletion
 - Deletion of users and employee should not really delete the entities, simple disable them.
     - We need to have information regarding the appointments they had. Users can still see with who they had their appointment even if the Employee is no longer present in the application

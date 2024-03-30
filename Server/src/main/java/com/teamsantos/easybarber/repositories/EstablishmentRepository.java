@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.entities.Establishment;
+import com.teamsantos.easybarber.entities.EstablishmentService;
 
 @Repository
 public interface EstablishmentRepository extends JpaRepository<Establishment, Long> {
@@ -34,4 +35,7 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
             WHERE es.employee.id = :employeeId
             AND es.admin = :admin""")
     Page<Establishment> findEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable);
+
+    @Query("SELECT e.services FROM Establishment e WHERE e.id = :establishmentId")
+    Page<EstablishmentService> findServicesByEstablishmentId(Long establishmentId, Pageable pageable);
 }
