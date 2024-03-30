@@ -1,7 +1,7 @@
 package com.teamsantos.easybarber.controllers;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
-import com.teamsantos.easybarber.DTO.BaseListDTO;
+import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
@@ -55,9 +55,9 @@ public class EstablishmentController {
 
     // GET /establishments?page=0&size=15&sort=id,desc
     @GetMapping("/list")
-    public ResponseEntity<BaseListDTO<EstablishmentDTO>> listEstablishments(
+    public ResponseEntity<BasePageDTO<EstablishmentDTO>> listEstablishments(
             @RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude, Pageable pageable) {
-        BaseListDTO<EstablishmentDTO> listDTO = new BaseListDTO<>();
+        BasePageDTO<EstablishmentDTO> listDTO = new BasePageDTO<>();
         try {
             listDTO.setItems(establishmentService.findByLocation(latitude, longitude, pageable));
             return ResponseEntity.ok(listDTO);
@@ -83,10 +83,10 @@ public class EstablishmentController {
     }
 
     @GetMapping("{id}/services")
-    public ResponseEntity<BaseListDTO<EstablishmentServiceDTO>> listServices(@PathVariable Long id) {
-        BaseListDTO<EstablishmentServiceDTO> listDTO = new BaseListDTO<>();
+    public ResponseEntity<BasePageDTO<EstablishmentServiceDTO>> listServices(@PathVariable Long id, Pageable pageable) {
+        BasePageDTO<EstablishmentServiceDTO> listDTO = new BasePageDTO<>();
         try {
-            listDTO.setItems(establishmentService.listServices(id));
+            listDTO.setItems(establishmentService.listServices(id, pageable));
             return ResponseEntity.ok(listDTO);
         } catch (Exception e) {
             listDTO.setResponseMessage(e.getMessage());

@@ -109,7 +109,8 @@ public class UserService {
 
     @Transactional
     public void deleteUser(Long id) {
-        // TODO: We need to alert the users that their appointments will be deleted since the employee that they are booked with will be deleted
+        // TODO: We need to alert the users that their appointments will be deleted
+        // since the employee that they are booked with will be deleted
         // This should cascade to the employee and establishment staff and consequently
         // to services
         userRepository.deleteById(id);

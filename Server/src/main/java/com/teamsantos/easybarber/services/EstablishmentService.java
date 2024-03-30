@@ -18,6 +18,7 @@ import org.locationtech.jts.io.ParseException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -104,15 +105,15 @@ public class EstablishmentService {
         throw new UnsupportedOperationException("User is not an employee");
     }
 
-    public List<EstablishmentDTO> findByLocation(double latitude, double longitude, Pageable pageable)
+    public Page<EstablishmentDTO> findByLocation(double latitude, double longitude, Pageable pageable)
             throws ParseException {
         return establishmentRepository.findClosestEstablishments(GeometryUtils.parseLocation(latitude, longitude),
-                pageable).getContent();
+                pageable);
     }
 
-    public List<EstablishmentServiceDTO> listServices(Long id) throws NotFoundException {
-        return establishmentRepository.findById(id).orElseThrow(NotFoundException::new).getServices().stream()
-                .map((service) -> modelMapper.map(service, EstablishmentServiceDTO.class)).toList();
+    // TODO: This request needs to be pageable ? 
+    public Page<EstablishmentServiceDTO> listServices(Long id, Pageable pageable) throws NotFoundException {
+        return edstablishmentRepository.findServicesByEstablishmentId(id, pageable);
     }
 
     @Transactional
