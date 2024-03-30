@@ -51,8 +51,8 @@ public class EstablishmentService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public List<EstablishmentDTO> listEstablishmentStaff(Long id) {
-        return employeeRepository.findOwnedEstablishmentsById(id).stream()
+    public List<EstablishmentDTO> listEstablishmentStaff(Long id, Pageable pageable) {
+        return employeeRepository.findOwnedEstablishmentsById(id, pageable).stream()
                 .map((element) -> modelMapper.map(element, EstablishmentDTO.class)).toList();
     }
 
@@ -77,7 +77,7 @@ public class EstablishmentService {
     }
 
     public List<BaseEstablishmentDTO> findAllBase(Pageable pageable) {
-        return establishmentRepository.findAllBase(pageable);
+        return establishmentRepository.findAllBase(pageable).getContent();
     }
 
     public void addEmployee(Long establishmentId, Long userId, Principal principal)
@@ -107,12 +107,12 @@ public class EstablishmentService {
     public List<EstablishmentDTO> findByLocation(double latitude, double longitude, Pageable pageable)
             throws ParseException {
         return establishmentRepository.findClosestEstablishments(GeometryUtils.parseLocation(latitude, longitude),
-                pageable);
+                pageable).getContent();
     }
 
-    public List<EstablishmentServiceDTO> listServices(Long id) {
-        return establishmentRepository.findById(id).map((element) -> element.getServices().stream()
-                .map((service) -> modelMapper.map(service, EstablishmentServiceDTO.class)).toList()).orElseThrow();
+    public List<EstablishmentServiceDTO> listServices(Long id) throws NotFoundException {
+        return establishmentRepository.findById(id).orElseThrow(NotFoundException::new).getServices().stream()
+                .map((service) -> modelMapper.map(service, EstablishmentServiceDTO.class)).toList();
     }
 
     @Transactional

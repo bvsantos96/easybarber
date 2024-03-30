@@ -15,6 +15,7 @@ import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.security.utils.PasswordEncoding;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,8 +43,8 @@ public class UserService {
         this.jwtUtils = jwtUtils;
     }
 
-    public List<UserDTO> getAllUsers() {
-        List<User> users = userRepository.findAll();
+    public List<UserDTO> getAllUsers(Pageable pageable) {
+        List<User> users = userRepository.findAll(pageable).toList();
         return users.stream()
                 .map(this::userEntityToDTO)
                 .collect(Collectors.toList());
@@ -136,12 +137,12 @@ public class UserService {
         return principal.getName().equals(mobileInformation);
     }
 
-    public List<EstablishmentDTO> getEstablishments(Principal principal, boolean admin) {
-        return getEstablishments(getUserId(principal), admin);
+    public List<EstablishmentDTO> getEstablishments(Principal principal, boolean admin, Pageable pageable) {
+        return getEstablishments(getUserId(principal), admin, pageable);
     }
 
-    public List<EstablishmentDTO> getEstablishments(Long id, boolean admin) {
-        return establishmentRepository.findEstablishmentsByEmployeeId(id, admin).stream()
+    public List<EstablishmentDTO> getEstablishments(Long id, boolean admin, Pageable pageable) {
+        return establishmentRepository.findEstablishmentsByEmployeeId(id, admin, pageable).stream()
                 .map(establishment -> modelMapper.map(establishment, EstablishmentDTO.class)).toList();
     }
 }

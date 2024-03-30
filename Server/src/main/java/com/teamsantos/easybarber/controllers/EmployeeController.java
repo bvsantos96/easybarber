@@ -3,6 +3,7 @@ package com.teamsantos.easybarber.controllers;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -70,18 +71,18 @@ public class EmployeeController {
     }
 
     @GetMapping("/services")
-    public ResponseEntity<BaseListDTO<ServiceDTO>> getServices(Principal principal) {
+    public ResponseEntity<BaseListDTO<ServiceDTO>> getServices(Principal principal, Pageable pageable) {
         try {
-            return ResponseEntity.ok(new BaseListDTO<ServiceDTO>(serviceService.getServices(principal)));
+            return ResponseEntity.ok(new BaseListDTO<ServiceDTO>(serviceService.getServices(principal, pageable)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseListDTO<ServiceDTO>(e.getMessage()));
         }
     }
 
     @GetMapping("/{id}/services")
-    public ResponseEntity<BaseListDTO<ServiceDTO>> getServices(@PathVariable("id") Long id) {
+    public ResponseEntity<BaseListDTO<ServiceDTO>> getServices(@PathVariable("id") Long id, Pageable pageable) {
         try {
-            return ResponseEntity.ok(new BaseListDTO<ServiceDTO>(serviceService.getServices(id)));
+            return ResponseEntity.ok(new BaseListDTO<ServiceDTO>(serviceService.getServices(id, pageable)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseListDTO<ServiceDTO>(e.getMessage()));
         }
@@ -89,10 +90,10 @@ public class EmployeeController {
 
     @GetMapping("/establishments")
     public ResponseEntity<BaseListDTO<EstablishmentDTO>> getEstablishments(Principal principal,
-            @RequestParam(defaultValue = "false") boolean owned) {
+            @RequestParam(defaultValue = "false") boolean owned, Pageable pageable) {
         try {
             return ResponseEntity
-                    .ok(new BaseListDTO<EstablishmentDTO>(userService.getEstablishments(principal, owned)));
+                    .ok(new BaseListDTO<EstablishmentDTO>(userService.getEstablishments(principal, owned, pageable)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseListDTO<EstablishmentDTO>(e.getMessage()));
         }
@@ -100,10 +101,10 @@ public class EmployeeController {
 
     @GetMapping("/{id}/establishments")
     public ResponseEntity<BaseListDTO<EstablishmentDTO>> getEstablishments(@PathVariable("id") Long id,
-            @RequestParam(defaultValue = "false") boolean owned) {
+            @RequestParam(defaultValue = "false") boolean owned, Pageable pageable) {
         try {
             return ResponseEntity
-                    .ok(new BaseListDTO<EstablishmentDTO>(userService.getEstablishments(id, owned)));
+                    .ok(new BaseListDTO<EstablishmentDTO>(userService.getEstablishments(id, owned, pageable)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseListDTO<EstablishmentDTO>(e.getMessage()));
         }
