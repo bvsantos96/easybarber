@@ -23,7 +23,7 @@ Create request in postman for every available endpoint
 Make it so every method that does more than one write from DB has a @Transaction flag
 
 ## Make list requests pageable
-- [ ] Make all list requests pageable
+- [x] Make all list requests pageable
 - [ ] Update all list requests in postman to use the pageable methodology
 
 ## User deletion
