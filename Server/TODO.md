@@ -19,7 +19,7 @@ Restructure employee related code (from user type to employee class)
 ## Create requests postman (DONE)
 Create request in postman for every available endpoint
 
-## Transactional methods
+## Transactional methods (DONE)
 Make it so every method that does more than one write from DB has a @Transaction flag
 
 ## Make list requests pageable
