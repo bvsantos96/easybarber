@@ -72,6 +72,7 @@ public class UserService {
         employeeRepository.save(modelMapper.map(employeeDTO, Employee.class));
     }
 
+    @Transactional
     public UserDTO createUser(UserCreateDTO userCreateDTO, boolean isEmployee) throws Exception {
         userCreateDTO.setPassword(PasswordEncoding.encode(userCreateDTO.getPassword()));
         User user = modelMapper.map(userCreateDTO, User.class);

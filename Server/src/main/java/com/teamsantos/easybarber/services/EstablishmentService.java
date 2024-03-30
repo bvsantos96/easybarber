@@ -12,6 +12,8 @@ import com.teamsantos.easybarber.repositories.EstablishmentRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.utils.GeometryUtils;
 
+import jakarta.transaction.Transactional;
+
 import org.locationtech.jts.io.ParseException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +60,7 @@ public class EstablishmentService {
         create(establishmentDTO, userService.getEmployee(principal));
     }
 
+    @Transactional
     public void create(BaseEstablishmentDTO establishmentDTO, Employee owner) {
         Establishment establishment = modelMapper.map(establishmentDTO, Establishment.class);
         if (establishment != null) {
@@ -82,6 +85,7 @@ public class EstablishmentService {
         addEmployee(establishmentId, userId, userService.getEmployee(principal));
     }
 
+    @Transactional
     public void addEmployee(Long establishmentId, Long userId, Employee invitor)
             throws NotFoundException, UnsupportedOperationException {
         Establishment establishment = establishmentRepository.findById(establishmentId)
@@ -93,9 +97,11 @@ public class EstablishmentService {
                     .add(new EstablishmentStaff(
                             employeeRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new),
                             establishment, false, true, invitor));
+            establishmentRepository.save(establishment);
             // TODO: note that the we might want to start an employee approval process here,
             // so we might want to set approved to false
         }
+        throw new UnsupportedOperationException("User is not an employee");
     }
 
     public List<EstablishmentDTO> findByLocation(double latitude, double longitude, Pageable pageable)
@@ -109,6 +115,7 @@ public class EstablishmentService {
                 .map((service) -> modelMapper.map(service, EstablishmentServiceDTO.class)).toList()).orElseThrow();
     }
 
+    @Transactional
     public void addService(Long id, EstablishmentServiceDTO serviceDTO) {
         if (serviceDTO != null) {
             Establishment establishment = establishmentRepository.findById(id).orElseThrow();
@@ -121,6 +128,7 @@ public class EstablishmentService {
         }
     }
 
+    @Transactional
     public void removeService(Long id, Long serviceId) {
         if (serviceId != null) {
             Establishment establishment = establishmentRepository.findById(id).orElseThrow();
