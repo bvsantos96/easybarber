@@ -24,18 +24,18 @@ Make it so every method that does more than one write from DB has a @Transaction
 
 ## Make list requests pageable
 - [x] Make all list requests pageable
-- [ ] Update all list requests in postman to use the pageable methodology
+- [x] Update all list requests in postman to use the pageable methodology
 
-## TODO's:
-See TODO's present in the code and fix them
+## Define public requests
+Make requests that should be public available with no authentication
 
 ## User deletion
 - Deletion of users and employee should not really delete the entities, simple disable them.
     - We need to have information regarding the appointments they had. Users can still see with who they had their appointment even if the Employee is no longer present in the application
 - We need to alert the users that their appointments will be deleted since the employee that they are booked with will be deleted
 
-## Define public requests
-Make requests that should be public available with no authentication
+## TODO's:
+See TODO's present in the code and fix them
 
 ## Create tests
 Create a group of tests that for a clean database run all the functionality (same as the requests available) as checks if the result is what we expected
