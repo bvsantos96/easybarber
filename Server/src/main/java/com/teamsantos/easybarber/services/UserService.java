@@ -1,10 +1,21 @@
 package com.teamsantos.easybarber.services;
 
+import java.security.Principal;
+import java.util.Optional;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
 import com.teamsantos.easybarber.entities.Employee;
+import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
@@ -13,16 +24,7 @@ import com.teamsantos.easybarber.repositories.EstablishmentRepository;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.security.utils.PasswordEncoding;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.security.Principal;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.teamsantos.easybarber.utils.PageDTO;
 
 @Service
 public class UserService {
@@ -43,11 +45,8 @@ public class UserService {
         this.jwtUtils = jwtUtils;
     }
 
-    public List<UserDTO> getAllUsers(Pageable pageable) {
-        List<User> users = userRepository.findAll(pageable).toList();
-        return users.stream()
-                .map(this::userEntityToDTO)
-                .collect(Collectors.toList());
+    public Page<UserDTO> getAllUsers(Pageable pageable) {
+        return PageDTO.toDTO(modelMapper, userRepository.findAll(pageable), UserDTO.class, pageable);
     }
 
     public String loginUser(UserCreateDTO userCreateDTO) {
@@ -116,10 +115,6 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    private UserDTO userEntityToDTO(User user) {
-        return modelMapper.map(user, UserDTO.class);
-    }
-
     public User getUser(Principal principal) {
         return userRepository.findByMobileInformation(principal.getName())
                 .map((element) -> modelMapper.map(element, User.class))
@@ -138,12 +133,11 @@ public class UserService {
         return principal.getName().equals(mobileInformation);
     }
 
-    public List<EstablishmentDTO> getEstablishments(Principal principal, boolean admin, Pageable pageable) {
+    public Page<EstablishmentDTO> getEstablishments(Principal principal, boolean admin, Pageable pageable) {
         return getEstablishments(getUserId(principal), admin, pageable);
     }
 
-    public List<EstablishmentDTO> getEstablishments(Long id, boolean admin, Pageable pageable) {
-        return establishmentRepository.findEstablishmentsByEmployeeId(id, admin, pageable).stream()
-                .map(establishment -> modelMapper.map(establishment, EstablishmentDTO.class)).toList();
+    public Page<EstablishmentDTO> getEstablishments(Long id, boolean admin, Pageable pageable) {
+        return PageDTO.toDTO(modelMapper, establishmentRepository.findEstablishmentsByEmployeeId(id, admin, pageable), EstablishmentDTO.class, pageable);
     }
 }

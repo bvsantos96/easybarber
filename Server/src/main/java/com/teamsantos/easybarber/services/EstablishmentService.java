@@ -111,9 +111,8 @@ public class EstablishmentService {
                 pageable);
     }
 
-    // TODO: This request needs to be pageable ? 
-    public Page<EstablishmentServiceDTO> listServices(Long id, Pageable pageable) throws NotFoundException {
-        return edstablishmentRepository.findServicesByEstablishmentId(id, pageable);
+    public Page<com.teamsantos.easybarber.entities.EstablishmentService> listServices(Long id, Pageable pageable) throws NotFoundException {
+        return establishmentRepository.findServicesByEstablishmentId(id, pageable);
     }
 
     @Transactional

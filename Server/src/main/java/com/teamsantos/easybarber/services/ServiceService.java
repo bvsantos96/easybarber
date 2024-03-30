@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.ServiceType;
 import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.repositories.ServiceTypeRepository;
+import com.teamsantos.easybarber.utils.PageDTO;
 
 import jakarta.transaction.Transactional;
 
@@ -54,13 +56,12 @@ public class ServiceService {
         serviceTypeRepository.save(modelMapper.map(serviceDTO, ServiceType.class));
     }
 
-    public List<ServiceDTO> getServices(Principal principal, Pageable pageable) {
+    public Page<ServiceDTO> getServices(Principal principal, Pageable pageable) {
         Employee employee = userTypeService.getEmployee(principal);
         return getServices(employee.getId(), pageable);
     }
 
-    public List<ServiceDTO> getServices(Long id, Pageable pageable) {
-        return serviceRepository.findByEmployeeId(id, pageable).stream()
-                .map(service -> modelMapper.map(service, ServiceDTO.class)).toList();
+    public Page<ServiceDTO> getServices(Long id, Pageable pageable) {
+        return PageDTO.toDTO(modelMapper, serviceRepository.findByEmployeeId(id, pageable), ServiceDTO.class, pageable);
     }
 }
