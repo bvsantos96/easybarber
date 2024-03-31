@@ -20,13 +20,9 @@ public class EmployeeService {
         this.userService = userService;
     }
 
+    @Transactional
     public void deleteEmployee(Principal principal) {
         deleteEmployee(userService.getEmployee(principal));
-    }
-
-    public void deleteEmployee(Long id) {
-        Employee employee = employeeRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Employee not found"));
-        deleteEmployee(employee);
     }
 
     @Transactional

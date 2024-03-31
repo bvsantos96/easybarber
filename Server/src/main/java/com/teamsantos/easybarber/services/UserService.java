@@ -61,6 +61,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public UserDTO createUser(UserCreateDTO userCreateDTO) throws Exception {
         return createUser(userCreateDTO, false);
     }
@@ -98,7 +99,7 @@ public class UserService {
             throw new IllegalArgumentException("User cannot be null");
     }
 
-    public void updateUser(UserCreateDTO userCreateDTO) throws Exception {
+    public void updateUser(UserCreateDTO userCreateDTO) {
         User oldUser = userRepository.findByMobileInformation(userCreateDTO.getMobileInformation())
                 .orElseThrow(UserNotFoundException::new);
         oldUser.updateNonNullValues(userCreateDTO);
