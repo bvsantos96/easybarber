@@ -22,13 +22,13 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
     private final EmployeeRepository employeeRepository;
     private final ServiceRepository serviceRepository;
 
-    public static final String _ESTABLISHMENT_ADMIN = "ESTABLISHMENT-ADMIN";
+    public static final String _ESTABLISHMENT_ADMIN = "ESTABLISHMENT_ADMIN";
     public static final String ESTABLISHMENT_ADMIN = "hasPermission(#establishmentId, " + _ESTABLISHMENT_ADMIN + ")";
-    public static final String _IS_EMPLOYEE = "IS-EMPLOYEE";
-    public static final String IS_EMPLOYEE = "hasPermission(" + _IS_EMPLOYEE + ")";
-    public static final String _SERVICE_OWNER = "SERVICE-OWNER";
+    public static final String _IS_EMPLOYEE = "IS_EMPLOYEE";
+    public static final String IS_EMPLOYEE = "hasPermission(#establishmentId, " + _IS_EMPLOYEE + ")";
+    public static final String _SERVICE_OWNER = "SERVICE_OWNER";
     public static final String SERVICE_OWNER = "hasPermission(#serviceId, " + _SERVICE_OWNER + ")";
-    public static final String _IS_USER = "IS-USER";
+    public static final String _IS_USER = "IS_USER";
     public static final String IS_USER = "hasPermission(#userId, " + _IS_USER + ")";
 
     @Autowired
@@ -53,7 +53,7 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
                         userRepository, establishmentStaffRepository);
                 yield root.hasAdminPermission((Long) targetDomainObject);
             }
-            case _IS_EMPLOYEE -> {
+            case "IS_EMPLOYEE" -> {
                 UserSecurityExpressionRoot userRoot = new UserSecurityExpressionRoot(authentication, userRepository,
                         employeeRepository);
                 yield userRoot.isEmployee();

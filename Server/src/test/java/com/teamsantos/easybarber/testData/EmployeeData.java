@@ -5,13 +5,13 @@ import java.util.List;
 
 import org.json.JSONObject;
 
-public class BarbersData {
-    public static final List<JSONObject> barbers;
+public class EmployeeData {
+    public static final List<JSONObject> employees;
 
     static {
-        barbers = new ArrayList<>();
+        employees = new ArrayList<>();
         try {
-            barbers.add(new JSONObject(
+            employees.add(new JSONObject(
                     "{\"countryMobile\":\"+351\",\"mobile\":\"999999999\",\"password\":\"Test123*\",\"name\":\"Henrique\"}"));
         } catch (Exception e) {
             e.printStackTrace();

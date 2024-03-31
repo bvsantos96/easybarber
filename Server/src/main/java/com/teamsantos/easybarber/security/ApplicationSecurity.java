@@ -26,7 +26,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class ApplicationSecurity {
 
     private final UserDetailsServiceImpl userDetailsService;
-    private final PrePermissionEvaluator rolePermissionEvaluator;
+    private final PrePermissionEvaluator prePermissionEvaluator;
     private final JwtUtils jwtUtils;
 
     @Autowired
@@ -34,7 +34,7 @@ public class ApplicationSecurity {
             PrePermissionEvaluator establishmentPermissionEvaluator) {
         this.userDetailsService = userDetailsService;
         this.jwtUtils = jwtUtils;
-        this.rolePermissionEvaluator = establishmentPermissionEvaluator;
+        this.prePermissionEvaluator = establishmentPermissionEvaluator;
     }
 
     @Bean
@@ -92,7 +92,7 @@ public class ApplicationSecurity {
     @Bean
     public MethodSecurityExpressionHandler expressionHandler() {
         DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
-        expressionHandler.setPermissionEvaluator(rolePermissionEvaluator);
+        expressionHandler.setPermissionEvaluator(prePermissionEvaluator);
         return expressionHandler;
     }
 }
