@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.EstablishmentData;
+import com.teamsantos.easybarber.testData.UsersData;
 import com.teamsantos.easybarber.utils.AnyOfStatusMatcher;
 
 @SpringBootTest
@@ -28,13 +29,16 @@ public class EstablishmentTests {
         this.employeeTests = new EmployeeTests(mockMvc);
     }
 
-    private void createEstablishment(String jwt, String establishment) throws Exception {
-        ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+    private ResultActions _createEstablishment(String jwt, String establishment) throws Exception {
+        return mockMvc.perform(MockMvcRequestBuilders
                 .post("/establishment")
                 .header("Authorization", "Bearer " + jwt)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(establishment));
-        result
+    }
+
+    private void createEstablishment(String jwt, String establishment) throws Exception {
+        _createEstablishment(jwt, establishment)
                 .andExpect(MockMvcResultMatchers.status().is(AnyOfStatusMatcher.createdOrFound()));
     }
 
@@ -42,7 +46,10 @@ public class EstablishmentTests {
     public void testEstablishment() {
         try {
             employeeTests.testEmployee();
-            String jwt = authTests.loginUser(EmployeeData.employees.get(0).toString());
+            String jwt = authTests.loginUser(UsersData.users.get(0).toString());
+            ResultActions result = _createEstablishment(jwt, EstablishmentData.establishments.get(0).toString());
+            result.andExpect(MockMvcResultMatchers.status().isForbidden());
+            jwt = authTests.loginUser(EmployeeData.employees.get(0).toString());
             createEstablishment(jwt, EstablishmentData.establishments.get(0).toString());
             createEstablishment(jwt, EstablishmentData.establishments.get(1).toString());
         } catch (Exception e) {
