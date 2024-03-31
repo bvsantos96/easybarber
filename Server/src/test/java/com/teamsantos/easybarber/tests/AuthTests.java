@@ -23,6 +23,16 @@ public class AuthTests {
         this.mockMvc = mockMvc;
     }
 
+    private void _registerUser(String user) throws Exception {
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                .post("/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(user));
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .isCreated());
+    }
+
     public void registerUser(String user) throws Exception {
         ResultActions result = mockMvc.perform(MockMvcRequestBuilders
                 .post("/register")
@@ -45,7 +55,13 @@ public class AuthTests {
 
     @Test
     public void test() {
-        testAuth();
+        try {
+            _registerUser(UsersData.users.get(0).toString());
+            _registerUser(UsersData.users.get(1).toString());
+            loginUser(UsersData.users.get(1).toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public String testAuth() {

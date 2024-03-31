@@ -34,7 +34,7 @@ public class AnyOfStatusMatcher extends TypeSafeMatcher<Integer> {
         return new AnyOfStatusMatcher(expectedStatuses);
     }
 
-	public static Matcher<? super Integer> createdOrFound() {
+    public static Matcher<? super Integer> createdOrFound() {
         return anyOfStatus(HttpStatus.CREATED.value(), HttpStatus.FOUND.value());
-	}
+    }
 }
