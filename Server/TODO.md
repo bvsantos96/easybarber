@@ -22,11 +22,11 @@ Create request in postman for every available endpoint
 ## Transactional methods (DONE)
 Make it so every method that does more than one write from DB has a @Transaction flag
 
-## Make list requests pageable
+## Make list requests pageable (DONE)
 - [x] Make all list requests pageable
 - [x] Update all list requests in postman to use the pageable methodology
 
-## Define public requests
+## Define public requests (DONE)
 Make requests that should be public available with no authentication
 
 ## User deletion
