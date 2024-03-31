@@ -15,7 +15,6 @@ import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
 import com.teamsantos.easybarber.entities.Employee;
-import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
@@ -104,15 +103,6 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
         oldUser.updateNonNullValues(userCreateDTO);
         userRepository.save(oldUser);
-    }
-
-    @Transactional
-    public void deleteUser(Long id) {
-        // TODO: We need to alert the users that their appointments will be deleted
-        // since the employee that they are booked with will be deleted
-        // This should cascade to the employee and establishment staff and consequently
-        // to services
-        userRepository.deleteById(id);
     }
 
     public User getUser(Principal principal) {
