@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,28 +22,41 @@ import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
+import com.teamsantos.easybarber.services.EmployeeService;
 import com.teamsantos.easybarber.services.ServiceService;
 import com.teamsantos.easybarber.services.UserService;
 
 @Controller
 @RequestMapping("/employee")
 public class EmployeeController {
+    private final EmployeeService employeeService;
     private final UserService userService;
     private final ServiceService serviceService;
 
     @Autowired
-    public EmployeeController(UserService userService, ServiceService serviceService) {
+    public EmployeeController(EmployeeService employeeService, UserService userService, ServiceService serviceService) {
+        this.employeeService = employeeService;
         this.userService = userService;
         this.serviceService = serviceService;
     }
 
-    @PostMapping("/register")
+    @PostMapping
     public ResponseEntity<BaseResponseDTO> createEmployee(@RequestBody EmployeeDTO employee, Principal principal) {
         try {
             if (principal != null && !userService.userChangePermissions(principal, employee.getMobileInformation()))
                 return ResponseEntity.badRequest().body(new BaseResponseDTO("You are not allowed to create this user"));
             userService.createUser(employee, true);
             return ResponseEntity.ok(new BaseResponseDTO("Employee created successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
+        }
+    }
+    
+    @DeleteMapping
+    public ResponseEntity<BaseResponseDTO> deleteEmployee(Principal principal) {
+        try {
+            employeeService.deleteEmployee(principal);
+            return ResponseEntity.ok(new BaseResponseDTO("Employee deleted successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
         }
