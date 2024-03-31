@@ -51,7 +51,7 @@ public class EmployeeController {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
         }
     }
-    
+
     @DeleteMapping
     public ResponseEntity<BaseResponseDTO> deleteEmployee(Principal principal) {
         try {
