@@ -15,7 +15,7 @@ public class EmployeeData {
                     "{\"countryMobile\":\"+351\",\"mobile\":\"999999999\",\"password\":\"Test123*\",\"name\":\"Henrique\"}"));
             employees.add(new JSONObject(
                     "{\"countryMobile\":\"+351\",\"mobile\":\"900000000\",\"password\":\"Test123*\",\"name\":\"Amigo do Joao\"}"));
-       } catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
