@@ -1,7 +1,6 @@
 package com.teamsantos.easybarber.services;
 
 import java.security.Principal;
-import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

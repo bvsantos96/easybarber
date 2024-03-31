@@ -57,6 +57,7 @@ public class EstablishmentService {
                 .map((element) -> modelMapper.map(element, EstablishmentDTO.class)).toList();
     }
 
+    @Transactional
     public void create(BaseEstablishmentDTO establishmentDTO, Principal principal) {
         create(establishmentDTO, userService.getEmployee(principal));
     }
@@ -81,6 +82,7 @@ public class EstablishmentService {
         return establishmentRepository.findAllBase(pageable).getContent();
     }
 
+    @Transactional
     public void addEmployee(Long establishmentId, Long userId, Principal principal)
             throws NotFoundException, UnsupportedOperationException {
         addEmployee(establishmentId, userId, userService.getEmployee(principal));
@@ -111,7 +113,7 @@ public class EstablishmentService {
                 pageable);
     }
 
-    public Page<com.teamsantos.easybarber.entities.EstablishmentService> listServices(Long id, Pageable pageable) throws NotFoundException {
+    public Page<com.teamsantos.easybarber.entities.EstablishmentService> listServices(Long id, Pageable pageable) {
         return establishmentRepository.findServicesByEstablishmentId(id, pageable);
     }
 

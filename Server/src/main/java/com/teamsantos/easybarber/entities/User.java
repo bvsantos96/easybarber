@@ -110,7 +110,7 @@ public class User {
 
     /**
      * Updates the user with the non-null values of the userDTO
-     * Note: This method does not update the passoword, mobileInformation or
+     * Note: This method does not update the password, mobileInformation or
      * userTypeId. This is because these values should not be updated by a global
      * user update.
      * 

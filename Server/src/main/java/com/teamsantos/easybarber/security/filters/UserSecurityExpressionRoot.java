@@ -29,6 +29,6 @@ public class UserSecurityExpressionRoot extends SecurityExpressionRoot {
     public boolean isUser(Long userId) {
         Long authId = userRepository.findByMobileInformation(getAuthentication().getName())
                 .orElseThrow(UserNotFoundException::new).getId();
-        return userId == authId;
+        return userId.equals(authId);
     }
 }

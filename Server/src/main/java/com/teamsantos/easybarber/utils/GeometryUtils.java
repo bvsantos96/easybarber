@@ -10,7 +10,7 @@ public class GeometryUtils {
     private final static WKTReader wktReader = new WKTReader();
 
     private static Geometry wktToGeometry(String wellKnownText) throws ParseException {
-        Geometry geometry = null;
+        Geometry geometry;
         geometry = wktReader.read(wellKnownText);
         return geometry;
     }

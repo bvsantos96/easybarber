@@ -28,7 +28,7 @@ public class UserController {
     @GetMapping("/users")
     public ResponseEntity<BasePageDTO<UserDTO>> getAllUsers(Pageable pageable) {
         try {
-            return ResponseEntity.ok(new BasePageDTO<UserDTO>(userService.getAllUsers(pageable)));
+            return ResponseEntity.ok(new BasePageDTO<>(userService.getAllUsers(pageable)));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new BasePageDTO<>(e.getMessage()));
         }

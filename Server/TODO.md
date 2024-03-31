@@ -38,10 +38,10 @@ Make requests that should be public available with no authentication
 Create a group of tests that for a clean database run all the functionality (same as the requests available) as checks if the result is what we expected
 
 ## Test functionality
-Test all available constroller requests
+Test all available controller requests
 
 ## Questions:
-- Do we really need a table for user_type and a field for user_type_id if we already have a Employee table?
+- Do we really need a table for user_type and a field for user_type_id if we already have an Employee table?
 
 ## TODO's:
 See TODO's present in the code and fix them

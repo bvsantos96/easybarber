@@ -87,18 +87,18 @@ public class EmployeeController {
     @GetMapping("/services")
     public ResponseEntity<BasePageDTO<ServiceDTO>> getServices(Principal principal, Pageable pageable) {
         try {
-            return ResponseEntity.ok(new BasePageDTO<ServiceDTO>(serviceService.getServices(principal, pageable)));
+            return ResponseEntity.ok(new BasePageDTO<>(serviceService.getServices(principal, pageable)));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new BasePageDTO<ServiceDTO>(e.getMessage()));
+            return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }
     }
 
     @GetMapping("/{id}/services")
     public ResponseEntity<BasePageDTO<ServiceDTO>> getServices(@PathVariable("id") Long id, Pageable pageable) {
         try {
-            return ResponseEntity.ok(new BasePageDTO<ServiceDTO>(serviceService.getServices(id, pageable)));
+            return ResponseEntity.ok(new BasePageDTO<>(serviceService.getServices(id, pageable)));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new BasePageDTO<ServiceDTO>(e.getMessage()));
+            return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }
     }
 
@@ -107,9 +107,9 @@ public class EmployeeController {
             @RequestParam(defaultValue = "false") boolean owned, Pageable pageable) {
         try {
             return ResponseEntity
-                    .ok(new BasePageDTO<EstablishmentDTO>(userService.getEstablishments(principal, owned, pageable)));
+                    .ok(new BasePageDTO<>(userService.getEstablishments(principal, owned, pageable)));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new BasePageDTO<EstablishmentDTO>(e.getMessage()));
+            return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }
     }
 
@@ -118,9 +118,9 @@ public class EmployeeController {
             @RequestParam(defaultValue = "false") boolean owned, Pageable pageable) {
         try {
             return ResponseEntity
-                    .ok(new BasePageDTO<EstablishmentDTO>(userService.getEstablishments(id, owned, pageable)));
+                    .ok(new BasePageDTO<>(userService.getEstablishments(id, owned, pageable)));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new BasePageDTO<EstablishmentDTO>(e.getMessage()));
+            return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }
     }
 }

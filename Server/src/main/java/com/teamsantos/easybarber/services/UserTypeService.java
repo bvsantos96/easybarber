@@ -54,7 +54,7 @@ public class UserTypeService implements ApplicationListener<ApplicationReadyEven
     }
 
     /**
-     * DEPRECATED: Note this method might nolonger be good enough, as it does not
+     * DEPRECATED: Note this method might no longer be good enough, as it does not
      * check if the user is connected to an employee entity
      * 
      * @param userId the id of the user
