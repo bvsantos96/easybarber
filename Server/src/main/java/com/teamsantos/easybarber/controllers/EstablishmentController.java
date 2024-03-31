@@ -42,12 +42,14 @@ public class EstablishmentController {
     }
 
     @PostMapping
+    @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
     public ResponseEntity<BaseEstablishmentDTO> createEstablishment(@RequestBody BaseEstablishmentDTO establishmentDTO,
             Principal principal) {
         try {
             establishmentService.create(establishmentDTO, principal);
-            return ResponseEntity.ok(establishmentDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(establishmentDTO);
         } catch (Exception e) {
+            System.err.println(e.getMessage());
             establishmentDTO.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(establishmentDTO);
         }

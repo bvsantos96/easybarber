@@ -1,10 +1,11 @@
 package com.teamsantos.easybarber.controllers;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
-import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.UserService;
 
 @Controller
@@ -35,10 +35,9 @@ public class UserController {
     }
 
     @PutMapping("/user")
-    @PreAuthorize(PrePermissionEvaluator.IS_USER)
-    public ResponseEntity<String> updateUser(@RequestBody UserCreateDTO userDTO) {
+    public ResponseEntity<String> updateUser(@RequestBody UserCreateDTO userDTO, Principal principal) {
         try {
-            userService.updateUser(userDTO);
+            userService.updateUser(userDTO, principal);
             return ResponseEntity.ok("User updated successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
