@@ -4,6 +4,7 @@ import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -21,6 +22,7 @@ import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.EmployeeService;
 import com.teamsantos.easybarber.services.ServiceService;
@@ -42,13 +44,23 @@ public class EmployeeController {
 
     @PostMapping
     public ResponseEntity<BaseResponseDTO> createEmployee(@RequestBody EmployeeDTO employee, Principal principal) {
+        HttpStatus status = HttpStatus.CREATED;
         try {
             if (principal != null && !userService.userChangePermissions(principal, employee.getMobileInformation()))
                 return ResponseEntity.badRequest().body(new BaseResponseDTO("You are not allowed to create this user"));
             userService.createUser(employee, true);
-            return ResponseEntity.ok(new BaseResponseDTO("Employee created successfully"));
+            return ResponseEntity.status(status).body(new BaseResponseDTO("Employee created successfully"));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
+            BaseResponseDTO response = new BaseResponseDTO();
+            response.setResponseMessage(e.getMessage());
+            if (e instanceof IllegalArgumentException) {
+                status = HttpStatus.BAD_REQUEST;
+            } else if (e instanceof UserAlreadyExistsException) {
+                status = HttpStatus.FOUND;
+            } else {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+            return ResponseEntity.status(status).body(response);
         }
     }
 

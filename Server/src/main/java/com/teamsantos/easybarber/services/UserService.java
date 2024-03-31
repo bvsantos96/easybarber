@@ -66,10 +66,12 @@ public class UserService {
         return createUser(userCreateDTO, false);
     }
 
-    private void createEmployee(EmployeeDTO employeeDTO, Long userId) throws UserAlreadyExistsException {
-        if (employeeRepository.existsByUserId(userId))
+    private void createEmployee(EmployeeDTO employeeDTO, User user) throws UserAlreadyExistsException {
+        if (employeeRepository.existsByUserId(user.getId()))
             throw new UserAlreadyExistsException();
-        employeeRepository.save(modelMapper.map(employeeDTO, Employee.class));
+        Employee employee = modelMapper.map(employeeDTO, Employee.class);
+        employee.setUser(user);
+        employeeRepository.save(employee);
     }
 
     @Transactional
@@ -93,15 +95,14 @@ public class UserService {
                     .getUserType(isEmployee ? UserTypeService.UserTypes.EMPLOYEE : UserTypeService.UserTypes.CLIENT));
             user = userRepository.save(user);
             if (isEmployee)
-                createEmployee((EmployeeDTO) userCreateDTO, user.getId());
+                createEmployee((EmployeeDTO) userCreateDTO, user);
             return modelMapper.map(user, UserDTO.class);
         } else
             throw new IllegalArgumentException("User cannot be null");
     }
 
-    public void updateUser(UserCreateDTO userCreateDTO) {
-        User oldUser = userRepository.findByMobileInformation(userCreateDTO.getMobileInformation())
-                .orElseThrow(UserNotFoundException::new);
+    public void updateUser(UserCreateDTO userCreateDTO, Principal principal) {
+        User oldUser = getUser(principal);
         oldUser.updateNonNullValues(userCreateDTO);
         userRepository.save(oldUser);
     }
