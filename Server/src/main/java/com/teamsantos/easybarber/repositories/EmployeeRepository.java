@@ -9,9 +9,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.Establishment;
+import com.teamsantos.easybarber.entities.User;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
+    boolean existsByUser(User user);
+
     boolean existsByUserId(Long userId);
 
     Optional<Employee> findByUserId(Long userId);
