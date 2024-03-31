@@ -33,7 +33,7 @@ public class EstablishmentTests {
                 .post("/establishment")
                 .header("Authorization", "Bearer " + jwt)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(EstablishmentData.establishments.get(0).toString()));
+                .content(establishment));
         result
                 .andExpect(MockMvcResultMatchers.status().is(AnyOfStatusMatcher.createdOrFound()));
     }
