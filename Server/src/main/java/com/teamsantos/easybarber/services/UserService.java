@@ -129,6 +129,7 @@ public class UserService {
     }
 
     public Page<EstablishmentDTO> getEstablishments(Long id, boolean admin, Pageable pageable) {
-        return PageDTO.toDTO(modelMapper, establishmentRepository.findEstablishmentsByEmployeeId(id, admin, pageable), EstablishmentDTO.class, pageable);
+        return PageDTO.toDTO(modelMapper, establishmentRepository.findEstablishmentsByEmployeeId(id, admin, pageable),
+                EstablishmentDTO.class, pageable);
     }
 }

@@ -29,7 +29,7 @@ Make it so every method that does more than one write from DB has a @Transaction
 ## Define public requests (DONE)
 Make requests that should be public available with no authentication
 
-## User deletion
+## User deletion (DONE)
 - Deletion of users and employee should not really delete the entities, simple disable them.
     - We need to have information regarding the appointments they had. Users can still see with who they had their appointment even if the Employee is no longer present in the application
 - We need to alert the users that their appointments will be deleted since the employee that they are booked with will be deleted

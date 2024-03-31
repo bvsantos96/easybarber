@@ -47,8 +47,8 @@ public class ApplicationSecurity {
                                 "/login",
                                 "/employee")
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/hello", 
-                                "/establishment/list", 
+                        .requestMatchers(HttpMethod.GET, "/hello",
+                                "/establishment/list",
                                 "employee/services",
                                 "employee/establishments",
                                 "employee/{id}/establishments",
