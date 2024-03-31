@@ -17,22 +17,30 @@ import com.teamsantos.easybarber.utils.AnyOfStatusMatcher;
 @AutoConfigureMockMvc
 public class EmployeeTests {
     private final MockMvc mockMvc;
-
+    private final AuthTests authTests;
     @Autowired
     public EmployeeTests(MockMvc mockMvc) {
         this.mockMvc = mockMvc;
+        this.authTests = new AuthTests(mockMvc);
+    }
+
+    private void createEmployee(String employee) throws Exception {
+        ResultActions result = mockMvc.perform(MockMvcRequestBuilders
+                .post("/employee")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(employee));
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .is(AnyOfStatusMatcher.createdOrFound()));
     }
 
     @Test
     public void testEmployee() {
         try {
-            ResultActions result = mockMvc.perform(MockMvcRequestBuilders
-                    .post("/employee")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(EmployeeData.employees.get(0).toString()));
-            result
-                .andExpect(MockMvcResultMatchers.status()
-                    .is(AnyOfStatusMatcher.createdOrFound()));
+            createEmployee(EmployeeData.employees.get(0).toString());
+            authTests.registerUser(EmployeeData.employees.get(1).toString());
+            createEmployee(EmployeeData.employees.get(1).toString());
+
         } catch (Exception e) {
             e.printStackTrace();
         }
