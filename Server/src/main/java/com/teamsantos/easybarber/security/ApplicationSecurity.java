@@ -42,8 +42,20 @@ public class ApplicationSecurity {
         http
                 .csrf(AbstractHttpConfigurer::disable) // TODO: See what this is and configure it properly
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/register", "/login", "/employee/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/hello", "/establishment/list").permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/register",
+                                "/login",
+                                "/employee/register")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/hello", 
+                                "/establishment/list", 
+                                "employee/services",
+                                "employee/establishments",
+                                "employee/{id}/establishments",
+                                "establishment/{id}",
+                                "establishment/list",
+                                "establishment/{id}/services")
+                        .permitAll()
                         .anyRequest().authenticated())
                 .cors(AbstractHttpConfigurer::disable)
                 // TODO: update this to use cors properly (use expo url as allowed origin)
