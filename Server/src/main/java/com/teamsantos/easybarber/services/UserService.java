@@ -84,8 +84,7 @@ public class UserService {
                 if (oUser.isPresent()) {
                     user = oUser.get();
                     if (!isEmployee
-                            || (UserTypeService.isEmployee(user) && employeeRepository.existsByUserId(user.getId()))
-                            || user.equalsIgnoreEmptyValues(userCreateDTO))
+                            || (UserTypeService.isEmployee(user) && employeeRepository.existsByUserId(user.getId())))
                         throw new UserAlreadyExistsException();
                 }
             } catch (Exception e) {
