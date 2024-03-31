@@ -34,11 +34,12 @@ Make requests that should be public available with no authentication
     - We need to have information regarding the appointments they had. Users can still see with who they had their appointment even if the Employee is no longer present in the application
 - We need to alert the users that their appointments will be deleted since the employee that they are booked with will be deleted
 
-## Create tests
-Create a group of tests that for a clean database run all the functionality (same as the requests available) as checks if the result is what we expected
-
-## Test functionality
+## Test
+### Test functionality
 Test all available controller requests
+
+### Create tests
+Create a group of tests that for a clean database run all the functionality (same as the requests available) as checks if the result is what we expected
 
 ## Questions:
 - Do we really need a table for user_type and a field for user_type_id if we already have an Employee table?

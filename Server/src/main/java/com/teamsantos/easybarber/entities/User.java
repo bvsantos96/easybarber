@@ -51,9 +51,7 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private Set<Appointment> appointment;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "user")
-    @ToString.Exclude
+    @OneToOne(mappedBy = "user")
     private Employee employee;
 
     private int hashCodeWithNullCheck(String item) {
