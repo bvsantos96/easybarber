@@ -1,0 +1,52 @@
+package com.teamsantos.easybarber.utils;
+
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+public class CreateTest {
+    public static ResultActions post(MockMvc mockMvc, String path, String jwt, String item) throws Exception {
+        return mockMvc.perform(MockMvcRequestBuilders
+                .post(path)
+                .header("Authorization", "Bearer " + jwt)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(item));
+    }
+
+    public static ResultActions post(MockMvc mockMvc, String path, String item) throws Exception {
+        return mockMvc.perform(MockMvcRequestBuilders
+                .post(path)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(item));
+    }
+
+    public static void create(MockMvc mockMvc, String path, String item) throws Exception {
+        ResultActions result = post(mockMvc, path, item);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .isCreated());
+    }
+
+    public static void createOrFound(MockMvc mockMvc, String path, String item) throws Exception {
+        ResultActions result = post(mockMvc, path, item);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .is(AnyOfStatusMatcher.createdOrFound()));
+    }
+
+    public static void create(MockMvc mockMvc, String path, String jwt, String item) throws Exception {
+        ResultActions result = post(mockMvc, path, jwt, item);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .isCreated());
+    }
+
+    public static void createOrFound(MockMvc mockMvc, String path, String jwt, String item) throws Exception {
+        ResultActions result = post(mockMvc, path, jwt, item);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .is(AnyOfStatusMatcher.createdOrFound()));
+    }
+}

@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.tests;
 
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -14,44 +15,40 @@ import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.EstablishmentData;
 import com.teamsantos.easybarber.testData.UsersData;
 import com.teamsantos.easybarber.utils.AnyOfStatusMatcher;
+import com.teamsantos.easybarber.utils.CreateTest;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 public class EstablishmentTests {
     private final MockMvc mockMvc;
-    private final AuthTests authTests;
-    private final EmployeeTests employeeTests;
+    public static boolean created = false;
 
     @Autowired
     public EstablishmentTests(MockMvc mockMvc) {
         this.mockMvc = mockMvc;
-        this.authTests = new AuthTests(mockMvc);
-        this.employeeTests = new EmployeeTests(mockMvc);
     }
 
-    private ResultActions _createEstablishment(String jwt, String establishment) throws Exception {
-        return mockMvc.perform(MockMvcRequestBuilders
-                .post("/establishment")
-                .header("Authorization", "Bearer " + jwt)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(establishment));
-    }
-
-    private void createEstablishment(String jwt, String establishment) throws Exception {
-        _createEstablishment(jwt, establishment)
-                .andExpect(MockMvcResultMatchers.status().is(AnyOfStatusMatcher.createdOrFound()));
+    private void create(String path, String jwt, String item) throws Exception {
+        if (!created)
+            CreateTest.create(mockMvc, path, jwt, item);
+        else
+            CreateTest.createOrFound(mockMvc, path, jwt, item);
     }
 
     @Test
-    public void testEstablishment() {
+    public void test() {
         try {
-            employeeTests.testEmployee();
-            String jwt = authTests.loginUser(UsersData.users.get(0).toString());
-            ResultActions result = _createEstablishment(jwt, EstablishmentData.establishments.get(0).toString());
-            result.andExpect(MockMvcResultMatchers.status().isForbidden());
-            jwt = authTests.loginUser(EmployeeData.employees.get(0).toString());
-            createEstablishment(jwt, EstablishmentData.establishments.get(0).toString());
-            createEstablishment(jwt, EstablishmentData.establishments.get(1).toString());
+            String jwt;
+            if (!created) {
+                created = true;
+                jwt = new AuthTests(mockMvc).loginUser();
+                ResultActions result = CreateTest.post(mockMvc, "/establishment", jwt,
+                        EstablishmentData.establishments.get(0).toString());
+                result.andExpect(MockMvcResultMatchers.status().isForbidden());
+            }
+            jwt = new EmployeeTests(mockMvc).loginUser();
+            CreateTest.create(mockMvc, "/establishment", jwt, EstablishmentData.establishments.get(0).toString());
+            CreateTest.create(mockMvc, "/establishment", jwt, EstablishmentData.establishments.get(1).toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

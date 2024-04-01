@@ -26,13 +26,17 @@ public class ServiceController {
         this.serviceService = serviceService;
     }
 
+    // TODO: We should thing what permissions are needed to create a service type
+    // Admin ? Employee ?
+    // This will probably be used by the application as a filter, so we should
+    // think about it
     @PostMapping
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
     public ResponseEntity<BaseResponseDTO> createServiceType(@RequestBody ServiceTypeDTO serviceDTO,
             Principal principal) {
         BaseResponseDTO response = new BaseResponseDTO();
         try {
-            serviceService.createType(serviceDTO, principal);
+            serviceService.createType(serviceDTO);
             response.setResponseMessage("Service type created successfully");
             return ResponseEntity.ok(response);
         } catch (Exception e) {
