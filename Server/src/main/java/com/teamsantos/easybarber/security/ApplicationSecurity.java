@@ -1,7 +1,7 @@
 package com.teamsantos.easybarber.security;
 
 import com.teamsantos.easybarber.security.filters.JwtAuthenticationFilter;
-import com.teamsantos.easybarber.security.services.EstablishmentPermissionEvaluator;
+import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.security.services.UserDetailsServiceImpl;
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.security.utils.PasswordEncoding;
@@ -14,6 +14,7 @@ import org.springframework.security.access.expression.method.MethodSecurityExpre
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,26 +26,38 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class ApplicationSecurity {
 
     private final UserDetailsServiceImpl userDetailsService;
-    private final EstablishmentPermissionEvaluator establishmentPermissionEvaluator;
+    private final PrePermissionEvaluator prePermissionEvaluator;
     private final JwtUtils jwtUtils;
 
     @Autowired
     public ApplicationSecurity(UserDetailsServiceImpl userDetailsService, JwtUtils jwtUtils,
-            EstablishmentPermissionEvaluator establishmentPermissionEvaluator) {
+            PrePermissionEvaluator establishmentPermissionEvaluator) {
         this.userDetailsService = userDetailsService;
         this.jwtUtils = jwtUtils;
-        this.establishmentPermissionEvaluator = establishmentPermissionEvaluator;
+        this.prePermissionEvaluator = establishmentPermissionEvaluator;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // TODO: See what this is and configure it properly
+                .csrf(AbstractHttpConfigurer::disable) // TODO: See what this is and configure it properly
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/register", "/login", "/employee/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/hello", "/establishment/list").permitAll()
+                        .requestMatchers(HttpMethod.POST,
+                                "/register",
+                                "/login",
+                                "/employee")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/hello",
+                                "/establishment/list",
+                                "employee/services",
+                                "employee/establishments",
+                                "employee/{id}/establishments",
+                                "establishment/{id}",
+                                "establishment/list",
+                                "establishment/{id}/services")
+                        .permitAll()
                         .anyRequest().authenticated())
-                .cors(cors -> cors.disable())
+                .cors(AbstractHttpConfigurer::disable)
                 // TODO: update this to use cors properly (use expo url as allowed origin)
                 // .cors(cors -> cors.configurationSource(request -> {
                 // var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
@@ -56,7 +69,7 @@ public class ApplicationSecurity {
                 // return corsConfiguration;
                 // }))
                 // .httpBasic(Customizer.withDefaults())
-                .httpBasic(httpBasic -> httpBasic.disable())
+                .httpBasic(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
@@ -79,7 +92,7 @@ public class ApplicationSecurity {
     @Bean
     public MethodSecurityExpressionHandler expressionHandler() {
         DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
-        expressionHandler.setPermissionEvaluator(establishmentPermissionEvaluator);
+        expressionHandler.setPermissionEvaluator(prePermissionEvaluator);
         return expressionHandler;
     }
 }

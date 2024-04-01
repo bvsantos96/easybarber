@@ -1,22 +1,18 @@
 package com.teamsantos.easybarber.entities;
 
-import lombok.Data;
-import java.util.Set;
-
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import jakarta.persistence.*;
+import lombok.*;
+import org.hibernate.proxy.HibernateProxy;
 import org.locationtech.jts.geom.Point;
 
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import java.util.Objects;
+import java.util.Set;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Entity
 public class Establishment {
     @Id
@@ -27,8 +23,10 @@ public class Establishment {
     @Column
     private String description;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Set<EstablishmentStaff> staff;
-    @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "establishment", fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Set<EstablishmentService> services;
     @Column
     private String address;
@@ -48,5 +46,30 @@ public class Establishment {
         dto.setLatitude(establishment.getLocation().getY());
         dto.setLongitude(establishment.getLocation().getX());
         return dto;
+    }
+
+    @Override
+    public final boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (o == null)
+            return false;
+        Class<?> oEffectiveClass = o instanceof HibernateProxy
+                ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
+                : o.getClass();
+        Class<?> thisEffectiveClass = this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass()
+                : this.getClass();
+        if (thisEffectiveClass != oEffectiveClass)
+            return false;
+        Establishment that = (Establishment) o;
+        return getId() != null && Objects.equals(getId(), that.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
+                : getClass().hashCode();
     }
 }
