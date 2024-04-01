@@ -21,6 +21,11 @@ public class ServiceTests {
         this.mockMvc = mockMvc;
     }
 
+    public ServiceTests get() {
+        created = true;
+        return this;
+    }
+
     private void create(String path, String jwt, String item) throws Exception {
         if (!created)
             CreateTest.create(mockMvc, path, jwt, item);
@@ -31,7 +36,7 @@ public class ServiceTests {
     @Test
     public void test() {
         try {
-            String jwt = new EmployeeTests(mockMvc).loginUser();
+            String jwt = new EmployeeTests(mockMvc).get().loginUser();
             create("/service", jwt, ServiceData.serviceTypes.get(0).toString());
             create("/service", jwt, ServiceData.serviceTypes.get(1).toString());
             create("/service", jwt, ServiceData.serviceTypes.get(2).toString());
