@@ -47,7 +47,7 @@ public class ServiceService {
         serviceRepository.save(modelMapper.map(serviceDTO, com.teamsantos.easybarber.entities.Service.class));
     }
 
-    public void createType(ServiceTypeDTO serviceDTO, Principal principal) {
+    public void createType(ServiceTypeDTO serviceDTO) {
         serviceTypeRepository.save(modelMapper.map(serviceDTO, ServiceType.class));
     }
 
