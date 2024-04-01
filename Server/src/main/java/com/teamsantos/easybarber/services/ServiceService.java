@@ -16,8 +16,6 @@ import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.repositories.ServiceTypeRepository;
 import com.teamsantos.easybarber.utils.PageDTO;
 
-import jakarta.transaction.Transactional;
-
 @Service
 public class ServiceService {
     private final ServiceRepository serviceRepository;
@@ -35,16 +33,19 @@ public class ServiceService {
         this.modelMapper = modelMapper;
     }
 
-    @Transactional
     public void createService(ServiceDTO serviceDTO, Principal principal) {
         com.teamsantos.easybarber.entities.Service service = modelMapper.map(serviceDTO,
                 com.teamsantos.easybarber.entities.Service.class);
         service.setEmployee(userTypeService.getEmployee(principal));
+        service.setServiceType(serviceTypeRepository.findById(serviceDTO.getServiceTypeId()).orElseThrow());
         serviceRepository.save(service);
     }
 
     public void updateService(ServiceDTO serviceDTO) {
-        serviceRepository.save(modelMapper.map(serviceDTO, com.teamsantos.easybarber.entities.Service.class));
+        com.teamsantos.easybarber.entities.Service service = modelMapper.map(serviceDTO,
+                com.teamsantos.easybarber.entities.Service.class);
+        service.setServiceType(serviceTypeRepository.findById(serviceDTO.getServiceTypeId()).orElseThrow());
+        serviceRepository.save(service);
     }
 
     public void createType(ServiceTypeDTO serviceDTO) {
