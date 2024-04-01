@@ -1,10 +1,11 @@
 package com.teamsantos.easybarber.controllers;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
-import com.teamsantos.easybarber.DTO.BaseListDTO;
+import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import com.teamsantos.easybarber.security.services.EstablishmentPermissionEvaluator;
+import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
+import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.EstablishmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -20,8 +21,7 @@ import java.security.Principal;
 @Controller
 @RequestMapping("/establishment")
 public class EstablishmentController {
-    private final static String ESTABLISHMENT_ADMIN = EstablishmentPermissionEvaluator.ESTABLISHMENT_ADMIN;
-    private EstablishmentService establishmentService;
+    private final EstablishmentService establishmentService;
 
     @Autowired
     public EstablishmentController(EstablishmentService establishmentService) {
@@ -42,12 +42,14 @@ public class EstablishmentController {
     }
 
     @PostMapping
+    @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
     public ResponseEntity<BaseEstablishmentDTO> createEstablishment(@RequestBody BaseEstablishmentDTO establishmentDTO,
             Principal principal) {
         try {
             establishmentService.create(establishmentDTO, principal);
-            return ResponseEntity.ok(establishmentDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(establishmentDTO);
         } catch (Exception e) {
+            System.err.println(e.getMessage());
             establishmentDTO.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(establishmentDTO);
         }
@@ -55,9 +57,9 @@ public class EstablishmentController {
 
     // GET /establishments?page=0&size=15&sort=id,desc
     @GetMapping("/list")
-    public ResponseEntity<BaseListDTO<EstablishmentDTO>> listEstablishments(
+    public ResponseEntity<BasePageDTO<EstablishmentDTO>> listEstablishments(
             @RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude, Pageable pageable) {
-        BaseListDTO<EstablishmentDTO> listDTO = new BaseListDTO<EstablishmentDTO>();
+        BasePageDTO<EstablishmentDTO> listDTO = new BasePageDTO<>();
         try {
             listDTO.setItems(establishmentService.findByLocation(latitude, longitude, pageable));
             return ResponseEntity.ok(listDTO);
@@ -67,14 +69,14 @@ public class EstablishmentController {
         }
     }
 
-    @PostMapping("/{id}/employee")
-    @PreAuthorize(EstablishmentPermissionEvaluator.ESTABLISHMENT_ADMIN)
+    @PostMapping("/{id}/employee/{employeeId}")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addEmployee(@PathVariable("id") Long establishmentId,
-            @RequestBody Long userId,
+            @PathVariable Long employeeId,
             Principal principal) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.addEmployee(establishmentId, userId, principal);
+            establishmentService.addEmployee(establishmentId, employeeId, principal);
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());
@@ -82,24 +84,43 @@ public class EstablishmentController {
         }
     }
 
-    class LocationDTO {
-        private double latitude;
-        private double longitude;
-
-        public double getLatitude() {
-            return latitude;
+    @GetMapping("{id}/services")
+    public ResponseEntity<BasePageDTO<com.teamsantos.easybarber.entities.EstablishmentService>> listServices(
+            @PathVariable Long id, Pageable pageable) {
+        BasePageDTO<com.teamsantos.easybarber.entities.EstablishmentService> listDTO = new BasePageDTO<>();
+        try {
+            listDTO.setItems(establishmentService.listServices(id, pageable));
+            return ResponseEntity.ok(listDTO);
+        } catch (Exception e) {
+            listDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(listDTO);
         }
+    }
 
-        public void setLatitude(double latitude) {
-            this.latitude = latitude;
+    @PostMapping("{id}/service")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long id,
+            @RequestBody EstablishmentServiceDTO serviceDTO) {
+        BaseResponseDTO responseDTO = new BaseResponseDTO();
+        try {
+            establishmentService.addService(id, serviceDTO);
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            responseDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(responseDTO);
         }
+    }
 
-        public double getLongitude() {
-            return longitude;
-        }
-
-        public void setLongitude(double longitude) {
-            this.longitude = longitude;
+    @DeleteMapping("{id}/service/{serviceId}")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    public ResponseEntity<BaseResponseDTO> removeService(@PathVariable Long id, @PathVariable Long serviceId) {
+        BaseResponseDTO responseDTO = new BaseResponseDTO();
+        try {
+            establishmentService.removeService(id, serviceId);
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            responseDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(responseDTO);
         }
     }
 }

@@ -23,6 +23,7 @@ public class EstablishmentDTO extends BaseEstablishmentDTO {
             if (distance instanceof Double)
                 this.distance = (Double) distance;
         } catch (Exception e) {
+            System.err.println("Error parsing distance from: " + distance.toString());
         }
     }
 }
