@@ -79,7 +79,7 @@ public class EmployeeController {
     public ResponseEntity<BaseResponseDTO> createService(@RequestBody ServiceDTO service, Principal principal) {
         try {
             serviceService.createService(service, principal);
-            return ResponseEntity.ok(new BaseResponseDTO("Service created successfully"));
+            return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponseDTO("Service created successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
         }

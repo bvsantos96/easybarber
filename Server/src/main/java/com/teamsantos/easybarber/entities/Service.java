@@ -19,12 +19,14 @@ public class Service {
     @JoinColumn(name = "employee_id", nullable = false)
     @ToString.Exclude
     private Employee employee;
-    @OneToOne(mappedBy = "service")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "service_type_id", nullable = false)
+    @ToString.Exclude
     private ServiceType serviceType;
     @Column
-    private int name;
+    private String name;
     @Column
-    private int description;
+    private String description;
     @Column
     private String imageUrl;
     @Column

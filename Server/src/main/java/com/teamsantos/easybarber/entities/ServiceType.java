@@ -21,10 +21,8 @@ public class ServiceType {
     private String description;
     @Column
     private String imageUrl;
-    // @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    // @JoinColumn(name = "service_id", nullable = false)
-    // @ToString.Exclude
-    // private Service service;
+    @OneToOne(mappedBy = "serviceType")
+    private Service service;
 
     @Override
     public final boolean equals(Object o) {

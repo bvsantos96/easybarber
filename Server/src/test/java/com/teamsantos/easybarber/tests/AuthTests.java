@@ -1,6 +1,5 @@
 package com.teamsantos.easybarber.tests;
 
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -21,6 +20,11 @@ public class AuthTests {
     @Autowired
     public AuthTests(MockMvc mockMvc) {
         this.mockMvc = mockMvc;
+    }
+
+    public AuthTests get() {
+        created = true;
+        return this;
     }
 
     public String loginUser() throws Exception {

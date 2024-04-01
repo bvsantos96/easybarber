@@ -24,7 +24,7 @@ public class UserTests {
     @Test
     public void test() {
         try {
-            AuthTests authTests = new AuthTests(mockMvc);
+            AuthTests authTests = new AuthTests(mockMvc).get();
             ResultActions result = CreateTest.post(mockMvc, "/user", authTests.loginUser(),
                     "{\"name\":\"Filipe Miguel Pinho Santos\"}");
             result

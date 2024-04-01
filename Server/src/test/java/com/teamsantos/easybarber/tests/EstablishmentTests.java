@@ -28,6 +28,11 @@ public class EstablishmentTests {
         this.mockMvc = mockMvc;
     }
 
+    public EstablishmentTests get() {
+        created = true;
+        return this;
+    }
+
     private void create(String path, String jwt, String item) throws Exception {
         if (!created)
             CreateTest.create(mockMvc, path, jwt, item);
@@ -41,12 +46,12 @@ public class EstablishmentTests {
             String jwt;
             if (!created) {
                 created = true;
-                jwt = new AuthTests(mockMvc).loginUser();
+                jwt = new AuthTests(mockMvc).get().loginUser();
                 ResultActions result = CreateTest.post(mockMvc, "/establishment", jwt,
                         EstablishmentData.establishments.get(0).toString());
                 result.andExpect(MockMvcResultMatchers.status().isForbidden());
             }
-            jwt = new EmployeeTests(mockMvc).loginUser();
+            jwt = new EmployeeTests(mockMvc).get().loginUser();
             CreateTest.create(mockMvc, "/establishment", jwt, EstablishmentData.establishments.get(0).toString());
             CreateTest.create(mockMvc, "/establishment", jwt, EstablishmentData.establishments.get(1).toString());
         } catch (Exception e) {

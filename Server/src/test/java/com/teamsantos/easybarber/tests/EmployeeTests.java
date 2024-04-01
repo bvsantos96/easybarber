@@ -22,11 +22,23 @@ public class EmployeeTests {
         this.mockMvc = mockMvc;
     }
 
+    public EmployeeTests get() {
+        created = true;
+        return this;
+    }
+
     public String loginUser() throws Exception {
         if (!created)
             test();
-        AuthTests authTests = new AuthTests(mockMvc);
+        AuthTests authTests = new AuthTests(mockMvc).get();
         return authTests.loginUser(EmployeeData.employees.get(0).toString());
+    }
+
+    private void create(String path, String jwt, String item) throws Exception {
+        if (!created)
+            CreateTest.create(mockMvc, path, jwt, item);
+        else
+            CreateTest.createOrFound(mockMvc, path, jwt, item);
     }
 
     private void create(String path, String item) throws Exception {
@@ -51,11 +63,12 @@ public class EmployeeTests {
     @Test
     public void testServices() {
         try {
-            new ServiceTests(mockMvc).test();
+            new ServiceTests(mockMvc).get().test();
+            String jwt = loginUser();
             created = false;
-            create("/employee/service", ServiceData.services.get(0).toString());
-            create("/employee/service", ServiceData.services.get(1).toString());
-            create("/employee/service", ServiceData.services.get(2).toString());
+            create("/employee/service", jwt, ServiceData.services.get(0).toString());
+            create("/employee/service", jwt, ServiceData.services.get(1).toString());
+            create("/employee/service", jwt, ServiceData.services.get(2).toString());
             created = true;
         } catch (Exception e) {
             e.printStackTrace();
