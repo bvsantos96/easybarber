@@ -7,6 +7,7 @@ import com.teamsantos.easybarber.utils.GeometryUtils;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.locationtech.jts.io.ParseException;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -22,7 +23,7 @@ public class BaseEstablishmentDTO extends BaseResponseDTO {
     // this in the JSON we would need to implement a custom serializer.
     // https://chat.openai.com/share/724876ff-1846-4be0-8a49-f4199b3eb7a2
     @JsonIgnore
-    public Point getLocation() {
+    public Point getLocation() throws ParseException {
         return GeometryUtils.parseLocation(latitude, longitude);
     }
 

@@ -2,18 +2,23 @@ package com.teamsantos.easybarber.services;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
+import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.EstablishmentStaff;
-import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
+import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
-import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.utils.GeometryUtils;
 
+import jakarta.transaction.Transactional;
+
+import org.locationtech.jts.io.ParseException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -26,18 +31,18 @@ public class EstablishmentService {
     private final ModelMapper modelMapper;
     private final EstablishmentRepository establishmentRepository;
     private final EstablishmentStaffRepository establishmentStaffRepository;
-    private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
     private final UserTypeService userTypeService;
     private final UserService userService;
 
     @Autowired
     public EstablishmentService(ModelMapper modelMapper, EstablishmentRepository establishmentRepository,
-            UserRepository userRepository, UserTypeService userTypeService,
+            EmployeeRepository employeeRepository, UserTypeService userTypeService,
             EstablishmentStaffRepository establishmentStaffRepository, UserService userService) {
         this.modelMapper = modelMapper;
         this.establishmentRepository = establishmentRepository;
         this.establishmentStaffRepository = establishmentStaffRepository;
-        this.userRepository = userRepository;
+        this.employeeRepository = employeeRepository;
         this.userTypeService = userTypeService;
         this.userService = userService;
     }
@@ -47,16 +52,18 @@ public class EstablishmentService {
                 .orElseThrow(NotFoundException::new);
     }
 
-    public List<EstablishmentDTO> listEstablishmentStaff(Long id) throws NotFoundException {
-        return userRepository.findOwnedEstablishmentsById(id).stream()
+    public List<EstablishmentDTO> listEstablishmentStaff(Long id, Pageable pageable) {
+        return employeeRepository.findOwnedEstablishmentsById(id, pageable).stream()
                 .map((element) -> modelMapper.map(element, EstablishmentDTO.class)).toList();
     }
 
+    @Transactional
     public void create(BaseEstablishmentDTO establishmentDTO, Principal principal) {
-        create(establishmentDTO, userService.getUser(principal));
+        create(establishmentDTO, userService.getEmployee(principal));
     }
 
-    public void create(BaseEstablishmentDTO establishmentDTO, User owner) {
+    @Transactional
+    public void create(BaseEstablishmentDTO establishmentDTO, Employee owner) {
         Establishment establishment = modelMapper.map(establishmentDTO, Establishment.class);
         if (establishment != null) {
             establishment = establishmentRepository.save(establishment);
@@ -65,22 +72,24 @@ public class EstablishmentService {
             if (owner.getEstablishments() == null)
                 owner.setEstablishments(new HashSet<>());
             owner.getEstablishments().add(establishmentOwned);
-            userRepository.save(owner);
+            employeeRepository.save(owner);
             establishmentStaffRepository.save(establishmentOwned);
         } else
             throw new IllegalArgumentException("Establishment cannot be null");
     }
 
     public List<BaseEstablishmentDTO> findAllBase(Pageable pageable) {
-        return establishmentRepository.findAllBase(pageable);
+        return establishmentRepository.findAllBase(pageable).getContent();
     }
 
+    @Transactional
     public void addEmployee(Long establishmentId, Long userId, Principal principal)
             throws NotFoundException, UnsupportedOperationException {
-        addEmployee(establishmentId, userId, userService.getUser(principal));
+        addEmployee(establishmentId, userId, userService.getEmployee(principal));
     }
 
-    public void addEmployee(Long establishmentId, Long userId, User invitor)
+    @Transactional
+    public void addEmployee(Long establishmentId, Long userId, Employee invitor)
             throws NotFoundException, UnsupportedOperationException {
         Establishment establishment = establishmentRepository.findById(establishmentId)
                 .orElseThrow(NotFoundException::new);
@@ -88,15 +97,45 @@ public class EstablishmentService {
             if (establishment.getStaff() == null)
                 establishment.setStaff(new HashSet<>());
             establishment.getStaff()
-                    .add(new EstablishmentStaff(userRepository.findById(userId).orElseThrow(UserNotFoundException::new),
+                    .add(new EstablishmentStaff(
+                            employeeRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new),
                             establishment, false, true, invitor));
+            establishmentRepository.save(establishment);
             // TODO: note that the we might want to start an employee approval process here,
             // so we might want to set approved to false
         }
+        throw new UnsupportedOperationException("User is not an employee");
     }
 
-    public List<EstablishmentDTO> findByLocation(double latitude, double longitude, Pageable pageable) {
+    public Page<EstablishmentDTO> findByLocation(double latitude, double longitude, Pageable pageable)
+            throws ParseException {
         return establishmentRepository.findClosestEstablishments(GeometryUtils.parseLocation(latitude, longitude),
                 pageable);
+    }
+
+    public Page<com.teamsantos.easybarber.entities.EstablishmentService> listServices(Long id, Pageable pageable) {
+        return establishmentRepository.findServicesByEstablishmentId(id, pageable);
+    }
+
+    @Transactional
+    public void addService(Long id, EstablishmentServiceDTO serviceDTO) {
+        if (serviceDTO != null) {
+            Establishment establishment = establishmentRepository.findById(id).orElseThrow();
+            establishment.getStaff().stream()
+                    .filter((staff) -> staff.getEmployee().getId().equals(serviceDTO.getEmployeeId()))
+                    .findFirst().orElseThrow();
+            establishment.getServices()
+                    .add(modelMapper.map(serviceDTO, com.teamsantos.easybarber.entities.EstablishmentService.class));
+            establishmentRepository.save(establishment);
+        }
+    }
+
+    @Transactional
+    public void removeService(Long id, Long serviceId) {
+        if (serviceId != null) {
+            Establishment establishment = establishmentRepository.findById(id).orElseThrow();
+            establishment.getServices().removeIf((service) -> service.getId().equals(serviceId));
+            establishmentRepository.save(establishment);
+        }
     }
 }

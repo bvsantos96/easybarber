@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 public class AuthController {
-    private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public AuthController(UserService userService) {
@@ -40,7 +40,7 @@ public class AuthController {
             if (e instanceof IllegalArgumentException) {
                 status = HttpStatus.BAD_REQUEST;
             } else if (e instanceof UserAlreadyExistsException) {
-                status = HttpStatus.CONFLICT;
+                status = HttpStatus.FOUND;
             } else {
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
