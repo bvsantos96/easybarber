@@ -2,10 +2,9 @@ package com.teamsantos.easybarber.DTO;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.locationtech.jts.geom.Point;
 
 import java.util.Set;
-
-import org.locationtech.jts.geom.Point;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

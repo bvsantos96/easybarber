@@ -1,25 +1,22 @@
 package com.teamsantos.easybarber.security.services;
 
-import java.io.Serializable;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.PermissionEvaluator;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
-
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.security.filters.EstablishmentSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.filters.ServiceSecurityExpressionRoot;
-import com.teamsantos.easybarber.security.filters.UserSecurityExpressionRoot;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
 
 @Service
 public class PrePermissionEvaluator implements PermissionEvaluator {
     private final UserRepository userRepository;
     private final EstablishmentStaffRepository establishmentStaffRepository;
-    private final EmployeeRepository employeeRepository;
     private final ServiceRepository serviceRepository;
 
     public static final String _ESTABLISHMENT_ADMIN = "ESTABLISHMENT_ADMIN";
@@ -30,11 +27,10 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
     public PrePermissionEvaluator(UserRepository userRepository,
-            EstablishmentStaffRepository establishmentStaffRepository, EmployeeRepository employeeRepository,
+            EstablishmentStaffRepository establishmentStaffRepository,
             ServiceRepository serviceRepository) {
         this.userRepository = userRepository;
         this.establishmentStaffRepository = establishmentStaffRepository;
-        this.employeeRepository = employeeRepository;
         this.serviceRepository = serviceRepository;
     }
 

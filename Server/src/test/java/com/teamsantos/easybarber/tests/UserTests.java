@@ -1,6 +1,6 @@
 package com.teamsantos.easybarber.tests;
 
-import org.junit.jupiter.api.Order;
+import com.teamsantos.easybarber.utils.CreateTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -8,8 +8,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import com.teamsantos.easybarber.utils.CreateTest;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -24,9 +22,8 @@ public class UserTests {
     @Test
     public void test() {
         try {
-            AuthTests authTests = new AuthTests(mockMvc).get();
-            ResultActions result = CreateTest.post(mockMvc, "/user", authTests.loginUser(),
-                    "{\"name\":\"Filipe Miguel Pinho Santos\"}");
+            ResultActions result = CreateTest.put(mockMvc, "/user", new AuthTests(mockMvc).loginUser(),
+                    "{\"name\":\"Bruno Vicente dos Santos\"}");
             result
                     .andExpect(MockMvcResultMatchers.status().isOk());
         } catch (Exception e) {
