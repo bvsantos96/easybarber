@@ -1,7 +1,10 @@
 package com.teamsantos.easybarber.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
@@ -16,10 +19,10 @@ public class EstablishmentService {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "establishment_id")
+    @JoinColumn
     private Establishment establishment;
     @ManyToOne
-    @JoinColumn(name = "employee_id")
+    @JoinColumn
     private User employee;
     @Column
     private double price;

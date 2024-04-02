@@ -1,7 +1,9 @@
 package com.teamsantos.easybarber.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
@@ -15,10 +17,10 @@ public class EstablishmentStaff {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
-    @JoinColumn(name = "employee_id")
+    @JoinColumn
     private Employee employee;
     @ManyToOne
-    @JoinColumn(name = "establishment_id")
+    @JoinColumn
     private Establishment establishment;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean admin;
@@ -27,7 +29,7 @@ public class EstablishmentStaff {
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean deleted;
     @ManyToOne
-    @JoinColumn(name = "invitor_id")
+    @JoinColumn
     private Employee invitor;
 
     public EstablishmentStaff(Employee employee, Establishment establishment, boolean admin, boolean approved,

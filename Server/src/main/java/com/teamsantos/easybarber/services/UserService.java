@@ -1,15 +1,5 @@
 package com.teamsantos.easybarber.services;
 
-import java.security.Principal;
-import java.util.Optional;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
@@ -24,6 +14,15 @@ import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.security.utils.PasswordEncoding;
 import com.teamsantos.easybarber.utils.PageDTO;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.security.Principal;
+import java.util.Optional;
 
 @Service
 public class UserService {
