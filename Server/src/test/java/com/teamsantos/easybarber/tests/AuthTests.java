@@ -21,24 +21,31 @@ public class AuthTests {
         this.mockMvc = mockMvc;
     }
 
-    public String loginUser() throws Exception {
-        if (!AuthTests.created)
+    public String login(boolean init) throws Exception {
+        if (init)
             test();
-        return loginUser(UsersData.users.get(0).toString());
+        return login(UsersData.users.get(0).toString());
     }
 
-    public String loginUser(String user) throws Exception {
+    public String login(String user, boolean init) throws Exception {
+        if (init)
+            test();
         ResultActions result = CreateTest.post(mockMvc, "/login", user);
         result
                 .andExpect(MockMvcResultMatchers.status().isOk());
         return result.andReturn().getResponse().getContentAsString();
     }
 
+    public String login() throws Exception {
+        return login(true);
+    }
+
+    public String login(String user) throws Exception {
+        return login(user, true);
+    }
+
     private void create(String path, String item) throws Exception {
-        if (!AuthTests.created)
-            CreateTest.create(mockMvc, path, item);
-        else
-            CreateTest.createOrFound(mockMvc, path, item);
+        CreateTest.createOrFound(mockMvc, path, item);
     }
 
     @Test
@@ -46,7 +53,7 @@ public class AuthTests {
         try {
             create("/register", UsersData.users.get(0).toString());
             create("/register", UsersData.users.get(1).toString());
-            loginUser(UsersData.users.get(1).toString());
+            login(UsersData.users.get(1).toString(), false);
             if (!AuthTests.created)
                 AuthTests.created = true;
         } catch (Exception e) {

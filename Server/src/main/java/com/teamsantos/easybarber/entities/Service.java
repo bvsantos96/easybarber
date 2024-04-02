@@ -8,6 +8,7 @@ import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -26,6 +27,9 @@ public class Service {
     @JoinColumn(nullable = false)
     @ToString.Exclude
     private ServiceType serviceType;
+    @OneToMany(mappedBy = "service", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Set<EstablishmentService> establishments;
     @Column
     private String name;
     @Column
