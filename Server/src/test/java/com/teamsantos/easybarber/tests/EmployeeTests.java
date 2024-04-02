@@ -66,6 +66,7 @@ public class EmployeeTests {
                 EmployeeTests.created = true;
         } catch (Exception e) {
             e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
     }
 
@@ -85,6 +86,7 @@ public class EmployeeTests {
             create("/employee/service", jwt, ServiceData.services.get(2).toString());
         } catch (Exception e) {
             e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
         EmployeeTests.created = created;
     }

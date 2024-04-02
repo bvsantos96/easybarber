@@ -4,10 +4,12 @@ import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.EstablishmentData;
 import com.teamsantos.easybarber.testData.ServiceData;
 import com.teamsantos.easybarber.utils.CreateTest;
+import org.hibernate.AssertionFailure;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.util.AssertionErrors;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -75,6 +77,7 @@ public class EstablishmentTests {
             EstablishmentTests.created = created;
         } catch (Exception e) {
             e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
         EstablishmentTests.created = created;
     }
@@ -98,6 +101,7 @@ public class EstablishmentTests {
             create("/establishment/1/service/2", jwt, ServiceData.services.get(2).toString());
         } catch (Exception e) {
             e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
         EstablishmentTests.created = created;
     }
