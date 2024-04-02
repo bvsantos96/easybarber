@@ -21,4 +21,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @Query("SELECT sf.establishment FROM EstablishmentStaff sf WHERE sf.employee.id = :userId AND sf.approved = true AND sf.deleted = false")
     Page<Establishment> findOwnedEstablishmentsById(Long userId, Pageable pageable);
+
+    @Query("SELECT e FROM Employee e WHERE e.user.mobileInformation = :mobileInformation")
+    Optional<Employee> findByMobileInformation(String mobileInformation);
 }

@@ -37,4 +37,6 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
 
     @Query("SELECT e.services FROM Establishment e WHERE e.id = :establishmentId")
     Page<EstablishmentService> findServicesByEstablishmentId(Long establishmentId, Pageable pageable);
+
+    boolean existsByName(String name);
 }
