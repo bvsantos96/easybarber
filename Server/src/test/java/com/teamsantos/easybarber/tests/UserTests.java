@@ -28,6 +28,7 @@ public class UserTests {
                     .andExpect(MockMvcResultMatchers.status().isOk());
         } catch (Exception e) {
             e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
     }
 }
