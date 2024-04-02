@@ -13,47 +13,38 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 public class EmployeeTests {
     private final MockMvc mockMvc;
-    private static boolean created = false;
 
     @Autowired
     public EmployeeTests(MockMvc mockMvc) {
         this.mockMvc = mockMvc;
     }
 
-    public String loginUser() throws Exception {
-        if (!EmployeeTests.created)
+    public String login(boolean init) throws Exception {
+        if (init)
             test();
-        return new AuthTests(mockMvc).loginUser(EmployeeData.employees.get(0).toString());
+        return new AuthTests(mockMvc).login(EmployeeData.employees.get(0).toString());
     }
 
-    public String loginUser(int index) throws Exception {
-        if (!EmployeeTests.created)
+    public String login(int index, boolean init) throws Exception {
+        if (init)
             test();
-        return new AuthTests(mockMvc).loginUser(EmployeeData.employees.get(index).toString());
+        return new AuthTests(mockMvc).login(EmployeeData.employees.get(index).toString());
     }
 
-    public String loginUserSafe() throws Exception {
-        EmployeeTests.created = true;
-        return loginUser();
+    public String login() throws Exception {
+        return login(true);
     }
 
-    public String loginUserSafe(int index) throws Exception {
-        EmployeeTests.created = true;
-        return loginUser(index);
+    public String login(int index) throws Exception {
+        return login(index, true);
     }
 
     private void create(String path, String jwt, String item) throws Exception {
-        if (!EmployeeTests.created)
-            CreateTest.create(mockMvc, path, jwt, item);
-        else
-            CreateTest.createOrFound(mockMvc, path, jwt, item);
+        CreateTest.createOrFound(mockMvc, path, jwt, item);
     }
 
     private void create(String path, String item) throws Exception {
-        if (!EmployeeTests.created)
-            CreateTest.create(mockMvc, path, item);
-        else
-            CreateTest.createOrFound(mockMvc, path, item);
+        CreateTest.createOrFound(mockMvc, path, item);
     }
 
     @Test
@@ -62,8 +53,6 @@ public class EmployeeTests {
             create("/employee", EmployeeData.employees.get(0).toString());
             create("/register", EmployeeData.employees.get(1).toString());
             create("/employee", EmployeeData.employees.get(1).toString());
-            if (!EmployeeTests.created)
-                EmployeeTests.created = true;
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
@@ -72,23 +61,20 @@ public class EmployeeTests {
 
     @Test
     public void testServices() {
-        boolean created = EmployeeTests.created;
+        testServices(true);
+    }
+
+    public void testServices(boolean init) {
         try {
-            new ServiceTests(mockMvc).test();
-            created = EmployeeTests.created;
-            String jwt = loginUser();
-            EmployeeTests.created = false;
+            new ServiceTests(mockMvc).test(init);
+            String jwt = login(init);
             create("/employee/service", jwt, ServiceData.services.get(0).toString());
             create("/employee/service", jwt, ServiceData.services.get(1).toString());
-            EmployeeTests.created = created;
-            jwt = loginUser(1);
-            EmployeeTests.created = false;
+            jwt = login(1, false);
             create("/employee/service", jwt, ServiceData.services.get(2).toString());
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
-        EmployeeTests.created = created;
     }
-
 }

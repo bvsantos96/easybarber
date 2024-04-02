@@ -7,4 +7,5 @@ import com.teamsantos.easybarber.entities.EstablishmentService;
 
 @Repository
 public interface EstablishmentServiceRepository extends JpaRepository<EstablishmentService, Long> {
+    boolean existsByServiceIdAndEstablishmentId(Long serviceId, Long id);
 }
