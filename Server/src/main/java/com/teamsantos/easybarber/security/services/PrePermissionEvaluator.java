@@ -20,18 +20,21 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
     private final ServiceRepository serviceRepository;
 
     public static final String _ESTABLISHMENT_ADMIN = "ESTABLISHMENT_ADMIN";
-    public static final String ESTABLISHMENT_ADMIN = "hasPermission(#establishmentId, " + _ESTABLISHMENT_ADMIN + ")";
+    public static final String ESTABLISHMENT_ADMIN = "hasPermission(#establishmentId, '" + _ESTABLISHMENT_ADMIN + "')";
     public static final String _SERVICE_OWNER = "SERVICE_OWNER";
-    public static final String SERVICE_OWNER = "hasPermission(#serviceId, " + _SERVICE_OWNER + ")";
+    public static final String SERVICE_OWNER = "hasPermission(#serviceId, '" + _SERVICE_OWNER + "')";
     public static final String IS_EMPLOYEE = "hasRole('EMPLOYEE')";
+    private final EmployeeRepository employeeRepository;
 
     @Autowired
     public PrePermissionEvaluator(UserRepository userRepository,
             EstablishmentStaffRepository establishmentStaffRepository,
-            ServiceRepository serviceRepository) {
+            ServiceRepository serviceRepository,
+            EmployeeRepository employeeRepository) {
         this.userRepository = userRepository;
         this.establishmentStaffRepository = establishmentStaffRepository;
         this.serviceRepository = serviceRepository;
+        this.employeeRepository = employeeRepository;
     }
 
     @Override
@@ -43,7 +46,7 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
         return switch (strPermission) {
             case _ESTABLISHMENT_ADMIN -> {
                 EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
-                        userRepository, establishmentStaffRepository);
+                        employeeRepository, establishmentStaffRepository);
                 yield root.hasAdminPermission((Long) targetDomainObject);
             }
             case _SERVICE_OWNER -> {
@@ -66,7 +69,7 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
         return switch (sPermission) {
             case _ESTABLISHMENT_ADMIN -> {
                 EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
-                        userRepository, establishmentStaffRepository);
+                        employeeRepository, establishmentStaffRepository);
                 yield root.hasAdminPermission(Long.parseLong(targetType));
             }
             case _SERVICE_OWNER -> {

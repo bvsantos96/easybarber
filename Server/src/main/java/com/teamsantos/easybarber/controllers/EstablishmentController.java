@@ -1,8 +1,7 @@
 package com.teamsantos.easybarber.controllers;
 
-import com.teamsantos.easybarber.DTO.*;
-import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
-import com.teamsantos.easybarber.services.EstablishmentService;
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Pageable;
@@ -10,9 +9,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.Principal;
+import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.DTO.BasePageDTO;
+import com.teamsantos.easybarber.DTO.BaseResponseDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
+import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
+import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
+import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
+import com.teamsantos.easybarber.services.EstablishmentService;
 
 @Controller
 @RequestMapping("/establishment")
@@ -24,7 +38,7 @@ public class EstablishmentController {
         this.establishmentService = establishmentService;
     }
 
-    @GetMapping("{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<EstablishmentDTO> getEstablishment(@PathVariable Long id) {
         EstablishmentDTO establishments = new EstablishmentDTO();
         try {
@@ -44,6 +58,9 @@ public class EstablishmentController {
         try {
             establishmentService.create(establishmentDTO, principal);
             return ResponseEntity.status(HttpStatus.CREATED).body(establishmentDTO);
+        } catch (AlreadyExistsException e) {
+            establishmentDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FOUND).body(establishmentDTO);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             establishmentDTO.setResponseMessage(e.getMessage());
@@ -73,14 +90,17 @@ public class EstablishmentController {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
             establishmentService.addEmployee(establishmentId, employeeId, principal);
-            return ResponseEntity.ok(responseDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+        } catch (UserAlreadyExistsException e) {
+            responseDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FOUND).body(responseDTO);
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(responseDTO);
         }
     }
 
-    @GetMapping("{id}/services")
+    @GetMapping("/{id}/services")
     public ResponseEntity<BasePageDTO<com.teamsantos.easybarber.entities.EstablishmentService>> listServices(
             @PathVariable Long id, Pageable pageable) {
         BasePageDTO<com.teamsantos.easybarber.entities.EstablishmentService> listDTO = new BasePageDTO<>();
@@ -93,21 +113,24 @@ public class EstablishmentController {
         }
     }
 
-    @PostMapping("{establishmentId}/service/{serviceId}")
+    @PostMapping("/{establishmentId}/service/{serviceId}/employee/{employeeId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long establishmentId,
-            @PathVariable Long serviceId) {
+            @PathVariable Long serviceId, @PathVariable Long employeeId) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.addService(establishmentId, serviceId);
-            return ResponseEntity.ok(responseDTO);
+            establishmentService.addService(establishmentId, serviceId, employeeId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+        } catch (AlreadyExistsException e) {
+            responseDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FOUND).body(responseDTO);
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(responseDTO);
         }
     }
 
-    @PutMapping("{establishmentId}/service")
+    @PutMapping("/{establishmentId}/service")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> updateService(@PathVariable Long establishmentId,
             EstablishmentServiceDTO serviceDTO) {
@@ -121,7 +144,7 @@ public class EstablishmentController {
         }
     }
 
-    @DeleteMapping("{id}/service/{serviceId}")
+    @DeleteMapping("/{id}/service/{serviceId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> removeService(@PathVariable Long id, @PathVariable Long serviceId) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
