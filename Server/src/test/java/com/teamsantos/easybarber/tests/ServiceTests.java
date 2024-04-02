@@ -29,7 +29,7 @@ public class ServiceTests {
     @Test
     public void test() {
         try {
-            String jwt = new EmployeeTests(mockMvc).loginUser();
+            String jwt = new EmployeeTests(mockMvc).loginUserSafe();
             create("/service", jwt, ServiceData.serviceTypes.get(0).toString());
             create("/service", jwt, ServiceData.serviceTypes.get(1).toString());
             create("/service", jwt, ServiceData.serviceTypes.get(2).toString());
