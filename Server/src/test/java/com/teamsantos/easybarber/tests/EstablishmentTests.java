@@ -2,6 +2,7 @@ package com.teamsantos.easybarber.tests;
 
 import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.EstablishmentData;
+import com.teamsantos.easybarber.testData.ServiceData;
 import com.teamsantos.easybarber.utils.CreateTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,8 +57,12 @@ public class EstablishmentTests {
 
     @Test
     public void testEmployees() {
+        boolean created = EstablishmentTests.created;
         try {
+            test();
+            created = EstablishmentTests.created;
             new EmployeeTests(mockMvc).test();
+            EstablishmentTests.created = false;
             String jwt = new EmployeeTests(mockMvc).loginUser();
             create("/establishment/1/employee/0", jwt, EmployeeData.employees.get(0).toString());
             create("/establishment/2/employee/0", jwt, EmployeeData.employees.get(0).toString());
@@ -67,8 +72,33 @@ public class EstablishmentTests {
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
             jwt = new EmployeeTests(mockMvc).loginUser();
             create("/establishment/2/employee/1", jwt, EmployeeData.employees.get(0).toString());
+            EstablishmentTests.created = created;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        EstablishmentTests.created = created;
+    }
+
+    @Test
+    public void testService() {
+        boolean created = EstablishmentTests.created;
+        try {
+            testEmployees();
+            created = EstablishmentTests.created;
+            new EmployeeTests(mockMvc).testServices();
+            EstablishmentTests.created = false;
+            String jwt = new EmployeeTests(mockMvc).loginUser();
+            create("/establishment/1/service/0", jwt, ServiceData.services.get(0).toString());
+            create("/establishment/1/service/1", jwt, ServiceData.services.get(1).toString());
+            jwt = new EmployeeTests(mockMvc).loginUser(1);
+            ResultActions result = CreateTest.post(mockMvc, "/establishment/1/service/2", jwt,
+                    ServiceData.services.get(2).toString());
+            result.andExpect(MockMvcResultMatchers.status().isForbidden());
+            jwt = new EmployeeTests(mockMvc).loginUser();
+            create("/establishment/1/service/2", jwt, ServiceData.services.get(2).toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        EstablishmentTests.created = created;
     }
 }
