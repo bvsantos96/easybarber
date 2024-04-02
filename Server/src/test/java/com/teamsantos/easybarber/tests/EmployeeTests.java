@@ -32,6 +32,16 @@ public class EmployeeTests {
         return new AuthTests(mockMvc).loginUser(EmployeeData.employees.get(index).toString());
     }
 
+    public String loginUserSafe() throws Exception {
+        EmployeeTests.created = true;
+        return loginUser();
+    }
+
+    public String loginUserSafe(int index) throws Exception {
+        EmployeeTests.created = true;
+        return loginUser(index);
+    }
+
     private void create(String path, String jwt, String item) throws Exception {
         if (!EmployeeTests.created)
             CreateTest.create(mockMvc, path, jwt, item);
@@ -52,7 +62,8 @@ public class EmployeeTests {
             create("/employee", EmployeeData.employees.get(0).toString());
             create("/register", EmployeeData.employees.get(1).toString());
             create("/employee", EmployeeData.employees.get(1).toString());
-            EmployeeTests.created = true;
+            if (!EmployeeTests.created)
+                EmployeeTests.created = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -60,10 +71,11 @@ public class EmployeeTests {
 
     @Test
     public void testServices() {
+        boolean created = EmployeeTests.created;
         try {
             new ServiceTests(mockMvc).test();
+            created = EmployeeTests.created;
             String jwt = loginUser();
-            boolean created = EmployeeTests.created;
             EmployeeTests.created = false;
             create("/employee/service", jwt, ServiceData.services.get(0).toString());
             create("/employee/service", jwt, ServiceData.services.get(1).toString());
@@ -71,9 +83,10 @@ public class EmployeeTests {
             jwt = loginUser(1);
             EmployeeTests.created = false;
             create("/employee/service", jwt, ServiceData.services.get(2).toString());
-            EmployeeTests.created = created;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        EmployeeTests.created = created;
     }
+
 }

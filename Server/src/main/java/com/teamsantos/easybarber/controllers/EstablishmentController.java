@@ -93,13 +93,27 @@ public class EstablishmentController {
         }
     }
 
-    @PostMapping("{id}/service")
+    @PostMapping("{id}/service{serviceId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long id,
-            @RequestBody EstablishmentServiceDTO serviceDTO) {
+            @PathVariable Long serviceId) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.addService(id, serviceDTO);
+            establishmentService.addService(id, serviceId);
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            responseDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
+    @PutMapping("{id}/service{serviceId}")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long id,
+            EstablishmentServiceDTO serviceDTO) {
+        BaseResponseDTO responseDTO = new BaseResponseDTO();
+        try {
+            establishmentService.updateService(id, serviceDTO);
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());

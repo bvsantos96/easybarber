@@ -10,6 +10,7 @@ import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
+import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.utils.GeometryUtils;
 import jakarta.transaction.Transactional;
 import org.locationtech.jts.io.ParseException;
@@ -30,17 +31,19 @@ public class EstablishmentService {
     private final EstablishmentRepository establishmentRepository;
     private final EstablishmentStaffRepository establishmentStaffRepository;
     private final EmployeeRepository employeeRepository;
+    private final ServiceRepository serviceRepository;
     private final UserTypeService userTypeService;
     private final UserService userService;
 
     @Autowired
     public EstablishmentService(ModelMapper modelMapper, EstablishmentRepository establishmentRepository,
-            EmployeeRepository employeeRepository, UserTypeService userTypeService,
+            EmployeeRepository employeeRepository, ServiceRepository serviceRepository, UserTypeService userTypeService,
             EstablishmentStaffRepository establishmentStaffRepository, UserService userService) {
         this.modelMapper = modelMapper;
         this.establishmentRepository = establishmentRepository;
         this.establishmentStaffRepository = establishmentStaffRepository;
         this.employeeRepository = employeeRepository;
+        this.serviceRepository = serviceRepository;
         this.userTypeService = userTypeService;
         this.userService = userService;
     }
@@ -129,6 +132,37 @@ public class EstablishmentService {
     }
 
     @Transactional
+    public void addService(Long id, Long serviceId) throws NotFoundException {
+        if (serviceId != null) {
+            Establishment establishment = establishmentRepository.findById(id).orElseThrow(NotFoundException::new);
+            com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceId)
+                    .orElseThrow(NotFoundException::new);
+            if (establishment.getStaff().stream().noneMatch((staff) -> staff.getEmployee().getUser()
+                    .getMobileInformation().equals(service.getEmployee().getUser().getMobileInformation())))
+                throw new UnsupportedOperationException("User is not an employee");
+            establishment.getServices()
+                    .add(modelMapper.map(service, com.teamsantos.easybarber.entities.EstablishmentService.class));
+            establishmentRepository.save(establishment);
+        }
+    }
+
+    @Transactional
+    public void updateService(Long establishmentId, EstablishmentServiceDTO serviceDTO) throws NotFoundException {
+        if (serviceDTO != null) {
+            Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow();
+            com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceDTO.getId())
+                    .orElseThrow(NotFoundException::new);
+            if (establishment.getStaff().stream().noneMatch((staff) -> staff.getEmployee().getUser()
+                    .getMobileInformation().equals(service.getEmployee().getUser().getMobileInformation())))
+                throw new UnsupportedOperationException("User is not an employee");
+            establishment.getServices().stream()
+                    .filter((_service) -> _service.getId().equals(serviceDTO.getId()))
+                    .findFirst().ifPresent((_service) -> modelMapper.map(serviceDTO, _service));
+            establishmentRepository.save(establishment);
+        }
+    }
+
+    @Transactional
     public void removeService(Long id, Long serviceId) {
         if (serviceId != null) {
             Establishment establishment = establishmentRepository.findById(id).orElseThrow();
@@ -136,4 +170,5 @@ public class EstablishmentService {
             establishmentRepository.save(establishment);
         }
     }
+
 }
