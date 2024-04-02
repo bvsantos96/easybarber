@@ -1,13 +1,12 @@
 package com.teamsantos.easybarber.services;
 
-import java.security.Principal;
-
+import com.teamsantos.easybarber.entities.Employee;
+import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamsantos.easybarber.entities.Employee;
-import com.teamsantos.easybarber.repositories.EmployeeRepository;
+import java.security.Principal;
 
 @Service
 public class EmployeeService {
