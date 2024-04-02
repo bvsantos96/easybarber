@@ -51,6 +51,7 @@ public class AuthTests {
                 AuthTests.created = true;
         } catch (Exception e) {
             e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
     }
 }

@@ -65,9 +65,9 @@ public class EstablishmentController {
         }
     }
 
-    @PostMapping("/{id}/employee/{employeeId}")
+    @PostMapping("/{establishmentId}/employee/{employeeId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
-    public ResponseEntity<BaseResponseDTO> addEmployee(@PathVariable("id") Long establishmentId,
+    public ResponseEntity<BaseResponseDTO> addEmployee(@PathVariable("establishmentId") Long establishmentId,
             @PathVariable Long employeeId,
             Principal principal) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
@@ -93,13 +93,13 @@ public class EstablishmentController {
         }
     }
 
-    @PostMapping("{id}/service{serviceId}")
+    @PostMapping("{establishmentId}/service/{serviceId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
-    public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long id,
+    public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long establishmentId,
             @PathVariable Long serviceId) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.addService(id, serviceId);
+            establishmentService.addService(establishmentId, serviceId);
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());
@@ -107,13 +107,13 @@ public class EstablishmentController {
         }
     }
 
-    @PutMapping("{id}/service{serviceId}")
+    @PutMapping("{establishmentId}/service")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
-    public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long id,
+    public ResponseEntity<BaseResponseDTO> updateService(@PathVariable Long establishmentId,
             EstablishmentServiceDTO serviceDTO) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.updateService(id, serviceDTO);
+            establishmentService.updateService(establishmentId, serviceDTO);
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());

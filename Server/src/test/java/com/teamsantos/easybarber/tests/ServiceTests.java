@@ -37,6 +37,7 @@ public class ServiceTests {
                 ServiceTests.created = true;
         } catch (Exception e) {
             e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
     }
 }
