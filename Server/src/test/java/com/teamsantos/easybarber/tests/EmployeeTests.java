@@ -23,8 +23,13 @@ public class EmployeeTests {
     public String loginUser() throws Exception {
         if (!EmployeeTests.created)
             test();
-        AuthTests authTests = new AuthTests(mockMvc);
-        return authTests.loginUser(EmployeeData.employees.get(0).toString());
+        return new AuthTests(mockMvc).loginUser(EmployeeData.employees.get(0).toString());
+    }
+
+    public String loginUser(int index) throws Exception {
+        if (!EmployeeTests.created)
+            test();
+        return new AuthTests(mockMvc).loginUser(EmployeeData.employees.get(index).toString());
     }
 
     private void create(String path, String jwt, String item) throws Exception {
@@ -58,11 +63,15 @@ public class EmployeeTests {
         try {
             new ServiceTests(mockMvc).test();
             String jwt = loginUser();
+            boolean created = EmployeeTests.created;
             EmployeeTests.created = false;
             create("/employee/service", jwt, ServiceData.services.get(0).toString());
             create("/employee/service", jwt, ServiceData.services.get(1).toString());
+            EmployeeTests.created = created;
+            jwt = loginUser(1);
+            EmployeeTests.created = false;
             create("/employee/service", jwt, ServiceData.services.get(2).toString());
-            EmployeeTests.created = true;
+            EmployeeTests.created = created;
         } catch (Exception e) {
             e.printStackTrace();
         }

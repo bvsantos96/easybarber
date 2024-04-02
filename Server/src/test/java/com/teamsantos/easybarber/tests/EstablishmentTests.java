@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.tests;
 
+import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.EstablishmentData;
 import com.teamsantos.easybarber.utils.CreateTest;
 import org.junit.jupiter.api.Test;
@@ -40,9 +41,32 @@ public class EstablishmentTests {
             }
             jwt = new EmployeeTests(mockMvc).loginUser();
             CreateTest.create(mockMvc, "/establishment", jwt, EstablishmentData.establishments.get(0).toString());
+            jwt = new AuthTests(mockMvc).loginUser();
+            ResultActions result = CreateTest.post(mockMvc, "/establishment", jwt,
+                    EstablishmentData.establishments.get(1).toString());
+            result.andExpect(MockMvcResultMatchers.status().isForbidden());
+            jwt = new EmployeeTests(mockMvc).loginUser();
             CreateTest.create(mockMvc, "/establishment", jwt, EstablishmentData.establishments.get(1).toString());
-            if(!EstablishmentTests.created)
+            if (!EstablishmentTests.created)
                 EstablishmentTests.created = true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testEmployees() {
+        try {
+            new EmployeeTests(mockMvc).test();
+            String jwt = new EmployeeTests(mockMvc).loginUser();
+            create("/establishment/1/employee/0", jwt, EmployeeData.employees.get(0).toString());
+            create("/establishment/2/employee/0", jwt, EmployeeData.employees.get(0).toString());
+            jwt = new EmployeeTests(mockMvc).loginUser(1);
+            ResultActions result = CreateTest.post(mockMvc, "/establishment/2/employee/1", jwt,
+                    EmployeeData.employees.get(1).toString());
+            result.andExpect(MockMvcResultMatchers.status().isForbidden());
+            jwt = new EmployeeTests(mockMvc).loginUser();
+            create("/establishment/2/employee/1", jwt, EmployeeData.employees.get(0).toString());
         } catch (Exception e) {
             e.printStackTrace();
         }

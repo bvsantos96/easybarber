@@ -22,7 +22,7 @@ public class AuthTests {
     }
 
     public String loginUser() throws Exception {
-        if(!AuthTests.created)
+        if (!AuthTests.created)
             test();
         return loginUser(UsersData.users.get(0).toString());
     }
