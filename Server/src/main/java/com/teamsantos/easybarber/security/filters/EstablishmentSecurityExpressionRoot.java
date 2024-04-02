@@ -1,19 +1,20 @@
 package com.teamsantos.easybarber.security.filters;
 
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
+import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.core.Authentication;
 
 public class EstablishmentSecurityExpressionRoot extends SecurityExpressionRoot {
-    private final UserRepository userRepository;
+    private final EmployeeRepository employeeRepository;
     private final EstablishmentStaffRepository establishmentStaffRepository;
 
-    public EstablishmentSecurityExpressionRoot(Authentication authentication, UserRepository userRepository,
+    public EstablishmentSecurityExpressionRoot(Authentication authentication, EmployeeRepository employeeRepository,
             EstablishmentStaffRepository establishmentStaffRepository) {
         super(authentication);
-        this.userRepository = userRepository;
+        this.employeeRepository = employeeRepository;
         this.establishmentStaffRepository = establishmentStaffRepository;
     }
 
@@ -28,9 +29,9 @@ public class EstablishmentSecurityExpressionRoot extends SecurityExpressionRoot 
      *         establishment
      */
     public boolean hasAdminPermission(Long establishmentId) {
-        Long userID = userRepository.findByMobileInformation(getAuthentication().getName())
+        Long employeeId = employeeRepository.findByMobileInformation(getAuthentication().getName())
                 .orElseThrow(UserNotFoundException::new)
                 .getId();
-        return establishmentStaffRepository.isUserAdminOfEstablishment(userID, establishmentId);
+        return establishmentStaffRepository.isUserAdminOfEstablishment(employeeId, establishmentId);
     }
 }

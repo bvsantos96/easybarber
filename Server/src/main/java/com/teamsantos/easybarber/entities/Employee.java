@@ -42,4 +42,6 @@ public class Employee {
     private List<Service> services;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean enabled;
+    @OneToOne(mappedBy = "employee")
+    private EstablishmentService establishmentService;
 }
