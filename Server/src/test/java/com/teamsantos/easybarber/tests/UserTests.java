@@ -21,8 +21,12 @@ public class UserTests {
 
     @Test
     public void test() {
+        test(true);
+    }
+
+    public void test(boolean init) {
         try {
-            ResultActions result = CreateTest.put(mockMvc, "/user", new AuthTests(mockMvc).loginUser(),
+            ResultActions result = CreateTest.put(mockMvc, "/user", new AuthTests(mockMvc).login(init),
                     "{\"name\":\"Bruno Vicente dos Santos\"}");
             result
                     .andExpect(MockMvcResultMatchers.status().isOk());
