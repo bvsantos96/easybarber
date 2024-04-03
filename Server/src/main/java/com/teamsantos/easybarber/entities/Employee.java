@@ -18,16 +18,20 @@ public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn
-    @ToString.Exclude
-    private User user;
     @Column
     private String description;
     @Column(nullable = false, columnDefinition = "DOUBLE DEFAULT 0.0")
     private double rating;
     @Column(nullable = false, columnDefinition = "SMALLINT DEFAULT 0")
     private short nRating;
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean enabled;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_mobileInformation", referencedColumnName = "mobileInformation")
+    private User user;
+
+    @OneToOne(mappedBy = "employee")
+    private EstablishmentService establishmentService;
     @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Appointment> appointments;
@@ -40,8 +44,4 @@ public class Employee {
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Service> services;
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
-    private boolean enabled;
-    @OneToOne(mappedBy = "employee")
-    private EstablishmentService establishmentService;
 }

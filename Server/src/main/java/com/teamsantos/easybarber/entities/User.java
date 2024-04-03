@@ -15,6 +15,7 @@ import java.util.Set;
 @ToString
 @RequiredArgsConstructor
 @Entity
+@Table(indexes = @Index(columnList = "mobileInformation"))
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,15 +32,15 @@ public class User {
     private String mobile;
     @Column
     private String name;
-    @Column
+    @Column(unique = true)
     private String mobileInformation;
     @Column
     private LocalDateTime tokenExpiration;
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Employee employee;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private Set<Appointment> appointment;
-    @OneToOne(mappedBy = "user")
-    private Employee employee;
 
     private int hashCodeWithNullCheck(String item) {
         return item != null ? item.hashCode() : 0;
