@@ -1,12 +1,15 @@
 package com.teamsantos.easybarber.DTO;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@Data
-public class EstablishmentServiceDTO {
-    private Long id;
-    private Long establishmentId;
-    private Long employeeId;
+@Setter
+@Getter
+@RequiredArgsConstructor
+public class EstablishmentServiceDTO extends ServiceDTO {
+    private EstablishmentDTO establishment;
+    private EmployeeDTO employee;
     private double price;
     private boolean active;
 }

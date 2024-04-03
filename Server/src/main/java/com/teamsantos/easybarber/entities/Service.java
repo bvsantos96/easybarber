@@ -15,29 +15,25 @@ import java.util.Set;
 @ToString
 @RequiredArgsConstructor
 @Entity
+@Table(indexes = { @Index(columnList = "serviceType") })
 public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    @ToString.Exclude
-    private Employee employee;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    @ToString.Exclude
-    private ServiceType serviceType;
-    @OneToMany(mappedBy = "service", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Set<EstablishmentService> establishments;
     @Column
     private String name;
     @Column
     private String description;
     @Column
     private String imageUrl;
-    @Column
-    private double price;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @PrimaryKeyJoinColumn
+    private ServiceType serviceType;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "employee_id", referencedColumnName = "id")
+    private Employee employee;
+    @OneToMany(mappedBy = "service", orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<EstablishmentService> establishments;
 
     @Override
     public final boolean equals(Object o) {

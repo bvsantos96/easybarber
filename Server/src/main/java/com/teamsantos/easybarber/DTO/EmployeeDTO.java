@@ -1,10 +1,12 @@
 package com.teamsantos.easybarber.DTO;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
-public class EmployeeDTO extends UserCreateDTO {
+@Getter
+@Setter
+@RequiredArgsConstructor
+public class EmployeeDTO extends UserDTO {
     private String description;
 }

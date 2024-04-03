@@ -1,8 +1,13 @@
 package com.teamsantos.easybarber.DTO;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@RequiredArgsConstructor
 public class ServiceDTO {
     private Long id;
     private Long employeeId;

@@ -18,20 +18,16 @@ public class EstablishmentService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn
-    private Establishment establishment;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn
-    private Service service;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn
-    @ToString.Exclude
-    private Employee employee;
     @Column
     private double price;
     @Column
     private boolean active;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "establishment_id", referencedColumnName = "id")
+    private Establishment establishment;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "service_id", referencedColumnName = "id")
+    private Service service;
 
     @Override
     public final boolean equals(Object o) {

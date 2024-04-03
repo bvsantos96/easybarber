@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.util.List;
 import java.util.Objects;
 
 @Getter
@@ -24,8 +25,8 @@ public class ServiceType {
     private String description;
     @Column
     private String imageUrl;
-    @OneToOne(mappedBy = "serviceType")
-    private Service service;
+    @OneToMany(mappedBy = "serviceType", fetch = FetchType.LAZY)
+    private List<Service> service;
 
     @Override
     public final boolean equals(Object o) {

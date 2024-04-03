@@ -25,16 +25,14 @@ public class Establishment {
     private String name;
     @Column
     private String description;
-    @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Set<EstablishmentStaff> staff;
-    @OneToMany(mappedBy = "establishment", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Set<EstablishmentService> services;
     @Column
     private String address;
     @Column
     private Point location;
+    @OneToMany(mappedBy = "establishment", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<EstablishmentStaff> staff;
+    @OneToMany(mappedBy = "establishment", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<EstablishmentService> services;
 
     public EstablishmentDTO convertToDto() {
         return convertToDto(this);

@@ -29,19 +29,8 @@ public class Employee {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_mobileInformation", referencedColumnName = "mobileInformation")
     private User user;
-
-    @OneToOne(mappedBy = "employee")
-    private EstablishmentService establishmentService;
-    @OneToMany(mappedBy = "employee", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private List<Appointment> appointments;
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Set<EstablishmentStaff> establishments;
-    @OneToMany(mappedBy = "invitor", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Set<EstablishmentStaff> invitations;
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
+    @OneToMany(mappedBy = "employee", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Service> services;
+    @OneToMany(mappedBy = "employee", orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<EstablishmentStaff> establishments;
 }
