@@ -2,6 +2,7 @@ package com.teamsantos.easybarber.entities;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
@@ -11,39 +12,24 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@RequiredArgsConstructor
 @Entity
 public class EstablishmentStaff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn
-    private Employee employee;
-    @ManyToOne
-    @JoinColumn
-    private Establishment establishment;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean admin;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean approved;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean deleted;
-    @ManyToOne
-    @JoinColumn
-    private Employee invitor;
-
-    public EstablishmentStaff(Employee employee, Establishment establishment, boolean admin, boolean approved,
-            Employee invitor) {
-        this.employee = employee;
-        this.establishment = establishment;
-        this.admin = admin;
-        this.approved = approved;
-        this.invitor = invitor;
-    }
-
-    public EstablishmentStaff() {
-
-    }
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "employee_id", referencedColumnName = "id")
+    private Employee employee;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "establishment_id", referencedColumnName = "id")
+    private Establishment establishment;
 
     @Override
     public final boolean equals(Object o) {
