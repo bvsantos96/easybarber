@@ -4,12 +4,9 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.locationtech.jts.geom.Point;
 
-import java.util.Set;
-
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class EstablishmentDTO extends BaseEstablishmentDTO {
-    private Set<UserDTO> owner;
     private double distance;
 
     public EstablishmentDTO() {
