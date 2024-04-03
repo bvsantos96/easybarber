@@ -1,6 +1,6 @@
 package com.teamsantos.easybarber.services;
 
-import com.teamsantos.easybarber.DTO.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.EmployeeCreateDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
@@ -65,7 +65,7 @@ public class UserService {
         return createUser(userCreateDTO, false);
     }
 
-    private void createEmployee(EmployeeDTO employeeDTO, User user) throws UserAlreadyExistsException {
+    private void createEmployee(EmployeeCreateDTO employeeDTO, User user) throws UserAlreadyExistsException {
         if (employeeRepository.existsByUserId(user.getId()))
             throw new UserAlreadyExistsException();
         Employee employee = modelMapper.map(employeeDTO, Employee.class);
@@ -93,7 +93,7 @@ public class UserService {
                     .getUserType(isEmployee ? UserTypeService.UserTypes.EMPLOYEE : UserTypeService.UserTypes.CLIENT));
             user = userRepository.save(user);
             if (isEmployee)
-                createEmployee((EmployeeDTO) userCreateDTO, user);
+                createEmployee((EmployeeCreateDTO) userCreateDTO, user);
             return modelMapper.map(user, UserDTO.class);
         } else
             throw new IllegalArgumentException("User cannot be null");

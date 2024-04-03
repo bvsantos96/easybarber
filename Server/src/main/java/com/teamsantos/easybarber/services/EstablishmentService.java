@@ -140,11 +140,11 @@ public class EstablishmentService {
             Establishment establishment = establishmentRepository.findById(id).orElseThrow(NotFoundException::new);
             com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceId)
                     .orElseThrow(NotFoundException::new);
-            if(establishment.getStaff().stream().noneMatch((staff) -> staff.getEmployee().getId() == employeeId))
+            if (establishment.getStaff().stream().noneMatch((staff) -> staff.getEmployee().getId() == employeeId))
                 throw new UnsupportedOperationException("User is not an employee of this establishment");
-            if(service.getEmployee().getId() != employeeId)
+            if (service.getEmployee().getId() != employeeId)
                 throw new UnsupportedOperationException("User is not the employee of the service");
-            if(establishmentServiceRepository.existsByServiceIdAndEstablishmentId(serviceId, id))
+            if (establishmentServiceRepository.existsByServiceIdAndEstablishmentId(serviceId, id))
                 throw new AlreadyExistsException("Service already registered in establishment");
             com.teamsantos.easybarber.entities.EstablishmentService serviceEntity = modelMapper.map(service,
                     com.teamsantos.easybarber.entities.EstablishmentService.class);
