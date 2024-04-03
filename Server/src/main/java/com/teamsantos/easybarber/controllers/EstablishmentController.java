@@ -113,13 +113,13 @@ public class EstablishmentController {
         }
     }
 
-    @PostMapping("/{establishmentId}/service/{serviceId}/employee/{employeeId}")
+    @PostMapping("/{establishmentId}/service/{serviceId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long establishmentId,
-            @PathVariable Long serviceId, @PathVariable Long employeeId) {
+            @PathVariable Long serviceId) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.addService(establishmentId, serviceId, employeeId);
+            establishmentService.addService(establishmentId, serviceId);
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
         } catch (AlreadyExistsException e) {
             responseDTO.setResponseMessage(e.getMessage());

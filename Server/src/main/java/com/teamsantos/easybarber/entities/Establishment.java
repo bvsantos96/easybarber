@@ -15,7 +15,6 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 @Entity
 public class Establishment {
     @Id
