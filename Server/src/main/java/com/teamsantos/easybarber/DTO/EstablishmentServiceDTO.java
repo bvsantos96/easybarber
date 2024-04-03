@@ -6,7 +6,6 @@ import lombok.Setter;
 
 @Setter
 @Getter
-@RequiredArgsConstructor
 public class EstablishmentServiceDTO extends ServiceDTO {
     private EstablishmentDTO establishment;
     private EmployeeDTO employee;

@@ -13,9 +13,8 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 @Entity
-@Table(indexes = { @Index(columnList = "serviceType") })
+@Table(indexes = { @Index(columnList = "serviceTypeId") })
 public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

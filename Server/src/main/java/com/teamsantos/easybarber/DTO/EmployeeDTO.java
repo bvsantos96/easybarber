@@ -6,7 +6,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
 public class EmployeeDTO extends UserDTO {
     private String description;
 }

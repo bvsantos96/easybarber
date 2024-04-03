@@ -12,7 +12,6 @@ import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentServiceRepository;
-import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.utils.GeometryUtils;
 import jakarta.transaction.Transactional;
@@ -72,7 +71,7 @@ public class EstablishmentService {
                 throw new AlreadyExistsException("Establishment name already exists");
             establishment = establishmentRepository.save(establishment);
             establishmentDTO.setId(establishment.getId());
-            EstablishmentStaff establishmentOwned = new EstablishmentStaff(owner, establishment, true, true, owner);
+            EstablishmentStaff establishmentOwned = new EstablishmentStaff(true, true, false, owner, establishment);
             if (owner.getEstablishments() == null)
                 owner.setEstablishments(new HashSet<>());
             owner.getEstablishments().add(establishmentOwned);
@@ -102,9 +101,7 @@ public class EstablishmentService {
             if (establishment.getStaff().stream().anyMatch((staff) -> staff.getEmployee().getId().equals(employeeId)))
                 throw new UserAlreadyExistsException("User is already an employee");
             establishment.getStaff()
-                    .add(new EstablishmentStaff(
-                            employeeRepository.findById(employeeId).orElseThrow(UserNotFoundException::new),
-                            establishment, false, true, invitor));
+                    .add(new EstablishmentStaff(false, true, false, employeeRepository.findById(employeeId).orElseThrow(UserNotFoundException::new), establishment));
             establishmentRepository.save(establishment);
             // TODO: note that the we might want to start an employee approval process here,
             // so we might want to set approved to false
@@ -135,21 +132,19 @@ public class EstablishmentService {
     }
 
     @Transactional
-    public void addService(Long id, Long serviceId, Long employeeId) throws NotFoundException, AlreadyExistsException {
+    public void addService(Long id, Long serviceId) throws NotFoundException, AlreadyExistsException {
         if (serviceId != null) {
             Establishment establishment = establishmentRepository.findById(id).orElseThrow(NotFoundException::new);
             com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceId)
                     .orElseThrow(NotFoundException::new);
-            if (establishment.getStaff().stream().noneMatch((staff) -> staff.getEmployee().getId() == employeeId))
+            if (establishment.getStaff().stream().noneMatch((staff) -> staff.getEmployee().getId() == service.getEmployee().getId()))
                 throw new UnsupportedOperationException("User is not an employee of this establishment");
-            if (service.getEmployee().getId() != employeeId)
-                throw new UnsupportedOperationException("User is not the employee of the service");
             if (establishmentServiceRepository.existsByServiceIdAndEstablishmentId(serviceId, id))
                 throw new AlreadyExistsException("Service already registered in establishment");
             com.teamsantos.easybarber.entities.EstablishmentService serviceEntity = modelMapper.map(service,
                     com.teamsantos.easybarber.entities.EstablishmentService.class);
             serviceEntity.setEstablishment(establishment);
-            serviceEntity.setEmployee(employeeRepository.findById(employeeId).orElseThrow());
+            serviceEntity.setService(service);
             establishmentServiceRepository.save(serviceEntity);
             establishment.getServices()
                     .add(serviceEntity);
