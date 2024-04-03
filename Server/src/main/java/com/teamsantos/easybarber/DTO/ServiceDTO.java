@@ -1,6 +1,5 @@
 package com.teamsantos.easybarber.DTO;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
