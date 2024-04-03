@@ -8,7 +8,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
 public class EstablishmentCompleteDTO extends EstablishmentDTO {
     private List<UserDTO> owner;
     private List<EmployeeDTO> staff;

@@ -6,7 +6,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
 public class ServiceDTO {
     private Long id;
     private Long employeeId;
