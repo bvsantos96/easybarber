@@ -31,7 +31,8 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponseDTO> createEmployee(@RequestBody EmployeeDTO employee, Principal principal) {
+    public ResponseEntity<BaseResponseDTO> createEmployee(@RequestBody EmployeeCreateDTO employee,
+            Principal principal) {
         HttpStatus status = HttpStatus.CREATED;
         try {
             if (principal != null && !userService.userChangePermissions(principal, employee.getMobileInformation()))
