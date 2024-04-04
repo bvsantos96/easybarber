@@ -35,11 +35,31 @@ Make requests that should be public available with no authentication
 - We need to alert the users that their appointments will be deleted since the employee that they are booked with will be deleted
 
 ## Test
+### Create tests (DONE)
+Create a group of tests that for a clean database run all the functionality (same as the requests available) as checks if the result is what we expected
+
 ### Test functionality
 Test all available controller requests
 
-### Create tests
-Create a group of tests that for a clean database run all the functionality (same as the requests available) as checks if the result is what we expected
+#### Tasks:
+- [x] Create entities
+- [ ] List entities
+    - [ ] Users
+    - [ ] Employees
+        - [ ] List employee services
+    - [ ] Establishments
+        - [ ] List establishment employees
+        - [ ] List establishment services
+        - [ ] List establishment employee services
+        - [ ] List establishments closest to location
+        - [ ] List establishments with certain service type
+    - [ ] Services
+        - [ ] List services by service type
+- [ ] Update entities 
+- [ ] Delete entities
+
+## Switch from JSON to Protobuf
+Do the necessary changes to start using protobuff instead of json. Note that the tests at the moment are created with JSON mock requests.
 
 ## Questions:
 - Do we really need a table for user_type and a field for user_type_id if we already have an Employee table?
