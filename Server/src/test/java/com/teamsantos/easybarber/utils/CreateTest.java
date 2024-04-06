@@ -30,6 +30,17 @@ public class CreateTest {
                 .content(item));
     }
 
+    public static ResultActions get(MockMvc mockMvc, String path) throws Exception {
+        return mockMvc.perform(MockMvcRequestBuilders
+                .get(path));
+    }
+
+    public static ResultActions get(MockMvc mockMvc, String path, String jwt) throws Exception {
+        return mockMvc.perform(MockMvcRequestBuilders
+                .get(path)
+                .header("Authorization", "Bearer " + jwt));
+    }
+
     public static ResultActions post(MockMvc mockMvc, String path, String item) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
                 .post(path)
