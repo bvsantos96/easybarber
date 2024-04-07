@@ -131,4 +131,10 @@ public class UserService {
         return PageDTO.toDTO(modelMapper, establishmentRepository.findEstablishmentsByEmployeeId(id, admin, pageable),
                 EstablishmentDTO.class, pageable);
     }
+
+    public Page<UserDTO> getAllUsersByType(String userType, Pageable pageable) {
+        return userRepository
+                .findByUserTypeId(UserTypeService.getUserType(UserTypeService.getUserType(userType)), pageable)
+                .map((element) -> modelMapper.map(element, UserDTO.class));
+    }
 }

@@ -1,13 +1,19 @@
 package com.teamsantos.easybarber.DTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.teamsantos.easybarber.utils.GeometryUtils;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 
-@Data
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.teamsantos.easybarber.utils.GeometryUtils;
+
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class BaseEstablishmentDTO extends BaseResponseDTO {
     private Long id;
@@ -54,5 +60,20 @@ public class BaseEstablishmentDTO extends BaseResponseDTO {
         this.name = name;
         this.description = description;
         this.address = address;
+    }
+
+    public BaseEstablishmentDTO(Long id, String name, String description, double latitude, double longitude) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public BaseEstablishmentDTO(String name, String description, double latitude, double longitude) {
+        this.name = name;
+        this.description = description;
+        this.latitude = latitude;
+        this.longitude = longitude;
     }
 }
