@@ -1,5 +1,8 @@
 package com.teamsantos.easybarber.tests;
 
+import java.util.List;
+
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -8,10 +11,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
 import com.teamsantos.easybarber.testData.UsersData;
 import com.teamsantos.easybarber.utils.CreateTest;
+import com.teamsantos.easybarber.utils.JSONToDTO;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -45,9 +48,12 @@ public class UserTests {
         try {
             ResultActions result = CreateTest.get(mockMvc, "/users", new AuthTests(mockMvc).login(false));
             String json = result.andReturn().getResponse().getContentAsString();
-            BasePageDTO<UserDTO> response = new BasePageDTO<UserDTO>();
-            if (json != null && !json.isEmpty())
-                response.loadFromJSON(json);
+            List<UserDTO> response = null;
+            if (!json.isEmpty())
+                response = JSONToDTO.fromBaseDTO(new JSONObject(json), UserDTO.class);
+            if(!response.equals(UsersData.usersDTO)) {
+                org.junit.jupiter.api.Assertions.fail("Response is not equal to expected value.");
+            }
             result.andExpect(MockMvcResultMatchers.status().isOk());
         } catch (Exception e) {
             e.printStackTrace();
