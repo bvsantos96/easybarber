@@ -1,7 +1,12 @@
 package com.teamsantos.easybarber.DTO;
 
+import java.lang.reflect.Field;
+import java.util.Objects;
+
+import com.teamsantos.easybarber.utils.JSONToDTO;
+
+import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,11 +15,12 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper = true)
 public class UserDTO extends BaseResponseDTO {
     private String mobile;
     private String countryMobile;
+    @Nullable
     private String name;
+    @Nullable
     private Long userTypeId;
 
     public UserDTO initName(String name) {
@@ -31,5 +37,26 @@ public class UserDTO extends BaseResponseDTO {
         this.countryMobile = countryMobile;
         this.mobile = mobile;
         return this;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        if (obj == this)
+            return true;
+        try {
+            Long _userTypeId = JSONToDTO.getLong(obj, "userTypeId");
+            String _name = JSONToDTO.getString(obj, "name");
+            return this.mobile.equals(Objects.requireNonNull(JSONToDTO.getString(obj, "mobile")))
+                    && this.countryMobile
+                            .equals(Objects.requireNonNull(JSONToDTO.getString(obj, "countryMobile")))
+                    && (this.name == null || _name == null || this.name.equals(_name))
+                    && (this.userTypeId == null || _userTypeId == null
+                            || this.userTypeId.equals(_userTypeId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }
