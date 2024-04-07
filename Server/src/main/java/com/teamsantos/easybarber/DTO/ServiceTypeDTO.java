@@ -1,10 +1,17 @@
 package com.teamsantos.easybarber.DTO;
 
 import com.teamsantos.easybarber.entities.ServiceType;
-import lombok.Data;
 
-@Data
-public class ServiceTypeDTO {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class ServiceTypeDTO extends BaseDTO {
     private Long id;
     private String name;
     private String description;

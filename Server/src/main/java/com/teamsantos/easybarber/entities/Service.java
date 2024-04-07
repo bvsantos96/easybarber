@@ -7,6 +7,9 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
+import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.utils.Utils;
+
 import java.util.Objects;
 import java.util.Set;
 
@@ -57,5 +60,11 @@ public class Service {
         return this instanceof HibernateProxy
                 ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
                 : getClass().hashCode();
+    }
+
+    public void update(ServiceDTO serviceDTO) {
+        Utils.setFieldIfNotNullOrEmpty(name, serviceDTO.getName());
+        Utils.setFieldIfNotNullOrEmpty(description, serviceDTO.getDescription());
+        Utils.setFieldIfNotNullOrEmpty(imageUrl, serviceDTO.getImageUrl());
     }
 }

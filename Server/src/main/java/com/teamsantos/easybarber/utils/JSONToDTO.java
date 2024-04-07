@@ -31,7 +31,7 @@ public class JSONToDTO {
         }
     }
 
-    public static <T> List<T> fromBaseDTO(JSONObject jsonObject, Class<T> clazz) {
+    public static <T> List<T> fromPageDTO(JSONObject jsonObject, Class<T> clazz) {
         try {
             ArrayList<T> list = new ArrayList<T>();
             jsonObject = jsonObject.getJSONObject("items");
@@ -54,15 +54,25 @@ public class JSONToDTO {
 
         for (Field field : clazz.getDeclaredFields()) {
             String fieldName = field.getName();
+            field.setAccessible(true);
             if (jsonObject.has(fieldName)) {
                 field.setAccessible(true);
                 Class<?> fieldType = field.getType();
-                if (fieldType == int.class) {
-                    field.setInt(instance, jsonObject.getInt(fieldName));
-                } else if (fieldType == String.class) {
+                if (fieldType == String.class) {
                     field.set(instance, jsonObject.getString(fieldName));
+                } else if (fieldType == long.class || fieldType == Long.class) {
+                    field.set(instance, jsonObject.getLong(fieldName));
+                } else if (fieldType == double.class) {
+                    field.setDouble(instance, jsonObject.getDouble(fieldName));
+                } else if (fieldType == int.class) {
+                    field.setInt(instance, jsonObject.getInt(fieldName));
+                } else if (fieldType == boolean.class) {
+                    field.setBoolean(instance, jsonObject.getBoolean(fieldName));
+                } else if (fieldType == List.class) {
+                    field.set(instance, jsonObject.getJSONArray(fieldName).toList());
+                } else {
+                    field.set(instance, toDTO(jsonObject.getJSONObject(fieldName), fieldType));
                 }
-                // Add more type mappings as needed
             }
         }
 

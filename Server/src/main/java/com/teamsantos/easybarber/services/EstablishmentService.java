@@ -101,7 +101,9 @@ public class EstablishmentService {
             if (establishment.getStaff().stream().anyMatch((staff) -> staff.getEmployee().getId().equals(employeeId)))
                 throw new UserAlreadyExistsException("User is already an employee");
             establishment.getStaff()
-                    .add(new EstablishmentStaff(false, true, false, employeeRepository.findById(employeeId).orElseThrow(UserNotFoundException::new), establishment));
+                    .add(new EstablishmentStaff(false, true, false,
+                            employeeRepository.findById(employeeId).orElseThrow(UserNotFoundException::new),
+                            establishment));
             establishmentRepository.save(establishment);
             // TODO: note that the we might want to start an employee approval process here,
             // so we might want to set approved to false
@@ -137,7 +139,8 @@ public class EstablishmentService {
             Establishment establishment = establishmentRepository.findById(id).orElseThrow(NotFoundException::new);
             com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceId)
                     .orElseThrow(NotFoundException::new);
-            if (establishment.getStaff().stream().noneMatch((staff) -> staff.getEmployee().getId() == service.getEmployee().getId()))
+            if (establishment.getStaff().stream()
+                    .noneMatch((staff) -> staff.getEmployee().getId() == service.getEmployee().getId()))
                 throw new UnsupportedOperationException("User is not an employee of this establishment");
             if (establishmentServiceRepository.existsByServiceIdAndEstablishmentId(serviceId, id))
                 throw new AlreadyExistsException("Service already registered in establishment");
