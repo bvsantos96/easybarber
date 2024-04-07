@@ -21,15 +21,15 @@ public class BaseDTO {
     }
 
     public void loadFromJSON(String json) throws Exception {
-            ObjectMapper mapper = new ObjectMapper();
-            Class<?> currentClass = this.getClass();
-            Object obj = mapper.readValue(json, currentClass);
+        ObjectMapper mapper = new ObjectMapper();
+        Class<?> currentClass = this.getClass();
+        Object obj = mapper.readValue(json, currentClass);
 
-            Field[] fields = currentClass.getDeclaredFields();
-            for (Field field : fields) {
-                field.setAccessible(true);
-                Object value = field.get(obj);
-                field.set(this, value);
-            }
+        Field[] fields = currentClass.getDeclaredFields();
+        for (Field field : fields) {
+            field.setAccessible(true);
+            Object value = field.get(obj);
+            field.set(this, value);
+        }
     }
 }

@@ -29,7 +29,8 @@ public class EstablishmentStaff {
     @JoinColumn(nullable = false, name = "establishment_id", referencedColumnName = "id")
     private Establishment establishment;
 
-    public EstablishmentStaff(boolean admin, boolean approved, boolean deleted, Employee employee, Establishment establishment) {
+    public EstablishmentStaff(boolean admin, boolean approved, boolean deleted, Employee employee,
+            Establishment establishment) {
         this.admin = admin;
         this.approved = approved;
         this.deleted = deleted;

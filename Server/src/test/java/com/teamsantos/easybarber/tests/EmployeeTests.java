@@ -1,13 +1,24 @@
 package com.teamsantos.easybarber.tests;
 
+import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.ServiceData;
 import com.teamsantos.easybarber.utils.CreateTest;
+import com.teamsantos.easybarber.utils.JSONToDTO;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -60,11 +71,24 @@ public class EmployeeTests {
     }
 
     @Test
-    public void testServices() {
-        testServices(true);
+    public void testDelete() {
+        // TODO: Need to implement this test after defining and implementing the all
+        // processo of deleting a employee
+        // - Mark employee as deleted
+        // - Mark every EstablishmentStaff as deleted
+        // - Alert Establishment Admins that this employee is no longer working
+        // - Mark every EstablishmentService as deleted
+        // - Mark every Service related to this employee as deleted
+        // - Cancel every appointment related to this employee
+        // - Alert every client that had an appointment with this employee
     }
 
-    public void testServices(boolean init) {
+    @Test
+    public void createService() {
+        createServices(true);
+    }
+
+    public void createServices(boolean init) {
         try {
             new ServiceTests(mockMvc).test(init);
             String jwt = login(init);
@@ -72,6 +96,54 @@ public class EmployeeTests {
             create("/employee/service", jwt, ServiceData.services.get(1).toString());
             jwt = login(1, false);
             create("/employee/service", jwt, ServiceData.services.get(2).toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void updateService() {
+        try {
+            createServices(true);
+            String jwt = login(false);
+            ResultActions result = CreateTest.put(mockMvc, "/employee/service", jwt,
+                    ServiceData.serviceUpdate.get(0).toString());
+            result.andExpect(MockMvcResultMatchers.status().isOk());
+            result = CreateTest.put(mockMvc, "/employee/service", jwt, ServiceData.serviceUpdate.get(2).toString());
+            result.andExpect(MockMvcResultMatchers.status().isForbidden());
+            result = CreateTest.put(mockMvc, "/employee/service", jwt, ServiceData.serviceUpdate.get(1).toString());
+            result.andExpect(MockMvcResultMatchers.status().isOk());
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void listServices() {
+        try {
+            createServices(true);
+            String jwt = login(false);
+            ResultActions result = CreateTest.get(mockMvc, "/employee/services", jwt);
+            result.andExpect(MockMvcResultMatchers.status().isOk());
+            JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
+            List<ServiceDTO> services;
+            services = JSONToDTO.fromPageDTO(response, ServiceDTO.class);
+            List<ServiceDTO> servicesDTO = Arrays.asList(ServiceData.services.get(0), ServiceData.services.get(1));
+            assert services != null;
+            for (int i = 0; i<services.size(); i++){
+                assert services.get(i).equalsWithoutPrice(servicesDTO.get(i));
+            }
+            result = CreateTest.get(mockMvc, "/employee/2/services", jwt);
+            result.andExpect(MockMvcResultMatchers.status().isOk());
+            services = JSONToDTO.fromPageDTO(new JSONObject(result.andReturn().getResponse().getContentAsString()),
+                    ServiceDTO.class);
+            servicesDTO = Collections.singletonList(ServiceData.services.get(2));
+            assert services != null;
+            for (int i = 0; i<services.size(); i++){
+                assert services.get(i).equalsWithoutPrice(servicesDTO.get(i));
+            }
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
