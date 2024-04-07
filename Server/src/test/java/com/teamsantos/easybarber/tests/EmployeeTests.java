@@ -1,12 +1,13 @@
 package com.teamsantos.easybarber.tests;
 
+import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.testData.EmployeeData;
+import com.teamsantos.easybarber.testData.EstablishmentData;
 import com.teamsantos.easybarber.testData.ServiceData;
 import com.teamsantos.easybarber.utils.CreateTest;
 import com.teamsantos.easybarber.utils.JSONToDTO;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -91,7 +92,7 @@ public class EmployeeTests {
     public void createServices(boolean init) {
         try {
             new ServiceTests(mockMvc).test(init);
-            String jwt = login(init);
+            String jwt = login(false);
             create("/employee/service", jwt, ServiceData.services.get(0).toString());
             create("/employee/service", jwt, ServiceData.services.get(1).toString());
             jwt = login(1, false);
@@ -128,11 +129,10 @@ public class EmployeeTests {
             ResultActions result = CreateTest.get(mockMvc, "/employee/services", jwt);
             result.andExpect(MockMvcResultMatchers.status().isOk());
             JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
-            List<ServiceDTO> services;
-            services = JSONToDTO.fromPageDTO(response, ServiceDTO.class);
+            List<ServiceDTO> services = JSONToDTO.fromPageDTO(response, ServiceDTO.class);
             List<ServiceDTO> servicesDTO = Arrays.asList(ServiceData.services.get(0), ServiceData.services.get(1));
             assert services != null;
-            for (int i = 0; i<services.size(); i++){
+            for (int i = 0; i < services.size(); i++) {
                 assert services.get(i).equalsWithoutPrice(servicesDTO.get(i));
             }
             result = CreateTest.get(mockMvc, "/employee/2/services", jwt);
@@ -141,9 +141,26 @@ public class EmployeeTests {
                     ServiceDTO.class);
             servicesDTO = Collections.singletonList(ServiceData.services.get(2));
             assert services != null;
-            for (int i = 0; i<services.size(); i++){
+            for (int i = 0; i < services.size(); i++) {
                 assert services.get(i).equalsWithoutPrice(servicesDTO.get(i));
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void listEstablishments() {
+        try {
+            new EstablishmentTests(mockMvc).testEmployees(true, true);
+            String jwt = login(false);
+            ResultActions result = CreateTest.get(mockMvc, "/employee/establishments", jwt);
+            JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
+            List<BaseEstablishmentDTO> establishments = JSONToDTO.fromPageDTO(response, BaseEstablishmentDTO.class);
+            List<BaseEstablishmentDTO> establishmentsDTO = Arrays.asList(EstablishmentData.establishments.get(0),
+                    EstablishmentData.establishments.get(1));
+
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());

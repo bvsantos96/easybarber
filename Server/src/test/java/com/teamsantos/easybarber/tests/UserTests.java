@@ -45,7 +45,8 @@ public class UserTests {
     @Test
     public void testList() {
         try {
-            ResultActions result = CreateTest.get(mockMvc, "/users", new AuthTests(mockMvc).login(false));
+            ResultActions result = CreateTest.get(mockMvc, "/users?userType=CLIENT",
+                    new AuthTests(mockMvc).login(false));
             String json = result.andReturn().getResponse().getContentAsString();
             UsersDTO response = new UsersDTO();
             response.setUsers(JSONToDTO.fromPageDTO(new JSONObject(json), UserDTO.class));
