@@ -41,8 +41,9 @@ public class ServiceService {
     }
 
     public void updateService(ServiceDTO serviceDTO) {
-        com.teamsantos.easybarber.entities.Service service = modelMapper.map(serviceDTO,
-                com.teamsantos.easybarber.entities.Service.class);
+        com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceDTO.getId())
+                .orElseThrow();
+        service.update(serviceDTO);
         service.setServiceType(serviceTypeRepository.findById(serviceDTO.getServiceTypeId()).orElseThrow());
         serviceRepository.save(service);
     }

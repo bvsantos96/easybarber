@@ -1,0 +1,8 @@
+createEmployee(EmployeeCreateDTO, Principal)
+deleteEmployee(Principal)
+createService(ServiceDTO, Principal)
+updateService(ServiceDTO, Principal)
+getServices(Principal, Pageable)
+getServices(Long, Pageable)
+getEstablishments(Principal, boolean, Pageable)
+getEstablishments(Long, boolean, Pageable)

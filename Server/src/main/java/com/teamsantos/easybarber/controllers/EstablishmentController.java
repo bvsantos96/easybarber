@@ -144,12 +144,13 @@ public class EstablishmentController {
         }
     }
 
-    @DeleteMapping("/{id}/service/{serviceId}")
+    @DeleteMapping("/{establishmentId}/service/{serviceId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
-    public ResponseEntity<BaseResponseDTO> removeService(@PathVariable Long id, @PathVariable Long serviceId) {
+    public ResponseEntity<BaseResponseDTO> removeService(@PathVariable Long establishmentId,
+            @PathVariable Long serviceId) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.removeService(id, serviceId);
+            establishmentService.removeService(establishmentId, serviceId);
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());
