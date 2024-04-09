@@ -29,7 +29,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(indexes = { @Index(columnList = "serviceTypeId") })
+@Table(indexes = { @Index(columnList = "service_type_id") })
 public class Service {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
