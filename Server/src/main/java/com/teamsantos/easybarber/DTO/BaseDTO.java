@@ -4,13 +4,28 @@ import java.lang.reflect.Field;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
 public class BaseDTO {
-    @Override
+    @Nullable
+    private Long id;
+
+    public BaseDTO(Long id) {
+        this.id = id;
+	}
+
+    public BaseDTO() {}
+
+    public BaseDTO addId(Long id) {
+        this.id = id;
+        return this;
+    }
+
+	@Override
     public String toString() {
         try {
             return new ObjectMapper().writeValueAsString(this);

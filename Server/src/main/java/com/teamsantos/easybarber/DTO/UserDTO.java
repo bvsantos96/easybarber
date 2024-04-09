@@ -1,6 +1,5 @@
 package com.teamsantos.easybarber.DTO;
 
-import java.lang.reflect.Field;
 import java.util.Objects;
 
 import com.teamsantos.easybarber.utils.JSONToDTO;
@@ -22,6 +21,13 @@ public class UserDTO extends BaseResponseDTO {
     private String name;
     @Nullable
     private Long userTypeId;
+
+    public UserDTO(Long id, String mobileCode, String mobileNumber, String name) {
+        this.id = id;
+        this.countryMobile = mobileCode;
+        this.mobile = mobileNumber;
+        this.name = name;
+    }
 
     public UserDTO initName(String name) {
         this.name = name;
@@ -59,4 +65,5 @@ public class UserDTO extends BaseResponseDTO {
             return false;
         }
     }
+
 }

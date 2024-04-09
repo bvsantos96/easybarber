@@ -1,15 +1,17 @@
 package com.teamsantos.easybarber.repositories;
 
-import com.teamsantos.easybarber.entities.Employee;
-import com.teamsantos.easybarber.entities.Establishment;
-import com.teamsantos.easybarber.entities.User;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import com.teamsantos.easybarber.entities.Employee;
+import com.teamsantos.easybarber.entities.Establishment;
+import com.teamsantos.easybarber.entities.User;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
@@ -24,4 +26,11 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @Query("SELECT e FROM Employee e WHERE e.user.mobileInformation = :mobileInformation")
     Optional<Employee> findByMobileInformation(String mobileInformation);
+
+    @Query("""
+            SELECT e FROM Employee e
+            JOIN e.establishments est
+            WHERE est.id = :establishmentId
+            AND e.enabled = :onlyActive """)
+    List<Employee> findEmployeesByEstablishmentId(Long establishmentId, boolean onlyActive);
 }
