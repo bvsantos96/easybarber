@@ -21,5 +21,12 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
 
     Page<Service> findByEmployeeId(Long id, Pageable pageable);
 
-	boolean existsByEmployeeIdServiceTypeIdNameAndDescription(Long id, Long id2, String name, String description);
+    @Query("""
+            SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END FROM Service s
+            WHERE s.employee.id = :employeeId
+            AND s.serviceType.id = :serviceTypeId
+            AND s.name = :name
+            AND s.description = :description""")
+    boolean existsByEmployeeIdServiceTypeIdNameAndDescription(Long employeeId, Long serviceTypeId, String name,
+            String description);
 }
