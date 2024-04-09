@@ -44,7 +44,10 @@ public class ServiceService {
         com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceDTO.getId())
                 .orElseThrow();
         service.update(serviceDTO);
-        service.setServiceType(serviceTypeRepository.findById(serviceDTO.getServiceTypeId()).orElseThrow());
+        Long serviceTypeId = serviceDTO.getServiceTypeId();
+        if (null != serviceTypeId && !serviceTypeId.equals(0L) && !serviceTypeId.equals(service.getServiceType().getId())) {
+            service.setServiceType(serviceTypeRepository.findById(serviceDTO.getServiceTypeId()).orElseThrow());
+        }
         serviceRepository.save(service);
     }
 
