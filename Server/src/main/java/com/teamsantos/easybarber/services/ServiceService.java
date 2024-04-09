@@ -4,6 +4,7 @@ import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.ServiceType;
+import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.repositories.ServiceTypeRepository;
 import com.teamsantos.easybarber.utils.PageDTO;
@@ -33,10 +34,16 @@ public class ServiceService {
     }
 
     public void createService(ServiceDTO serviceDTO, Principal principal) {
+        Employee employee = userTypeService.getEmployee(principal);
+        ServiceType serviceType = serviceTypeRepository.findById(serviceDTO.getServiceTypeId()).orElseThrow();
+        if (serviceRepository.existsByEmployeeIdServiceTypeIdNameAndDescription(employee.getId(),
+                serviceType.getId(), serviceDTO.getName(), serviceDTO.getDescription())) {
+            throw new AlreadyExistsException("Service already exists");
+        }
         com.teamsantos.easybarber.entities.Service service = modelMapper.map(serviceDTO,
                 com.teamsantos.easybarber.entities.Service.class);
-        service.setEmployee(userTypeService.getEmployee(principal));
-        service.setServiceType(serviceTypeRepository.findById(serviceDTO.getServiceTypeId()).orElseThrow());
+        service.setEmployee(employee);
+        service.setServiceType(serviceType);
         serviceRepository.save(service);
     }
 
@@ -45,7 +52,8 @@ public class ServiceService {
                 .orElseThrow();
         service.update(serviceDTO);
         Long serviceTypeId = serviceDTO.getServiceTypeId();
-        if (null != serviceTypeId && !serviceTypeId.equals(0L) && !serviceTypeId.equals(service.getServiceType().getId())) {
+        if (null != serviceTypeId && !serviceTypeId.equals(0L)
+                && !serviceTypeId.equals(service.getServiceType().getId())) {
             service.setServiceType(serviceTypeRepository.findById(serviceDTO.getServiceTypeId()).orElseThrow());
         }
         serviceRepository.save(service);

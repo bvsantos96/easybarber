@@ -8,7 +8,6 @@ import org.hibernate.proxy.HibernateProxy;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.utils.Utils;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -42,7 +41,7 @@ public class Service {
     @Column
     private String imageUrl;
     @ManyToOne(fetch = FetchType.LAZY)
-    @PrimaryKeyJoinColumn
+    @PrimaryKeyJoinColumn(name = "service_type_id")
     private ServiceType serviceType;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "employee_id", referencedColumnName = "id")
