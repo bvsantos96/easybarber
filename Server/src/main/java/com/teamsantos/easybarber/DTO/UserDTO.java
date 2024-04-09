@@ -23,7 +23,7 @@ public class UserDTO extends BaseResponseDTO {
     private Long userTypeId;
 
     public UserDTO(Long id, String mobileCode, String mobileNumber, String name) {
-        this.id = id;
+        super(id);
         this.countryMobile = mobileCode;
         this.mobile = mobileNumber;
         this.name = name;
