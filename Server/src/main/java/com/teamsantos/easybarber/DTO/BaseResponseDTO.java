@@ -12,7 +12,6 @@ public class BaseResponseDTO extends BaseDTO {
     }
 
     public BaseResponseDTO(String responseMessage) {
-        super(0L);
         this.responseMessage = responseMessage;
     }
 
