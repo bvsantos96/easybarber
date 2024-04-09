@@ -20,4 +20,6 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
     boolean checkIfEmployeeIsServiceOwner(Long serviceId, String mobileInformation);
 
     Page<Service> findByEmployeeId(Long id, Pageable pageable);
+
+	boolean existsByEmployeeIdServiceTypeIdNameAndDescription(Long id, Long id2, String name, String description);
 }
