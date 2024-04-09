@@ -76,7 +76,7 @@ public class EmployeeController {
 
     @PutMapping("/service")
     @PreAuthorize(PrePermissionEvaluator.SERVICE_OWNER_OBJECT)
-    public ResponseEntity<BaseResponseDTO> updateService(@RequestBody ServiceDTO service, Principal principal) {
+    public ResponseEntity<BaseResponseDTO> updateService(@RequestBody ServiceDTO service) {
         try {
             serviceService.updateService(service);
             return ResponseEntity.ok(new BaseResponseDTO("Service updated successfully"));

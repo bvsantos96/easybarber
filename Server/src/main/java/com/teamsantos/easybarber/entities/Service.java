@@ -76,8 +76,8 @@ public class Service {
     }
 
     public void update(ServiceDTO serviceDTO) {
-        Utils.setFieldIfNotNullOrEmpty(name, serviceDTO.getName());
-        Utils.setFieldIfNotNullOrEmpty(description, serviceDTO.getDescription());
-        Utils.setFieldIfNotNullOrEmpty(imageUrl, serviceDTO.getImageUrl());
+        this.name = Utils.setFieldIfNotNullOrEmpty(name, serviceDTO.getName());
+        this.description = Utils.setFieldIfNotNullOrEmpty(description, serviceDTO.getDescription());
+        this.imageUrl = Utils.setFieldIfNotNullOrEmpty(imageUrl, serviceDTO.getImageUrl());
     }
 }
