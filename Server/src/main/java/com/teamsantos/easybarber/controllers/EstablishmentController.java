@@ -19,14 +19,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
+import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.EstablishmentService;
+
+import jakarta.websocket.server.PathParam;
 
 @Controller
 @RequestMapping("/establishment")
@@ -155,6 +159,21 @@ public class EstablishmentController {
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
+    @GetMapping("/{establishmentId}/employees")
+    public ResponseEntity<BaseListDTO<EmployeeDTO>> listEmployees(@PathVariable Long establishmentId, @RequestParam(defaultValue = "true") boolean onlyActive) {
+        BaseListDTO<EmployeeDTO> response = new BaseListDTO<>();
+        try {
+            response.setItems(establishmentService.getEmployees(establishmentId, onlyActive));
+            return ResponseEntity.ok(response);
+        }catch (NotFoundException e) {
+            response.setResponseMessage(String.format("Establishment with id %d not found", establishmentId));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception ex) {
+            response.setResponseMessage(ex.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 }

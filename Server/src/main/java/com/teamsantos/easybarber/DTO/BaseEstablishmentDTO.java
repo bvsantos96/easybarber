@@ -16,7 +16,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public class BaseEstablishmentDTO extends BaseResponseDTO {
-    private Long id;
     private String name;
     private String description;
     private String address;

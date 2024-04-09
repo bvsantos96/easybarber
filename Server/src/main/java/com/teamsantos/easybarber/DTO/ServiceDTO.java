@@ -10,18 +10,12 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ServiceDTO extends BaseDTO {
-    private Long id;
     private Long employeeId;
     private Long serviceTypeId;
     private String name;
     private String description;
     private String imageUrl;
     private double price;
-
-    public ServiceDTO addId(Long id) {
-        this.id = id;
-        return this;
-    }
 
     public ServiceDTO addDescription(String description) {
         this.description = description;
