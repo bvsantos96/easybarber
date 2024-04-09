@@ -1,15 +1,8 @@
 package com.teamsantos.easybarber.tests;
 
-import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
-import com.teamsantos.easybarber.DTO.ServiceDTO;
-import com.teamsantos.easybarber.testData.EmployeeData;
-import com.teamsantos.easybarber.testData.EstablishmentData;
-import com.teamsantos.easybarber.testData.ServiceData;
-import com.teamsantos.easybarber.utils.CreateTest;
-import com.teamsantos.easybarber.utils.JSONToDTO;
-
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.json.JSONObject;
@@ -20,6 +13,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.testData.EmployeeData;
+import com.teamsantos.easybarber.testData.EstablishmentData;
+import com.teamsantos.easybarber.testData.ServiceData;
+import com.teamsantos.easybarber.utils.CreateTest;
+import com.teamsantos.easybarber.utils.JSONToDTO;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -158,9 +159,11 @@ public class EmployeeTests {
             ResultActions result = CreateTest.get(mockMvc, "/employee/establishments", jwt);
             JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
             List<BaseEstablishmentDTO> establishments = JSONToDTO.fromPageDTO(response, BaseEstablishmentDTO.class);
+                establishments.sort(Comparator.comparingLong(BaseEstablishmentDTO::getId));
             List<BaseEstablishmentDTO> establishmentsDTO = Arrays.asList(EstablishmentData.establishments.get(0),
                     EstablishmentData.establishments.get(1));
-
+                establishmentsDTO.sort(Comparator.comparingLong(BaseEstablishmentDTO::getId));
+            assert establishments != null && establishmentsDTO != null && establishments.equals(establishmentsDTO);
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());

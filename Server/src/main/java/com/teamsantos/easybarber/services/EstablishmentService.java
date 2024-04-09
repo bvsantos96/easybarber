@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.services;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
 import com.teamsantos.easybarber.entities.Employee;
@@ -178,5 +179,14 @@ public class EstablishmentService {
             establishmentRepository.save(establishment);
         }
     }
+
+	public List<EmployeeDTO> getEmployees(Long establishmentId, boolean onlyActive) throws NotFoundException {
+        if (!establishmentRepository.existsById(establishmentId))
+        {
+            throw new NotFoundException();
+        }
+        return employeeRepository.findEmployeesByEstablishmentId(establishmentId, onlyActive).stream()
+                .map((element) -> modelMapper.map(element, EmployeeDTO.class)).toList();
+	}
 
 }

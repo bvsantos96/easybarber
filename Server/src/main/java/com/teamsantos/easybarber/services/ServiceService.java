@@ -36,6 +36,9 @@ public class ServiceService {
     public void createService(ServiceDTO serviceDTO, Principal principal) {
         Employee employee = userTypeService.getEmployee(principal);
         ServiceType serviceType = serviceTypeRepository.findById(serviceDTO.getServiceTypeId()).orElseThrow();
+        if (serviceRepository.existsById(serviceDTO.getId())) {
+            throw new AlreadyExistsException("Service already exists");
+        }
         if (serviceRepository.existsByEmployeeIdServiceTypeIdNameAndDescription(employee.getId(),
                 serviceType.getId(), serviceDTO.getName(), serviceDTO.getDescription())) {
             throw new AlreadyExistsException("Service already exists");

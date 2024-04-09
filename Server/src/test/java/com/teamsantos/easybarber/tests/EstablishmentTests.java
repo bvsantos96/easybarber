@@ -1,5 +1,10 @@
 package com.teamsantos.easybarber.tests;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -8,10 +13,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.EstablishmentData;
 import com.teamsantos.easybarber.testData.ServiceData;
 import com.teamsantos.easybarber.utils.CreateTest;
+import com.teamsantos.easybarber.utils.JSONToDTO;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -92,6 +99,42 @@ public class EstablishmentTests {
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
             jwt = new EmployeeTests(mockMvc).login(false);
             create("/establishment/1/service/3", jwt, ServiceData.services.get(2).toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void listEmployees() {
+        try {
+            testEmployees(true, true);
+            ResultActions result = CreateTest.get(mockMvc, "/establishment/1/employee");
+            result.andExpect(MockMvcResultMatchers.status().isOk());
+            JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
+            List<EmployeeDTO> establishments = JSONToDTO.fromPageDTO(response, EmployeeDTO.class);
+                establishments.sort(Comparator.comparingLong(EmployeeDTO::getId));
+            assert establishments != null && establishments.equals(EmployeeData.employees);
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void listEstablishmentServices() {
+        try {
+            System.out.println("TODO");
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void listEstablishmentEmployeeServices() {
+        try {
+            System.out.println("TODO");
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());

@@ -12,7 +12,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ServiceTypeDTO extends BaseDTO {
-    private Long id;
     private String name;
     private String description;
     private String imageUrl;
