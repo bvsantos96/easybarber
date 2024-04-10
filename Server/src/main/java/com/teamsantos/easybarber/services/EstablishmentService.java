@@ -185,7 +185,6 @@ public class EstablishmentService {
             throw new NotFoundException();
         }
         return employeeRepository.findEmployeesByEstablishmentId(establishmentId, onlyActive).stream()
-                .map((element) -> modelMapper.map(element, EmployeeDTO.class)).toList();
+                .map((element) -> new EmployeeDTO(element)).toList();
     }
-
 }
