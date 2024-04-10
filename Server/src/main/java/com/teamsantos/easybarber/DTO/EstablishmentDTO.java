@@ -1,11 +1,14 @@
 package com.teamsantos.easybarber.DTO;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.locationtech.jts.geom.Point;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
 public class EstablishmentDTO extends BaseEstablishmentDTO {
     private double distance;
 
@@ -21,5 +24,25 @@ public class EstablishmentDTO extends BaseEstablishmentDTO {
         } catch (Exception e) {
             System.err.println("Error parsing distance from: " + distance.toString());
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        EstablishmentDTO establishment = (EstablishmentDTO) o;
+        return Double.compare(establishment.distance, distance) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

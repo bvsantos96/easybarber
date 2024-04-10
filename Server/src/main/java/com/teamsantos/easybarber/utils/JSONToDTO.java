@@ -3,7 +3,9 @@ package com.teamsantos.easybarber.utils;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -40,42 +42,66 @@ public class JSONToDTO {
                 list.add(toDTO(arr.getJSONObject(i), clazz));
             }
             return list;
-        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException
-                | NoSuchFieldException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    public static <T> T toDTO(JSONObject jsonObject, Class<T> clazz) throws NoSuchMethodException,
-            IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchFieldException {
-        Constructor<T> constructor = clazz.getConstructor();
-        T instance = constructor.newInstance();
+    public static <T> T toDTO(JSONObject jsonObject, Class<T> clazz) {
+        try {
+            Constructor<T> constructor = clazz.getDeclaredConstructor();
+            T instance = constructor.newInstance();
 
-        for (Field field : clazz.getDeclaredFields()) {
-            String fieldName = field.getName();
-            field.setAccessible(true);
-            if (jsonObject.has(fieldName)) {
-                field.setAccessible(true);
-                Class<?> fieldType = field.getType();
-                if (fieldType == String.class) {
-                    field.set(instance, jsonObject.getString(fieldName));
-                } else if (fieldType == long.class || fieldType == Long.class) {
-                    field.set(instance, jsonObject.getLong(fieldName));
-                } else if (fieldType == double.class) {
-                    field.setDouble(instance, jsonObject.getDouble(fieldName));
-                } else if (fieldType == int.class) {
-                    field.setInt(instance, jsonObject.getInt(fieldName));
-                } else if (fieldType == boolean.class) {
-                    field.setBoolean(instance, jsonObject.getBoolean(fieldName));
-                } else if (fieldType == List.class) {
-                    field.set(instance, jsonObject.getJSONArray(fieldName).toList());
-                } else {
-                    field.set(instance, toDTO(jsonObject.getJSONObject(fieldName), fieldType));
+            Iterator<String> keys = jsonObject.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                try {
+                    Field field = findFieldInHierarchy(clazz, key);
+                    if (field != null) {
+                        Object jsonValue = jsonObject.get(key);
+                        Object value = jsonValue.equals(JSONObject.NULL) ? null
+                                : parseByType(jsonValue, field.getType());
+                        field.setAccessible(true);
+                        field.set(instance, value);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
+            return instance;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
+    }
 
-        return instance;
+    private static Object parseByType(Object value, Class<?> fieldType) {
+        if (fieldType == int.class || fieldType == Integer.class) {
+            return Integer.parseInt(value.toString());
+        } else if (fieldType == long.class || fieldType == Long.class) {
+            return Long.parseLong(value.toString());
+        } else if (fieldType == double.class || fieldType == Double.class) {
+            return Double.parseDouble(value.toString());
+        } else if (fieldType == String.class) {
+            return value.toString();
+        } else if (fieldType == boolean.class || fieldType == Boolean.class) {
+            return Boolean.parseBoolean(value.toString());
+        } else {
+            return value;
+        }
+    }
+
+    private static Field findFieldInHierarchy(Class<?> clazz, String fieldName) {
+        Class<?> currentClass = clazz;
+        while (currentClass != null) {
+            try {
+                Field field = currentClass.getDeclaredField(fieldName);
+                return field;
+            } catch (NoSuchFieldException e) {
+                currentClass = currentClass.getSuperclass();
+            }
+        }
+        return null;
     }
 }

@@ -159,11 +159,12 @@ public class EmployeeTests {
             ResultActions result = CreateTest.get(mockMvc, "/employee/establishments", jwt);
             JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
             List<BaseEstablishmentDTO> establishments = JSONToDTO.fromPageDTO(response, BaseEstablishmentDTO.class);
-                establishments.sort(Comparator.comparingLong(BaseEstablishmentDTO::getId));
+            assert establishments != null;
+            establishments.sort(Comparator.comparingLong(BaseEstablishmentDTO::getId));
             List<BaseEstablishmentDTO> establishmentsDTO = Arrays.asList(EstablishmentData.establishments.get(0),
                     EstablishmentData.establishments.get(1));
-                establishmentsDTO.sort(Comparator.comparingLong(BaseEstablishmentDTO::getId));
-            assert establishments != null && establishmentsDTO != null && establishments.equals(establishmentsDTO);
+            establishmentsDTO.sort(Comparator.comparingLong(BaseEstablishmentDTO::getId));
+            assert establishments.equals(establishmentsDTO);
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());

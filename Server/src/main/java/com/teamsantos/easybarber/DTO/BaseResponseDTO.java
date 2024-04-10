@@ -15,7 +15,7 @@ public class BaseResponseDTO extends BaseDTO {
         this.responseMessage = responseMessage;
     }
 
-	public BaseResponseDTO(Long id) {
+    public BaseResponseDTO(Long id) {
         super(id);
-	}
+    }
 }

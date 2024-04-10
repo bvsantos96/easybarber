@@ -14,18 +14,26 @@ public class BaseDTO {
     @Nullable
     private Long id;
 
-    public BaseDTO(Long id) {
+    public BaseDTO(@Nullable Long id) {
         this.id = id;
-	}
+    }
 
-    public BaseDTO() {}
+    public BaseDTO() {
+    }
 
     public BaseDTO addId(Long id) {
         this.id = id;
         return this;
     }
 
-	@Override
+    public Long getId() {
+        if (id == null) {
+            return 0L;
+        }
+        return id;
+    }
+
+    @Override
     public String toString() {
         try {
             return new ObjectMapper().writeValueAsString(this);
@@ -33,6 +41,21 @@ public class BaseDTO {
             e.printStackTrace();
             return "Error converting object to string.";
         }
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj == this) {
+            return true;
+        }
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+        BaseDTO other = (BaseDTO) obj;
+        return getId().equals(other.getId());
     }
 
     public void loadFromJSON(String json) throws Exception {

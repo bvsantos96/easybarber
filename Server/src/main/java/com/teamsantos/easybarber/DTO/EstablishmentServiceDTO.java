@@ -9,6 +9,6 @@ import lombok.Setter;
 public class EstablishmentServiceDTO extends ServiceDTO {
     private EstablishmentDTO establishment;
     private EmployeeDTO employee;
-    private double price;
-    private boolean active;
+    private Double price;
+    private Boolean active;
 }
