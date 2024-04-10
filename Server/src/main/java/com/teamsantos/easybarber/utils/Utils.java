@@ -1,5 +1,10 @@
 package com.teamsantos.easybarber.utils;
 
+import org.modelmapper.ModelMapper;
+
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.entities.Establishment;
+
 public class Utils {
     public static String setFieldIfNotNullOrEmpty(String field1, String field2) {
         if (field2 != null && !field2.isEmpty()) {
@@ -41,5 +46,24 @@ public class Utils {
             return field2;
         }
         return field1;
+    }
+
+    public static ModelMapper createModelMapper() {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setAmbiguityIgnored(true)
+                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
+        modelMapper.typeMap(Establishment.class, EstablishmentDTO.class)
+                .addMappings(mapper -> mapper.map(src -> src.getLocation(), EstablishmentDTO::setLocation));
+        return modelMapper;
+    }
+
+    public static boolean equalsWithNull(Object obj1, Object obj2) {
+        if (obj1 == null && obj2 == null) {
+            return true;
+        }
+        if (obj1 == null || obj2 == null) {
+            return false;
+        }
+        return obj1.equals(obj2);
     }
 }

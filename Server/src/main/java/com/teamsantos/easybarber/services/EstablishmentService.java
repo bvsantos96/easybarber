@@ -180,13 +180,12 @@ public class EstablishmentService {
         }
     }
 
-	public List<EmployeeDTO> getEmployees(Long establishmentId, boolean onlyActive) throws NotFoundException {
-        if (!establishmentRepository.existsById(establishmentId))
-        {
+    public List<EmployeeDTO> getEmployees(Long establishmentId, boolean onlyActive) throws NotFoundException {
+        if (!establishmentRepository.existsById(establishmentId)) {
             throw new NotFoundException();
         }
         return employeeRepository.findEmployeesByEstablishmentId(establishmentId, onlyActive).stream()
                 .map((element) -> modelMapper.map(element, EmployeeDTO.class)).toList();
-	}
+    }
 
 }

@@ -15,10 +15,27 @@ public class ServiceDTO extends BaseDTO {
     private String name;
     private String description;
     private String imageUrl;
-    private double price;
+    private Double price;
+
+    public ServiceDTO(Long id, Long employeeId, Long serviceTypeId, String name, String description, String imageUrl,
+            double price) {
+        super(id);
+        this.employeeId = employeeId;
+        this.serviceTypeId = serviceTypeId;
+        this.name = name;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.price = price;
+    }
+
+    @Override
+    public ServiceDTO addId(Long id) {
+        setId(id);
+        return this;
+    }
 
     public ServiceDTO addDescription(String description) {
-        this.description = description;
+        setDescription(description);
         return this;
     }
 
@@ -27,7 +44,7 @@ public class ServiceDTO extends BaseDTO {
         if (!(obj instanceof ServiceDTO service)) {
             return false;
         }
-        return id.equals(service.getId()) && employeeId.equals(service.getEmployeeId())
+        return getId().equals(service.getId()) && employeeId.equals(service.getEmployeeId())
                 && serviceTypeId.equals(service.getServiceTypeId()) && name.equals(service.getName())
                 && description.equals(service.getDescription()) && imageUrl.equals(service.getImageUrl())
                 && price == service.getPrice();
@@ -37,7 +54,7 @@ public class ServiceDTO extends BaseDTO {
         if (!(obj instanceof ServiceDTO service)) {
             return false;
         }
-        return id.equals(service.getId()) && employeeId.equals(service.getEmployeeId())
+        return getId().equals(service.getId()) && employeeId.equals(service.getEmployeeId())
                 && serviceTypeId.equals(service.getServiceTypeId()) && name.equals(service.getName())
                 && description.equals(service.getDescription()) && imageUrl.equals(service.getImageUrl());
     }
