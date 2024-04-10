@@ -30,8 +30,6 @@ import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.EstablishmentService;
 
-import jakarta.websocket.server.PathParam;
-
 @Controller
 @RequestMapping("/establishment")
 public class EstablishmentController {

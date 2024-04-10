@@ -2,7 +2,6 @@ package com.teamsantos.easybarber.tests;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -109,12 +108,12 @@ public class EstablishmentTests {
     public void listEmployees() {
         try {
             testEmployees(true, true);
-            ResultActions result = CreateTest.get(mockMvc, "/establishment/1/employee");
+            ResultActions result = CreateTest.get(mockMvc, "/establishment/1/employees");
             result.andExpect(MockMvcResultMatchers.status().isOk());
             JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
             List<EmployeeDTO> establishments = JSONToDTO.fromPageDTO(response, EmployeeDTO.class);
             establishments.sort(Comparator.comparingLong(EmployeeDTO::getId));
-            assert establishments != null && establishments.equals(EmployeeData.employees);
+            assert establishments.equals(EmployeeData.employees);
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
