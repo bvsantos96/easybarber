@@ -163,12 +163,13 @@ public class EstablishmentController {
     }
 
     @GetMapping("/{establishmentId}/employees")
-    public ResponseEntity<BaseListDTO<EmployeeDTO>> listEmployees(@PathVariable Long establishmentId, @RequestParam(defaultValue = "true") boolean onlyActive) {
+    public ResponseEntity<BaseListDTO<EmployeeDTO>> listEmployees(@PathVariable Long establishmentId,
+            @RequestParam(defaultValue = "true") boolean onlyActive) {
         BaseListDTO<EmployeeDTO> response = new BaseListDTO<>();
         try {
             response.setItems(establishmentService.getEmployees(establishmentId, onlyActive));
             return ResponseEntity.ok(response);
-        }catch (NotFoundException e) {
+        } catch (NotFoundException e) {
             response.setResponseMessage(String.format("Establishment with id %d not found", establishmentId));
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
         } catch (Exception ex) {

@@ -24,4 +24,17 @@ public class ServiceTypeDTO extends BaseDTO {
         service.setImageUrl(getImageUrl());
         return service;
     }
+
+    public ServiceTypeDTO(Long id, String name, String description) {
+        super(id);
+        this.name = name;
+        this.description = description;
+    }
+
+    public ServiceTypeDTO(Long id, String name, String description, String imageUrl) {
+        super(id);
+        this.name = name;
+        this.description = description;
+        this.imageUrl = imageUrl;
+    }
 }

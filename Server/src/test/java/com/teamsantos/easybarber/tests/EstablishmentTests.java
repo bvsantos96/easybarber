@@ -113,7 +113,7 @@ public class EstablishmentTests {
             result.andExpect(MockMvcResultMatchers.status().isOk());
             JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
             List<EmployeeDTO> establishments = JSONToDTO.fromPageDTO(response, EmployeeDTO.class);
-                establishments.sort(Comparator.comparingLong(EmployeeDTO::getId));
+            establishments.sort(Comparator.comparingLong(EmployeeDTO::getId));
             assert establishments != null && establishments.equals(EmployeeData.employees);
         } catch (Exception e) {
             e.printStackTrace();

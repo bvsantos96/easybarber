@@ -2,6 +2,7 @@ package com.teamsantos.easybarber.repositories;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.EstablishmentService;
 import org.locationtech.jts.geom.Point;
@@ -12,6 +13,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -28,11 +30,7 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
             "ORDER BY ST_Distance_Sphere(e.location, :location) ASC ")
     Page<EstablishmentDTO> findClosestEstablishments(Point location, Pageable pageable);
 
-    @Query("""
-            SELECT e FROM Establishment e
-            JOIN e.staff es
-            WHERE es.employee.id = :employeeId
-            AND es.admin = :admin""")
+    @Query("SELECT es.establishment FROM EstablishmentStaff es WHERE es.employee.id = :employeeId AND (:admin = false OR es.admin = true)")
     Page<Establishment> findEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable);
 
     @Query("SELECT e.services FROM Establishment e WHERE e.id = :establishmentId")
