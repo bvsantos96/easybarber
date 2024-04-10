@@ -69,6 +69,7 @@ public class UserService {
         if (employeeRepository.existsByUserId(user.getId()))
             throw new UserAlreadyExistsException();
         Employee employee = modelMapper.map(employeeDTO, Employee.class);
+        employee.setEnabled(true);
         employee.setUser(user);
         employeeRepository.save(employee);
     }

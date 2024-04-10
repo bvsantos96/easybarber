@@ -28,9 +28,12 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Optional<Employee> findByMobileInformation(String mobileInformation);
 
     @Query("""
-            SELECT e FROM Employee e
-            JOIN e.establishments est
-            WHERE est.id = :establishmentId
-            AND e.enabled = :onlyActive """)
+        SELECT e.employee, e.employee.user
+        FROM EstablishmentStaff e
+        WHERE   e.establishment.id = :establishmentId
+                AND NOT (e.deleted = :onlyActive)
+                AND e.approved = :onlyActive
+                AND e.employee.enabled = :onlyActive
+    """)
     List<Employee> findEmployeesByEstablishmentId(Long establishmentId, boolean onlyActive);
 }

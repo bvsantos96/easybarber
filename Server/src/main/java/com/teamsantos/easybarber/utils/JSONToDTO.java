@@ -36,8 +36,13 @@ public class JSONToDTO {
     public static <T> List<T> fromPageDTO(JSONObject jsonObject, Class<T> clazz) {
         try {
             ArrayList<T> list = new ArrayList<T>();
-            jsonObject = jsonObject.getJSONObject("items");
-            JSONArray arr = jsonObject.getJSONArray("content");
+            JSONArray arr;
+            try {
+                jsonObject = jsonObject.getJSONObject("items");
+                arr = jsonObject.getJSONArray("content");
+            }catch(Exception e) {
+                arr = jsonObject.getJSONArray("items");
+            }
             for (int i = 0; i < arr.length(); i++) {
                 list.add(toDTO(arr.getJSONObject(i), clazz));
             }
