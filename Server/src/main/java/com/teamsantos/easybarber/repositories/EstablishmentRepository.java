@@ -12,8 +12,8 @@ import org.springframework.stereotype.Repository;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.entities.Establishment;
-import com.teamsantos.easybarber.entities.Service;
 
 @Repository
 public interface EstablishmentRepository extends JpaRepository<Establishment, Long> {
@@ -32,8 +32,8 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
     @Query("SELECT es.establishment FROM EstablishmentStaff es WHERE es.employee.id = :employeeId AND (:admin = false OR es.admin = true)")
     Page<Establishment> findEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable);
 
-    @Query("SELECT es.service FROM EstablishmentService es WHERE es.establishment.id = :establishmentId AND es.active = true")
-    Page<Service> findServicesByEstablishmentId(Long establishmentId, Pageable pageable);
+    @Query("SELECT new com.teamsantos.easybarber.DTO.ServiceDTO(es.service.id, es.service.employee.id, es.service.serviceType.id, es.service.name, es.service.description, es.service.imageUrl, es.price) FROM EstablishmentService es WHERE es.establishment.id = :establishmentId AND es.active = true")
+    Page<ServiceDTO> findServicesByEstablishmentId(Long establishmentId, Pageable pageable);
 
     boolean existsByName(String name);
 }

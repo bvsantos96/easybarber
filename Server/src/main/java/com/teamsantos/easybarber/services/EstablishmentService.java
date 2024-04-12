@@ -4,6 +4,7 @@ import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
+import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.EstablishmentStaff;
@@ -117,7 +118,7 @@ public class EstablishmentService {
                 pageable);
     }
 
-    public Page<com.teamsantos.easybarber.entities.Service> listServices(Long id, Pageable pageable) {
+    public Page<ServiceDTO> listServices(Long id, Pageable pageable) {
         return establishmentRepository.findServicesByEstablishmentId(id, pageable);
     }
 
