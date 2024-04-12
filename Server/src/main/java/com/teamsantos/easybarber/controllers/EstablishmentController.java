@@ -25,6 +25,7 @@ import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
+import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.entities.Service;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
@@ -104,9 +105,9 @@ public class EstablishmentController {
     }
 
     @GetMapping("/{id}/services")
-    public ResponseEntity<BasePageDTO<Service>> listServices(
+    public ResponseEntity<BasePageDTO<ServiceDTO>> listServices(
             @PathVariable Long id, Pageable pageable) {
-        BasePageDTO<Service> listDTO = new BasePageDTO<>();
+        BasePageDTO<ServiceDTO> listDTO = new BasePageDTO<>();
         try {
             listDTO.setItems(establishmentService.listServices(id, pageable));
             return ResponseEntity.ok(listDTO);
