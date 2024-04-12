@@ -92,14 +92,14 @@ public class EstablishmentTests {
             testEmployees(initAuth, initEmployee);
             new EmployeeTests(mockMvc).createServices(false);
             String jwt = new EmployeeTests(mockMvc).login(false);
-            create("/establishment/1/service/1", jwt, ServiceData.services.get(0).toString());
-            create("/establishment/1/service/2", jwt, ServiceData.services.get(1).toString());
+            create("/establishment/1/service", jwt, ServiceData.services.get(0).toString());
+            create("/establishment/1/service", jwt, ServiceData.services.get(1).toString());
             jwt = new EmployeeTests(mockMvc).login(1, false);
-            ResultActions result = CreateTest.post(mockMvc, "/establishment/1/service/2", jwt,
+            ResultActions result = CreateTest.post(mockMvc, "/establishment/1/service", jwt,
                     ServiceData.services.get(2).toString());
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
             jwt = new EmployeeTests(mockMvc).login(false);
-            create("/establishment/1/service/3", jwt, ServiceData.services.get(2).toString());
+            create("/establishment/1/service", jwt, ServiceData.services.get(2).toString());
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
@@ -131,7 +131,7 @@ public class EstablishmentTests {
             JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
             List<ServiceDTO> serviceDTO = JSONToDTO.fromPageDTO(response, ServiceDTO.class);
             serviceDTO.sort(Comparator.comparingLong(ServiceDTO::getId));
-            assert serviceDTO.equals(Arrays.asList(ServiceData.services.get(0), ServiceData.services.get(1)));
+            assert serviceDTO.equals(Arrays.asList(ServiceData.services.get(0), ServiceData.services.get(1), ServiceData.services.get(2)));
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
