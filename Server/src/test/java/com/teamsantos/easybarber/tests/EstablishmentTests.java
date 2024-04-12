@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.tests;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.EstablishmentData;
 import com.teamsantos.easybarber.testData.ServiceData;
@@ -123,7 +125,13 @@ public class EstablishmentTests {
     @Test
     public void listEstablishmentServices() {
         try {
-            System.out.println("TODO");
+            testService(true, true);
+            ResultActions result = CreateTest.get(mockMvc, "/establishment/1/services");
+            result.andExpect(MockMvcResultMatchers.status().isOk());
+            JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
+            List<ServiceDTO> serviceDTO = JSONToDTO.fromPageDTO(response, ServiceDTO.class);
+            serviceDTO.sort(Comparator.comparingLong(ServiceDTO::getId));
+            assert serviceDTO.equals(Arrays.asList(ServiceData.services.get(0), ServiceData.services.get(1)));
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());

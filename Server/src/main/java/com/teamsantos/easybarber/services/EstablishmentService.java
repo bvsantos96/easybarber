@@ -117,7 +117,7 @@ public class EstablishmentService {
                 pageable);
     }
 
-    public Page<com.teamsantos.easybarber.entities.EstablishmentService> listServices(Long id, Pageable pageable) {
+    public Page<com.teamsantos.easybarber.entities.Service> listServices(Long id, Pageable pageable) {
         return establishmentRepository.findServicesByEstablishmentId(id, pageable);
     }
 
@@ -147,6 +147,7 @@ public class EstablishmentService {
                 throw new AlreadyExistsException("Service already registered in establishment");
             com.teamsantos.easybarber.entities.EstablishmentService serviceEntity = modelMapper.map(service,
                     com.teamsantos.easybarber.entities.EstablishmentService.class);
+            System.out.println(serviceEntity.getActive());
             serviceEntity.setEstablishment(establishment);
             serviceEntity.setService(service);
             establishmentServiceRepository.save(serviceEntity);

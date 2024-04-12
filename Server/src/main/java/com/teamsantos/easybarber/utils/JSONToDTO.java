@@ -40,7 +40,7 @@ public class JSONToDTO {
             try {
                 jsonObject = jsonObject.getJSONObject("items");
                 arr = jsonObject.getJSONArray("content");
-            }catch(Exception e) {
+            } catch (Exception e) {
                 arr = jsonObject.getJSONArray("items");
             }
             for (int i = 0; i < arr.length(); i++) {

@@ -1,10 +1,7 @@
 package com.teamsantos.easybarber.repositories;
 
-import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import com.teamsantos.easybarber.entities.Employee;
-import com.teamsantos.easybarber.entities.Establishment;
-import com.teamsantos.easybarber.entities.EstablishmentService;
+import java.util.Optional;
+
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,8 +10,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-import java.util.Optional;
+import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.entities.Establishment;
+import com.teamsantos.easybarber.entities.Service;
 
 @Repository
 public interface EstablishmentRepository extends JpaRepository<Establishment, Long> {
@@ -33,8 +32,8 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
     @Query("SELECT es.establishment FROM EstablishmentStaff es WHERE es.employee.id = :employeeId AND (:admin = false OR es.admin = true)")
     Page<Establishment> findEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable);
 
-    @Query("SELECT e.services FROM Establishment e WHERE e.id = :establishmentId")
-    Page<EstablishmentService> findServicesByEstablishmentId(Long establishmentId, Pageable pageable);
+    @Query("SELECT es.service FROM EstablishmentService es WHERE es.establishment.id = :establishmentId AND es.active = true")
+    Page<Service> findServicesByEstablishmentId(Long establishmentId, Pageable pageable);
 
     boolean existsByName(String name);
 }
