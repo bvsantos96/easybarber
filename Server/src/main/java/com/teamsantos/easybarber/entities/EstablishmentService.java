@@ -1,12 +1,21 @@
 package com.teamsantos.easybarber.entities;
 
-import jakarta.persistence.*;
+import java.util.Objects;
+
+import org.hibernate.proxy.HibernateProxy;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.proxy.HibernateProxy;
-
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -18,14 +27,21 @@ public class EstablishmentService {
     private Long id;
     @Column
     private double price;
-    @Column
-    private boolean active;
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private Boolean active;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "establishment_id", referencedColumnName = "id")
     private Establishment establishment;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "service_id", referencedColumnName = "id")
     private Service service;
+
+    @PrePersist
+    public void prePersist() {
+        if (active == null) {
+            active = true;
+        }
+    }
 
     @Override
     public final boolean equals(Object o) {
