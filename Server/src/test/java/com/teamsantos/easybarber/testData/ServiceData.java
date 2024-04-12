@@ -1,12 +1,10 @@
 package com.teamsantos.easybarber.testData;
 
-import org.json.JSONObject;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ServiceData {
     public static final List<ServiceTypeDTO> serviceTypes;
