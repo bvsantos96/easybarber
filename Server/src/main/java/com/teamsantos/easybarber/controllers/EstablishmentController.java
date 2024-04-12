@@ -24,9 +24,8 @@ import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
+import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
-import com.teamsantos.easybarber.entities.Service;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
@@ -120,10 +119,10 @@ public class EstablishmentController {
     @PostMapping("/{establishmentId}/service/{serviceId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long establishmentId,
-            @PathVariable Long serviceId) {
+            @RequestBody CreateEstablishmentServiceDTO serviceDTO) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.addService(establishmentId, serviceId);
+            establishmentService.addService(establishmentId, serviceDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
         } catch (AlreadyExistsException e) {
             responseDTO.setResponseMessage(e.getMessage());
@@ -137,7 +136,7 @@ public class EstablishmentController {
     @PutMapping("/{establishmentId}/service")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> updateService(@PathVariable Long establishmentId,
-            EstablishmentServiceDTO serviceDTO) {
+            CreateEstablishmentServiceDTO serviceDTO) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
             establishmentService.updateService(establishmentId, serviceDTO);

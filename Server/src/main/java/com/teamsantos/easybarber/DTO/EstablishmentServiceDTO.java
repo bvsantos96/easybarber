@@ -5,9 +5,9 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class EstablishmentServiceDTO extends ServiceDTO {
+public class EstablishmentServiceDTO extends BaseDTO {
     private EstablishmentDTO establishment;
-    private EmployeeDTO employee;
+    private ServiceDTO service;
     private Double price;
     private Boolean active;
 }
