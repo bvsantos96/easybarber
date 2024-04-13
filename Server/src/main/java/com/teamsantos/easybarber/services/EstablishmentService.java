@@ -169,15 +169,27 @@ public class EstablishmentService {
     public void updateService(Long establishmentId, CreateEstablishmentServiceDTO serviceDTO) throws NotFoundException {
         if (serviceDTO != null) {
             Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow();
-            com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceDTO.getId())
+            com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceDTO.getServiceId())
                     .orElseThrow(NotFoundException::new);
             if (establishment.getStaff().stream().noneMatch((staff) -> staff.getEmployee().getUser()
                     .getMobileInformation().equals(service.getEmployee().getUser().getMobileInformation())))
                 throw new UnsupportedOperationException("User is not an employee");
-            establishment.getServices().stream()
+            com.teamsantos.easybarber.entities.EstablishmentService establishmentService = establishment.getServices()
+                    .stream()
                     .filter((_service) -> _service.getId().equals(serviceDTO.getId()))
-                    .findFirst().ifPresent((_service) -> modelMapper.map(serviceDTO, _service));
-            establishmentRepository.save(establishment);
+                    .findFirst().orElseThrow(NotFoundException::new);
+            boolean changed = false;
+            if (serviceDTO.getPrice() != null) {
+                establishmentService.setPrice(serviceDTO.getPrice());
+                changed = true;
+            }
+            if (serviceDTO.getActive() != null) {
+                establishmentService.setActive(serviceDTO.getActive());
+                changed = true;
+            }
+            if (changed) {
+                establishmentRepository.save(establishment);
+            }
         }
     }
 

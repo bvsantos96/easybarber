@@ -14,4 +14,13 @@ public class CreateEstablishmentServiceDTO extends BaseDTO {
     public Boolean getActive() {
         return null != active ? active : true;
     }
+
+    public CreateEstablishmentServiceDTO(Long id, Long serviceId, Long establishmentId, Double price, Boolean active) {
+        super(id);
+        this.serviceId = serviceId;
+        this.establishmentId = establishmentId;
+        this.price = price;
+        this.active = active;
+        this.active = getActive();
+    }
 }

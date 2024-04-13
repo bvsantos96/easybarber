@@ -116,6 +116,9 @@ public class EmployeeTests {
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
             result = CreateTest.put(mockMvc, "/employee/service", jwt, ServiceData.serviceUpdate.get(1).toString());
             result.andExpect(MockMvcResultMatchers.status().isOk());
+            jwt = login(1,false);
+            result = CreateTest.put(mockMvc, "/employee/service", jwt, ServiceData.serviceUpdate.get(2).toString());
+            result.andExpect(MockMvcResultMatchers.status().isOk());
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());

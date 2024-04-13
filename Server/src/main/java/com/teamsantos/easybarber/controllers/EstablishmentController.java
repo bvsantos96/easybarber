@@ -116,7 +116,7 @@ public class EstablishmentController {
         }
     }
 
-    @PostMapping("/{establishmentId}/service/{serviceId}")
+    @PostMapping("/{establishmentId}/service")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long establishmentId,
             @RequestBody CreateEstablishmentServiceDTO serviceDTO) {
