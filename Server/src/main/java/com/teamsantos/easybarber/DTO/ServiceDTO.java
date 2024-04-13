@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Objects;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -47,7 +49,7 @@ public class ServiceDTO extends BaseDTO {
         return getId().equals(service.getId()) && employeeId.equals(service.getEmployeeId())
                 && serviceTypeId.equals(service.getServiceTypeId()) && name.equals(service.getName())
                 && description.equals(service.getDescription()) && imageUrl.equals(service.getImageUrl())
-                && price == service.getPrice();
+                && Objects.equals(price, service.getPrice());
     }
 
     public boolean equalsWithoutPrice(Object obj) {
