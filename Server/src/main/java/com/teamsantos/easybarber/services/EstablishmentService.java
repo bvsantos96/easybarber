@@ -5,6 +5,7 @@ import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.controllers.EstablishmentController;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.EstablishmentStaff;
@@ -90,13 +91,13 @@ public class EstablishmentService {
     }
 
     @Transactional
-    public void addEmployee(Long establishmentId, Long userId, Principal principal)
+    public void addEmployee(Long establishmentId, Principal principal)
             throws NotFoundException, UnsupportedOperationException, UserAlreadyExistsException {
-        addEmployee(establishmentId, userId, userService.getEmployee(principal));
+        addEmployee(establishmentId, userService.getEmployee(principal).getId());
     }
 
     @Transactional
-    public void addEmployee(Long establishmentId, Long employeeId, Employee invitor)
+    public void addEmployee(Long establishmentId, Long employeeId)
             throws NotFoundException, UnsupportedOperationException, UserAlreadyExistsException {
         Establishment establishment = establishmentRepository.findById(establishmentId)
                 .orElseThrow(NotFoundException::new);
@@ -112,6 +113,8 @@ public class EstablishmentService {
             establishmentRepository.save(establishment);
             // TODO: note that the we might want to start an employee approval process here,
             // so we might want to set approved to false
+        } else {
+            throw new UnsupportedOperationException("User is not an employee!");
         }
     }
 

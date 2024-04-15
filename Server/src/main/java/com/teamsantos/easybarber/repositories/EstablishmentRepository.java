@@ -2,6 +2,7 @@ package com.teamsantos.easybarber.repositories;
 
 import java.util.Optional;
 
+import com.teamsantos.easybarber.DTO.EstablishmentCompleteDTO;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

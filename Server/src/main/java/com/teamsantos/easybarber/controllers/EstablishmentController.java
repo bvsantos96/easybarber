@@ -2,6 +2,7 @@ package com.teamsantos.easybarber.controllers;
 
 import java.security.Principal;
 
+import com.teamsantos.easybarber.DTO.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Pageable;
@@ -18,14 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
-import com.teamsantos.easybarber.DTO.BaseListDTO;
-import com.teamsantos.easybarber.DTO.BasePageDTO;
-import com.teamsantos.easybarber.DTO.BaseResponseDTO;
-import com.teamsantos.easybarber.DTO.EmployeeDTO;
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
-import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
@@ -43,14 +36,14 @@ public class EstablishmentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<EstablishmentDTO> getEstablishment(@PathVariable Long id) {
-        EstablishmentDTO establishments = new EstablishmentDTO();
+        EstablishmentDTO establishment = new EstablishmentDTO();
         try {
             return ResponseEntity.ok(establishmentService.getEstablishment(id));
         } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(establishments);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(establishment);
         } catch (Exception e) {
-            establishments.setResponseMessage(e.getMessage());
-            return ResponseEntity.badRequest().body(establishments);
+            establishment.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(establishment);
         }
     }
 
@@ -92,7 +85,7 @@ public class EstablishmentController {
             Principal principal) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.addEmployee(establishmentId, employeeId, principal);
+            establishmentService.addEmployee(establishmentId, employeeId);
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
         } catch (UserAlreadyExistsException e) {
             responseDTO.setResponseMessage(e.getMessage());

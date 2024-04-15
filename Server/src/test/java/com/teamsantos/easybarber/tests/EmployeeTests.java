@@ -139,7 +139,7 @@ public class EmployeeTests {
             for (int i = 0; i < services.size(); i++) {
                 assert services.get(i).equalsWithoutPrice(servicesDTO.get(i));
             }
-            result = CreateTest.get(mockMvc, "/employee/2/services", jwt);
+            result = CreateTest.get(mockMvc, String.format("/employee/%d/services", EmployeeData.employees.get(1).getId()), jwt);
             result.andExpect(MockMvcResultMatchers.status().isOk());
             services = JSONToDTO.fromPageDTO(new JSONObject(result.andReturn().getResponse().getContentAsString()),
                     ServiceDTO.class);
@@ -158,7 +158,7 @@ public class EmployeeTests {
     public void listEstablishments() {
         try {
             new EstablishmentTests(mockMvc).testEmployees(true, true);
-            String jwt = login(false);
+            String jwt = login(1, false);
             ResultActions result = CreateTest.get(mockMvc, "/employee/establishments", jwt);
             JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
             List<BaseEstablishmentDTO> establishments = JSONToDTO.fromPageDTO(response, BaseEstablishmentDTO.class);
