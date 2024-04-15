@@ -37,4 +37,15 @@ public class ServiceTypeDTO extends BaseDTO {
         this.description = description;
         this.imageUrl = imageUrl;
     }
+
+    @Override
+    public ServiceTypeDTO addId(Long id) {
+        super.addId(id);
+        return this;
+    }
+
+    public ServiceTypeDTO addDescription(String description) {
+        this.description = description;
+        return this;
+    }
 }

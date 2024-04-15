@@ -17,7 +17,6 @@ import com.teamsantos.easybarber.repositories.EstablishmentRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentServiceRepository;
 import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.utils.GeometryUtils;
-import com.teamsantos.easybarber.utils.Utils;
 
 import jakarta.transaction.Transactional;
 import org.locationtech.jts.io.ParseException;
