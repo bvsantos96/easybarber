@@ -13,7 +13,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentCompleteDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.EstablishmentData;
@@ -53,7 +55,7 @@ public class EstablishmentTests {
             result = CreateTest.post(mockMvc, "/establishment", jwt,
                     EstablishmentData.establishments.get(1).toString());
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
-            jwt = new EmployeeTests(mockMvc).login(false);
+            jwt = new EmployeeTests(mockMvc).login(1, false);
             create("/establishment", jwt, EstablishmentData.establishments.get(1).toString());
         } catch (Exception e) {
             e.printStackTrace();
@@ -75,7 +77,7 @@ public class EstablishmentTests {
                     EmployeeData.employees.get(1).toString());
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
             jwt = new EmployeeTests(mockMvc).login(false);
-            create("/establishment/2/employee/2", jwt, EmployeeData.employees.get(0).toString());
+            create("/establishment/2/employee/2", jwt, EmployeeData.employees.get(1).toString());
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
@@ -92,14 +94,16 @@ public class EstablishmentTests {
             testEmployees(initAuth, initEmployee);
             new EmployeeTests(mockMvc).createServices(false);
             String jwt = new EmployeeTests(mockMvc).login(false);
-            create("/establishment/1/service", jwt, EstablishmentData.establishmentServices.get(0).toString());
-            create("/establishment/1/service", jwt, EstablishmentData.establishmentServices.get(1).toString());
+            CreateEstablishmentServiceDTO service = EstablishmentData.establishmentServices.get(0);
+            create(String.format("/establishment/%d/service", service.getEstablishmentId()), jwt, service.toString());
+            service = EstablishmentData.establishmentServices.get(1);
+            create(String.format("/establishment/%d/service", service.getEstablishmentId()), jwt, service.toString());
             jwt = new EmployeeTests(mockMvc).login(1, false);
+            service = EstablishmentData.establishmentServices.get(2);
             ResultActions result = CreateTest.post(mockMvc, "/establishment/1/service", jwt,
                     EstablishmentData.establishmentServices.get(2).toString());
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
-            jwt = new EmployeeTests(mockMvc).login(false);
-            create("/establishment/1/service", jwt, EstablishmentData.establishmentServices.get(2).toString());
+            create(String.format("/establishment/%d/service", service.getEstablishmentId()), jwt, service.toString());
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
@@ -122,6 +126,24 @@ public class EstablishmentTests {
         }
     }
 
+    private boolean testEstablishmentServices(Long establishmentId, List<ServiceDTO> _services) {
+        _services.sort(Comparator.comparingLong(ServiceDTO::getId));
+        List<Long> ids = EstablishmentData.establishmentServices.stream()
+                .filter(e -> e.getEstablishmentId().equals(establishmentId)).map(e -> e.getServiceId()).toList();
+        List<ServiceDTO> services = ServiceData.services.stream().filter(e -> ids.contains(e.getId()))
+                .toList();
+        boolean test = _services.equals(services);
+        if (!test) {
+            services.forEach(e -> {
+                ServiceData.serviceUpdate.stream()
+                        .filter(el -> el.getId().equals(e.getId()))
+                        .findFirst().ifPresent(matchingData -> e.setDescription(matchingData.getDescription()));
+            });
+            return false;
+        }
+        return true;
+    }
+
     @Test
     public void listEstablishmentServices() {
         try {
@@ -132,17 +154,7 @@ public class EstablishmentTests {
             List<ServiceDTO> serviceDTO = JSONToDTO.fromPageDTO(response, ServiceDTO.class);
             assert serviceDTO != null;
             serviceDTO.sort(Comparator.comparingLong(ServiceDTO::getId));
-            List<ServiceDTO> services = Arrays.asList(ServiceData.services.get(0), ServiceData.services.get(1),
-                    ServiceData.services.get(2));
-            boolean test = serviceDTO.equals(services);
-            if(!test){
-                services.forEach(e -> {
-                    ServiceData.serviceUpdate.stream()
-                            .filter(el -> el.getId().equals(e.getId()))
-                            .findFirst().ifPresent(matchingData -> e.setDescription(matchingData.getDescription()));
-                });
-                assert serviceDTO.equals(services);
-            }
+            assert testEstablishmentServices(1L, serviceDTO);
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
@@ -152,7 +164,16 @@ public class EstablishmentTests {
     @Test
     public void listEstablishmentEmployeeServices() {
         try {
-            System.out.println("TODO");
+            testService(true, true);
+            ResultActions result = CreateTest.get(mockMvc, "/establishment/1");
+            result.andExpect(MockMvcResultMatchers.status().isOk());
+            JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
+            EstablishmentCompleteDTO establishments = JSONToDTO.toDTO(response, EstablishmentCompleteDTO.class);
+            assert establishments != null;
+            List<ServiceDTO> serviceDTO = establishments.getServices();
+            assert serviceDTO != null;
+            serviceDTO.sort(Comparator.comparingLong(ServiceDTO::getId));
+            assert testEstablishmentServices(1L, serviceDTO);
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
