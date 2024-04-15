@@ -11,8 +11,8 @@ public class EmployeeData {
     static {
         employees = new ArrayList<>() {
             {
-                add(new UserCreateDTO(1L, "+351", "999999999", "Test123*", "Henrique"));
-                add(new UserCreateDTO(2L, "+351", "900000000", "Test123*", "Amigo do Joao"));
+                add(new UserCreateDTO(2L, "+351", "999999999", "Test123*", "Henrique"));
+                add(new UserCreateDTO(3L, "+351", "900000000", "Test123*", "Amigo do Joao"));
             }
         };
     }

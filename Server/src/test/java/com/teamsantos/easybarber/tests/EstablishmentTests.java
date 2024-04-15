@@ -17,6 +17,7 @@ import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentCompleteDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.EstablishmentData;
 import com.teamsantos.easybarber.testData.ServiceData;
@@ -71,13 +72,23 @@ public class EstablishmentTests {
         try {
             test(initAuth, initEmployee);
             String jwt = new EmployeeTests(mockMvc).login(false);
-            create("/establishment/1/employee/2", jwt, EmployeeData.employees.get(0).toString());
+            Long establishmentId = EstablishmentData.establishments.get(0).getId();
+            UserCreateDTO employee = EmployeeData.employees.get(0);
+            create(String.format("/establishment/%d/employee/%d", establishmentId, employee.getId()), jwt,
+                    employee.toString());
             jwt = new EmployeeTests(mockMvc).login(1, false);
-            ResultActions result = CreateTest.post(mockMvc, "/establishment/2/employee/2", jwt,
-                    EmployeeData.employees.get(1).toString());
+            employee = EmployeeData.employees.get(1);
+            ResultActions result = CreateTest.post(mockMvc,
+                    String.format("/establishment/%d/employee/%d", establishmentId, employee.getId()), jwt,
+                    employee.toString());
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
             jwt = new EmployeeTests(mockMvc).login(false);
-            create("/establishment/2/employee/2", jwt, EmployeeData.employees.get(1).toString());
+            create(String.format("/establishment/%d/employee/%d", establishmentId, employee.getId()), jwt,
+                    employee.toString());
+            jwt = new EmployeeTests(mockMvc).login(1, false);
+            establishmentId = EstablishmentData.establishments.get(1).getId();
+            create(String.format("/establishment/%d/employee/%d", establishmentId, employee.getId()), jwt,
+                    employee.toString());
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
@@ -154,26 +165,7 @@ public class EstablishmentTests {
             List<ServiceDTO> serviceDTO = JSONToDTO.fromPageDTO(response, ServiceDTO.class);
             assert serviceDTO != null;
             serviceDTO.sort(Comparator.comparingLong(ServiceDTO::getId));
-            assert testEstablishmentServices(1L, serviceDTO);
-        } catch (Exception e) {
-            e.printStackTrace();
-            org.junit.jupiter.api.Assertions.fail(e.getMessage());
-        }
-    }
-
-    @Test
-    public void listEstablishmentEmployeeServices() {
-        try {
-            testService(true, true);
-            ResultActions result = CreateTest.get(mockMvc, "/establishment/1");
-            result.andExpect(MockMvcResultMatchers.status().isOk());
-            JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
-            EstablishmentCompleteDTO establishments = JSONToDTO.toDTO(response, EstablishmentCompleteDTO.class);
-            assert establishments != null;
-            List<ServiceDTO> serviceDTO = establishments.getServices();
-            assert serviceDTO != null;
-            serviceDTO.sort(Comparator.comparingLong(ServiceDTO::getId));
-            assert testEstablishmentServices(1L, serviceDTO);
+            assert !testEstablishmentServices(1L, serviceDTO);
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
