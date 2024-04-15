@@ -10,6 +10,7 @@ import com.teamsantos.easybarber.repositories.ServiceTypeRepository;
 import com.teamsantos.easybarber.utils.PageDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -66,7 +67,7 @@ public class ServiceService {
         serviceTypeRepository.save(modelMapper.map(serviceDTO, ServiceType.class));
     }
 
-    public void updateType(ServiceTypeDTO serviceDTO) {
+    public void updateType(ServiceTypeDTO serviceDTO) throws NotFoundException {
         serviceTypeRepository.save(modelMapper.map(serviceDTO, ServiceType.class));
     }
 

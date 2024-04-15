@@ -10,6 +10,7 @@ public class ServiceData {
     public static final List<ServiceTypeDTO> serviceTypes;
     public static final List<ServiceDTO> services;
     public static final List<ServiceDTO> serviceUpdate;
+    public static final List<ServiceTypeDTO> serviceTypesUpdate;
 
     static {
         try {
@@ -34,6 +35,13 @@ public class ServiceData {
                     add(new ServiceDTO().addId(services.get(0).getId()).addDescription("Simple haircut (updated)"));
                     add(new ServiceDTO().addId(services.get(1).getId()).addDescription("Simple beard trim (updated)"));
                     add(new ServiceDTO().addId(services.get(2).getId()).addDescription("Simple haircut and beard trim (updated)"));
+                }
+            };
+            serviceTypesUpdate = new ArrayList<>() {
+                {
+                    add(new ServiceTypeDTO().addId(serviceTypes.get(0).getId()).addDescription("Simple haircut (updated)"));
+                    add(new ServiceTypeDTO().addId(serviceTypes.get(1).getId()).addDescription("Simple beard trim (updated)"));
+                    add(new ServiceTypeDTO().addId(serviceTypes.get(2).getId()).addDescription("Simple haircut and beard trim (updated)"));
                 }
             };
         } catch (Exception e) {
