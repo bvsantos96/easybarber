@@ -92,7 +92,7 @@ public class EmployeeTests {
 
     public void createServices(boolean init) {
         try {
-            new ServiceTests(mockMvc).test(init);
+            new ServiceTypeTests(mockMvc).createServiceTypes(init);
             String jwt = login(false);
             create("/employee/service", jwt, ServiceData.services.get(0).toString());
             create("/employee/service", jwt, ServiceData.services.get(1).toString());
