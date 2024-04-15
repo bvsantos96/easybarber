@@ -125,7 +125,7 @@ public class UserService {
     }
 
     public Page<EstablishmentDTO> getEstablishments(Principal principal, boolean admin, Pageable pageable) {
-        return getEstablishments(getUserId(principal), admin, pageable);
+        return getEstablishments(getEmployee(principal).getId(), admin, pageable);
     }
 
     public Page<EstablishmentDTO> getEstablishments(Long id, boolean admin, Pageable pageable) {

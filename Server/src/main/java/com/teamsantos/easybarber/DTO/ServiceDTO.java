@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.DTO;
 
+import com.teamsantos.easybarber.entities.Service;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,15 @@ public class ServiceDTO extends BaseDTO {
     private String description;
     private String imageUrl;
     private Double price;
+
+    public ServiceDTO(Service service){
+        super(service.getId());
+        this.employeeId = service.getEmployee().getId();
+        this.serviceTypeId = service.getServiceType().getId();
+        this.name = service.getName();
+        this.description = service.getDescription();
+        this.imageUrl = service.getImageUrl();
+    }
 
     public ServiceDTO(Long id, Long employeeId, Long serviceTypeId, String name, String description, String imageUrl,
             double price) {
