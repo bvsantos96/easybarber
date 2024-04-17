@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+
+import { Country } from 'react-native-country-picker-modal';
+
 import Input from '../components/Input';
 import Title from '../components/Title';
-import { PhoneIcon, PasswordIcon } from '../components/Icons';
+import { PasswordIcon } from '../components/Icons';
 import Divider from '../components/Divider';
 import Button from '../components/Button';
 import { AppleLoginButton, GoogleLoginButton } from '../components/LoginBrandButton';
@@ -12,11 +15,13 @@ import { doLogin, Result } from '../utils/ApiRequest';
 import { getStyles } from '../styles/Sign';
 import { resetNavigation } from '../App';
 import { Props } from '../screens/SignIn';
+import PhoneInput from './PhoneInput';
 
 export default function Login({ navigation, toggleNewUser }: Props) {
     const styles = getStyles();
     const texts = require("@lang/en.json");
     const [phone, setPhone] = useState("");
+    const [nation, setNation] = useState<Country | null>();
     const [password, setPassword] = useState("");
 
     const login = async () => {
@@ -35,11 +40,12 @@ export default function Login({ navigation, toggleNewUser }: Props) {
                 <Title line={[{ text: texts.login.title, highlight: false }]} />
             </View>
             <View style={styles.inputsContainer}>
-                <Input
-                    icon={<PhoneIcon />}
-                    placeholder={texts.phoneNumber}
-                    type="tel"
-                    onInputChange={setPhone}
+                <PhoneInput
+                    {...{
+                        setPhone,
+                        setNation,
+                        nation
+                    }}
                 />
                 <Divider size={20} />
                 <Input
