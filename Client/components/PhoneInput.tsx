@@ -33,7 +33,6 @@ export function NationPicker({ nation, setNation }: NationSelectionProps) {
             withCallingCode
             withEmoji
             onSelect={(country: Country) => { country && setNation(country) }}
-            visible
         />
     );
 }
