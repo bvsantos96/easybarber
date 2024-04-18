@@ -1,9 +1,13 @@
 package com.teamsantos.easybarber.tests;
 
+import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 
+import org.bouncycastle.util.encoders.UTF8;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +17,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
-import com.teamsantos.easybarber.DTO.EstablishmentCompleteDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.testData.EmployeeData;
@@ -39,11 +45,11 @@ public class EstablishmentTests {
     }
 
     @Test
-    public void test() {
-        test(true, true);
+    public void createEstablishments() {
+        createEstablishments(true, true);
     }
 
-    public void test(boolean initAuth, boolean initEmployee) {
+    public void createEstablishments(boolean initAuth, boolean initEmployee) {
         try {
             String jwt;
             jwt = new AuthTests(mockMvc).login(initAuth);
@@ -70,7 +76,7 @@ public class EstablishmentTests {
 
     public void testEmployees(boolean initAuth, boolean initEmployee) {
         try {
-            test(initAuth, initEmployee);
+            createEstablishments(initAuth, initEmployee);
             String jwt = new EmployeeTests(mockMvc).login(false);
             Long establishmentId = EstablishmentData.establishments.get(0).getId();
             UserCreateDTO employee = EmployeeData.employees.get(0);
@@ -166,6 +172,32 @@ public class EstablishmentTests {
             assert serviceDTO != null;
             serviceDTO.sort(Comparator.comparingLong(ServiceDTO::getId));
             assert !testEstablishmentServices(1L, serviceDTO);
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void listClosestEstablishments() {
+        try {
+            createEstablishments(true, true);
+            float latitude = 38.671870f,
+                    longitude = -9.165940f;
+            ResultActions result = CreateTest.get(mockMvc,
+                    String.format(Locale.US, "/establishment/list?latitude=%f&longitude=%f", latitude, longitude));
+            result.andExpect(MockMvcResultMatchers.status().isOk());
+            List<BaseEstablishmentDTO> establishments = JSONToDTO.fromPageDTO(
+                    new JSONObject(result.andReturn().getResponse().getContentAsString()), BaseEstablishmentDTO.class);
+            assert establishments != null && establishments.equals(Arrays.asList(EstablishmentData.establishments.get(1), EstablishmentData.establishments.get(0)));
+            latitude = 38.622584f;
+            longitude = -9.208970f;
+            result = CreateTest.get(mockMvc,
+                    String.format(Locale.US, "/establishment/list?latitude=%f&longitude=%f", latitude, longitude));
+            result.andExpect(MockMvcResultMatchers.status().isOk());
+            establishments = JSONToDTO.fromPageDTO(
+                    new JSONObject(result.andReturn().getResponse().getContentAsString()), BaseEstablishmentDTO.class);
+            assert establishments != null && establishments.equals(EstablishmentData.establishments);
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());

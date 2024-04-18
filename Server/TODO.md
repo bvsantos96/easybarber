@@ -38,24 +38,23 @@ Make requests that should be public available with no authentication
 ### Create tests (DONE)
 Create a group of tests that for a clean database run all the functionality (same as the requests available) as checks if the result is what we expected
 
-### Test functionality
+### Test functionality (DONE)
 Test all available controller requests
 
 #### Tasks:
 - [x] Create entities
-- [ ] List entities
-    - [ ] Users
-    - [ ] Employees
-        - [ ] List employee services
+- [x] List entities
+    - [x] Users
+    - [x] Employees
+        - [x] List employee services
     - [ ] Establishments
-        - [ ] List establishment employees
-        - [ ] List establishment services
-        - [ ] List establishment employee services
+        - [x] List establishment employees
+        - [x] List establishment services
         - [ ] List establishments closest to location
         - [ ] List establishments with certain service type
-    - [ ] Services
+    - [x] Services
         - [ ] List services by service type
-- [ ] Update entities 
+- [x] Update entities 
 - [ ] Delete entities
 
 ## Switch from JSON to Protobuf
