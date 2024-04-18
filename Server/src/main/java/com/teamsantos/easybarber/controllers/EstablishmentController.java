@@ -64,7 +64,7 @@ public class EstablishmentController {
         }
     }
 
-    // GET /establishments?page=0&size=15&sort=id,desc
+    // GET /establishments/list?page=0&size=15&sort=id,desc
     @GetMapping("/list")
     public ResponseEntity<BasePageDTO<EstablishmentDTO>> listEstablishments(
             @RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude, Pageable pageable) {
