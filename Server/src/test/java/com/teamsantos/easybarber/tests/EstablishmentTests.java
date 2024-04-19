@@ -1,13 +1,13 @@
 package com.teamsantos.easybarber.tests;
 
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.bouncycastle.util.encoders.UTF8;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +18,8 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
-import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.testData.EmployeeData;
@@ -121,6 +119,9 @@ public class EstablishmentTests {
                     EstablishmentData.establishmentServices.get(2).toString());
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
             create(String.format("/establishment/%d/service", service.getEstablishmentId()), jwt, service.toString());
+            service = EstablishmentData.establishmentServices.get(3);
+            jwt = new EmployeeTests(mockMvc).login(false);
+            create(String.format("/establishment/%d/service", service.getEstablishmentId()), jwt, service.toString());
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
@@ -189,7 +190,8 @@ public class EstablishmentTests {
             result.andExpect(MockMvcResultMatchers.status().isOk());
             List<BaseEstablishmentDTO> establishments = JSONToDTO.fromPageDTO(
                     new JSONObject(result.andReturn().getResponse().getContentAsString()), BaseEstablishmentDTO.class);
-            assert establishments != null && establishments.equals(Arrays.asList(EstablishmentData.establishments.get(1), EstablishmentData.establishments.get(0)));
+            assert establishments != null && establishments.equals(
+                    Arrays.asList(EstablishmentData.establishments.get(1), EstablishmentData.establishments.get(0)));
             latitude = 38.622584f;
             longitude = -9.208970f;
             result = CreateTest.get(mockMvc,
@@ -198,6 +200,28 @@ public class EstablishmentTests {
             establishments = JSONToDTO.fromPageDTO(
                     new JSONObject(result.andReturn().getResponse().getContentAsString()), BaseEstablishmentDTO.class);
             assert establishments != null && establishments.equals(EstablishmentData.establishments);
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void listEstablishmentsByServiceType() {
+        try {
+            testService(true, true);
+            ResultActions result = CreateTest.get(mockMvc, "/establishment/list?serviceType=1");
+            result.andExpect(MockMvcResultMatchers.status().isOk());
+            List<BaseEstablishmentDTO> establishments = JSONToDTO.fromPageDTO(
+                    new JSONObject(result.andReturn().getResponse().getContentAsString()), BaseEstablishmentDTO.class);
+            Set<Long> serviceIds = ServiceData.services.stream().filter(e -> e.getServiceTypeId().equals(3L))
+                    .map(e -> e.getId()).collect(Collectors.toSet());
+            Set<Long> establishmentIds = EstablishmentData.establishmentServices.stream()
+                    .filter(e -> serviceIds.contains(e.getServiceId())).map(es -> es.getId())
+                    .collect(Collectors.toSet());
+            assert establishments != null && establishments.equals(
+                    EstablishmentData.establishments.stream().filter(e -> establishmentIds.contains(e.getId()))
+                            .toList());
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());

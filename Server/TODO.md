@@ -50,7 +50,7 @@ Test all available controller requests
     - [ ] Establishments
         - [x] List establishment employees
         - [x] List establishment services
-        - [ ] List establishments closest to location
+        - [x] List establishments closest to location
         - [ ] List establishments with certain service type
     - [x] Services
         - [ ] List services by service type
