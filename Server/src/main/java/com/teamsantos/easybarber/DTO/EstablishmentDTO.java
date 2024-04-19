@@ -16,6 +16,10 @@ public class EstablishmentDTO extends BaseEstablishmentDTO {
         super();
     }
 
+    public EstablishmentDTO(Long id, String name, String description, String address, Point location) {
+        super(id, name, description, address, location);
+    }
+
     public EstablishmentDTO(Long id, String name, String description, String address, Point location, Object distance) {
         super(id, name, description, address, location);
         try {

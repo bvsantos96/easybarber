@@ -67,10 +67,12 @@ public class EstablishmentController {
     // GET /establishments/list?page=0&size=15&sort=id,desc
     @GetMapping("/list")
     public ResponseEntity<BasePageDTO<EstablishmentDTO>> listEstablishments(
-            @RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude, Pageable pageable) {
+            @RequestParam(name = "latitude", required = false) Double latitude,
+            @RequestParam(name = "longitude", required = false) Double longitude,
+            @RequestParam(name = "serviceType", required = false) Long serviceType, Pageable pageable) {
         BasePageDTO<EstablishmentDTO> listDTO = new BasePageDTO<>();
         try {
-            listDTO.setItems(establishmentService.findByLocation(latitude, longitude, pageable));
+            listDTO.setItems(establishmentService.findByLocation(latitude, longitude, serviceType, pageable));
             return ResponseEntity.ok(listDTO);
         } catch (Exception e) {
             listDTO.setResponseMessage(e.getMessage());

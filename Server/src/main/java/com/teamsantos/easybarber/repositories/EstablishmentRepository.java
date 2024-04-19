@@ -2,7 +2,6 @@ package com.teamsantos.easybarber.repositories;
 
 import java.util.Optional;
 
-import com.teamsantos.easybarber.DTO.EstablishmentCompleteDTO;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,11 +23,22 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
     @Query("SELECT new com.teamsantos.easybarber.DTO.BaseEstablishmentDTO(e.id, e.name, e.description) FROM Establishment e")
     Page<BaseEstablishmentDTO> findAllBase(Pageable pageable);
 
-    @Query("SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location, :location)) "
-            +
-            "FROM Establishment e " +
-            "ORDER BY ST_Distance_Sphere(e.location, :location) ASC ")
-    Page<EstablishmentDTO> findClosestEstablishments(Point location, Pageable pageable);
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location, :location))
+            FROM Establishment e
+            INNER JOIN EstablishmentService es ON :serviceType IS NULL OR es.service.id = :serviceType
+            WHERE es.establishment.id = e.id
+            ORDER BY ST_Distance_Sphere(e.location, :location) ASC
+            """)
+    Page<EstablishmentDTO> findClosestEstablishments(Point location, Long serviceType, Pageable pageable);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location)
+            FROM Establishment e
+            INNER JOIN EstablishmentService es ON :serviceType IS NULL OR es.service.id = :serviceType
+            WHERE es.establishment.id = e.id
+            """)
+    Page<EstablishmentDTO> list(Long serviceType, Pageable pageable);
 
     @Query("SELECT es.establishment FROM EstablishmentStaff es WHERE es.employee.id = :employeeId AND (:admin = false OR es.admin = true)")
     Page<Establishment> findEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable);
