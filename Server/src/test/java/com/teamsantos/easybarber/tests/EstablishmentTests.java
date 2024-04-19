@@ -2,7 +2,6 @@ package com.teamsantos.easybarber.tests;
 
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -211,12 +210,12 @@ public class EstablishmentTests {
         try {
             testService(true, true);
             long serviceTypeId = 3L;
-            ResultActions result = CreateTest.get(mockMvc, String.format("/establishment/list?serviceType=%d", serviceTypeId));
+            ResultActions result = CreateTest.get(mockMvc,
+                    String.format("/establishment/list?serviceType=%d", serviceTypeId));
             result.andExpect(MockMvcResultMatchers.status().isOk());
             List<BaseEstablishmentDTO> establishments = JSONToDTO.fromPageDTO(
                     new JSONObject(result.andReturn().getResponse().getContentAsString()), BaseEstablishmentDTO.class);
-            Set<Long> serviceIds = ServiceData.services.stream().filter(e -> e.getServiceTypeId().equals(serviceTypeId))
-                    .map(e -> e.getId()).collect(Collectors.toSet());
+            Set<Long> serviceIds = ServiceTypeTests.getServicesIdByServiceType(serviceTypeId);
             Set<Long> establishmentIds = EstablishmentData.establishmentServices.stream()
                     .filter(e -> serviceIds.contains(e.getServiceId())).map(es -> es.getEstablishmentId())
                     .collect(Collectors.toSet());
