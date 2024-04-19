@@ -123,6 +123,7 @@ public class EstablishmentService {
             return establishmentRepository.findClosestEstablishments(GeometryUtils.parseLocation(latitude, longitude),
                     serviceType, pageable);
         }
+        Page<EstablishmentDTO> establishments = establishmentRepository.list(serviceType, pageable);
         return establishmentRepository.list(serviceType, pageable);
     }
 
