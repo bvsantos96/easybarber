@@ -117,10 +117,13 @@ public class EstablishmentService {
         }
     }
 
-    public Page<EstablishmentDTO> findByLocation(double latitude, double longitude, Pageable pageable)
+    public Page<BaseEstablishmentDTO> findByLocation(Double latitude, Double longitude, Long serviceType, Pageable pageable)
             throws ParseException {
-        return establishmentRepository.findClosestEstablishments(GeometryUtils.parseLocation(latitude, longitude),
-                pageable);
+        if (latitude != null && longitude != null) {
+            return establishmentRepository.findClosestEstablishments(GeometryUtils.parseLocation(latitude, longitude),
+                    serviceType, pageable);
+        }
+        return establishmentRepository.list(serviceType, pageable);
     }
 
     public Page<ServiceDTO> listServices(Long id, Pageable pageable) {
@@ -158,6 +161,7 @@ public class EstablishmentService {
                 throw new AlreadyExistsException("Service already registered in establishment");
             com.teamsantos.easybarber.entities.EstablishmentService serviceEntity = modelMapper.map(service,
                     com.teamsantos.easybarber.entities.EstablishmentService.class);
+            serviceEntity.setId(null);
             serviceEntity.setPrice(price);
             serviceEntity.setEstablishment(establishment);
             serviceEntity.setService(service);
