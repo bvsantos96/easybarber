@@ -53,7 +53,7 @@ Test all available controller requests
         - [x] List establishments closest to location
         - [x] List establishments with certain service type
     - [x] Services
-        - [ ] List services by service type
+        - [x] List services by service type
 - [x] Update entities 
 - [ ] Delete entities
 
