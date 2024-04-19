@@ -117,7 +117,7 @@ public class EstablishmentService {
         }
     }
 
-    public Page<BaseEstablishmentDTO> findByLocation(Double latitude, Double longitude, Long serviceType, Pageable pageable)
+    public Page<EstablishmentDTO> findByLocation(Double latitude, Double longitude, Long serviceType, Pageable pageable)
             throws ParseException {
         if (latitude != null && longitude != null) {
             return establishmentRepository.findClosestEstablishments(GeometryUtils.parseLocation(latitude, longitude),

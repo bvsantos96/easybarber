@@ -219,9 +219,10 @@ public class EstablishmentTests {
             Set<Long> establishmentIds = EstablishmentData.establishmentServices.stream()
                     .filter(e -> serviceIds.contains(e.getServiceId())).map(es -> es.getId())
                     .collect(Collectors.toSet());
-            assert establishments != null && establishments.equals(
-                    EstablishmentData.establishments.stream().filter(e -> establishmentIds.contains(e.getId()))
-                            .toList());
+            List<BaseEstablishmentDTO> _establishments = EstablishmentData.establishments.stream()
+                    .filter(e -> establishmentIds.contains(e.getId()))
+                    .toList();
+            assert establishments != null && establishments.equals(_establishments);
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
