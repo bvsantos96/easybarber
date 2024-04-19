@@ -47,11 +47,11 @@ Test all available controller requests
     - [x] Users
     - [x] Employees
         - [x] List employee services
-    - [ ] Establishments
+    - [x] Establishments
         - [x] List establishment employees
         - [x] List establishment services
         - [x] List establishments closest to location
-        - [ ] List establishments with certain service type
+        - [x] List establishments with certain service type
     - [x] Services
         - [ ] List services by service type
 - [x] Update entities 
