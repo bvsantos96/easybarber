@@ -76,7 +76,15 @@ public class ServiceService {
         return getServices(employee.getId(), pageable);
     }
 
-    public Page<ServiceDTO> getServices(Long id, Pageable pageable) {
-        return PageDTO.toDTO(modelMapper, serviceRepository.findByEmployeeId(id, pageable), ServiceDTO.class, pageable);
+    public Page<ServiceDTO> getServices(Long employeeId, Pageable pageable) {
+        return PageDTO.toDTO(modelMapper, serviceRepository.findByEmployeeId(employeeId, pageable), ServiceDTO.class, pageable);
+    }
+
+    public Page<ServiceDTO>list(Long serviceTypeId, Pageable pageable) {
+        if(serviceTypeId == null || serviceTypeId.equals(0L)) {
+            return PageDTO.toDTO(modelMapper, serviceRepository.findAll(pageable), ServiceDTO.class, pageable);
+        }
+        return PageDTO.toDTO(modelMapper, serviceRepository.listByServiceTypeId(serviceTypeId, pageable), ServiceDTO.class, pageable);
+
     }
 }
