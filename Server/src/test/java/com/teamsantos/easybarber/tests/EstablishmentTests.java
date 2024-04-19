@@ -210,14 +210,15 @@ public class EstablishmentTests {
     public void listEstablishmentsByServiceType() {
         try {
             testService(true, true);
-            ResultActions result = CreateTest.get(mockMvc, "/establishment/list?serviceType=1");
+            long serviceTypeId = 3L;
+            ResultActions result = CreateTest.get(mockMvc, String.format("/establishment/list?serviceType=%d", serviceTypeId));
             result.andExpect(MockMvcResultMatchers.status().isOk());
             List<BaseEstablishmentDTO> establishments = JSONToDTO.fromPageDTO(
                     new JSONObject(result.andReturn().getResponse().getContentAsString()), BaseEstablishmentDTO.class);
-            Set<Long> serviceIds = ServiceData.services.stream().filter(e -> e.getServiceTypeId().equals(3L))
+            Set<Long> serviceIds = ServiceData.services.stream().filter(e -> e.getServiceTypeId().equals(serviceTypeId))
                     .map(e -> e.getId()).collect(Collectors.toSet());
             Set<Long> establishmentIds = EstablishmentData.establishmentServices.stream()
-                    .filter(e -> serviceIds.contains(e.getServiceId())).map(es -> es.getId())
+                    .filter(e -> serviceIds.contains(e.getServiceId())).map(es -> es.getEstablishmentId())
                     .collect(Collectors.toSet());
             List<BaseEstablishmentDTO> _establishments = EstablishmentData.establishments.stream()
                     .filter(e -> establishmentIds.contains(e.getId()))
