@@ -26,7 +26,5 @@ public class Image {
     @JoinColumn(name = "entity_id", nullable = false)
     private EntityWithImages entity;
     @Column
-    private String url;
-    @Column
     private String data;
 }
