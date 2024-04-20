@@ -6,6 +6,7 @@ import java.util.Set;
 import org.hibernate.proxy.HibernateProxy;
 
 import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.entities.base.EntityWithImages;
 import com.teamsantos.easybarber.utils.Utils;
 
 import jakarta.persistence.CascadeType;
@@ -30,7 +31,7 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(indexes = { @Index(columnList = "service_type_id") })
-public class Service {
+public class Service extends EntityWithImages {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -38,8 +39,6 @@ public class Service {
     private String name;
     @Column
     private String description;
-    @Column
-    private String imageUrl;
     @ManyToOne(fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn(name = "service_type_id")
     private ServiceType serviceType;
@@ -77,6 +76,10 @@ public class Service {
     public void update(ServiceDTO serviceDTO) {
         this.name = Utils.setFieldIfNotNullOrEmpty(name, serviceDTO.getName());
         this.description = Utils.setFieldIfNotNullOrEmpty(description, serviceDTO.getDescription());
-        this.imageUrl = Utils.setFieldIfNotNullOrEmpty(imageUrl, serviceDTO.getImageUrl());
     }
+
+	@Override
+	public String getEntityType() {
+        return "service";
+	}
 }

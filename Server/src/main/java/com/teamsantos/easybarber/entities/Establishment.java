@@ -7,6 +7,7 @@ import org.hibernate.proxy.HibernateProxy;
 import org.locationtech.jts.geom.Point;
 
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.entities.base.EntityWithImages;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -24,7 +25,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-public class Establishment {
+public class Establishment extends EntityWithImages {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -80,4 +81,9 @@ public class Establishment {
                 ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
                 : getClass().hashCode();
     }
+
+	@Override
+	public String getEntityType() {
+        return "establishment";
+	}
 }
