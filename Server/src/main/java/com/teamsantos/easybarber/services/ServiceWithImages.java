@@ -13,34 +13,35 @@ import com.teamsantos.easybarber.entities.Image;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
 import com.teamsantos.easybarber.repositories.ImageRepository;
 
-public abstract class ServiceWithImages<T extends EntityWithImages> {
-    public abstract JpaRepository<T, Long> getRepository();
+public class ServiceWithImages<T extends EntityWithImages> {
+    protected JpaRepository<T, Long> repository;
+    protected ImageRepository imageRepository;
+    protected ModelMapper modelMapper;
+    protected T entity;
 
-    public abstract ImageRepository getImageRepository();
-
-    public abstract ModelMapper getModelMapper();
-
-    public abstract T getEntity();
-
-    public abstract void setEntity(T entity);
+    public ServiceWithImages(JpaRepository<T, Long> repository, ImageRepository imageRepository,
+            ModelMapper modelMapper) {
+        this.repository = repository;
+        this.imageRepository = imageRepository;
+        this.modelMapper = modelMapper;
+    }
 
     public void saveImages(Long entityId, List<ImageDTO> images) throws NotFoundException {
-        setEntity(getRepository().findById(entityId).orElseThrow(NotFoundException::new));
+        entity = repository.findById(entityId).orElseThrow(NotFoundException::new);
         HashMap<Long, Image> toBeDeleted = null;
-        if (getEntity().getImages() == null) {
-            getEntity()
-                    .setImages(
-                            images.stream().map(i -> getModelMapper().map(i, Image.class)).collect(Collectors.toSet()));
+        if (entity.getImages() == null) {
+            entity
+                    .setImages(images.stream().map(i -> modelMapper.map(i, Image.class)).collect(Collectors.toSet()));
         } else {
-            toBeDeleted = getEntity().getImages()
+            toBeDeleted = entity.getImages()
                     .stream()
                     .collect(Collectors.toMap(Image::getId, image -> image, (existing, replacement) -> replacement,
                             HashMap::new));
             for (ImageDTO image : images) {
                 if ((image.getData() != null && !image.getData().equals(""))) {
-                    Long id = getImageRepository().getIdByEntityAndData(getEntity(), image.getData());
+                    Long id = imageRepository.getIdByEntityAndData(entity, image.getData());
                     if (id == null || id == 0L) {
-                        getEntity().getImages().add(getModelMapper().map(image, Image.class));
+                        entity.getImages().add(modelMapper.map(image, Image.class));
                     } else {
                         toBeDeleted.remove(id);
                     }
@@ -48,12 +49,12 @@ public abstract class ServiceWithImages<T extends EntityWithImages> {
             }
         }
 
-        if (getEntity().getImages().isEmpty()) {
-            getRepository().save(getEntity());
+        if (entity.getImages().isEmpty()) {
+            repository.save(entity);
         }
 
         if (!toBeDeleted.isEmpty()) {
-            getImageRepository().deleteAllById(toBeDeleted.keySet());
+            imageRepository.deleteAllById(toBeDeleted.keySet());
         }
     }
 }
