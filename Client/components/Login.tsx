@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 
 import { Country } from 'react-native-country-picker-modal';
@@ -16,6 +16,7 @@ import { getStyles } from '../styles/Sign';
 import { resetNavigation } from '../App';
 import { Props } from '../screens/SignIn';
 import PhoneInput from './PhoneInput';
+import { getDefaultCountryAsync } from '../utils/Constants';
 
 export default function Login({ navigation, toggleNewUser }: Props) {
     const styles = getStyles();
@@ -24,8 +25,25 @@ export default function Login({ navigation, toggleNewUser }: Props) {
     const [nation, setNation] = useState<Country | null>();
     const [password, setPassword] = useState("");
 
+    useEffect(() => {
+        const fetchDefaultCountry = async () => {
+            try {
+                const DEFAULT_COUNTRY = await getDefaultCountryAsync();
+                setNation(DEFAULT_COUNTRY);
+            } catch (error) {
+                console.error(texts.errors.defaultCountry, error);
+            }
+        };
+
+        fetchDefaultCountry();
+    }, []);
+
     const login = async () => {
-        const result: Result = await doLogin(phone, password);
+        if (!nation) {
+            alert(texts.apiMessages.invalidCountry);
+            return;
+        }
+        const result: Result = await doLogin(nation.callingCode[0], phone, password);
         if (result.success)
             resetNavigation(navigation, 'Tabs');
         else {
