@@ -4,11 +4,9 @@ import java.util.List;
 
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.Service;
-import com.teamsantos.easybarber.utils.Utils;
 import lombok.Getter;
 import lombok.Setter;
 import org.locationtech.jts.geom.Point;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Getter
 @Setter
