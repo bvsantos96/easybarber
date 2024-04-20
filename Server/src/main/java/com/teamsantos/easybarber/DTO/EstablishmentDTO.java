@@ -30,6 +30,7 @@ public class EstablishmentDTO extends BaseEstablishmentDTO {
         }
     }
 
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
