@@ -124,7 +124,7 @@ const hasData = async (key: string): Promise<boolean> => {
     }
 }
 
-const _fetch = async (url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed): Promise<Result> => {
+const request = async (url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed): Promise<Result> => {
     if (!apiUrl)
         return { success: false, message: langs.apiMessages.failed };
     if (url.startsWith("/"))
@@ -148,8 +148,8 @@ const _fetch = async (url: string, method: string, body: any, successMessage: st
 
     return fetch(`${apiUrl}${separator}${url}`, {
         method: method,
+        mode: 'cors',
         ...(method !== "GET" && {
-            mode: 'cors',
             headers: {
                 'Content-Type': 'application/json',
                 ...(token !== null && token !== undefined && { 'Authorization': `Bearer ${token}` })
@@ -157,7 +157,6 @@ const _fetch = async (url: string, method: string, body: any, successMessage: st
             body: JSON.stringify(body)
         })
     }).then(async response => {
-        console.log(response);
         if (response.status != 200 && response.status != 201) {
             try {
                 const json = await response.json();
@@ -177,6 +176,7 @@ const _fetch = async (url: string, method: string, body: any, successMessage: st
 }
 
 const isValidNumberString = (input: string): boolean => {
+    alert(input)
     const pattern = /^[-+]?\d*\.?\d+$/;
     return pattern.test(input);
 }
@@ -195,19 +195,24 @@ const isValidPassword = (password: string): boolean => {
     return hasMinLength && hasUppercase && hasLowercase && hasDigit;
 }
 
-export const doLogin = async (phone: string, password: string): Promise<Result> => {
+export const doLogin = async (countryCode: string, phone: string, password: string): Promise<Result> => {
     phone = phone.trim();
-    if (!isValidNumberString(phone))
+    const _countryCode = countryCode.startsWith('+') ? countryCode : `+${countryCode}`;
+    if (!isValidNumberString(`${_countryCode}${phone}`))
         return { success: false, message: langs.apiMessages.invalidPhone };
 
-    _fetch("hello", "GET", null, "Hello", "Failed");
-    const result = await _fetch("login", "POST", { countryMobile: "+351", mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed);
+    const result = await request("login", "POST", { countryMobile: _countryCode, mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed);
+
+    console.log(result)
+
     if (result.success)
         storeData("token", result.message);
+    else
+        alert(result.message);
     return result;
 }
 
-export const doRegister = async (phone: string, password: string, confirmPassword: string, name: string): Promise<Result> => {
+export const doRegister = async (countryCode: string, phone: string, password: string, confirmPassword: string, name: string): Promise<Result> => {
     phone = phone.trim();
     if (!isValidNumberString(phone))
         return { success: false, message: langs.apiMessages.invalidPhone };
@@ -218,8 +223,8 @@ export const doRegister = async (phone: string, password: string, confirmPasswor
     name = name.trim();
     if (name.length < 3)
         return { success: false, message: langs.apiMessages.register.invalidName };
-    const result = await _fetch("register", "POST", { countryMobile: "+351", mobile: phone, password, name }, langs.apiMessages.register.success, langs.apiMessages.register.failed);
+    const result = await request("register", "POST", { countryMobile: countryCode, mobile: phone, password, name }, langs.apiMessages.register.success, langs.apiMessages.register.failed);
     if (result.success)
-        doLogin(phone, password);
+        doLogin(countryCode, phone, password);
     return result;
 }
