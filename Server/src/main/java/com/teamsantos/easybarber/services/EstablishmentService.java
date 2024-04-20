@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
@@ -37,23 +36,19 @@ import jakarta.transaction.Transactional;
 @Service
 public class EstablishmentService extends ServiceWithImages<Establishment> {
     private final ModelMapper modelMapper;
-    private final EstablishmentRepository repository;
     private final EmployeeRepository employeeRepository;
     private final ServiceRepository serviceRepository;
-    private final ImageRepository imageRepository;
     private final EstablishmentServiceRepository establishmentServiceRepository;
     private final UserService userService;
-    private Establishment entity;
 
     @Autowired
     public EstablishmentService(ModelMapper modelMapper, EstablishmentRepository repository,
             EmployeeRepository employeeRepository, ServiceRepository serviceRepository, ImageRepository imageRepository,
             EstablishmentServiceRepository establishmentServiceRepository, UserService userService) {
+        super(repository, imageRepository, modelMapper);
         this.modelMapper = modelMapper;
-        this.repository = repository;
         this.establishmentServiceRepository = establishmentServiceRepository;
         this.employeeRepository = employeeRepository;
-        this.imageRepository = imageRepository;
         this.serviceRepository = serviceRepository;
         this.userService = userService;
     }
@@ -77,7 +72,7 @@ public class EstablishmentService extends ServiceWithImages<Establishment> {
     public void create(BaseEstablishmentDTO establishmentDTO, Employee owner) {
         Establishment establishment = modelMapper.map(establishmentDTO, Establishment.class);
         if (establishment != null) {
-            if (repository.existsByName(establishment.getName()))
+            if (((EstablishmentRepository) repository).existsByName(establishment.getName()))
                 throw new AlreadyExistsException("Establishment name already exists");
             establishment = repository.save(establishment);
             establishmentDTO.setId(establishment.getId());
@@ -91,7 +86,7 @@ public class EstablishmentService extends ServiceWithImages<Establishment> {
     }
 
     public List<BaseEstablishmentDTO> findAllBase(Pageable pageable) {
-        return repository.findAllBase(pageable).getContent();
+        return ((EstablishmentRepository) repository).findAllBase(pageable).getContent();
     }
 
     @Transactional
@@ -125,14 +120,15 @@ public class EstablishmentService extends ServiceWithImages<Establishment> {
     public Page<EstablishmentDTO> findByLocation(Double latitude, Double longitude, Long serviceType, Pageable pageable)
             throws ParseException {
         if (latitude != null && longitude != null) {
-            return repository.findClosestEstablishments(GeometryUtils.parseLocation(latitude, longitude),
+            return ((EstablishmentRepository) repository).findClosestEstablishments(
+                    GeometryUtils.parseLocation(latitude, longitude),
                     serviceType, pageable);
         }
-        return repository.list(serviceType, pageable);
+        return ((EstablishmentRepository) repository).list(serviceType, pageable);
     }
 
     public Page<ServiceDTO> listServices(Long id, Pageable pageable) {
-        return repository.findServicesByEstablishmentId(id, pageable);
+        return ((EstablishmentRepository) repository).findServicesByEstablishmentId(id, pageable);
     }
 
     @Transactional
@@ -220,30 +216,4 @@ public class EstablishmentService extends ServiceWithImages<Establishment> {
         return employeeRepository.findEmployeesByEstablishmentId(establishmentId, onlyActive).stream()
                 .map(EmployeeDTO::new).toList();
     }
-
-	@Override
-	public JpaRepository<Establishment, Long> getRepository() {
-        return repository;
-	}
-
-	@Override
-	public ImageRepository getImageRepository() {
-        return imageRepository;
-	}
-
-	@Override
-	public ModelMapper getModelMapper() {
-        return modelMapper;
-	}
-
-	@Override
-	public Establishment getEntity() {
-        return entity;
-	}
-
-	@Override
-	public void setEntity(Establishment entity) {
-        this.entity = entity;
-	}
-
 }
