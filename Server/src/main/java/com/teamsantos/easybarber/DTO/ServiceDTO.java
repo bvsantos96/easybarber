@@ -26,7 +26,6 @@ public class ServiceDTO extends BaseDTO {
         this.serviceTypeId = service.getServiceType().getId();
         this.name = service.getName();
         this.description = service.getDescription();
-        this.imageUrl = service.getImageUrl();
     }
 
     public ServiceDTO(Long id, Long employeeId, Long serviceTypeId, String name, String description, String imageUrl,

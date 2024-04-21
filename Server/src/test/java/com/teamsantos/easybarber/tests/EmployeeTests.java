@@ -38,6 +38,12 @@ public class EmployeeTests {
         return new AuthTests(mockMvc).login(EmployeeData.employees.get(0).toString());
     }
 
+    public String loginById(Long id, boolean init) throws Exception {
+        if (init)
+            test();
+        return new AuthTests(mockMvc).login(EmployeeData.employees.stream().filter(e->e.getId() == id).findFirst().toString());
+    }
+
     public String login(int index, boolean init) throws Exception {
         if (init)
             test();

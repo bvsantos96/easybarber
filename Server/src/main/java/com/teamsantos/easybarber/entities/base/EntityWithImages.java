@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.entities.base;
 
+import java.util.List;
 import java.util.Set;
 
 import org.modelmapper.TypeToken;
@@ -44,6 +45,11 @@ public abstract class EntityWithImages<T> {
         for (final Image<T> image : images)
             image.setEntity(getEntity());
         this.images = images;
+    }
+
+    public void setImages(List<ImageDTO> images) {
+        for(final ImageDTO image : images)
+            addImage(image);
     }
 
     public abstract T getEntity();

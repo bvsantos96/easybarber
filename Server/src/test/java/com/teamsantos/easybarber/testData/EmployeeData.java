@@ -4,9 +4,11 @@ import com.teamsantos.easybarber.DTO.UserCreateDTO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class EmployeeData {
     public static final List<UserCreateDTO> employees;
+    public static final Map<Long, List<Long>> employeesEstablishments;
 
     static {
         employees = new ArrayList<>() {
@@ -15,5 +17,17 @@ public class EmployeeData {
                 add(new UserCreateDTO(3L, "+351", "900000000", "Test123*", "Amigo do Joao"));
             }
         };
+        employeesEstablishments = Map.of(
+                2L, new ArrayList<>() {
+                    {
+                        add(1L);
+                    }
+                },
+                3L, new ArrayList<>() {
+                    {
+                        add(2L);
+                    }
+                }
+        );
     }
 }
