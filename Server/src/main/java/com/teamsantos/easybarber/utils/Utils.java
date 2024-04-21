@@ -57,7 +57,7 @@ public class Utils {
         return modelMapper;
     }
 
-    private static ModelMapper createModelMapper() {
+    public static ModelMapper createModelMapper() {
         modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setAmbiguityIgnored(true)
                 .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);

@@ -19,6 +19,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.testData.EmployeeData;
@@ -53,16 +54,17 @@ public class EstablishmentTests {
             ResultActions result = CreateTest.post(mockMvc, "/establishment", jwt,
                     EstablishmentData.establishments.get(0).toString());
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
-            jwt = new EmployeeTests(mockMvc).login(initEmployee);
-            create("/establishment", jwt, EstablishmentData.establishments.get(0).toString());
-            jwt = new AuthTests(mockMvc).login(false);
-            result = CreateTest.post(mockMvc, "/establishment", jwt,
-                    EstablishmentData.establishments.get(1).toString());
-            result.andExpect(MockMvcResultMatchers.status().isForbidden());
-            jwt = new EmployeeTests(mockMvc).login(1, false);
-            create("/establishment", jwt, EstablishmentData.establishments.get(1).toString());
+            for (Long employeeId : EmployeeData.employeesEstablishments.keySet()) {
+                jwt = new EmployeeTests(mockMvc).loginById(employeeId, initEmployee);
+                for (Long establishmentId : EmployeeData.employeesEstablishments.get(employeeId)) {
+                    create("/establishment", jwt, EstablishmentData.establishments.stream()
+                            .filter(e -> e.getId().equals(establishmentId)).toString());
+                }
+                initEmployee = false;
+            }
         } catch (Exception e) {
             e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
     }
 
@@ -223,6 +225,35 @@ public class EstablishmentTests {
                     .filter(e -> establishmentIds.contains(e.getId()))
                     .toList();
             assert establishments != null && establishments.equals(_establishments);
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    public String loginAdminByEstablishmentId(Long id) throws Exception {
+        for (Long employeeId : EmployeeData.employeesEstablishments.keySet()) {
+            if (EmployeeData.employeesEstablishments.get(employeeId).contains(id)) {
+                return new EmployeeTests(mockMvc).loginById(employeeId, false);
+            }
+        }
+        return null;
+    }
+
+    @Test
+    public void addImages() {
+        addImages(true, true);
+    }
+
+    public void addImages(boolean initAuth, boolean initEmployee) {
+        try {
+            createEstablishments(initAuth, initEmployee);
+            for (Long establishmentId : EmployeeData.employeesEstablishments.values().stream().flatMap(e -> e.stream())
+                    .toList()) {
+                String jwt = loginAdminByEstablishmentId(establishmentId);
+                List<ImageDTO> images = EstablishmentData.establishmentImages.get(establishmentId);
+                new ImageUtils(mockMvc, String.format("/establishment/%d", establishmentId)).saveImages(images, jwt);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
