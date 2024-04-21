@@ -32,14 +32,14 @@ public class ServiceWithImages<T extends EntityWithImages<T>> {
         HashMap<Long, Image<T>> toBeDeleted = null;
         if (entity.getImages() == null) {
             entity
-                    .setImages(images.stream().map(i -> modelMapper.map(i, Image.class)).collect(Collectors.toSet()));
+                    .setImages(images);
         } else {
             toBeDeleted = entity.getImages()
                     .stream()
                     .collect(Collectors.toMap(Image::getId, image -> image, (existing, replacement) -> replacement,
                             HashMap::new));
             for (ImageDTO image : images) {
-                if ((image.getUrl() != null && !image.getUrl().equals(""))) {
+                if ((image.getUrl() != null && !image.getUrl().isEmpty())) {
                     Long id = imageRepository.getIdByEntityAndData(entity, image.getUrl());
                     if (id == null || id == 0L) {
                         entity.addImage(image);
