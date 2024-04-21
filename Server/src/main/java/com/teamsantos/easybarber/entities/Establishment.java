@@ -25,7 +25,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-public class Establishment extends EntityWithImages {
+public class Establishment extends EntityWithImages<Establishment> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -82,8 +82,8 @@ public class Establishment extends EntityWithImages {
                 : getClass().hashCode();
     }
 
-	@Override
-	public String getEntityType() {
-        return "establishment";
-	}
+    @Override
+    public Establishment getEntity() {
+        return this;
+    }
 }

@@ -3,8 +3,6 @@ package com.teamsantos.easybarber.entities;
 import java.util.List;
 import java.util.Set;
 
-import com.teamsantos.easybarber.entities.base.EntityWithImages;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,7 +21,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-public class Employee extends EntityWithImages {
+public class Employee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -42,9 +40,4 @@ public class Employee extends EntityWithImages {
     private List<Service> services;
     @OneToMany(mappedBy = "employee", orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<EstablishmentStaff> establishments;
-
-    @Override
-    public String getEntityType() {
-        return "employee";
-    }
 }
