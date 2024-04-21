@@ -5,11 +5,13 @@ import java.util.List;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
+import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 
 public class EstablishmentData {
     public static final List<BaseEstablishmentDTO> establishments;
     public static final List<CreateEstablishmentServiceDTO> establishmentServices;
+    public static final List<ImageDTO> establishmentImages;
 
     static {
         establishments = new ArrayList<>() {
@@ -28,6 +30,14 @@ public class EstablishmentData {
                 temp = ServiceData.services.get(2);
                 add(new CreateEstablishmentServiceDTO(3L, temp.getId(),establishments.get(1).getId(), temp.getPrice(), true));
                 add(new CreateEstablishmentServiceDTO(4L, temp.getId(),establishments.get(0).getId(), temp.getPrice(), true));
+            }
+        };
+        establishmentImages = new ArrayList<>() {
+            {
+                add(new ImageDTO(1L, "image1"));
+                add(new ImageDTO(2L, "image2"));
+                add(new ImageDTO(3L, "image3"));
+                add(new ImageDTO(4L, "image4"));
             }
         };
     }

@@ -5,8 +5,6 @@ import java.util.Objects;
 
 import org.hibernate.proxy.HibernateProxy;
 
-import com.teamsantos.easybarber.entities.base.EntityWithImages;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -22,7 +20,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-public class ServiceType extends EntityWithImages {
+public class ServiceType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -59,9 +57,4 @@ public class ServiceType extends EntityWithImages {
                 ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
                 : getClass().hashCode();
     }
-
-	@Override
-	public String getEntityType() {
-        return "serviceType";
-	}
 }

@@ -5,21 +5,22 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.teamsantos.easybarber.DTO.ImageDTO;
-import com.teamsantos.easybarber.entities.Image;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
+import com.teamsantos.easybarber.entities.base.Image;
 import com.teamsantos.easybarber.repositories.ImageRepository;
 
-public class ServiceWithImages<T extends EntityWithImages> {
+public class ServiceWithImages<T extends EntityWithImages<T>> {
     protected JpaRepository<T, Long> repository;
-    protected ImageRepository imageRepository;
+    protected ImageRepository<T> imageRepository;
     protected ModelMapper modelMapper;
     protected T entity;
 
-    public ServiceWithImages(JpaRepository<T, Long> repository, ImageRepository imageRepository,
+    public ServiceWithImages(JpaRepository<T, Long> repository, ImageRepository<T> imageRepository,
             ModelMapper modelMapper) {
         this.repository = repository;
         this.imageRepository = imageRepository;
@@ -28,7 +29,7 @@ public class ServiceWithImages<T extends EntityWithImages> {
 
     public void saveImages(Long entityId, List<ImageDTO> images) throws NotFoundException {
         entity = repository.findById(entityId).orElseThrow(NotFoundException::new);
-        HashMap<Long, Image> toBeDeleted = null;
+        HashMap<Long, Image<T>> toBeDeleted = null;
         if (entity.getImages() == null) {
             entity
                     .setImages(images.stream().map(i -> modelMapper.map(i, Image.class)).collect(Collectors.toSet()));
@@ -38,10 +39,10 @@ public class ServiceWithImages<T extends EntityWithImages> {
                     .collect(Collectors.toMap(Image::getId, image -> image, (existing, replacement) -> replacement,
                             HashMap::new));
             for (ImageDTO image : images) {
-                if ((image.getData() != null && !image.getData().equals(""))) {
-                    Long id = imageRepository.getIdByEntityAndData(entity, image.getData());
+                if ((image.getUrl() != null && !image.getUrl().equals(""))) {
+                    Long id = imageRepository.getIdByEntityAndData(entity, image.getUrl());
                     if (id == null || id == 0L) {
-                        entity.getImages().add(modelMapper.map(image, Image.class));
+                        entity.addImage(image);
                     } else {
                         toBeDeleted.remove(id);
                     }

@@ -48,8 +48,17 @@ public class Utils {
         return field1;
     }
 
-    public static ModelMapper createModelMapper() {
-        ModelMapper modelMapper = new ModelMapper();
+    private static ModelMapper modelMapper;
+
+    public static ModelMapper getModelMapper() {
+        if (modelMapper == null) {
+            modelMapper = createModelMapper();
+        }
+        return modelMapper;
+    }
+
+    private static ModelMapper createModelMapper() {
+        modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setAmbiguityIgnored(true)
                 .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
         modelMapper.typeMap(Establishment.class, EstablishmentDTO.class)
