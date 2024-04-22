@@ -44,7 +44,8 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
 
     @Autowired
     public EstablishmentService(ModelMapper modelMapper, EstablishmentRepository repository,
-            EmployeeRepository employeeRepository, ServiceRepository serviceRepository, ImageRepository imageRepository,
+            EmployeeRepository employeeRepository, ServiceRepository serviceRepository,
+            ImageRepository<Establishment, EstablishmentImage> imageRepository,
             EstablishmentServiceRepository establishmentServiceRepository, UserService userService) {
         super(repository, imageRepository, modelMapper);
         this.modelMapper = modelMapper;
@@ -71,19 +72,24 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
 
     @Transactional
     public void create(BaseEstablishmentDTO establishmentDTO, Employee owner) {
-        Establishment establishment = modelMapper.map(establishmentDTO, Establishment.class);
-        if (establishment != null) {
-            if (((EstablishmentRepository) repository).existsByName(establishment.getName()))
-                throw new AlreadyExistsException("Establishment name already exists");
-            establishment = repository.save(establishment);
-            establishmentDTO.setId(establishment.getId());
-            EstablishmentStaff establishmentOwned = new EstablishmentStaff(true, true, false, owner, establishment);
-            if (owner.getEstablishments() == null)
-                owner.setEstablishments(new HashSet<>());
-            owner.getEstablishments().add(establishmentOwned);
-            employeeRepository.save(owner);
-        } else
-            throw new IllegalArgumentException("Establishment cannot be null");
+        try {
+            Establishment establishment = modelMapper.map(establishmentDTO, Establishment.class);
+            if (establishment != null) {
+                if (((EstablishmentRepository) repository).existsByName(establishment.getName()))
+                    throw new AlreadyExistsException("Establishment name already exists");
+                establishment = repository.save(establishment);
+                establishmentDTO.setId(establishment.getId());
+                EstablishmentStaff establishmentOwned = new EstablishmentStaff(true, true, false, owner, establishment);
+                if (owner.getEstablishments() == null)
+                    owner.setEstablishments(new HashSet<>());
+                owner.getEstablishments().add(establishmentOwned);
+                employeeRepository.save(owner);
+            } else
+                throw new IllegalArgumentException("Establishment cannot be null");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public List<BaseEstablishmentDTO> findAllBase(Pageable pageable) {
