@@ -19,4 +19,8 @@ public interface EstablishmentStaffRepository extends JpaRepository<Establishmen
             AND es.admin = true
             """)
     boolean isUserAdminOfEstablishment(Long userId, Long establishmentId);
+
+    void deleteByEstablishmentId(Long id);
+
+    void deleteByEmployeeId(Long id);
 }

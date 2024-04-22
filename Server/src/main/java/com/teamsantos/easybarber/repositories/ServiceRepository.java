@@ -1,12 +1,11 @@
 package com.teamsantos.easybarber.repositories;
 
+import com.teamsantos.easybarber.entities.Service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import com.teamsantos.easybarber.entities.Service;
 
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, Long> {
@@ -39,4 +38,6 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
              WHERE :serviceTypeId IS NULL OR s.serviceType.id = :serviceTypeId
             """)
     Page<Service> listByServiceTypeId(Long serviceTypeId, Pageable pageable);
+
+    void deleteByEmployeeId(Long id);
 }

@@ -1,12 +1,11 @@
 package com.teamsantos.easybarber.tests;
 
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.teamsantos.easybarber.DTO.*;
+import com.teamsantos.easybarber.testData.EmployeeData;
+import com.teamsantos.easybarber.testData.EstablishmentData;
+import com.teamsantos.easybarber.testData.ServiceData;
+import com.teamsantos.easybarber.utils.CreateTest;
+import com.teamsantos.easybarber.utils.JSONToDTO;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +16,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
-import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
-import com.teamsantos.easybarber.DTO.EmployeeDTO;
-import com.teamsantos.easybarber.DTO.ImageDTO;
-import com.teamsantos.easybarber.DTO.ServiceDTO;
-import com.teamsantos.easybarber.DTO.UserCreateDTO;
-import com.teamsantos.easybarber.testData.EmployeeData;
-import com.teamsantos.easybarber.testData.EstablishmentData;
-import com.teamsantos.easybarber.testData.ServiceData;
-import com.teamsantos.easybarber.utils.CreateTest;
-import com.teamsantos.easybarber.utils.JSONToDTO;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -59,7 +49,8 @@ public class EstablishmentTests {
                 jwt = new EmployeeTests(mockMvc).loginById(employeeId, initEmployee);
                 for (Long establishmentId : EmployeeData.employeesEstablishments.get(employeeId)) {
                     create("/establishment", jwt, EstablishmentData.establishments.stream()
-                            .filter(e -> e.getId().equals(establishmentId)).findFirst().orElseThrow(NotFoundException::new).toString());
+                            .filter(e -> e.getId().equals(establishmentId)).findFirst()
+                            .orElseThrow(NotFoundException::new).toString());
                 }
                 initEmployee = false;
             }
@@ -249,7 +240,8 @@ public class EstablishmentTests {
     public void addImages(boolean initAuth, boolean initEmployee) {
         try {
             createEstablishments(initAuth, initEmployee);
-            for (Long establishmentId : EmployeeData.employeesEstablishments.values().stream().flatMap(e -> e.stream())
+            for (Long establishmentId : EmployeeData.employeesEstablishments.values().stream()
+                    .flatMap(Collection::stream)
                     .toList()) {
                 String jwt = loginAdminByEstablishmentId(establishmentId);
                 List<ImageDTO> images = EstablishmentData.establishmentImages.get(establishmentId);

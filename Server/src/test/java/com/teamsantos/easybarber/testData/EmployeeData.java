@@ -27,7 +27,6 @@ public class EmployeeData {
                     {
                         add(2L);
                     }
-                }
-        );
+                });
     }
 }

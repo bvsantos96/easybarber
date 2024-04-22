@@ -1,10 +1,9 @@
 package com.teamsantos.easybarber.DTO;
 
-import org.locationtech.jts.geom.Point;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+import org.locationtech.jts.geom.Point;
 
 @Getter
 @Setter
@@ -29,7 +28,6 @@ public class EstablishmentDTO extends BaseEstablishmentDTO {
             System.err.println("Error parsing distance from: " + distance.toString());
         }
     }
-
 
     @Override
     public boolean equals(Object o) {

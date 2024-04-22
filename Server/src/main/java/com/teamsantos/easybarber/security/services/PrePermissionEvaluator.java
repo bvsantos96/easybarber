@@ -1,17 +1,16 @@
 package com.teamsantos.easybarber.security.services;
 
-import java.io.Serializable;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.PermissionEvaluator;
-import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
-
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.security.filters.EstablishmentSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.filters.ServiceSecurityExpressionRoot;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
 
 @Service
 public class PrePermissionEvaluator implements PermissionEvaluator {

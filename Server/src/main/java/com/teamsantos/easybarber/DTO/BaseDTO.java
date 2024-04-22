@@ -1,12 +1,11 @@
 package com.teamsantos.easybarber.DTO;
 
-import java.lang.reflect.Field;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.lang.reflect.Field;
 
 @Getter
 @Setter
