@@ -8,6 +8,7 @@ import org.locationtech.jts.geom.Point;
 
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
+import com.teamsantos.easybarber.entities.images.EstablishmentImage;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -25,7 +26,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-public class Establishment extends EntityWithImages<Establishment> {
+public class Establishment extends EntityWithImages<Establishment, EstablishmentImage> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

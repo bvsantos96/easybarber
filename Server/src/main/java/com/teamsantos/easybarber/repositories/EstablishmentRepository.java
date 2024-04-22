@@ -43,7 +43,7 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
     @Query("SELECT es.establishment FROM EstablishmentStaff es WHERE es.employee.id = :employeeId AND (:admin = false OR es.admin = true)")
     Page<Establishment> findEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable);
 
-    @Query("SELECT new com.teamsantos.easybarber.DTO.ServiceDTO(es.service.id, es.service.employee.id, es.service.serviceType.id, es.service.name, es.service.description, es.service.imageUrl, es.price) FROM EstablishmentService es WHERE es.establishment.id = :establishmentId AND es.active = true")
+    @Query("SELECT new com.teamsantos.easybarber.DTO.ServiceDTO(es.service.id, es.service.employee.id, es.service.serviceType.id, es.service.name, es.service.description, es.price) FROM EstablishmentService es WHERE es.establishment.id = :establishmentId AND es.active = true")
     Page<ServiceDTO> findServicesByEstablishmentId(Long establishmentId, Pageable pageable);
 
     boolean existsByName(String name);
