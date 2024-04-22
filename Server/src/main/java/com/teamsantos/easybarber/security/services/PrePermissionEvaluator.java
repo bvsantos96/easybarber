@@ -13,7 +13,6 @@ import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.security.filters.EstablishmentSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.filters.ServiceSecurityExpressionRoot;
-import com.teamsantos.easybarber.security.filters.UserSecurityExpressionRoot;
 
 @Service
 public class PrePermissionEvaluator implements PermissionEvaluator {

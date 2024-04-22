@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -47,7 +48,7 @@ public class EstablishmentService {
         this.userService = userService;
     }
 
-    public EstablishmentDTO getEstablishment(Long id) throws NotFoundException {
+    public EstablishmentDTO getEstablishment(@NonNull Long id) throws NotFoundException {
         return establishmentRepository.findById(id).map((element) -> element.convertToDto())
                 .orElseThrow(NotFoundException::new);
     }
@@ -89,7 +90,7 @@ public class EstablishmentService {
     }
 
     @Transactional
-    public void addEmployee(Long establishmentId, Long userId, Employee invitor)
+    public void addEmployee(@NonNull Long establishmentId, Long userId, Employee invitor)
             throws NotFoundException, UnsupportedOperationException {
         Establishment establishment = establishmentRepository.findById(establishmentId)
                 .orElseThrow(NotFoundException::new);
@@ -118,7 +119,7 @@ public class EstablishmentService {
     }
 
     @Transactional
-    public void addService(Long id, EstablishmentServiceDTO serviceDTO) {
+    public void addService(@NonNull Long id, EstablishmentServiceDTO serviceDTO) {
         if (serviceDTO != null) {
             Establishment establishment = establishmentRepository.findById(id).orElseThrow();
             establishment.getStaff().stream()
