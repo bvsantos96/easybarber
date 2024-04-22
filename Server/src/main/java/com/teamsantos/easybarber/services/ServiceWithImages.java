@@ -1,17 +1,16 @@
 package com.teamsantos.easybarber.services;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import org.modelmapper.ModelMapper;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
-import org.springframework.data.jpa.repository.JpaRepository;
-
 import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
 import com.teamsantos.easybarber.entities.base.Image;
 import com.teamsantos.easybarber.repositories.base.ImageRepository;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image<T, E>> {
     protected JpaRepository<T, Long> repository;

@@ -2,7 +2,6 @@ package com.teamsantos.easybarber;
 
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.utils.Utils;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

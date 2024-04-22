@@ -1,24 +1,22 @@
 package com.teamsantos.easybarber.entities.base;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import jakarta.persistence.FetchType;
-import org.modelmapper.TypeToken;
-
 import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.utils.Utils;
-
+import jakarta.persistence.FetchType;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import lombok.Getter;
+import org.modelmapper.TypeToken;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @MappedSuperclass
 public abstract class EntityWithImages<T extends EntityWithImages<T, E>, E extends Image<T, E>> {
-    @OneToMany(mappedBy = "entity", orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "entity", fetch = FetchType.LAZY)
     private Set<E> images = new HashSet<>();
 
     @PrePersist

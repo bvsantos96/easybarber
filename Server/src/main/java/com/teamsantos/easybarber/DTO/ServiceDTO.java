@@ -20,7 +20,7 @@ public class ServiceDTO extends BaseDTO {
     private String imageUrl;
     private Double price;
 
-    public ServiceDTO(Service service){
+    public ServiceDTO(Service service) {
         super(service.getId());
         this.employeeId = service.getEmployee().getId();
         this.serviceTypeId = service.getServiceType().getId();
@@ -29,7 +29,7 @@ public class ServiceDTO extends BaseDTO {
     }
 
     public ServiceDTO(Long id, Long employeeId, Long serviceTypeId, String name, String description,
-                      double price) {
+            double price) {
         super(id);
         this.employeeId = employeeId;
         this.serviceTypeId = serviceTypeId;

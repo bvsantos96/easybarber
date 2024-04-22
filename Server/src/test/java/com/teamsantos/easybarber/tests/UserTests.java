@@ -1,5 +1,10 @@
 package com.teamsantos.easybarber.tests;
 
+import com.teamsantos.easybarber.DTO.UserDTO;
+import com.teamsantos.easybarber.DTO.UsersDTO;
+import com.teamsantos.easybarber.testData.UsersData;
+import com.teamsantos.easybarber.utils.CreateTest;
+import com.teamsantos.easybarber.utils.JSONToDTO;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +13,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
-
-import com.teamsantos.easybarber.DTO.UserDTO;
-import com.teamsantos.easybarber.DTO.UsersDTO;
-import com.teamsantos.easybarber.testData.UsersData;
-import com.teamsantos.easybarber.utils.CreateTest;
-import com.teamsantos.easybarber.utils.JSONToDTO;
 
 @SpringBootTest
 @AutoConfigureMockMvc

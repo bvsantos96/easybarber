@@ -1,12 +1,17 @@
 package com.teamsantos.easybarber.services;
 
-import java.security.Principal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-
 import com.teamsantos.easybarber.DTO.*;
+import com.teamsantos.easybarber.entities.Employee;
+import com.teamsantos.easybarber.entities.Establishment;
+import com.teamsantos.easybarber.entities.EstablishmentStaff;
 import com.teamsantos.easybarber.entities.images.EstablishmentImage;
+import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
+import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
+import com.teamsantos.easybarber.exceptions.UserNotFoundException;
+import com.teamsantos.easybarber.repositories.*;
+import com.teamsantos.easybarber.repositories.base.ImageRepository;
+import com.teamsantos.easybarber.utils.GeometryUtils;
+import jakarta.transaction.Transactional;
 import org.locationtech.jts.io.ParseException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,20 +20,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.teamsantos.easybarber.entities.Employee;
-import com.teamsantos.easybarber.entities.Establishment;
-import com.teamsantos.easybarber.entities.EstablishmentStaff;
-import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
-import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
-import com.teamsantos.easybarber.exceptions.UserNotFoundException;
-import com.teamsantos.easybarber.repositories.EmployeeRepository;
-import com.teamsantos.easybarber.repositories.EstablishmentRepository;
-import com.teamsantos.easybarber.repositories.EstablishmentServiceRepository;
-import com.teamsantos.easybarber.repositories.base.ImageRepository;
-import com.teamsantos.easybarber.repositories.ServiceRepository;
-import com.teamsantos.easybarber.utils.GeometryUtils;
-
-import jakarta.transaction.Transactional;
+import java.security.Principal;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
 
 @Service
 public class EstablishmentService extends ServiceWithImages<Establishment, EstablishmentImage> {
@@ -36,18 +31,21 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     private final EmployeeRepository employeeRepository;
     private final ServiceRepository serviceRepository;
     private final EstablishmentServiceRepository establishmentServiceRepository;
+    private final EstablishmentStaffRepository establishmentStaffRepository;
     private final UserService userService;
 
     @Autowired
     public EstablishmentService(ModelMapper modelMapper, EstablishmentRepository repository,
             EmployeeRepository employeeRepository, ServiceRepository serviceRepository,
             ImageRepository<Establishment, EstablishmentImage> imageRepository,
+            EstablishmentStaffRepository establishmentStaffRepository,
             EstablishmentServiceRepository establishmentServiceRepository, UserService userService) {
         super(repository, imageRepository, modelMapper);
         this.modelMapper = modelMapper;
         this.establishmentServiceRepository = establishmentServiceRepository;
         this.employeeRepository = employeeRepository;
         this.serviceRepository = serviceRepository;
+        this.establishmentStaffRepository = establishmentStaffRepository;
         this.userService = userService;
     }
 
@@ -86,6 +84,14 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
             e.printStackTrace();
             throw e;
         }
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        establishmentServiceRepository.deleteByEstablishmentId(id);
+        imageRepository.deleteByEntityId(id);
+        establishmentStaffRepository.deleteByEstablishmentId(id);
+        repository.deleteById(id);
     }
 
     public List<BaseEstablishmentDTO> findAllBase(Pageable pageable) {

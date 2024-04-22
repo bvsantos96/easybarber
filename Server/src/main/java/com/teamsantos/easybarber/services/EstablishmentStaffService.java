@@ -25,7 +25,8 @@ public class EstablishmentStaffService {
     private final ModelMapper modelMapper;
 
     @Autowired
-    public EstablishmentStaffService(EstablishmentStaffRepository establishmentStaffRepository, ServiceTypeRepository serviceTypeRepository,
+    public EstablishmentStaffService(EstablishmentStaffRepository establishmentStaffRepository,
+            ServiceTypeRepository serviceTypeRepository,
             UserTypeService userTypeService, ServiceRepository serviceRepository,
             ModelMapper modelMapper) {
         this.serviceRepository = serviceRepository;
@@ -67,4 +68,3 @@ public class EstablishmentStaffService {
         return PageDTO.toDTO(modelMapper, serviceRepository.findByEmployeeId(id, pageable), ServiceDTO.class, pageable);
     }
 }
-

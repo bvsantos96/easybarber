@@ -1,13 +1,13 @@
 package com.teamsantos.easybarber.utils;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
 
 public class JSONToDTO {
 

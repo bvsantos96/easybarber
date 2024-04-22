@@ -1,7 +1,6 @@
 package com.teamsantos.easybarber.DTO;
 
 import com.teamsantos.easybarber.entities.Employee;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,13 +1,11 @@
 package com.teamsantos.easybarber.tests;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MockMvc;
-
 import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.utils.CreateTest;
 import com.teamsantos.easybarber.utils.Utils;
+import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.List;
 
 public class ImageUtils {
     private final MockMvc mockMvc;
