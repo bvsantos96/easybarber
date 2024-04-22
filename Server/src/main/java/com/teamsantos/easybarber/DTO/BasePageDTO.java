@@ -1,9 +1,8 @@
 package com.teamsantos.easybarber.DTO;
 
-import org.springframework.data.domain.Page;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.springframework.data.domain.Page;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

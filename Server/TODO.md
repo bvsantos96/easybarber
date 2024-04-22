@@ -46,4 +46,3 @@ Create a group of tests that for a clean database run all the functionality (sam
 
 ## TODO's:
 See TODO's present in the code and fix them
-

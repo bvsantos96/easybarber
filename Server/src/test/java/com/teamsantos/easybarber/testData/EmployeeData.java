@@ -1,9 +1,9 @@
 package com.teamsantos.easybarber.testData;
 
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.json.JSONObject;
 
 public class EmployeeData {
     public static final List<JSONObject> employees;

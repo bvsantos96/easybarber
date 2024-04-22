@@ -1,12 +1,10 @@
 package com.teamsantos.easybarber.DTO;
 
-import org.locationtech.jts.geom.Point;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teamsantos.easybarber.utils.GeometryUtils;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 
 @Data
