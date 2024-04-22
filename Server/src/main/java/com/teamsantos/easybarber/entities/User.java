@@ -1,8 +1,5 @@
 package com.teamsantos.easybarber.entities;
 
-import java.time.LocalDateTime;
-import java.util.Set;
-
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 
 import jakarta.persistence.CascadeType;
@@ -18,6 +15,9 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.time.LocalDateTime;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -44,9 +44,6 @@ public class User {
     private String mobileInformation;
     @Column
     private LocalDateTime tokenExpiration;
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Set<EstablishmentService> establishmentServices;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private Set<Appointment> appointment;

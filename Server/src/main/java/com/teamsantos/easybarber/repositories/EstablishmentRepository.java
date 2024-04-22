@@ -1,7 +1,9 @@
 package com.teamsantos.easybarber.repositories;
 
-import java.util.Optional;
-
+import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.entities.Establishment;
+import com.teamsantos.easybarber.entities.EstablishmentService;
 import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,10 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
-import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import com.teamsantos.easybarber.entities.Establishment;
-import com.teamsantos.easybarber.entities.EstablishmentService;
+import java.util.Optional;
 
 @Repository
 public interface EstablishmentRepository extends JpaRepository<Establishment, Long> {
@@ -38,4 +37,6 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
 
     @Query("SELECT e.services FROM Establishment e WHERE e.id = :establishmentId")
     Page<EstablishmentService> findServicesByEstablishmentId(Long establishmentId, Pageable pageable);
+
+    boolean existsByName(String name);
 }

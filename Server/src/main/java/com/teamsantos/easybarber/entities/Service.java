@@ -1,10 +1,14 @@
 package com.teamsantos.easybarber.entities;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -16,15 +20,20 @@ public class Service {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee_id", nullable = false)
+    @JoinColumn(nullable = false)
     @ToString.Exclude
     private Employee employee;
-    @OneToOne(mappedBy = "service")
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    @ToString.Exclude
     private ServiceType serviceType;
+    @OneToMany(mappedBy = "service", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Set<EstablishmentService> establishments;
     @Column
-    private int name;
+    private String name;
     @Column
-    private int description;
+    private String description;
     @Column
     private String imageUrl;
     @Column
