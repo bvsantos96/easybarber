@@ -20,13 +20,8 @@ import lombok.Getter;
 @Getter
 @MappedSuperclass
 public abstract class EntityWithImages<T extends EntityWithImages<T, E>, E extends Image<T, E>> {
-<<<<<<< HEAD
     @OneToMany(mappedBy = "entity", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<E> images;
-=======
-    @OneToMany(mappedBy = "entity", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
-    private Set<E> images = new HashSet<>();
->>>>>>> refs/remotes/origin/EntitiesCleanUp
 
     @PrePersist
     public void prePersist() {
