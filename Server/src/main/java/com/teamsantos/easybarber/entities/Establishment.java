@@ -38,9 +38,9 @@ public class Establishment extends EntityWithImages<Establishment, Establishment
     private String address;
     @Column
     private Point location;
-    @OneToMany(mappedBy = "establishment", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "establishment", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Set<EstablishmentStaff> staff;
-    @OneToMany(mappedBy = "establishment", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "establishment", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Set<EstablishmentService> services;
 
     public EstablishmentDTO convertToDto() {
