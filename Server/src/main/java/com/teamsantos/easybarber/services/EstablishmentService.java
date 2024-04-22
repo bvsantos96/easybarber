@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+import com.teamsantos.easybarber.DTO.*;
 import com.teamsantos.easybarber.entities.images.EstablishmentImage;
 import org.locationtech.jts.io.ParseException;
 import org.modelmapper.ModelMapper;
@@ -14,11 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
-import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
-import com.teamsantos.easybarber.DTO.EmployeeDTO;
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.EstablishmentStaff;
