@@ -26,7 +26,7 @@ public class ServiceController {
         this.serviceService = serviceService;
     }
 
-    // TODO: We should thing what permissions are needed to create a service type
+    // TODO: We should think what permissions are needed to create a service type
     // Admin ? Employee ?
     // This will probably be used by the application as a filter, so we should
     // think about it
