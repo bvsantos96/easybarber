@@ -100,6 +100,13 @@ public class UserService {
             throw new IllegalArgumentException("User cannot be null");
     }
 
+    @Transactional
+    public void deleteUser(Long id) {
+        if (employeeRepository.existsByUserId(id))
+            employeeRepository.deleteByUserId(id);
+        userRepository.deleteById(id);
+    }
+
     public void updateUser(UserCreateDTO userCreateDTO, Principal principal) {
         User oldUser = getUser(principal);
         oldUser.updateNonNullValues(userCreateDTO);

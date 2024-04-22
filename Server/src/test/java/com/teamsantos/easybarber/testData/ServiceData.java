@@ -1,10 +1,10 @@
 package com.teamsantos.easybarber.testData;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ServiceData {
     public static final List<ServiceTypeDTO> serviceTypes;
@@ -24,9 +24,12 @@ public class ServiceData {
             };
             services = new ArrayList<>() {
                 {
-                    add(new ServiceDTO(1L, EmployeeData.employees.get(0).getId(), serviceTypes.get(0).getId(), "Haircut", "Simple haircut", "https://youtube.com", 10.0));
-                    add(new ServiceDTO(2L, EmployeeData.employees.get(0).getId(), serviceTypes.get(1).getId(), "Beard", "Simple beard trim", "https://youtube.com", 5.0));
-                    add(new ServiceDTO(3L, EmployeeData.employees.get(1).getId(), serviceTypes.get(2).getId(), "Beard and haircut", "Simple haircut and beard trim",
+                    add(new ServiceDTO(1L, EmployeeData.employees.get(0).getId(), serviceTypes.get(0).getId(),
+                            "Haircut", "Simple haircut", "https://youtube.com", 10.0));
+                    add(new ServiceDTO(2L, EmployeeData.employees.get(0).getId(), serviceTypes.get(1).getId(), "Beard",
+                            "Simple beard trim", "https://youtube.com", 5.0));
+                    add(new ServiceDTO(3L, EmployeeData.employees.get(1).getId(), serviceTypes.get(2).getId(),
+                            "Beard and haircut", "Simple haircut and beard trim",
                             "https://youtube.com", 15.0));
                 }
             };
@@ -34,14 +37,18 @@ public class ServiceData {
                 {
                     add(new ServiceDTO().addId(services.get(0).getId()).addDescription("Simple haircut (updated)"));
                     add(new ServiceDTO().addId(services.get(1).getId()).addDescription("Simple beard trim (updated)"));
-                    add(new ServiceDTO().addId(services.get(2).getId()).addDescription("Simple haircut and beard trim (updated)"));
+                    add(new ServiceDTO().addId(services.get(2).getId())
+                            .addDescription("Simple haircut and beard trim (updated)"));
                 }
             };
             serviceTypesUpdate = new ArrayList<>() {
                 {
-                    add(new ServiceTypeDTO().addId(serviceTypes.get(0).getId()).addDescription("Simple haircut (updated)"));
-                    add(new ServiceTypeDTO().addId(serviceTypes.get(1).getId()).addDescription("Simple beard trim (updated)"));
-                    add(new ServiceTypeDTO().addId(serviceTypes.get(2).getId()).addDescription("Simple haircut and beard trim (updated)"));
+                    add(new ServiceTypeDTO().addId(serviceTypes.get(0).getId())
+                            .addDescription("Simple haircut (updated)"));
+                    add(new ServiceTypeDTO().addId(serviceTypes.get(1).getId())
+                            .addDescription("Simple beard trim (updated)"));
+                    add(new ServiceTypeDTO().addId(serviceTypes.get(2).getId())
+                            .addDescription("Simple haircut and beard trim (updated)"));
                 }
             };
         } catch (Exception e) {

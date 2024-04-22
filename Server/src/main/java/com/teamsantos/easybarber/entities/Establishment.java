@@ -1,28 +1,18 @@
 package com.teamsantos.easybarber.entities;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
-
-import org.hibernate.proxy.HibernateProxy;
-import org.locationtech.jts.geom.Point;
-
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
 import com.teamsantos.easybarber.entities.images.EstablishmentImage;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.proxy.HibernateProxy;
+import org.locationtech.jts.geom.Point;
+
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -40,9 +30,9 @@ public class Establishment extends EntityWithImages<Establishment, Establishment
     private String address;
     @Column
     private Point location;
-    @OneToMany(mappedBy = "establishment", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "establishment", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Set<EstablishmentStaff> staff;
-    @OneToMany(mappedBy = "establishment", orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "establishment", fetch = FetchType.LAZY)
     private Set<EstablishmentService> services;
 
     @PrePersist

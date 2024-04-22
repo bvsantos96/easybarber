@@ -5,9 +5,11 @@ import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.ServiceType;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
+import com.teamsantos.easybarber.repositories.EstablishmentServiceRepository;
 import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.repositories.ServiceTypeRepository;
 import com.teamsantos.easybarber.utils.PageDTO;
+import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -21,14 +23,16 @@ import java.security.Principal;
 public class ServiceService {
     private final ServiceRepository serviceRepository;
     private final ServiceTypeRepository serviceTypeRepository;
+    private final EstablishmentServiceRepository establishmentServiceRepository;
     private final UserTypeService userTypeService;
     private final ModelMapper modelMapper;
 
     @Autowired
     public ServiceService(ServiceRepository serviceRepository, ServiceTypeRepository serviceTypeRepository,
-            UserTypeService userTypeService,
+            UserTypeService userTypeService, EstablishmentServiceRepository establishmentServiceRepository,
             ModelMapper modelMapper) {
         this.serviceRepository = serviceRepository;
+        this.establishmentServiceRepository = establishmentServiceRepository;
         this.serviceTypeRepository = serviceTypeRepository;
         this.userTypeService = userTypeService;
         this.modelMapper = modelMapper;
@@ -63,8 +67,14 @@ public class ServiceService {
         serviceRepository.save(service);
     }
 
-    public void createType( ServiceTypeDTO serviceDTO) {
-        if( serviceDTO != null ){
+    @Transactional
+    public void deleteService(Long id) {
+        establishmentServiceRepository.deleteByServiceId(id);
+        serviceRepository.deleteById(id);
+    }
+
+    public void createType(ServiceTypeDTO serviceDTO) {
+        if (serviceDTO != null) {
             serviceTypeRepository.save(modelMapper.map(serviceDTO, ServiceType.class));
         }
     }
@@ -79,14 +89,16 @@ public class ServiceService {
     }
 
     public Page<ServiceDTO> getServices(Long employeeId, Pageable pageable) {
-        return PageDTO.toDTO(modelMapper, serviceRepository.findByEmployeeId(employeeId, pageable), ServiceDTO.class, pageable);
+        return PageDTO.toDTO(modelMapper, serviceRepository.findByEmployeeId(employeeId, pageable), ServiceDTO.class,
+                pageable);
     }
 
-    public Page<ServiceDTO>list(Long serviceTypeId, Pageable pageable) {
-        if(serviceTypeId == null || serviceTypeId.equals(0L)) {
+    public Page<ServiceDTO> list(Long serviceTypeId, Pageable pageable) {
+        if (serviceTypeId == null || serviceTypeId.equals(0L)) {
             return PageDTO.toDTO(modelMapper, serviceRepository.findAll(pageable), ServiceDTO.class, pageable);
         }
-        return PageDTO.toDTO(modelMapper, serviceRepository.listByServiceTypeId(serviceTypeId, pageable), ServiceDTO.class, pageable);
+        return PageDTO.toDTO(modelMapper, serviceRepository.listByServiceTypeId(serviceTypeId, pageable),
+                ServiceDTO.class, pageable);
 
     }
 }

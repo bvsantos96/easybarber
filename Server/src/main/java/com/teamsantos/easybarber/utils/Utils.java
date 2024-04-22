@@ -1,15 +1,14 @@
 package com.teamsantos.easybarber.utils;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.entities.Establishment;
 import org.json.JSONArray;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
 
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import com.teamsantos.easybarber.entities.Establishment;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 public class Utils {
     public static String setFieldIfNotNullOrEmpty(String field1, String field2) {

@@ -1,11 +1,13 @@
 package com.teamsantos.easybarber.tests;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-
+import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.exceptions.UserNotFoundException;
+import com.teamsantos.easybarber.testData.EmployeeData;
+import com.teamsantos.easybarber.testData.EstablishmentData;
+import com.teamsantos.easybarber.testData.ServiceData;
+import com.teamsantos.easybarber.utils.CreateTest;
+import com.teamsantos.easybarber.utils.JSONToDTO;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +17,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
-import com.teamsantos.easybarber.DTO.ServiceDTO;
-import com.teamsantos.easybarber.DTO.UserCreateDTO;
-import com.teamsantos.easybarber.exceptions.UserNotFoundException;
-import com.teamsantos.easybarber.testData.EmployeeData;
-import com.teamsantos.easybarber.testData.EstablishmentData;
-import com.teamsantos.easybarber.testData.ServiceData;
-import com.teamsantos.easybarber.utils.CreateTest;
-import com.teamsantos.easybarber.utils.JSONToDTO;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc

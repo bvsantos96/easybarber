@@ -1,12 +1,12 @@
 package com.teamsantos.easybarber.DTO;
 
-import java.util.List;
-
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.Service;
 import lombok.Getter;
 import lombok.Setter;
 import org.locationtech.jts.geom.Point;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -15,13 +15,16 @@ public class EstablishmentCompleteDTO extends BaseEstablishmentDTO {
     private List<EmployeeDTO> staff;
     private List<ServiceDTO> services;
 
-    public EstablishmentCompleteDTO() {}
-
-    public EstablishmentCompleteDTO(EstablishmentDTO establishment) {
-        super(establishment.getId(), establishment.getName(), establishment.getDescription(), establishment.getAddress());
+    public EstablishmentCompleteDTO() {
     }
 
-    public EstablishmentCompleteDTO(Long id, String name, String description, String address, Point location, List<Service> services, List<Employee> employees) {
+    public EstablishmentCompleteDTO(EstablishmentDTO establishment) {
+        super(establishment.getId(), establishment.getName(), establishment.getDescription(),
+                establishment.getAddress());
+    }
+
+    public EstablishmentCompleteDTO(Long id, String name, String description, String address, Point location,
+            List<Service> services, List<Employee> employees) {
         super(id, name, description, address, location);
         try {
             setServices(services.stream().map(ServiceDTO::new).toList());
