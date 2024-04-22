@@ -7,6 +7,21 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 public class CreateTest {
+    public static ResultActions put(MockMvc mockMvc, String path, String jwt, String item) throws Exception {
+        return mockMvc.perform(MockMvcRequestBuilders
+                .put(path)
+                .header("Authorization", "Bearer " + jwt)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(item));
+    }
+
+    public static ResultActions put(MockMvc mockMvc, String path, String item) throws Exception {
+        return mockMvc.perform(MockMvcRequestBuilders
+                .put(path)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(item));
+    }
+
     public static ResultActions post(MockMvc mockMvc, String path, String jwt, String item) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
                 .post(path)

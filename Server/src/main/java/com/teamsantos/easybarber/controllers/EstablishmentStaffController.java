@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.security.Principal;
 
 @Controller
-public class UserController {
-    private final UserService userService;
+public class EstablishmentStaffController {
+    private final EstablishmentStafFS userService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public EstablishmentStaffController(UserService userService) {
         this.userService = userService;
     }
 

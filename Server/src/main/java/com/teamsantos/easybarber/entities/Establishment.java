@@ -2,7 +2,10 @@ package com.teamsantos.easybarber.entities;
 
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 import org.locationtech.jts.geom.Point;
 

@@ -6,14 +6,16 @@ import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.EstablishmentStaff;
+import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
+import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentRepository;
+import com.teamsantos.easybarber.repositories.EstablishmentServiceRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
+import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.utils.GeometryUtils;
-
 import jakarta.transaction.Transactional;
-
 import org.locationtech.jts.io.ParseException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,20 +33,20 @@ import java.util.List;
 public class EstablishmentService {
     private final ModelMapper modelMapper;
     private final EstablishmentRepository establishmentRepository;
-    private final EstablishmentStaffRepository establishmentStaffRepository;
     private final EmployeeRepository employeeRepository;
-    private final UserTypeService userTypeService;
+    private final ServiceRepository serviceRepository;
+    private final EstablishmentServiceRepository establishmentServiceRepository;
     private final UserService userService;
 
     @Autowired
     public EstablishmentService(ModelMapper modelMapper, EstablishmentRepository establishmentRepository,
-            EmployeeRepository employeeRepository, UserTypeService userTypeService,
-            EstablishmentStaffRepository establishmentStaffRepository, UserService userService) {
+            EmployeeRepository employeeRepository, ServiceRepository serviceRepository,
+            EstablishmentServiceRepository establishmentServiceRepository, UserService userService) {
         this.modelMapper = modelMapper;
         this.establishmentRepository = establishmentRepository;
-        this.establishmentStaffRepository = establishmentStaffRepository;
+        this.establishmentServiceRepository = establishmentServiceRepository;
         this.employeeRepository = employeeRepository;
-        this.userTypeService = userTypeService;
+        this.serviceRepository = serviceRepository;
         this.userService = userService;
     }
 
@@ -67,6 +69,8 @@ public class EstablishmentService {
     public void create(BaseEstablishmentDTO establishmentDTO, Employee owner) {
         Establishment establishment = modelMapper.map(establishmentDTO, Establishment.class);
         if (establishment != null) {
+            if (establishmentRepository.existsByName(establishment.getName()))
+                throw new AlreadyExistsException("Establishment name already exists");
             establishment = establishmentRepository.save(establishment);
             establishmentDTO.setId(establishment.getId());
             EstablishmentStaff establishmentOwned = new EstablishmentStaff(owner, establishment, true, true, owner);
@@ -74,7 +78,6 @@ public class EstablishmentService {
                 owner.setEstablishments(new HashSet<>());
             owner.getEstablishments().add(establishmentOwned);
             employeeRepository.save(owner);
-            establishmentStaffRepository.save(establishmentOwned);
         } else
             throw new IllegalArgumentException("Establishment cannot be null");
     }
@@ -85,27 +88,28 @@ public class EstablishmentService {
 
     @Transactional
     public void addEmployee(Long establishmentId, Long userId, Principal principal)
-            throws NotFoundException, UnsupportedOperationException {
+            throws NotFoundException, UnsupportedOperationException, UserAlreadyExistsException {
         addEmployee(establishmentId, userId, userService.getEmployee(principal));
     }
 
     @Transactional
-    public void addEmployee(@NonNull Long establishmentId, Long userId, Employee invitor)
-            throws NotFoundException, UnsupportedOperationException {
+    public void addEmployee(Long establishmentId, Long employeeId, Employee invitor)
+            throws NotFoundException, UnsupportedOperationException, UserAlreadyExistsException {
         Establishment establishment = establishmentRepository.findById(establishmentId)
                 .orElseThrow(NotFoundException::new);
-        if (userTypeService.isEmployee(userId)) {
+        if (employeeRepository.existsById(employeeId)) {
             if (establishment.getStaff() == null)
                 establishment.setStaff(new HashSet<>());
+            if (establishment.getStaff().stream().anyMatch((staff) -> staff.getEmployee().getId().equals(employeeId)))
+                throw new UserAlreadyExistsException("User is already an employee");
             establishment.getStaff()
                     .add(new EstablishmentStaff(
-                            employeeRepository.findByUserId(userId).orElseThrow(UserNotFoundException::new),
+                            employeeRepository.findById(employeeId).orElseThrow(UserNotFoundException::new),
                             establishment, false, true, invitor));
             establishmentRepository.save(establishment);
             // TODO: note that the we might want to start an employee approval process here,
             // so we might want to set approved to false
         }
-        throw new UnsupportedOperationException("User is not an employee");
     }
 
     public Page<EstablishmentDTO> findByLocation(double latitude, double longitude, Pageable pageable)
@@ -132,6 +136,44 @@ public class EstablishmentService {
     }
 
     @Transactional
+    public void addService(Long id, Long serviceId, Long employeeId) throws NotFoundException, AlreadyExistsException {
+        if (serviceId != null) {
+            Establishment establishment = establishmentRepository.findById(id).orElseThrow(NotFoundException::new);
+            com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceId)
+                    .orElseThrow(NotFoundException::new);
+            if(establishment.getStaff().stream().noneMatch((staff) -> staff.getEmployee().getId() == employeeId))
+                throw new UnsupportedOperationException("User is not an employee of this establishment");
+            if(service.getEmployee().getId() != employeeId)
+                throw new UnsupportedOperationException("User is not the employee of the service");
+            if(establishmentServiceRepository.existsByServiceIdAndEstablishmentId(serviceId, id))
+                throw new AlreadyExistsException("Service already registered in establishment");
+            com.teamsantos.easybarber.entities.EstablishmentService serviceEntity = modelMapper.map(service,
+                    com.teamsantos.easybarber.entities.EstablishmentService.class);
+            serviceEntity.setEstablishment(establishment);
+            serviceEntity.setEmployee(employeeRepository.findById(employeeId).orElseThrow());
+            establishmentServiceRepository.save(serviceEntity);
+            establishment.getServices()
+                    .add(serviceEntity);
+        }
+    }
+
+    @Transactional
+    public void updateService(Long establishmentId, EstablishmentServiceDTO serviceDTO) throws NotFoundException {
+        if (serviceDTO != null) {
+            Establishment establishment = establishmentRepository.findById(establishmentId).orElseThrow();
+            com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceDTO.getId())
+                    .orElseThrow(NotFoundException::new);
+            if (establishment.getStaff().stream().noneMatch((staff) -> staff.getEmployee().getUser()
+                    .getMobileInformation().equals(service.getEmployee().getUser().getMobileInformation())))
+                throw new UnsupportedOperationException("User is not an employee");
+            establishment.getServices().stream()
+                    .filter((_service) -> _service.getId().equals(serviceDTO.getId()))
+                    .findFirst().ifPresent((_service) -> modelMapper.map(serviceDTO, _service));
+            establishmentRepository.save(establishment);
+        }
+    }
+
+    @Transactional
     public void removeService(Long id, Long serviceId) {
         if (serviceId != null) {
             Establishment establishment = establishmentRepository.findById(id).orElseThrow();
@@ -139,4 +181,5 @@ public class EstablishmentService {
             establishmentRepository.save(establishment);
         }
     }
+
 }

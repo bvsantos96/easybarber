@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.entities;
 
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -7,17 +8,6 @@ import lombok.ToString;
 
 import java.util.List;
 import java.util.Set;
-
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 
 @Getter
 @Setter
@@ -29,7 +19,7 @@ public class Employee {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "employee")
+    @JoinColumn
     @ToString.Exclude
     private User user;
     @Column
@@ -52,4 +42,6 @@ public class Employee {
     private List<Service> services;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean enabled;
+    @OneToOne(mappedBy = "employee")
+    private EstablishmentService establishmentService;
 }
