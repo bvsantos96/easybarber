@@ -44,7 +44,7 @@ public class Service {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "employee_id", referencedColumnName = "id")
     private Employee employee;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "service", orphanRemoval = true, cascade = CascadeType.REMOVE)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "service", orphanRemoval = true, cascade = CascadeType.ALL)
     private Set<EstablishmentService> establishments;
 
     @Override

@@ -10,7 +10,6 @@ import org.modelmapper.TypeToken;
 import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.utils.Utils;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
@@ -19,7 +18,7 @@ import lombok.Getter;
 @Getter
 @MappedSuperclass
 public abstract class EntityWithImages<T extends EntityWithImages<T, E>, E extends Image<T, E>> {
-    @OneToMany(mappedBy = "entity", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "entity", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<E> images = new HashSet<>();
 
     @PrePersist

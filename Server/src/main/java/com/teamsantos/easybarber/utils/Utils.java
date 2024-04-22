@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import org.json.JSONArray;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
 
@@ -91,5 +92,16 @@ public class Utils {
             return false;
         }
         return obj1.equals(obj2);
+    }
+
+    public static String fromListToString(List<?> items) {
+        if (items == null) {
+            return "[]";
+        }
+        JSONArray jsonArray = new JSONArray();
+        for (Object item : items) {
+            jsonArray.put(item);
+        }
+        return jsonArray.toString();
     }
 }
