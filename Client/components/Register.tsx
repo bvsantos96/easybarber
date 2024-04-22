@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Input from '../components/Input';
 import Title from '../components/Title';
-import { PhoneIcon, PasswordIcon, NameIcon } from '../components/Icons';
+import { PasswordIcon, NameIcon } from '../components/Icons';
 import Divider from '../components/Divider';
 import Button from '../components/Button';
 
@@ -10,6 +10,8 @@ import { getStyles } from '../styles/Sign';
 import { resetNavigation } from '../App';
 import { Props } from '../screens/SignIn';
 import { Result, doRegister } from '../utils/ApiRequest';
+import { Country } from 'react-native-country-picker-modal';
+import PhoneInput from './PhoneInput';
 
 export default function Register({ navigation, toggleNewUser }: Props) {
     const styles = getStyles();
@@ -18,10 +20,11 @@ export default function Register({ navigation, toggleNewUser }: Props) {
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
+    const [nation, setNation] = useState<Country | null | undefined>();
 
-    const register = async() => {
+    const register = async () => {
         const result: Result = await doRegister(phone, password, confirmPassword, name);
-        if(result.success)
+        if (result.success)
             resetNavigation(navigation, 'Tabs');
         else
             alert(result.message);
@@ -39,11 +42,12 @@ export default function Register({ navigation, toggleNewUser }: Props) {
                     onInputChange={setName}
                 />
                 <Divider size={19.25} />
-                <Input
-                    icon={<PhoneIcon />}
-                    placeholder={texts.phoneNumber}
-                    type="tel"
-                    onInputChange={setPhone}
+                <PhoneInput
+                    {...{
+                        setPhone,
+                        setNation,
+                        nation
+                    }}
                 />
                 <Divider size={19.25} />
                 <Input

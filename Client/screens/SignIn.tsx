@@ -1,4 +1,4 @@
-import { View, ScrollView, Animated } from 'react-native';
+import { View, Animated } from 'react-native';
 import LogoSmall from "../assets/images/logo.svg";
 import Login from '../components/Login';
 import Register from '../components/Register';
@@ -34,7 +34,7 @@ export default function SignIn({ navigation }: PropNavigation) {
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
+        <View style={styles.container} >
             <View style={[styles.logoContainer, styles.shadow]} >
                 <LogoSmall width={styles.logo.width} height={styles.logo.height} />
             </View>
@@ -52,6 +52,6 @@ export default function SignIn({ navigation }: PropNavigation) {
                     <Register toggleNewUser={changeNewUser} navigation={navigation} />
                 }
             </Animated.View>
-        </ScrollView >
+        </View >
     );
 }

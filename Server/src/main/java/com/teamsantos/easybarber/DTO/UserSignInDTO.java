@@ -1,9 +1,13 @@
 package com.teamsantos.easybarber.DTO;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-public class UserSignInDTO {
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
+public class UserSignInDTO extends BaseDTO {
     private String password;
     private String mobileInformation;
 }

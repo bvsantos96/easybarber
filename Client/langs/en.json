@@ -63,7 +63,8 @@
     "apiMessages": {
         "success": "Success in processing the request",
         "failed": "Failed to process the request",
-        "connectionError": "Cannor connect to the server",
+        "connectionError": "Cannot connect to the server",
+        "invalidCountry": "Country needs to be selected",
         "invalidPhone": "Invalid Phone Number",
         "login": {
             "success": "Login Success",
@@ -77,5 +78,8 @@
             "passwordMismatch": "Password Mismatch",
             "invalidName": "Invalid Name Format (name should be at least 3 characters long)"
         }
+    },
+    "errors": {
+        defaultCountry: "Error fetching default country:"
     }
 }

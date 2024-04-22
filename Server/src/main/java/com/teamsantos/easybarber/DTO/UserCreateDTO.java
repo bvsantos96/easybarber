@@ -1,15 +1,29 @@
 package com.teamsantos.easybarber.DTO;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-public class UserCreateDTO {
-    private String password;
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserCreateDTO extends BaseDTO {
     private String countryMobile;
     private String mobile;
+    private String password;
     private String name;
 
     public String getMobileInformation() {
         return countryMobile + mobile;
+    }
+
+    public UserCreateDTO(Long id, String countryMobile, String mobile, String password, String name) {
+        super(id);
+        this.countryMobile = countryMobile;
+        this.mobile = mobile;
+        this.password = password;
+        this.name = name;
     }
 }

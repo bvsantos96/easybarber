@@ -3,7 +3,6 @@ package com.teamsantos.easybarber.security.filters;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
-import com.teamsantos.easybarber.repositories.UserRepository;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.core.Authentication;
 

@@ -1,7 +1,9 @@
 package com.teamsantos.easybarber.controllers;
 
 import java.security.Principal;
+import java.util.List;
 
+import com.teamsantos.easybarber.DTO.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Pageable;
@@ -18,11 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
-import com.teamsantos.easybarber.DTO.BasePageDTO;
-import com.teamsantos.easybarber.DTO.BaseResponseDTO;
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
@@ -40,14 +37,14 @@ public class EstablishmentController {
 
     @GetMapping("/{id}")
     public ResponseEntity<EstablishmentDTO> getEstablishment(@PathVariable Long id) {
-        EstablishmentDTO establishments = new EstablishmentDTO();
+        EstablishmentDTO establishment = new EstablishmentDTO();
         try {
             return ResponseEntity.ok(establishmentService.getEstablishment(id));
         } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(establishments);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(establishment);
         } catch (Exception e) {
-            establishments.setResponseMessage(e.getMessage());
-            return ResponseEntity.badRequest().body(establishments);
+            establishment.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(establishment);
         }
     }
 
@@ -68,13 +65,15 @@ public class EstablishmentController {
         }
     }
 
-    // GET /establishments?page=0&size=15&sort=id,desc
+    // GET /establishments/list?page=0&size=15&sort=id,desc
     @GetMapping("/list")
     public ResponseEntity<BasePageDTO<EstablishmentDTO>> listEstablishments(
-            @RequestParam("latitude") double latitude, @RequestParam("longitude") double longitude, Pageable pageable) {
+            @RequestParam(name = "latitude", required = false) Double latitude,
+            @RequestParam(name = "longitude", required = false) Double longitude,
+            @RequestParam(name = "serviceType", required = false) Long serviceType, Pageable pageable) {
         BasePageDTO<EstablishmentDTO> listDTO = new BasePageDTO<>();
         try {
-            listDTO.setItems(establishmentService.findByLocation(latitude, longitude, pageable));
+            listDTO.setItems(establishmentService.findByLocation(latitude, longitude, serviceType, pageable));
             return ResponseEntity.ok(listDTO);
         } catch (Exception e) {
             listDTO.setResponseMessage(e.getMessage());
@@ -89,7 +88,7 @@ public class EstablishmentController {
             Principal principal) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.addEmployee(establishmentId, employeeId, principal);
+            establishmentService.addEmployee(establishmentId, employeeId);
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
         } catch (UserAlreadyExistsException e) {
             responseDTO.setResponseMessage(e.getMessage());
@@ -101,9 +100,9 @@ public class EstablishmentController {
     }
 
     @GetMapping("/{id}/services")
-    public ResponseEntity<BasePageDTO<com.teamsantos.easybarber.entities.EstablishmentService>> listServices(
+    public ResponseEntity<BasePageDTO<ServiceDTO>> listServices(
             @PathVariable Long id, Pageable pageable) {
-        BasePageDTO<com.teamsantos.easybarber.entities.EstablishmentService> listDTO = new BasePageDTO<>();
+        BasePageDTO<ServiceDTO> listDTO = new BasePageDTO<>();
         try {
             listDTO.setItems(establishmentService.listServices(id, pageable));
             return ResponseEntity.ok(listDTO);
@@ -113,13 +112,13 @@ public class EstablishmentController {
         }
     }
 
-    @PostMapping("/{establishmentId}/service/{serviceId}/employee/{employeeId}")
+    @PostMapping("/{establishmentId}/service")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long establishmentId,
-            @PathVariable Long serviceId, @PathVariable Long employeeId) {
+            @RequestBody CreateEstablishmentServiceDTO serviceDTO) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.addService(establishmentId, serviceId, employeeId);
+            establishmentService.addService(establishmentId, serviceDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
         } catch (AlreadyExistsException e) {
             responseDTO.setResponseMessage(e.getMessage());
@@ -133,7 +132,7 @@ public class EstablishmentController {
     @PutMapping("/{establishmentId}/service")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> updateService(@PathVariable Long establishmentId,
-            EstablishmentServiceDTO serviceDTO) {
+            CreateEstablishmentServiceDTO serviceDTO) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
             establishmentService.updateService(establishmentId, serviceDTO);
@@ -144,16 +143,80 @@ public class EstablishmentController {
         }
     }
 
-    @DeleteMapping("/{id}/service/{serviceId}")
+    @DeleteMapping("/{establishmentId}/service/{serviceId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
-    public ResponseEntity<BaseResponseDTO> removeService(@PathVariable Long id, @PathVariable Long serviceId) {
+    public ResponseEntity<BaseResponseDTO> removeService(@PathVariable Long establishmentId,
+            @PathVariable Long serviceId) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.removeService(id, serviceId);
+            establishmentService.removeService(establishmentId, serviceId);
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(responseDTO);
         }
     }
+
+    @GetMapping("/{establishmentId}/employees")
+    public ResponseEntity<BaseListDTO<EmployeeDTO>> listEmployees(@PathVariable Long establishmentId,
+            @RequestParam(defaultValue = "true") boolean onlyActive) {
+        BaseListDTO<EmployeeDTO> response = new BaseListDTO<>();
+        try {
+            response.setItems(establishmentService.getEmployees(establishmentId, onlyActive));
+            return ResponseEntity.ok(response);
+        } catch (NotFoundException e) {
+            response.setResponseMessage(String.format("Establishment with id %d not found", establishmentId));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception ex) {
+            response.setResponseMessage(ex.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PostMapping("/{establishmentId}/images")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("establishmentId") Long establishmentId,
+            @RequestBody List<ImageDTO> images) {
+        BaseResponseDTO response = new BaseResponseDTO();
+        try {
+            if (images.isEmpty()) {
+                response.setResponseMessage("Images list is empty");
+                return ResponseEntity.badRequest().body(response);
+            }
+            establishmentService.saveImages(establishmentId, images);
+            return ResponseEntity.ok(response);
+        } catch (NotFoundException e) {
+            System.err.println(e.getMessage());
+            response.setResponseMessage("Establishment not found");
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PutMapping("/{establishmentId}/images")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    public ResponseEntity<BaseResponseDTO> updateImage(@PathVariable("establishmentId") Long establishmentId,
+            @RequestBody List<ImageDTO> images) {
+        BaseResponseDTO response = new BaseResponseDTO();
+        try {
+            if (images.isEmpty()) {
+                response.setResponseMessage("Images list is empty");
+                return ResponseEntity.badRequest().body(response);
+            }
+            establishmentService.saveImages(establishmentId, images);
+            return ResponseEntity.ok(response);
+        } catch (NotFoundException e) {
+            System.err.println(e.getMessage());
+            response.setResponseMessage("Establishment not found");
+            return ResponseEntity.badRequest().body(response);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
 }
