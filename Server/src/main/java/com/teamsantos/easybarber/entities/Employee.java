@@ -36,8 +36,8 @@ public class Employee {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_mobileInformation", referencedColumnName = "mobileInformation")
     private User user;
-    @OneToMany(mappedBy = "employee", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private List<Service> services;
-    @OneToMany(mappedBy = "employee", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", orphanRemoval = true, cascade = CascadeType.REMOVE)
     private Set<EstablishmentStaff> establishments;
 }
