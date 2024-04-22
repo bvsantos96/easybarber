@@ -1,7 +1,5 @@
 package com.teamsantos.easybarber.services;
 
-package com.teamsantos.easybarber.services;
-
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
 import com.teamsantos.easybarber.entities.Employee;
@@ -21,12 +19,18 @@ import java.security.Principal;
 @Service
 public class EstablishmentStaffService {
     private final EstablishmentStaffRepository establishmentStaffRepository;
+    private final UserTypeService userTypeService;
+    private final ServiceTypeRepository serviceTypeRepository;
+    private final ServiceRepository serviceRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
     public EstablishmentStaffService(EstablishmentStaffRepository establishmentStaffRepository, ServiceTypeRepository serviceTypeRepository,
-            UserTypeService userTypeService,
+            UserTypeService userTypeService, ServiceRepository serviceRepository,
             ModelMapper modelMapper) {
+        this.serviceRepository = serviceRepository;
+        this.userTypeService = userTypeService;
+        this.serviceTypeRepository = serviceTypeRepository;
         this.establishmentStaffRepository = establishmentStaffRepository;
         this.modelMapper = modelMapper;
     }
@@ -36,14 +40,14 @@ public class EstablishmentStaffService {
                 com.teamsantos.easybarber.entities.Service.class);
         service.setEmployee(userTypeService.getEmployee(principal));
         service.setServiceType(serviceTypeRepository.findById(serviceDTO.getServiceTypeId()).orElseThrow());
-        establishmentStaffRepository.save(service);
+        serviceRepository.save(service);
     }
 
     public void updateService(ServiceDTO serviceDTO) {
         com.teamsantos.easybarber.entities.Service service = modelMapper.map(serviceDTO,
                 com.teamsantos.easybarber.entities.Service.class);
         service.setServiceType(serviceTypeRepository.findById(serviceDTO.getServiceTypeId()).orElseThrow());
-        establishmentStaffRepository.save(service);
+        serviceRepository.save(service);
     }
 
     public void createType(ServiceTypeDTO serviceDTO) {
@@ -60,7 +64,7 @@ public class EstablishmentStaffService {
     }
 
     public Page<ServiceDTO> getServices(Long id, Pageable pageable) {
-        return PageDTO.toDTO(modelMapper, establishmentStaffRepository.findByEmployeeId(id, pageable), ServiceDTO.class, pageable);
+        return PageDTO.toDTO(modelMapper, serviceRepository.findByEmployeeId(id, pageable), ServiceDTO.class, pageable);
     }
 }
 
