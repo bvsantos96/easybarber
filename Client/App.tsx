@@ -9,8 +9,9 @@ SplashScreen.preventAutoHideAsync();
 
 //screens
 import { ThemeProvider, useTheme } from './styles/ThemeContext';
-import { Animated, View } from 'react-native';
+import { Animated, View, Text } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import DismissKeyboard from './components/DismissKeyboard';
 
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
@@ -118,14 +119,16 @@ const Router = () => {
     return (
         <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView} >
             <NavigationContainer>
-                <Stack.Navigator initialRouteName="Sign">
+                <Stack.Navigator
+                    initialRouteName="Sign"
+                >
                     <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
                         {props => containerizedComponent(<OnBoarding {...props} />)}
                     </Stack.Screen>
                     <Stack.Screen name="AccountTypeSelection" options={{ headerShown: false }} >
                         {props => containerizedComponent(<AccountTypeSelection {...props} />)}
                     </Stack.Screen>
-                    <Stack.Screen name="Sign" options={{ headerShown: false }} >
+                    <Stack.Screen name="Sign" options={{ headerShown: false, gestureEnabled: false }} >
                         {props => <SignIn {...props} />}
                     </Stack.Screen>
                     <Stack.Screen name="Tabs" options={{ headerShown: false }} >
@@ -133,6 +136,9 @@ const Router = () => {
                     </Stack.Screen>
                     <Stack.Screen name="Loading" options={{ headerShown: false }} >
                         {props => containerizedComponent(<Loading {...props} />)}
+                    </Stack.Screen>
+                    <Stack.Screen name="Test" options={{ headerShown: false, gestureEnabled: false }}>
+                        {_ => containerizedComponent(<View style={{backgroundColor: "red", minHeight: 50, minWidth: 50}}><Text>Test</Text></View>)}
                     </Stack.Screen>
                 </Stack.Navigator>
             </NavigationContainer>
@@ -144,7 +150,9 @@ export default function App() {
     return (
         <SafeAreaProvider>
             <ThemeProvider>
-                <Router />
+                <DismissKeyboard>
+                    <Router />
+                </DismissKeyboard>
             </ThemeProvider>
         </SafeAreaProvider>
     );

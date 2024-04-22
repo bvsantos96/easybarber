@@ -49,12 +49,14 @@ public class ApplicationSecurity {
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/hello",
                                 "/establishment/list",
-                                "employee/services",
-                                "employee/establishments",
-                                "employee/{id}/establishments",
-                                "establishment/{id}",
-                                "establishment/list",
-                                "establishment/{id}/services")
+                                "/employee/services",
+                                "/employee/establishments",
+                                "/employee/{id}/establishments",
+                                "/establishment/{id}",
+                                "/establishment/list",
+                                "/establishment/{id}/services",
+                                "/establishment/{id}/employees",
+                                "/service/list")
                         .permitAll()
                         .anyRequest().authenticated())
                 .cors(AbstractHttpConfigurer::disable)

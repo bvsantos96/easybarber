@@ -1,16 +1,20 @@
 package com.teamsantos.easybarber.DTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.teamsantos.easybarber.utils.GeometryUtils;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 
-@Data
-@EqualsAndHashCode(callSuper = false)
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.teamsantos.easybarber.utils.GeometryUtils;
+import com.teamsantos.easybarber.utils.Utils;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
 public class BaseEstablishmentDTO extends BaseResponseDTO {
-    private Long id;
     private String name;
     private String description;
     private String address;
@@ -29,30 +33,71 @@ public class BaseEstablishmentDTO extends BaseResponseDTO {
         super();
     }
 
-    public BaseEstablishmentDTO(String name, String description) {
+    public BaseEstablishmentDTO(final String name, final String description) {
         this.name = name;
         this.description = description;
     }
 
-    public BaseEstablishmentDTO(Long id, String name, String description) {
-        this.id = id;
+    public BaseEstablishmentDTO(final Long id, final String name, final String description) {
+        setId(id);
         this.name = name;
         this.description = description;
     }
 
-    public BaseEstablishmentDTO(Long id, String name, String description, String address, Point location) {
-        this.id = id;
+    public BaseEstablishmentDTO(final Long id, final String name, final String description, final String address,
+            final Point location) {
+        setId(id);
         this.name = name;
         this.description = description;
         this.address = address;
+        setLocation(location);
+    }
+
+    public void setLocation(final Point location) {
         this.latitude = location.getY();
         this.longitude = location.getX();
     }
 
-    public BaseEstablishmentDTO(Long id, String name, String description, String address) {
-        this.id = id;
+    public BaseEstablishmentDTO(final Long id, final String name, final String description, final String address) {
+        setId(id);
         this.name = name;
         this.description = description;
         this.address = address;
+    }
+
+    public BaseEstablishmentDTO(final Long id, final String name, final String description, final double latitude,
+            final double longitude) {
+        setId(id);
+        this.name = name;
+        this.description = description;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    public BaseEstablishmentDTO(final String name, final String description, final double latitude,
+            final double longitude) {
+        this.name = name;
+        this.description = description;
+        this.latitude = latitude;
+        this.longitude = longitude;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        if (!super.equals(o)) {
+            return false;
+        }
+        BaseEstablishmentDTO establishment = (BaseEstablishmentDTO) o;
+        return Utils.equalsWithNull(this.name, establishment.getName()) &&
+                Utils.equalsWithNull(this.description, establishment.getDescription()) &&
+                Utils.equalsWithNull(this.address, establishment.getAddress()) &&
+                Double.compare(establishment.latitude, latitude) == 0 &&
+                Double.compare(establishment.longitude, longitude) == 0;
     }
 }

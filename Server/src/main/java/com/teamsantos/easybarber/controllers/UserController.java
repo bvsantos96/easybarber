@@ -5,6 +5,7 @@ import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
 import com.teamsantos.easybarber.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
 
@@ -25,9 +27,16 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<BasePageDTO<UserDTO>> getAllUsers(Pageable pageable) {
+    public ResponseEntity<BasePageDTO<UserDTO>> getAllUsers(@RequestParam(required = false) String userType,
+            Pageable pageable) {
         try {
-            return ResponseEntity.ok(new BasePageDTO<>(userService.getAllUsers(pageable)));
+            Page<UserDTO> users;
+            if (userType != null) {
+                users = userService.getAllUsersByType(userType, pageable);
+            } else {
+                users = userService.getAllUsers(pageable);
+            }
+            return ResponseEntity.ok(new BasePageDTO<>(users));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new BasePageDTO<>(e.getMessage()));
         }

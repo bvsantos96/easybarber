@@ -1,9 +1,7 @@
 package com.teamsantos.easybarber.entities;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
@@ -11,38 +9,33 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
 public class EstablishmentStaff {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn
-    private Employee employee;
-    @ManyToOne
-    @JoinColumn
-    private Establishment establishment;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean admin;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean approved;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean deleted;
-    @ManyToOne
-    @JoinColumn
-    private Employee invitor;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "employee_id", referencedColumnName = "id")
+    private Employee employee;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "establishment_id", referencedColumnName = "id")
+    private Establishment establishment;
 
-    public EstablishmentStaff(Employee employee, Establishment establishment, boolean admin, boolean approved,
-            Employee invitor) {
-        this.employee = employee;
-        this.establishment = establishment;
+    public EstablishmentStaff(boolean admin, boolean approved, boolean deleted, Employee employee,
+            Establishment establishment) {
         this.admin = admin;
         this.approved = approved;
-        this.invitor = invitor;
-    }
-
-    public EstablishmentStaff() {
-
+        this.deleted = deleted;
+        this.employee = employee;
+        this.establishment = establishment;
     }
 
     @Override

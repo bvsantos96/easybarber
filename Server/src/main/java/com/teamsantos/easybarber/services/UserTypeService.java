@@ -39,6 +39,13 @@ public class UserTypeService implements ApplicationListener<ApplicationReadyEven
                 .collect(Collectors.toMap(usertype -> usertype.getUserType().toUpperCase(), UserType::getId));
     }
 
+    public static UserTypes getUserType(String userType) {
+        if (userTypes == null || userTypes.isEmpty()) {
+            throw new RuntimeException("UserTypes not initialized");
+        }
+        return UserTypes.valueOf(userType.toUpperCase());
+    }
+
     public static Long getUserType(UserTypes userType) {
         if (userTypes == null || userTypes.isEmpty()) {
             throw new RuntimeException("UserTypes not initialized");

@@ -1,37 +1,47 @@
 package com.teamsantos.easybarber.entities;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.Objects;
+
 import org.hibernate.proxy.HibernateProxy;
 
-import java.util.Objects;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 @Entity
 public class EstablishmentService {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn
-    private Establishment establishment;
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn
-    private Service service;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn
-    @ToString.Exclude
-    private Employee employee;
     @Column
     private double price;
-    @Column
-    private boolean active;
+    @Column(nullable = false, columnDefinition = "boolean default true")
+    private Boolean active;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "establishment_id", referencedColumnName = "id")
+    private Establishment establishment;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "service_id", referencedColumnName = "id")
+    private Service service;
+
+    @PrePersist
+    public void prePersist() {
+        if (active == null) {
+            active = true;
+        }
+    }
 
     @Override
     public final boolean equals(Object o) {

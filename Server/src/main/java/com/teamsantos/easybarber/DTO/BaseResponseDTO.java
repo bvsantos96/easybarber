@@ -1,9 +1,11 @@
 package com.teamsantos.easybarber.DTO;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-public class BaseResponseDTO {
+@Getter
+@Setter
+public class BaseResponseDTO extends BaseDTO {
     private String responseMessage;
 
     public BaseResponseDTO() {
@@ -11,5 +13,9 @@ public class BaseResponseDTO {
 
     public BaseResponseDTO(String responseMessage) {
         this.responseMessage = responseMessage;
+    }
+
+    public BaseResponseDTO(Long id) {
+        super(id);
     }
 }

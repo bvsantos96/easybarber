@@ -24,7 +24,7 @@ public class AuthTests {
     public String login(boolean init) throws Exception {
         if (init)
             test();
-        return login(UsersData.users.get(0).toString());
+        return login(UsersData.usersDTO.get(0).toString());
     }
 
     public String login(String user, boolean init) throws Exception {
@@ -51,9 +51,9 @@ public class AuthTests {
     @Test
     public void test() {
         try {
-            create("/register", UsersData.users.get(0).toString());
-            create("/register", UsersData.users.get(1).toString());
-            login(UsersData.users.get(1).toString(), false);
+            create("/register", UsersData.usersDTO.get(0).toString());
+            create("/register", UsersData.usersDTO.get(1).toString());
+            login(UsersData.usersDTO.get(1).toString(), false);
             if (!AuthTests.created)
                 AuthTests.created = true;
         } catch (Exception e) {
