@@ -12,12 +12,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.security.Principal;
 
 @Controller
+@RequestMapping("/establishmentstaff")
 public class EstablishmentStaffController {
-    private final EstablishmentStafFS userService;
+    private final UserService userService;
 
     @Autowired
     public EstablishmentStaffController(UserService userService) {
