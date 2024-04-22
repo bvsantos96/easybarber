@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.entities;
 
+import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -18,6 +19,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -40,8 +42,16 @@ public class Establishment extends EntityWithImages<Establishment, Establishment
     private Point location;
     @OneToMany(mappedBy = "establishment", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private Set<EstablishmentStaff> staff;
-    @OneToMany(mappedBy = "establishment", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "establishment", orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<EstablishmentService> services;
+
+    @PrePersist
+    public void prePersist() {
+        if (getServices() == null)
+            setServices(new HashSet<>());
+        if (getStaff() == null)
+            setStaff(new HashSet<>());
+    }
 
     public EstablishmentDTO convertToDto() {
         return convertToDto(this);
