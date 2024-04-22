@@ -44,10 +44,6 @@ public class EmployeeTests {
     public String loginById(Long id, boolean init) throws Exception {
         if (init)
             test();
-        List<UserCreateDTO> employees = EmployeeData.employees.stream().filter(e -> e.getId() == id).toList();
-        UserCreateDTO employee = employees.stream().findFirst().orElseThrow(UserNotFoundException::new);
-        Optional<UserCreateDTO> oEmployee = EmployeeData.employees.stream().filter(e -> e.getId() == id).findFirst();
-        employee = oEmployee.orElseThrow(UserNotFoundException::new);
         return new AuthTests(mockMvc).login(EmployeeData.employees.stream().filter(e -> e.getId() == id).findFirst()
                 .orElseThrow(UserNotFoundException::new).toString());
     }
