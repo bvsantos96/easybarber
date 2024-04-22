@@ -1,20 +1,33 @@
 package com.teamsantos.easybarber.controllers;
 
-import com.teamsantos.easybarber.DTO.*;
-import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
-import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
-import com.teamsantos.easybarber.services.EmployeeService;
-import com.teamsantos.easybarber.services.ServiceService;
-import com.teamsantos.easybarber.services.UserService;
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.Principal;
+import com.teamsantos.easybarber.DTO.BasePageDTO;
+import com.teamsantos.easybarber.DTO.BaseResponseDTO;
+import com.teamsantos.easybarber.DTO.EmployeeCreateDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
+import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
+import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
+import com.teamsantos.easybarber.services.EmployeeService;
+import com.teamsantos.easybarber.services.ServiceService;
+import com.teamsantos.easybarber.services.UserService;
 
 @Controller
 @RequestMapping("/employee")
@@ -31,7 +44,8 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponseDTO> createEmployee(@RequestBody EmployeeDTO employee, Principal principal) {
+    public ResponseEntity<BaseResponseDTO> createEmployee(@RequestBody EmployeeCreateDTO employee,
+            Principal principal) {
         HttpStatus status = HttpStatus.CREATED;
         try {
             if (principal != null && !userService.userChangePermissions(principal, employee.getMobileInformation()))
@@ -68,14 +82,16 @@ public class EmployeeController {
         try {
             serviceService.createService(service, principal);
             return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponseDTO("Service created successfully"));
+        } catch (AlreadyExistsException e) {
+            return ResponseEntity.status(HttpStatus.FOUND).body(new BaseResponseDTO(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
         }
     }
 
     @PutMapping("/service")
-    @PreAuthorize(PrePermissionEvaluator.SERVICE_OWNER)
-    public ResponseEntity<BaseResponseDTO> updateService(@RequestBody ServiceDTO service, Principal principal) {
+    @PreAuthorize(PrePermissionEvaluator.SERVICE_OWNER_OBJECT)
+    public ResponseEntity<BaseResponseDTO> updateService(@RequestBody ServiceDTO service) {
         try {
             serviceService.updateService(service);
             return ResponseEntity.ok(new BaseResponseDTO("Service updated successfully"));

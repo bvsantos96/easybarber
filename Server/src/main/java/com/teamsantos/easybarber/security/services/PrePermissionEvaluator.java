@@ -1,34 +1,36 @@
 package com.teamsantos.easybarber.security.services;
 
+import java.io.Serializable;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.ServiceRepository;
-import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.security.filters.EstablishmentSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.filters.ServiceSecurityExpressionRoot;
 
 @Service
 public class PrePermissionEvaluator implements PermissionEvaluator {
-    private final UserRepository userRepository;
     private final EstablishmentStaffRepository establishmentStaffRepository;
     private final ServiceRepository serviceRepository;
 
     public static final String _ESTABLISHMENT_ADMIN = "ESTABLISHMENT_ADMIN";
     public static final String ESTABLISHMENT_ADMIN = "hasPermission(#establishmentId, '" + _ESTABLISHMENT_ADMIN + "')";
     public static final String _SERVICE_OWNER = "SERVICE_OWNER";
+    public static final String SERVICE_OWNER_OBJECT = "hasPermission(#service.getId(), '" + _SERVICE_OWNER + "')";
     public static final String SERVICE_OWNER = "hasPermission(#serviceId, '" + _SERVICE_OWNER + "')";
     public static final String IS_EMPLOYEE = "hasRole('EMPLOYEE')";
+    public static final String IS_SYSTEM_ADMIN = "hasRole('SYSTEM_ADMIN')";
     private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public PrePermissionEvaluator(UserRepository userRepository,
-            EstablishmentStaffRepository establishmentStaffRepository,
+    public PrePermissionEvaluator(EstablishmentStaffRepository establishmentStaffRepository,
             ServiceRepository serviceRepository,
             EmployeeRepository employeeRepository) {
-        this.userRepository = userRepository;
         this.establishmentStaffRepository = establishmentStaffRepository;
         this.serviceRepository = serviceRepository;
         this.employeeRepository = employeeRepository;

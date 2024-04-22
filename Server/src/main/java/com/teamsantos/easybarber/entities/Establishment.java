@@ -1,23 +1,32 @@
 package com.teamsantos.easybarber.entities;
 
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.Objects;
+import java.util.Set;
+
 import org.hibernate.proxy.HibernateProxy;
 import org.locationtech.jts.geom.Point;
 
-import java.util.Objects;
-import java.util.Set;
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.entities.base.EntityWithImages;
+import com.teamsantos.easybarber.entities.images.EstablishmentImage;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 @Entity
-public class Establishment {
+public class Establishment extends EntityWithImages<Establishment, EstablishmentImage> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,16 +34,14 @@ public class Establishment {
     private String name;
     @Column
     private String description;
-    @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Set<EstablishmentStaff> staff;
-    @OneToMany(mappedBy = "establishment", fetch = FetchType.LAZY)
-    @ToString.Exclude
-    private Set<EstablishmentService> services;
     @Column
     private String address;
     @Column
     private Point location;
+    @OneToMany(mappedBy = "establishment", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private Set<EstablishmentStaff> staff;
+    @OneToMany(mappedBy = "establishment", orphanRemoval = true, cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private Set<EstablishmentService> services;
 
     public EstablishmentDTO convertToDto() {
         return convertToDto(this);
@@ -74,5 +81,10 @@ public class Establishment {
         return this instanceof HibernateProxy
                 ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
                 : getClass().hashCode();
+    }
+
+    @Override
+    public Establishment getEntity() {
+        return this;
     }
 }

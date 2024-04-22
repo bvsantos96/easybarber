@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+
+import { Country } from 'react-native-country-picker-modal';
+
 import Input from '../components/Input';
 import Title from '../components/Title';
-import { PhoneIcon, PasswordIcon } from '../components/Icons';
+import { PasswordIcon } from '../components/Icons';
 import Divider from '../components/Divider';
 import Button from '../components/Button';
 import { AppleLoginButton, GoogleLoginButton } from '../components/LoginBrandButton';
@@ -12,15 +15,35 @@ import { doLogin, Result } from '../utils/ApiRequest';
 import { getStyles } from '../styles/Sign';
 import { resetNavigation } from '../App';
 import { Props } from '../screens/SignIn';
+import PhoneInput from './PhoneInput';
+import { getDefaultCountryAsync } from '../utils/Constants';
 
 export default function Login({ navigation, toggleNewUser }: Props) {
     const styles = getStyles();
     const texts = require("@lang/en.json");
     const [phone, setPhone] = useState("");
+    const [nation, setNation] = useState<Country | null>();
     const [password, setPassword] = useState("");
 
+    useEffect(() => {
+        const fetchDefaultCountry = async () => {
+            try {
+                const DEFAULT_COUNTRY = await getDefaultCountryAsync();
+                setNation(DEFAULT_COUNTRY);
+            } catch (error) {
+                console.error(texts.errors.defaultCountry, error);
+            }
+        };
+
+        fetchDefaultCountry();
+    }, []);
+
     const login = async () => {
-        const result: Result = await doLogin(phone, password);
+        if (!nation) {
+            alert(texts.apiMessages.invalidCountry);
+            return;
+        }
+        const result: Result = await doLogin(nation.callingCode[0], phone, password);
         if (result.success)
             resetNavigation(navigation, 'Tabs');
         else {
@@ -35,11 +58,12 @@ export default function Login({ navigation, toggleNewUser }: Props) {
                 <Title line={[{ text: texts.login.title, highlight: false }]} />
             </View>
             <View style={styles.inputsContainer}>
-                <Input
-                    icon={<PhoneIcon />}
-                    placeholder={texts.phoneNumber}
-                    type="tel"
-                    onInputChange={setPhone}
+                <PhoneInput
+                    {...{
+                        setPhone,
+                        setNation,
+                        nation
+                    }}
                 />
                 <Divider size={20} />
                 <Input

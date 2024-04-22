@@ -1,20 +1,26 @@
 package com.teamsantos.easybarber.controllers;
 
-import com.teamsantos.easybarber.DTO.BaseResponseDTO;
-import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
-import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
-import com.teamsantos.easybarber.services.ServiceService;
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import java.security.Principal;
+import com.teamsantos.easybarber.DTO.BasePageDTO;
+import com.teamsantos.easybarber.DTO.BaseResponseDTO;
+import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
+import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
+import com.teamsantos.easybarber.services.ServiceService;
 
 @Controller
 @RequestMapping("/service")
@@ -45,13 +51,26 @@ public class ServiceController {
         }
     }
 
-    @PutMapping
-    @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
+    @PutMapping("/{serviceId}")
+    @PreAuthorize(PrePermissionEvaluator.IS_SYSTEM_ADMIN)
     public ResponseEntity<BaseResponseDTO> updateServiceType(@RequestBody ServiceTypeDTO serviceDTO) {
         BaseResponseDTO response = new BaseResponseDTO();
         try {
             serviceService.updateType(serviceDTO);
             response.setResponseMessage("Service type created successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<BasePageDTO<ServiceDTO>> list(
+            @RequestParam(name = "serviceType", required = false) Long serviceType, Pageable pageable) {
+        BasePageDTO<ServiceDTO> response = new BasePageDTO<>();
+        try {
+            response.setItems(serviceService.list(serviceType, pageable));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.setResponseMessage(e.getMessage());

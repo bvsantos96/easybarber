@@ -1,18 +1,24 @@
 package com.teamsantos.easybarber.entities;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import java.util.List;
+import java.util.Objects;
+
 import org.hibernate.proxy.HibernateProxy;
 
-import java.util.Objects;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
 @ToString
-@RequiredArgsConstructor
 @Entity
 public class ServiceType {
     @Id
@@ -24,9 +30,8 @@ public class ServiceType {
     private String description;
     @Column
     private String imageUrl;
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id", nullable = false)
-    private Service service;
+    @OneToMany(mappedBy = "serviceType", fetch = FetchType.LAZY)
+    private List<Service> service;
 
     @Override
     public final boolean equals(Object o) {

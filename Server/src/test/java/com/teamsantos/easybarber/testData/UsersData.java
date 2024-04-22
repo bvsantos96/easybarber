@@ -1,22 +1,27 @@
 package com.teamsantos.easybarber.testData;
 
-import org.json.JSONObject;
+import com.teamsantos.easybarber.DTO.UserCreateDTO;
+import com.teamsantos.easybarber.DTO.UserDTO;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class UsersData {
-    public static final List<JSONObject> users;
+    public static final List<UserCreateDTO> usersDTO;
+    public static final List<UserDTO> usersUpdateDTO;
 
     static {
-        users = new ArrayList<>();
-        try {
-            users.add(new JSONObject(
-                    "{\"countryMobile\":\"+351\",\"mobile\":\"927030780\",\"password\":\"Test123*\",\"name\":\"Bruno Santos\"}"));
-            users.add(new JSONObject(
-                    "{\"countryMobile\":\"+351\",\"mobile\":\"962844407\",\"password\":\"Test123*\",\"name\":\"Filipe Santos\"}"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        usersDTO = new ArrayList<>() {
+            {
+                add(new UserCreateDTO("+351", "927030780", "Test123*", "Bruno Santos"));
+                add(new UserCreateDTO("+351", "962844407", "Test123*", "Filipe Santos"));
+            }
+        };
+        usersUpdateDTO = new ArrayList<>() {
+            {
+                add(new UserDTO().initName("Bruno Vicente dos Santos"));
+                add(new UserDTO().initName("Filipe Miguel Pinho Santos"));
+            }
+        };
     }
 }
