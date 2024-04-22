@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -58,7 +59,7 @@ public class EstablishmentTests {
                 jwt = new EmployeeTests(mockMvc).loginById(employeeId, initEmployee);
                 for (Long establishmentId : EmployeeData.employeesEstablishments.get(employeeId)) {
                     create("/establishment", jwt, EstablishmentData.establishments.stream()
-                            .filter(e -> e.getId().equals(establishmentId)).toString());
+                            .filter(e -> e.getId().equals(establishmentId)).findFirst().orElseThrow(NotFoundException::new).toString());
                 }
                 initEmployee = false;
             }

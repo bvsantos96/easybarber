@@ -48,21 +48,22 @@ public class Utils {
         return field1;
     }
 
-    private static ModelMapper modelMapper;
+    private static ModelMapper _modelMapper;
 
     public static ModelMapper getModelMapper() {
-        if (modelMapper == null) {
-            modelMapper = createModelMapper();
+        if (_modelMapper == null) {
+            _modelMapper = createModelMapper();
         }
-        return modelMapper;
+        return _modelMapper;
     }
 
     public static ModelMapper createModelMapper() {
-        modelMapper = new ModelMapper();
+        ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setAmbiguityIgnored(true)
                 .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
         modelMapper.typeMap(Establishment.class, EstablishmentDTO.class)
                 .addMappings(mapper -> mapper.map(src -> src.getLocation(), EstablishmentDTO::setLocation));
+        _modelMapper = modelMapper;
         return modelMapper;
     }
 

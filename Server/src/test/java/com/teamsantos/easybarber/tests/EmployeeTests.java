@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -16,6 +17,8 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.DTO.UserCreateDTO;
+import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.EstablishmentData;
 import com.teamsantos.easybarber.testData.ServiceData;
@@ -41,7 +44,12 @@ public class EmployeeTests {
     public String loginById(Long id, boolean init) throws Exception {
         if (init)
             test();
-        return new AuthTests(mockMvc).login(EmployeeData.employees.stream().filter(e->e.getId() == id).findFirst().toString());
+        List<UserCreateDTO> employees = EmployeeData.employees.stream().filter(e -> e.getId() == id).toList();
+        UserCreateDTO employee = employees.stream().findFirst().orElseThrow(UserNotFoundException::new);
+        Optional<UserCreateDTO> oEmployee = EmployeeData.employees.stream().filter(e -> e.getId() == id).findFirst();
+        employee = oEmployee.orElseThrow(UserNotFoundException::new);
+        return new AuthTests(mockMvc).login(EmployeeData.employees.stream().filter(e -> e.getId() == id).findFirst()
+                .orElseThrow(UserNotFoundException::new).toString());
     }
 
     public String login(int index, boolean init) throws Exception {
@@ -122,7 +130,7 @@ public class EmployeeTests {
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
             result = CreateTest.put(mockMvc, "/employee/service", jwt, ServiceData.serviceUpdate.get(1).toString());
             result.andExpect(MockMvcResultMatchers.status().isOk());
-            jwt = login(1,false);
+            jwt = login(1, false);
             result = CreateTest.put(mockMvc, "/employee/service", jwt, ServiceData.serviceUpdate.get(2).toString());
             result.andExpect(MockMvcResultMatchers.status().isOk());
         } catch (Exception e) {
@@ -145,7 +153,8 @@ public class EmployeeTests {
             for (int i = 0; i < services.size(); i++) {
                 assert services.get(i).equalsWithoutPrice(servicesDTO.get(i));
             }
-            result = CreateTest.get(mockMvc, String.format("/employee/%d/services", EmployeeData.employees.get(1).getId()), jwt);
+            result = CreateTest.get(mockMvc,
+                    String.format("/employee/%d/services", EmployeeData.employees.get(1).getId()), jwt);
             result.andExpect(MockMvcResultMatchers.status().isOk());
             services = JSONToDTO.fromPageDTO(new JSONObject(result.andReturn().getResponse().getContentAsString()),
                     ServiceDTO.class);

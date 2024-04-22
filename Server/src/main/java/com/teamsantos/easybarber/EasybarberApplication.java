@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Bean;
 public class EasybarberApplication {
     @Bean
     public ModelMapper modelMapper() {
-        return Utils.getModelMapper();
+        return Utils.createModelMapper();
     }
 
     @Bean

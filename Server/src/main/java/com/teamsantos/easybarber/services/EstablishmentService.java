@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
+import com.teamsantos.easybarber.entities.images.EstablishmentImage;
 import org.locationtech.jts.io.ParseException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,14 +28,14 @@ import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentServiceRepository;
-import com.teamsantos.easybarber.repositories.ImageRepository;
+import com.teamsantos.easybarber.repositories.base.ImageRepository;
 import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.utils.GeometryUtils;
 
 import jakarta.transaction.Transactional;
 
 @Service
-public class EstablishmentService extends ServiceWithImages<Establishment> {
+public class EstablishmentService extends ServiceWithImages<Establishment, EstablishmentImage> {
     private final ModelMapper modelMapper;
     private final EmployeeRepository employeeRepository;
     private final ServiceRepository serviceRepository;
