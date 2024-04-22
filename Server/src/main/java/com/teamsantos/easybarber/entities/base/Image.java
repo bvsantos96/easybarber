@@ -16,7 +16,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @MappedSuperclass
-public class Image<T> {
+public class Image<T extends EntityWithImages<T, E>, E extends Image<T, E>> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

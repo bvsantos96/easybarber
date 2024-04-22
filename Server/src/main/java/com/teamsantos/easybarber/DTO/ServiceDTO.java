@@ -28,6 +28,16 @@ public class ServiceDTO extends BaseDTO {
         this.description = service.getDescription();
     }
 
+    public ServiceDTO(Long id, Long employeeId, Long serviceTypeId, String name, String description,
+                      double price) {
+        super(id);
+        this.employeeId = employeeId;
+        this.serviceTypeId = serviceTypeId;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+    }
+
     public ServiceDTO(Long id, Long employeeId, Long serviceTypeId, String name, String description, String imageUrl,
             double price) {
         super(id);

@@ -17,38 +17,38 @@ import lombok.Setter;
 @Getter
 @Setter
 @MappedSuperclass
-public abstract class EntityWithImages<T> {
-    @OneToMany(mappedBy = "entity", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Image<T>> images;
+public abstract class EntityWithImages<T extends EntityWithImages<T, E>, E extends Image<T, E>> {
+    @OneToMany(mappedBy = "entity", orphanRemoval = true, cascade = CascadeType.ALL)
+    private Set<E> images;
 
-    public Set<Image<T>> getImages() {
+    public Set<E> getImages() {
         setImages(images);
         return images;
     }
 
     public void addImage(ImageDTO image) {
-        getImages().add(Utils.getModelMapper().map(image, new TypeToken<Image<T>>() {
+        getImages().add(Utils.getModelMapper().map(image, new TypeToken<E>() {
         }.getType()));
     }
 
     @SuppressWarnings("rawtypes")
     public void addImage(Image image) {
-        getImages().add(Utils.getModelMapper().map(image, new TypeToken<Image<T>>() {
+        getImages().add(Utils.getModelMapper().map(image, new TypeToken<E>() {
         }.getType()));
     }
 
-    public void removeImage(Image<T> image) {
+    public void removeImage(E image) {
         getImages().remove(image);
     }
 
-    public void setImages(Set<Image<T>> images) {
-        for (final Image<T> image : images)
+    public void setImages(Set<E> images) {
+        for (final E image : images)
             image.setEntity(getEntity());
         this.images = images;
     }
 
     public void setImages(List<ImageDTO> images) {
-        for(final ImageDTO image : images)
+        for (final ImageDTO image : images)
             addImage(image);
     }
 
