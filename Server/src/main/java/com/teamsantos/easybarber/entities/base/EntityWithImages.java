@@ -9,6 +9,7 @@ import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.utils.Utils;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OneToMany;
 import lombok.Getter;
@@ -18,7 +19,7 @@ import lombok.Setter;
 @Setter
 @MappedSuperclass
 public abstract class EntityWithImages<T extends EntityWithImages<T, E>, E extends Image<T, E>> {
-    @OneToMany(mappedBy = "entity", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "entity", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<E> images;
 
     public Set<E> getImages() {
