@@ -1,6 +1,8 @@
 package com.teamsantos.easybarber.controllers;
 
 import com.teamsantos.easybarber.DTO.*;
+import com.teamsantos.easybarber.entities.Employee;
+import com.teamsantos.easybarber.entities.images.EmployeeImage;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
@@ -16,16 +18,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/employee")
-public class EmployeeController {
+public class EmployeeController extends ImageController<Employee, EmployeeImage> {
     private final EmployeeService employeeService;
     private final UserService userService;
     private final ServiceService serviceService;
 
     @Autowired
     public EmployeeController(EmployeeService employeeService, UserService userService, ServiceService serviceService) {
+        super(employeeService);
         this.employeeService = employeeService;
         this.userService = userService;
         this.serviceService = serviceService;
@@ -125,6 +129,23 @@ public class EmployeeController {
                     .ok(new BasePageDTO<>(userService.getEstablishments(id, owned, pageable)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
+        }
+    }
+
+    @Override
+    @PostMapping("/{entityId}/images")
+    @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
+    public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("entityId") Long entityId,
+            @RequestBody List<ImageDTO> images, Principal principal) {
+        try {
+            if (principal != null && userService.userChangePermissions(principal,
+                    userService.getUser(principal).getMobileInformation()))
+                return _addImages(entityId, images);
+            else
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body(new BaseResponseDTO("User not allowed to update this entity"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
         }
     }
 }

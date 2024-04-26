@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.utils;
 
+import com.teamsantos.easybarber.DTO.BaseDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.entities.Establishment;
 import org.json.JSONArray;

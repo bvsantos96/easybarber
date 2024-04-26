@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.controllers;
 
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -23,7 +24,8 @@ public abstract class ImageController<T extends EntityWithImages<T, E>, E extend
         this.service = service;
     }
 
-    public abstract ResponseEntity<BaseResponseDTO> addImages(Long entityId, List<ImageDTO> images);
+    public abstract ResponseEntity<BaseResponseDTO> addImages(Long entityId, List<ImageDTO> images,
+            Principal principal);
 
     public ResponseEntity<BaseResponseDTO> _addImages(Long entityId,
             List<ImageDTO> images) {

@@ -173,7 +173,7 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     @PostMapping(path = "/{establishmentId}/images", consumes = "application/json")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("establishmentId") Long establishmentId,
-            @RequestBody List<ImageDTO> images) {
+            @RequestBody List<ImageDTO> images, Principal principal) {
         return super._addImages(establishmentId, images);
     }
 }
