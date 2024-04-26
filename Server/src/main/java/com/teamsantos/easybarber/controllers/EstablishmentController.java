@@ -165,7 +165,7 @@ public class EstablishmentController {
         }
     }
 
-    @PostMapping("/{establishmentId}/images")
+    @PostMapping(path = "/{establishmentId}/images", consumes = "application/json")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("establishmentId") Long establishmentId,
             @RequestBody List<ImageDTO> images) {
@@ -187,28 +187,4 @@ public class EstablishmentController {
             return ResponseEntity.badRequest().body(response);
         }
     }
-
-    @PutMapping("/{establishmentId}/images")
-    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
-    public ResponseEntity<BaseResponseDTO> updateImage(@PathVariable("establishmentId") Long establishmentId,
-            @RequestBody List<ImageDTO> images) {
-        BaseResponseDTO response = new BaseResponseDTO();
-        try {
-            if (images.isEmpty()) {
-                response.setResponseMessage("Images list is empty");
-                return ResponseEntity.badRequest().body(response);
-            }
-            establishmentService.saveImages(establishmentId, images);
-            return ResponseEntity.ok(response);
-        } catch (NotFoundException e) {
-            System.err.println(e.getMessage());
-            response.setResponseMessage("Establishment not found");
-            return ResponseEntity.badRequest().body(response);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            response.setResponseMessage(e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        }
-    }
-
 }

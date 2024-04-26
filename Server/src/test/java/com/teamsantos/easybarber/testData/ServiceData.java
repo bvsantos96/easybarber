@@ -4,6 +4,7 @@ import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class ServiceData {
@@ -22,6 +23,8 @@ public class ServiceData {
                             "https://google.com"));
                 }
             };
+            serviceTypes.sort(Comparator.comparing(ServiceTypeDTO::getId));
+
             services = new ArrayList<>() {
                 {
                     add(new ServiceDTO(1L, EmployeeData.employees.get(0).getId(), serviceTypes.get(0).getId(),
@@ -33,6 +36,8 @@ public class ServiceData {
                             "https://youtube.com", 15.0));
                 }
             };
+            services.sort(Comparator.comparing(ServiceDTO::getId));
+
             serviceUpdate = new ArrayList<>() {
                 {
                     add(new ServiceDTO().addId(services.get(0).getId()).addDescription("Simple haircut (updated)"));
@@ -41,6 +46,8 @@ public class ServiceData {
                             .addDescription("Simple haircut and beard trim (updated)"));
                 }
             };
+            serviceUpdate.sort(Comparator.comparing(ServiceDTO::getId));
+
             serviceTypesUpdate = new ArrayList<>() {
                 {
                     add(new ServiceTypeDTO().addId(serviceTypes.get(0).getId())
@@ -51,6 +58,7 @@ public class ServiceData {
                             .addDescription("Simple haircut and beard trim (updated)"));
                 }
             };
+            serviceTypesUpdate.sort(Comparator.comparing(ServiceTypeDTO::getId));
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
