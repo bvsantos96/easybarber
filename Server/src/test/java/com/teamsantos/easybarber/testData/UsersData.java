@@ -4,6 +4,7 @@ import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class UsersData {
@@ -17,11 +18,14 @@ public class UsersData {
                 add(new UserCreateDTO("+351", "962844407", "Test123*", "Filipe Santos"));
             }
         };
+        usersDTO.sort(Comparator.comparing(UserCreateDTO::getId));
+
         usersUpdateDTO = new ArrayList<>() {
             {
                 add(new UserDTO().initName("Bruno Vicente dos Santos"));
                 add(new UserDTO().initName("Filipe Miguel Pinho Santos"));
             }
         };
+        usersUpdateDTO.sort(Comparator.comparing(UserDTO::getId));
     }
 }

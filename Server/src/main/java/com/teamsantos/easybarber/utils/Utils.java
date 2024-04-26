@@ -66,16 +66,6 @@ public class Utils {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setAmbiguityIgnored(true)
                 .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
-        //
-        // Custom mapping for Lists and Sets
-        modelMapper.addConverter((MappingContext<List<Object>, List<Object>> context) -> context.getSource() != null
-                ? context.getSource()
-                : Collections.emptyList());
-
-        modelMapper.addConverter(
-                (MappingContext<Set<Object>, Set<Object>> context) -> context.getSource() != null ? context.getSource()
-                        : Collections.emptySet());
-
         // Type mapping for Establishment to EstablishmentDTO
         modelMapper.typeMap(Establishment.class, EstablishmentDTO.class)
                 .addMappings(mapper -> mapper.map(src -> src.getLocation(), EstablishmentDTO::setLocation));
