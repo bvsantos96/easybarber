@@ -176,7 +176,7 @@ public class EstablishmentController {
                 return ResponseEntity.badRequest().body(response);
             }
             establishmentService.saveImages(establishmentId, images);
-            return ResponseEntity.ok(response);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (NotFoundException e) {
             System.err.println(e.getMessage());
             response.setResponseMessage("Establishment not found");

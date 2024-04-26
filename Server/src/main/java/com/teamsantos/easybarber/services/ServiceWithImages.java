@@ -28,7 +28,7 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
     public void saveImages(Long entityId, List<ImageDTO> images) throws NotFoundException {
         entity = repository.findById(entityId).orElseThrow(NotFoundException::new);
         HashMap<Long, E> toBeDeleted = null;
-        if (entity.getImages() == null) {
+        if (entity.getImages() == null || entity.getImages().isEmpty()) {
             entity
                     .setImages(images);
         } else {
@@ -38,7 +38,7 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
                             HashMap::new));
             for (ImageDTO image : images) {
                 if ((image.getUrl() != null && !image.getUrl().isEmpty())) {
-                    Long id = imageRepository.getIdByEntityAndData(entity, image.getUrl());
+                    Long id = imageRepository.getIdByEntityIdAndData(entityId, image.getUrl());
                     if (id == null || id == 0L) {
                         entity.addImage(image);
                     } else {
@@ -52,7 +52,7 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
             repository.save(entity);
         }
 
-        if (!toBeDeleted.isEmpty()) {
+        if (toBeDeleted != null && !toBeDeleted.isEmpty()) {
             imageRepository.deleteAllById(toBeDeleted.keySet());
         }
     }
