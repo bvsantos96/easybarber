@@ -1,17 +1,20 @@
 package com.teamsantos.easybarber.testData;
 
+import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 public class ServiceData {
     public static final List<ServiceTypeDTO> serviceTypes;
     public static final List<ServiceDTO> services;
     public static final List<ServiceDTO> serviceUpdate;
     public static final List<ServiceTypeDTO> serviceTypesUpdate;
+    public static final Map<Long, List<ImageDTO>> serviceImages;
 
     static {
         try {
@@ -59,6 +62,33 @@ public class ServiceData {
                 }
             };
             serviceTypesUpdate.sort(Comparator.comparing(ServiceTypeDTO::getId));
+
+            serviceImages = Map.of(1L, new ArrayList<>() {
+                {
+                    add(new ImageDTO(null,
+                            "https://cdn-fnknc.nitrocdn.com/jwqHRGAzpUgGskUSHlppNQzwuXgXIKwg/assets/images/optimized/rev-99e07b0/www.fashionbeans.com/wp-content/uploads/2023/08/smartcutzbarbers_manwithnumber2andskinfadehaircut-696x445.jpg"));
+                    add(new ImageDTO(null,
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg6C-koP0XN8yAeszXhRukicFHhQnSkhVQUrQABvhnKQ&s"));
+                    add(new ImageDTO(null, "https://i.pinimg.com/736x/09/25/9d/09259d4ab3cbf58d8d09312d4c1816b8.jpg"));
+                }
+            }, 2L, new ArrayList<>() {
+                {
+                    add(new ImageDTO(null, "https://i.ytimg.com/vi/KBKAIdtRinc/maxresdefault.jpg"));
+                    add(new ImageDTO(null,
+                            "https://i.ytimg.com/vi/V4aG7_zsyrg/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCQSDIXessxdD6pYgn5Wr5uI2AGcA"));
+                    add(new ImageDTO(null,
+                            "https://cdn.thebeardclub.com/articles/Trim_Your_Beard_2_3202ea96-9f43-43af-bc17-81955f6ddabc_1920x.jpg?ixlib=imgixjs-4.0.1"));
+                }
+            }, 3L, new ArrayList<>() {
+                {
+                    add(new ImageDTO(null,
+                            "https://cdn11.bigcommerce.com/s-h7l2pcerei/product_images/uploaded_images/trimming-beard.jpg"));
+                    add(new ImageDTO(null,
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOfIzEg-rxJJg7GqAE9vsPYE9NaduGYpFsh0NDOR8DGw&s"));
+                    add(new ImageDTO(null,
+                            "https://cdn.shopify.com/s/files/1/0013/3536/1603/files/Short-And-Shaped.jpg?v=1603734407"));
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
             throw new RuntimeException(e);
