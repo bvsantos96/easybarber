@@ -1,7 +1,9 @@
 package com.teamsantos.easybarber.tests;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.EstablishmentData;
@@ -17,10 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -34,20 +33,21 @@ public class EmployeeTests {
 
     public String login(boolean init) throws Exception {
         if (init)
-            test();
+            createEmployees();
         return new AuthTests(mockMvc).login(EmployeeData.employees.get(0).toString());
     }
 
     public String loginById(Long id, boolean init) throws Exception {
         if (init)
-            test();
-        return new AuthTests(mockMvc).login(EmployeeData.employees.stream().filter(e -> e.getId() == id).findFirst()
-                .orElseThrow(UserNotFoundException::new).toString());
+            createEmployees();
+        return new AuthTests(mockMvc)
+                .login(EmployeeData.employees.stream().filter(e -> Objects.equals(e.getId(), id)).findFirst()
+                        .orElseThrow(UserNotFoundException::new).toString());
     }
 
     public String login(int index, boolean init) throws Exception {
         if (init)
-            test();
+            createEmployees();
         return new AuthTests(mockMvc).login(EmployeeData.employees.get(index).toString());
     }
 
@@ -68,7 +68,7 @@ public class EmployeeTests {
     }
 
     @Test
-    public void test() {
+    public void createEmployees() {
         try {
             create("/employee", EmployeeData.employees.get(0).toString());
             create("/register", EmployeeData.employees.get(1).toString());
@@ -180,5 +180,55 @@ public class EmployeeTests {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
+    }
+
+    @Test
+    public void addImages() {
+        addImages(true, true);
+    }
+
+    public void addImages(boolean initAuth, boolean initEmployee) {
+        try {
+            for (Long employeeId : EmployeeData.employees.stream().map(UserCreateDTO::getId).toList()) {
+                String jwt = loginById(employeeId, initAuth);
+                List<ImageDTO> images = EmployeeData.employeeImages.get(employeeId);
+                addImageAndCheckIfSaved(images, jwt, employeeId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void deleteImages() {
+        deleteImages(true, true);
+    }
+
+    public void deleteImages(boolean initAuth, boolean initEmployee) {
+        try {
+            addImages(initAuth, initEmployee);
+            for (Long employeeId : EmployeeData.employees.stream().map(UserCreateDTO::getId).toList()) {
+                String jwt = loginById(employeeId, initAuth);
+                List<ImageDTO> images = EmployeeData.employeeImages.get(employeeId).subList(0, 1);
+                addImageAndCheckIfSaved(images, jwt, employeeId);
+            }
+            // This is meant to reset the images to the original state for following tests
+            addImages(false, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    private void addImageAndCheckIfSaved(List<ImageDTO> images, String jwt, Long establishmentId) {
+        if (images == null || images.isEmpty()) {
+            return;
+        }
+        ImageUtils imageUtils = new ImageUtils(mockMvc, String.format("/employee/%d", establishmentId));
+        imageUtils.saveImages(images, jwt);
+        List<ImageDTO> _images = imageUtils.getImages(jwt);
+        assert _images.equals(images);
+
     }
 }

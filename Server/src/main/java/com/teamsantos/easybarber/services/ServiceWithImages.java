@@ -70,7 +70,7 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
         }
     }
 
-    public Page<ImageDTO> getImages(Long entityId, Pageable pageable) throws NotFoundException{
+    public Page<ImageDTO> getImages(Long entityId, Pageable pageable) throws NotFoundException {
         return imageRepository.findByEntityId(entityId, pageable);
     }
 }

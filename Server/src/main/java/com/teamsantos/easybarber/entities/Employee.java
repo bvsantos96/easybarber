@@ -8,11 +8,14 @@ import lombok.ToString;
 import java.util.List;
 import java.util.Set;
 
+import com.teamsantos.easybarber.entities.base.EntityWithImages;
+import com.teamsantos.easybarber.entities.images.EmployeeImage;
+
 @Getter
 @Setter
 @ToString
 @Entity
-public class Employee {
+public class Employee extends EntityWithImages<Employee, EmployeeImage> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,4 +34,9 @@ public class Employee {
     private List<Service> services;
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
     private Set<EstablishmentStaff> establishments;
+
+    @Override
+    public Employee getEntity() {
+        return this;
+    }
 }

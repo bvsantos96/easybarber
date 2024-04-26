@@ -14,7 +14,10 @@ public class BaseDTO {
     private Long id;
 
     public BaseDTO(@Nullable Long id) {
-        this.id = id;
+        if (id != null && id.equals(0L))
+            this.id = null;
+        else
+            this.id = id;
     }
 
     public BaseDTO() {

@@ -23,5 +23,5 @@ public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Ima
     void deleteByEntityId(@Param("id") Long id);
 
     @Query("SELECT new com.teamsantos.easybarber.DTO.ImageDTO(i.id, i.data) FROM #{#entityName} i WHERE i.entity.id = :entityId")
-	Page<ImageDTO> findByEntityId(Long entityId, Pageable pageable);
+    Page<ImageDTO> findByEntityId(Long entityId, Pageable pageable);
 }
