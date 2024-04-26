@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.tests;
 
+import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.testData.ServiceData;
 import com.teamsantos.easybarber.utils.CreateTest;
