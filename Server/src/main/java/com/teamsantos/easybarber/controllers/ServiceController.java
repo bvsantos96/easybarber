@@ -2,8 +2,11 @@ package com.teamsantos.easybarber.controllers;
 
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
+import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
+import com.teamsantos.easybarber.entities.Service;
+import com.teamsantos.easybarber.entities.images.ServiceImage;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.ServiceService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,14 +18,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/service")
-public class ServiceController {
+public class ServiceController extends ImageController<Service, ServiceImage> {
     private final ServiceService serviceService;
 
     @Autowired
     public ServiceController(ServiceService serviceService) {
+        super(serviceService);
         this.serviceService = serviceService;
     }
 
@@ -69,6 +74,18 @@ public class ServiceController {
         } catch (Exception e) {
             response.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @Override
+    @PostMapping("/{serviceId}/images")
+    @PreAuthorize(PrePermissionEvaluator.SERVICE_OWNER)
+    public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("serviceId") Long serviceId,
+            @RequestBody List<ImageDTO> images, Principal principal) {
+        try {
+            return _addImages(serviceId, images);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
         }
     }
 }

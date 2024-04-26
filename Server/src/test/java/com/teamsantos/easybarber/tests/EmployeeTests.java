@@ -231,4 +231,65 @@ public class EmployeeTests {
         assert _images.equals(images);
 
     }
+
+    @Test
+    public void addServiceImages() {
+        addServiceImages(true, true);
+    }
+
+    public void addServiceImages(boolean initAuth, boolean initEmployee) {
+        try {
+            new EmployeeTests(mockMvc).createServices(initEmployee);
+            for (Long serviceId : ServiceData.services.stream().map(ServiceDTO::getId).toList()) {
+                String jwt = loginServiceAdmin(serviceId, initAuth);
+                List<ImageDTO> images = ServiceData.serviceImages.get(serviceId);
+                addServiceImageAndCheckIfSaved(images, jwt, serviceId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void deleteServiceImages() {
+        deleteServiceImages(true, true);
+    }
+
+    public void deleteServiceImages(boolean initAuth, boolean initEmployee) {
+        try {
+            addServiceImages(initAuth, initEmployee);
+            for (Long serviceId : ServiceData.services.stream().map(ServiceDTO::getId).toList()) {
+                String jwt = loginServiceAdmin(serviceId, initAuth);
+                List<ImageDTO> images = ServiceData.serviceImages.get(serviceId).subList(0, 1);
+                addServiceImageAndCheckIfSaved(images, jwt, serviceId);
+            }
+            // This is meant to reset the images to the original state for following tests
+            addServiceImages(false, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    private void addServiceImageAndCheckIfSaved(List<ImageDTO> images, String jwt, Long establishmentId) {
+        if (images == null || images.isEmpty()) {
+            return;
+        }
+        ImageUtils imageUtils = new ImageUtils(mockMvc, String.format("/service/%d", establishmentId));
+        imageUtils.saveImages(images, jwt);
+        List<ImageDTO> _images = imageUtils.getImages(jwt);
+        assert _images.equals(images);
+
+    }
+
+    private String loginServiceAdmin(Long id, boolean initEmployee) throws Exception {
+        for (ServiceDTO service : ServiceData.services) {
+            if (service.getId().equals(id)) {
+                return new EmployeeTests(mockMvc).loginById(service.getEmployeeId(), initEmployee);
+            }
+        }
+        return null;
+    }
+
 }

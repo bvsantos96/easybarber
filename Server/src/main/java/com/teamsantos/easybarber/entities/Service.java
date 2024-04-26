@@ -1,6 +1,8 @@
 package com.teamsantos.easybarber.entities;
 
 import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.entities.base.EntityWithImages;
+import com.teamsantos.easybarber.entities.images.ServiceImage;
 import com.teamsantos.easybarber.utils.Utils;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -16,7 +18,7 @@ import java.util.Set;
 @ToString
 @Entity
 @Table(indexes = { @Index(columnList = "service_type_id") })
-public class Service {
+public class Service extends EntityWithImages<Service, ServiceImage> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -61,5 +63,10 @@ public class Service {
     public void update(ServiceDTO serviceDTO) {
         this.name = Utils.setFieldIfNotNullOrEmpty(name, serviceDTO.getName());
         this.description = Utils.setFieldIfNotNullOrEmpty(description, serviceDTO.getDescription());
+    }
+
+    @Override
+    public Service getEntity() {
+        return this;
     }
 }
