@@ -7,6 +7,8 @@ import com.teamsantos.easybarber.repositories.base.ImageRepository;
 import jakarta.transaction.Transactional;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.ArrayList;
@@ -27,9 +29,13 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
         this.modelMapper = modelMapper;
     }
 
+    private void setEntityById(Long entityId) throws NotFoundException {
+        entity = repository.findById(entityId).orElseThrow(NotFoundException::new);
+    }
+
     @Transactional
     public void saveImages(Long entityId, List<ImageDTO> images) throws NotFoundException {
-        entity = repository.findById(entityId).orElseThrow(NotFoundException::new);
+        setEntityById(entityId);
         HashMap<Long, E> toBeDeleted = null;
         List<E> imagesToAdd = new ArrayList<>();
         if (entity.getImages() == null || entity.getImages().isEmpty()) {
@@ -62,5 +68,9 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
         if (!imagesToAdd.isEmpty()) {
             imageRepository.saveAll(imagesToAdd);
         }
+    }
+
+    public Page<ImageDTO> getImages(Long entityId, Pageable pageable) throws NotFoundException{
+        return imageRepository.findByEntityId(entityId, pageable);
     }
 }

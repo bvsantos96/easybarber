@@ -1,10 +1,11 @@
 package com.teamsantos.easybarber.repositories.base;
 
+import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
 import com.teamsantos.easybarber.entities.base.Image;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -20,4 +21,7 @@ public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Ima
     @Modifying
     @Query("DELETE FROM #{#entityName} i WHERE i.entity.id = :id")
     void deleteByEntityId(@Param("id") Long id);
+
+    @Query("SELECT new com.teamsantos.easybarber.DTO.ImageDTO(i.id, i.data) FROM #{#entityName} i WHERE i.entity.id = :entityId")
+	Page<ImageDTO> findByEntityId(Long entityId, Pageable pageable);
 }

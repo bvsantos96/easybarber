@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.DTO;
 
+import lombok.NoArgsConstructor;
 import org.json.JSONObject;
 
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class ImageDTO extends BaseDTO {
     private String data;
 

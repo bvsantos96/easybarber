@@ -244,14 +244,44 @@ public class EstablishmentTests {
                     .toList()) {
                 String jwt = loginAdminByEstablishmentId(establishmentId);
                 List<ImageDTO> images = EstablishmentData.establishmentImages.get(establishmentId);
-                if (images == null || images.isEmpty()) {
-                    continue;
-                }
-                new ImageUtils(mockMvc, String.format("/establishment/%d", establishmentId)).saveImages(images, jwt);
+                addImageAndCheckIfSaved(images, jwt, establishmentId);
             }
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
+    }
+
+    @Test
+    public void deleteImages() {
+        deleteImages(true, true);
+    }
+
+    public void deleteImages(boolean initAuth, boolean initEmployee) {
+        try {
+            addImages(initAuth, initEmployee);
+            for (Long establishmentId : EstablishmentData.establishments.stream().map(BaseEstablishmentDTO::getId)
+                    .toList()) {
+                String jwt = loginAdminByEstablishmentId(establishmentId);
+                List<ImageDTO> images = EstablishmentData.establishmentImages.get(establishmentId).subList(0, 1);
+                addImageAndCheckIfSaved(images, jwt, establishmentId);
+            }
+            // This is meant to reset the images to the original state for following tests
+            addImages(false, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    private void addImageAndCheckIfSaved(List<ImageDTO> images, String jwt, Long establishmentId) {
+        if (images == null || images.isEmpty()) {
+            return;
+        }
+        ImageUtils imageUtils = new ImageUtils(mockMvc, String.format("/establishment/%d", establishmentId));
+        imageUtils.saveImages(images, jwt);
+        List<ImageDTO> _images = imageUtils.getImages(jwt);
+        assert _images.equals(images);
+
     }
 }
