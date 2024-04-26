@@ -9,6 +9,7 @@ import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import org.modelmapper.TypeToken;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -30,8 +31,10 @@ public abstract class EntityWithImages<T extends EntityWithImages<T, E>, E exten
     public void addImage(ImageDTO image) {
         if (image == null)
             images = new HashSet<>();
-        images.add(Utils.getModelMapper().map(image, new TypeToken<E>() {
-        }.getType()));
+        ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
+        @SuppressWarnings("unchecked")
+        Class<E> imageClass = (Class<E>) genericSuperclass.getActualTypeArguments()[1];
+        images.add(Utils.getModelMapper().map(image, imageClass));
     }
 
     @SuppressWarnings("rawtypes")

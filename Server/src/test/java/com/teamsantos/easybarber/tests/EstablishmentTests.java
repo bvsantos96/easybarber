@@ -240,11 +240,13 @@ public class EstablishmentTests {
     public void addImages(boolean initAuth, boolean initEmployee) {
         try {
             createEstablishments(initAuth, initEmployee);
-            for (Long establishmentId : EmployeeData.employeesEstablishments.values().stream()
-                    .flatMap(Collection::stream)
+            for (Long establishmentId : EstablishmentData.establishments.stream().map(BaseEstablishmentDTO::getId)
                     .toList()) {
                 String jwt = loginAdminByEstablishmentId(establishmentId);
                 List<ImageDTO> images = EstablishmentData.establishmentImages.get(establishmentId);
+                if (images == null || images.isEmpty()) {
+                    continue;
+                }
                 new ImageUtils(mockMvc, String.format("/establishment/%d", establishmentId)).saveImages(images, jwt);
             }
         } catch (Exception e) {
