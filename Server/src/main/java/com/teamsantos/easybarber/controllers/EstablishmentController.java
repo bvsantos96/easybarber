@@ -1,6 +1,8 @@
 package com.teamsantos.easybarber.controllers;
 
 import com.teamsantos.easybarber.DTO.*;
+import com.teamsantos.easybarber.entities.Establishment;
+import com.teamsantos.easybarber.entities.images.EstablishmentImage;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
@@ -19,12 +21,14 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/establishment")
-public class EstablishmentController {
+public class EstablishmentController extends ImageController<Establishment, EstablishmentImage> {
+
     private final EstablishmentService establishmentService;
 
     @Autowired
-    public EstablishmentController(EstablishmentService establishmentService) {
-        this.establishmentService = establishmentService;
+    public EstablishmentController(EstablishmentService service) {
+        super(service);
+        this.establishmentService = service;
     }
 
     @GetMapping("/{id}")
@@ -165,26 +169,11 @@ public class EstablishmentController {
         }
     }
 
+    @Override
     @PostMapping(path = "/{establishmentId}/images", consumes = "application/json")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("establishmentId") Long establishmentId,
             @RequestBody List<ImageDTO> images) {
-        BaseResponseDTO response = new BaseResponseDTO();
-        try {
-            if (images.isEmpty()) {
-                response.setResponseMessage("Images list is empty");
-                return ResponseEntity.badRequest().body(response);
-            }
-            establishmentService.saveImages(establishmentId, images);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (NotFoundException e) {
-            System.err.println(e.getMessage());
-            response.setResponseMessage("Establishment not found");
-            return ResponseEntity.badRequest().body(response);
-        } catch (Exception e) {
-            System.err.println(e.getMessage());
-            response.setResponseMessage(e.getMessage());
-            return ResponseEntity.badRequest().body(response);
-        }
+        return super._addImages(establishmentId, images);
     }
 }

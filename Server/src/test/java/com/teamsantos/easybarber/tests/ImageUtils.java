@@ -2,8 +2,13 @@ package com.teamsantos.easybarber.tests;
 
 import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.utils.CreateTest;
+import com.teamsantos.easybarber.utils.JSONToDTO;
 import com.teamsantos.easybarber.utils.Utils;
+
+import org.json.JSONObject;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 
@@ -36,5 +41,18 @@ public class ImageUtils {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
+    }
+
+    public List<ImageDTO> getImages(String jwt) {
+        try {
+            ResultActions result = CreateTest.get(mockMvc, String.format("%s/images", pathPrefix), jwt);
+            result.andExpect(MockMvcResultMatchers.status().isOk());
+            return JSONToDTO.fromPageDTO(
+                    new JSONObject(result.andReturn().getResponse().getContentAsString()), ImageDTO.class);
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+        return null;
     }
 }
