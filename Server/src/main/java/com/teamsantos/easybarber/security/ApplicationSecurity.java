@@ -24,7 +24,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableMethodSecurity
 public class ApplicationSecurity {
-
     private final UserDetailsServiceImpl userDetailsService;
     private final PrePermissionEvaluator prePermissionEvaluator;
     private final JwtUtils jwtUtils;
