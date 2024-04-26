@@ -2,12 +2,12 @@ package com.teamsantos.easybarber.entities.base;
 
 import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.utils.Utils;
+
 import jakarta.persistence.FetchType;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import lombok.Getter;
-import org.modelmapper.TypeToken;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.HashSet;
@@ -28,21 +28,25 @@ public abstract class EntityWithImages<T extends EntityWithImages<T, E>, E exten
             image.setEntity(getEntity());
     }
 
-    public void addImage(ImageDTO image) {
+    public void addImage(E image) {
         if (image == null)
             images = new HashSet<>();
+        images.add(image);
+    }
+
+    public void addImage(Object image) {
+        if (image == null)
+            images = new HashSet<>();
+        images.add(getImage(image));
+    }
+
+    public E getImage(Object image) {
         ParameterizedType genericSuperclass = (ParameterizedType) getClass().getGenericSuperclass();
         @SuppressWarnings("unchecked")
         Class<E> imageClass = (Class<E>) genericSuperclass.getActualTypeArguments()[1];
-        images.add(Utils.getModelMapper().map(image, imageClass));
-    }
-
-    @SuppressWarnings("rawtypes")
-    public void addImage(Image image) {
-        if (image == null)
-            images = new HashSet<>();
-        images.add(Utils.getModelMapper().map(image, new TypeToken<E>() {
-        }.getType()));
+        E imageEntity = Utils.getModelMapper().map(image, imageClass);
+        imageEntity.setEntity(getEntity());
+        return imageEntity;
     }
 
     public void removeImage(E image) {

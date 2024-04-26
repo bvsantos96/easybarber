@@ -1,19 +1,23 @@
 package com.teamsantos.easybarber.DTO;
 
-import lombok.AllArgsConstructor;
+import org.json.JSONObject;
+
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
 public class ImageDTO extends BaseDTO {
-    private String url;
+    private String data;
 
-    public ImageDTO(Long id, String url) {
+    public ImageDTO(Long id, String data) {
         super(id);
-        this.url = url;
+        this.data = data;
+    }
+
+    public ImageDTO(String data) {
+        JSONObject json = new JSONObject(data);
+        this.setId(json.getLong("id"));
+        this.data = json.getString("data");
     }
 }
