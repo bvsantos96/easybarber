@@ -12,6 +12,7 @@ import com.teamsantos.easybarber.DTO.UserCreateDTO;
 public class EmployeeData {
     public static final List<UserCreateDTO> employees;
     public static final Map<Long, List<Long>> employeesEstablishments;
+    public static final Map<Long, List<Long>> adminEstablishments;
     public static final Map<Long, List<ImageDTO>> employeeImages;
 
     static {
@@ -26,6 +27,12 @@ public class EmployeeData {
         employeesEstablishments.get(2L).add(2L);
         employeesEstablishments.put(3L, new ArrayList<>());
         employeesEstablishments.get(3L).add(2L);
+
+        adminEstablishments = new TreeMap<>();
+        adminEstablishments.put(2L, new ArrayList<>());
+        adminEstablishments.get(2L).add(1L);
+        adminEstablishments.put(3L, new ArrayList<>());
+        adminEstablishments.get(3L).add(2L);
 
         employeeImages = new TreeMap<>();
         employeeImages.put(2L, new ArrayList<>() {

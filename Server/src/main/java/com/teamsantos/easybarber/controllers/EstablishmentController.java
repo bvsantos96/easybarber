@@ -115,6 +115,9 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         try {
             establishmentService.addService(establishmentId, service);
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+        } catch (UnsupportedOperationException e) {
+            responseDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(responseDTO);
         } catch (AlreadyExistsException e) {
             responseDTO.setResponseMessage(e.getMessage());
             return ResponseEntity.status(HttpStatus.FOUND).body(responseDTO);
