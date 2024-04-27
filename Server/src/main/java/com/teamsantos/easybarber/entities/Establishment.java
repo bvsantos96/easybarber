@@ -30,9 +30,9 @@ public class Establishment extends EntityWithImages<Establishment, Establishment
     private String address;
     @Column
     private Point location;
-    @OneToMany(mappedBy = "establishment", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<EstablishmentStaff> staff;
-    @OneToMany(mappedBy = "establishment", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<EstablishmentService> services;
 
     @PrePersist

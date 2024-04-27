@@ -166,14 +166,15 @@ public class EmployeeTests {
     public void listEstablishments() {
         try {
             new EstablishmentTests(mockMvc).testEmployees(true, true);
-            String jwt = login(1, false);
+            Long employeeId = EmployeeData.employees.get(0).getId();
+            String jwt = loginById(employeeId, false);
             ResultActions result = CreateTest.get(mockMvc, "/employee/establishments", jwt);
             JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
             List<BaseEstablishmentDTO> establishments = JSONToDTO.fromPageDTO(response, BaseEstablishmentDTO.class);
             assert establishments != null;
             establishments.sort(Comparator.comparingLong(BaseEstablishmentDTO::getId));
-            List<BaseEstablishmentDTO> establishmentsDTO = Arrays.asList(EstablishmentData.establishments.get(0),
-                    EstablishmentData.establishments.get(1));
+            List<BaseEstablishmentDTO> establishmentsDTO = new ArrayList<>(EstablishmentData.establishments.stream()
+                    .filter(e -> EmployeeData.employeesEstablishments.get(employeeId).contains(e.getId())).toList());
             establishmentsDTO.sort(Comparator.comparingLong(BaseEstablishmentDTO::getId));
             assert establishments.equals(establishmentsDTO);
         } catch (Exception e) {
