@@ -45,9 +45,9 @@ public class EstablishmentTests {
             ResultActions result = CreateTest.post(mockMvc, "/establishment", jwt,
                     EstablishmentData.establishments.get(0).toString());
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
-            for (Long employeeId : EmployeeData.employeesEstablishments.keySet()) {
+            for (Long employeeId : EmployeeData.adminEstablishments.keySet()) {
                 jwt = new EmployeeTests(mockMvc).loginById(employeeId, initEmployee);
-                for (Long establishmentId : EmployeeData.employeesEstablishments.get(employeeId)) {
+                for (Long establishmentId : EmployeeData.adminEstablishments.get(employeeId)) {
                     create("/establishment", jwt, EstablishmentData.establishments.stream()
                             .filter(e -> e.getId().equals(establishmentId)).findFirst()
                             .orElseThrow(NotFoundException::new).toString());
@@ -68,23 +68,26 @@ public class EstablishmentTests {
     public void testEmployees(boolean initAuth, boolean initEmployee) {
         try {
             createEstablishments(initAuth, initEmployee);
-            String jwt = new EmployeeTests(mockMvc).login(false);
+
+            for (Long establishmentId : EstablishmentData.establishments.stream().map(BaseEstablishmentDTO::getId)
+                    .toList()) {
+                String jwt = loginAdminByEstablishmentId(establishmentId);
+                for (Long employeeId : EmployeeData.employeesEstablishments.keySet()) {
+                    if (EmployeeData.employeesEstablishments.get(employeeId).contains(establishmentId)) {
+                        create(String.format("/establishment/%d/employee/%d", establishmentId, employeeId), jwt,
+                                EmployeeData.employees.stream().filter(e -> e.getId().equals(employeeId)).findFirst()
+                                        .orElseThrow(NotFoundException::new).toString());
+                    }
+                }
+            }
+
+            String jwt = new EmployeeTests(mockMvc).loginById(3L, false);
             Long establishmentId = EstablishmentData.establishments.get(0).getId();
-            UserCreateDTO employee = EmployeeData.employees.get(0);
-            create(String.format("/establishment/%d/employee/%d", establishmentId, employee.getId()), jwt,
-                    employee.toString());
-            jwt = new EmployeeTests(mockMvc).login(1, false);
-            employee = EmployeeData.employees.get(1);
+            UserCreateDTO employee = EmployeeData.employees.get(1);
             ResultActions result = CreateTest.post(mockMvc,
                     String.format("/establishment/%d/employee/%d", establishmentId, employee.getId()), jwt,
                     employee.toString());
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
-            jwt = new EmployeeTests(mockMvc).login(false);
-            create(String.format("/establishment/%d/employee/%d", establishmentId, employee.getId()), jwt,
-                    employee.toString());
-            establishmentId = EstablishmentData.establishments.get(1).getId();
-            create(String.format("/establishment/%d/employee/%d", establishmentId, employee.getId()), jwt,
-                    employee.toString());
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
@@ -99,21 +102,21 @@ public class EstablishmentTests {
     public void testService(boolean initAuth, boolean initEmployee) {
         try {
             testEmployees(initAuth, initEmployee);
-            new EmployeeTests(mockMvc).createServices(false);
-            String jwt = new EmployeeTests(mockMvc).login(false);
-            CreateEstablishmentServiceDTO service = EstablishmentData.establishmentServices.get(0);
-            create(String.format("/establishment/%d/service", service.getEstablishmentId()), jwt, service.toString());
-            service = EstablishmentData.establishmentServices.get(1);
-            create(String.format("/establishment/%d/service", service.getEstablishmentId()), jwt, service.toString());
-            jwt = new EmployeeTests(mockMvc).login(1, false);
-            service = EstablishmentData.establishmentServices.get(2);
-            ResultActions result = CreateTest.post(mockMvc, "/establishment/1/service", jwt,
-                    EstablishmentData.establishmentServices.get(2).toString());
+            EmployeeTests employeeTests = new EmployeeTests(mockMvc);
+            employeeTests.createServices(false);
+            String jwt;
+            Long employeeId;
+            for (CreateEstablishmentServiceDTO service : EstablishmentData.establishmentServices) {
+                employeeId = ServiceData.services.stream().filter(e -> e.getId().equals(service.getServiceId()))
+                        .findFirst().orElseThrow(NotFoundException::new).getEmployeeId();
+                jwt = employeeTests.loginById(employeeId, false);
+                create(String.format("/establishment/%d/service", service.getEstablishmentId()), jwt,
+                        service.toString());
+            }
+            jwt = employeeTests.login(1, false);
+            CreateEstablishmentServiceDTO service = EstablishmentData.establishmentServices.get(2);
+            ResultActions result = CreateTest.post(mockMvc, "/establishment/1/service", jwt, service.toString());
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
-            create(String.format("/establishment/%d/service", service.getEstablishmentId()), jwt, service.toString());
-            service = EstablishmentData.establishmentServices.get(3);
-            jwt = new EmployeeTests(mockMvc).login(false);
-            create(String.format("/establishment/%d/service", service.getEstablishmentId()), jwt, service.toString());
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
@@ -224,7 +227,7 @@ public class EstablishmentTests {
 
     public String loginAdminByEstablishmentId(Long id) throws Exception {
         for (Long employeeId : EmployeeData.employeesEstablishments.keySet()) {
-            if (EmployeeData.employeesEstablishments.get(employeeId).contains(id)) {
+            if (EmployeeData.adminEstablishments.get(employeeId).contains(id)) {
                 return new EmployeeTests(mockMvc).loginById(employeeId, false);
             }
         }
