@@ -17,7 +17,6 @@ public class ServiceDTO extends BaseDTO {
     private Long serviceTypeId;
     private String name;
     private String description;
-    private String imageUrl;
     private Double price;
 
     public ServiceDTO(Service service) {
@@ -45,7 +44,6 @@ public class ServiceDTO extends BaseDTO {
         this.serviceTypeId = serviceTypeId;
         this.name = name;
         this.description = description;
-        this.imageUrl = imageUrl;
         this.price = price;
     }
 
@@ -67,7 +65,7 @@ public class ServiceDTO extends BaseDTO {
         }
         return getId().equals(service.getId()) && employeeId.equals(service.getEmployeeId())
                 && serviceTypeId.equals(service.getServiceTypeId()) && name.equals(service.getName())
-                && description.equals(service.getDescription()) && imageUrl.equals(service.getImageUrl())
+                && description.equals(service.getDescription())
                 && Objects.equals(price, service.getPrice());
     }
 
@@ -77,6 +75,6 @@ public class ServiceDTO extends BaseDTO {
         }
         return getId().equals(service.getId()) && employeeId.equals(service.getEmployeeId())
                 && serviceTypeId.equals(service.getServiceTypeId()) && name.equals(service.getName())
-                && description.equals(service.getDescription()) && imageUrl.equals(service.getImageUrl());
+                && description.equals(service.getDescription());
     }
 }

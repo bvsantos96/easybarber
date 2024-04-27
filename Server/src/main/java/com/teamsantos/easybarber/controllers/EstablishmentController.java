@@ -80,8 +80,7 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     @PostMapping("/{establishmentId}/employee/{employeeId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addEmployee(@PathVariable("establishmentId") Long establishmentId,
-            @PathVariable Long employeeId,
-            Principal principal) {
+            @PathVariable Long employeeId) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
             establishmentService.addEmployee(establishmentId, employeeId);
@@ -109,12 +108,12 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     }
 
     @PostMapping("/{establishmentId}/service")
-    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    @PreAuthorize(PrePermissionEvaluator.SERVICE_OWNER_OBJECT)
     public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long establishmentId,
-            @RequestBody CreateEstablishmentServiceDTO serviceDTO) {
+            @RequestBody CreateEstablishmentServiceDTO service) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.addService(establishmentId, serviceDTO);
+            establishmentService.addService(establishmentId, service);
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
         } catch (AlreadyExistsException e) {
             responseDTO.setResponseMessage(e.getMessage());
@@ -126,12 +125,12 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     }
 
     @PutMapping("/{establishmentId}/service")
-    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    @PreAuthorize(PrePermissionEvaluator.SERVICE_OWNER_OBJECT)
     public ResponseEntity<BaseResponseDTO> updateService(@PathVariable Long establishmentId,
-            CreateEstablishmentServiceDTO serviceDTO) {
+            CreateEstablishmentServiceDTO service) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.updateService(establishmentId, serviceDTO);
+            establishmentService.updateService(establishmentId, service);
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());

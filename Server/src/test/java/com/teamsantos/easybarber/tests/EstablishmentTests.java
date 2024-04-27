@@ -82,7 +82,6 @@ public class EstablishmentTests {
             jwt = new EmployeeTests(mockMvc).login(false);
             create(String.format("/establishment/%d/employee/%d", establishmentId, employee.getId()), jwt,
                     employee.toString());
-            jwt = new EmployeeTests(mockMvc).login(1, false);
             establishmentId = EstablishmentData.establishments.get(1).getId();
             create(String.format("/establishment/%d/employee/%d", establishmentId, employee.getId()), jwt,
                     employee.toString());
@@ -175,7 +174,7 @@ public class EstablishmentTests {
     @Test
     public void listClosestEstablishments() {
         try {
-            createEstablishments(true, true);
+            testService(true, true);
             float latitude = 38.671870f,
                     longitude = -9.165940f;
             ResultActions result = CreateTest.get(mockMvc,

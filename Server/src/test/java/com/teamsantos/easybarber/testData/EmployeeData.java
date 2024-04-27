@@ -23,6 +23,7 @@ public class EmployeeData {
         employeesEstablishments = new TreeMap<>();
         employeesEstablishments.put(2L, new ArrayList<>());
         employeesEstablishments.get(2L).add(1L);
+        employeesEstablishments.get(2L).add(2L);
         employeesEstablishments.put(3L, new ArrayList<>());
         employeesEstablishments.get(3L).add(2L);
 

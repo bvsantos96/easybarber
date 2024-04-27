@@ -19,7 +19,7 @@ public class EstablishmentData {
     static {
         establishments = new ArrayList<>() {
             {
-                add(new BaseEstablishmentDTO(1l, "Henrique Barber Shop", "Henrique Barber Shop", 38.62983, -9.19362));
+                add(new BaseEstablishmentDTO(1L, "Henrique Barber Shop", "Henrique Barber Shop", 38.62983, -9.19362));
                 add(new BaseEstablishmentDTO(2L, "Forum Almada Barber Shop", "Forum Almada Barber Shop", 38.65967,
                         -9.17385));
             }

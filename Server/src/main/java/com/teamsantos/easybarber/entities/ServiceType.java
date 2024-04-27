@@ -23,7 +23,7 @@ public class ServiceType {
     private String description;
     @Column
     private String imageUrl;
-    @OneToMany(mappedBy = "serviceType", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Service> service;
 
     @Override
