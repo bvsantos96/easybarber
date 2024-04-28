@@ -130,9 +130,11 @@ public class EstablishmentTests {
             ResultActions result = CreateTest.get(mockMvc, "/establishment/1/employees");
             result.andExpect(MockMvcResultMatchers.status().isOk());
             JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
-            List<EmployeeDTO> establishments = JSONToDTO.fromPageDTO(response, EmployeeDTO.class);
-            establishments.sort(Comparator.comparingLong(EmployeeDTO::getId));
-            assert establishments.equals(EmployeeData.employees);
+            List<EmployeeDTO> _employees = JSONToDTO.fromPageDTO(response, EmployeeDTO.class);
+            _employees.sort(Comparator.comparingLong(EmployeeDTO::getId));
+            List<UserCreateDTO> employees = EmployeeData.employees.stream()
+                    .filter(e -> EmployeeData.employeesEstablishments.get(e.getId()).contains(1L)).toList();
+            assert employees.equals(_employees);
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
@@ -167,7 +169,7 @@ public class EstablishmentTests {
             List<ServiceDTO> serviceDTO = JSONToDTO.fromPageDTO(response, ServiceDTO.class);
             assert serviceDTO != null;
             serviceDTO.sort(Comparator.comparingLong(ServiceDTO::getId));
-            assert !testEstablishmentServices(1L, serviceDTO);
+            assert testEstablishmentServices(1L, serviceDTO);
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
