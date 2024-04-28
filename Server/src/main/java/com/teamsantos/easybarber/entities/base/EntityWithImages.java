@@ -30,13 +30,13 @@ public abstract class EntityWithImages<T extends EntityWithImages<T, E>, E exten
 
     public void addImage(E image) {
         if (image == null)
-            images = new HashSet<>();
+            return;
         images.add(image);
     }
 
     public void addImage(Object image) {
         if (image == null)
-            images = new HashSet<>();
+            return;
         images.add(getImage(image));
     }
 
@@ -50,16 +50,26 @@ public abstract class EntityWithImages<T extends EntityWithImages<T, E>, E exten
     }
 
     public void removeImage(E image) {
+        if (images == null)
+            return;
         getImages().remove(image);
     }
 
     public void setImages(Set<E> images) {
+        if (images == null)
+            return;
+        if (this.images == null)
+            this.images = new HashSet<>();
         for (final E image : images)
             image.setEntity(getEntity());
         this.images = images;
     }
 
     public void setImages(List<ImageDTO> images) {
+        if (images == null)
+            return;
+        if (this.images == null)
+            this.images = new HashSet<>();
         for (final ImageDTO image : images)
             addImage(image);
     }

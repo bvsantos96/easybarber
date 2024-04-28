@@ -10,6 +10,8 @@ import org.locationtech.jts.geom.Point;
 @AllArgsConstructor
 public class EstablishmentDTO extends BaseEstablishmentDTO {
     private double distance;
+    private Long nVotes;
+    private Long sumVotes;
 
     public EstablishmentDTO() {
         super();
@@ -27,6 +29,20 @@ public class EstablishmentDTO extends BaseEstablishmentDTO {
         } catch (Exception e) {
             System.err.println("Error parsing distance from: " + distance.toString());
         }
+    }
+
+    public EstablishmentDTO(Long id, String name, String description, String address, Point location, Long nVotes,
+            Long sumVotes) {
+        super(id, name, description, address, location);
+        this.nVotes = nVotes;
+        this.sumVotes = sumVotes;
+    }
+
+    public EstablishmentDTO(Long id, String name, String description, String address, Point location, Object distance,
+            Long nVotes, Long sumVotes) {
+        this(id, name, description, address, location, distance);
+        this.nVotes = nVotes;
+        this.sumVotes = sumVotes;
     }
 
     @Override

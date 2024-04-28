@@ -6,6 +6,9 @@ import com.teamsantos.easybarber.utils.Utils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
+
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 
@@ -18,6 +21,7 @@ public class BaseEstablishmentDTO extends BaseResponseDTO {
     private String address;
     private double latitude;
     private double longitude;
+    private List<ImageDTO> images;
 
     // Note the serialization of Point class is not implemented by default, to send
     // this in the JSON we would need to implement a custom serializer.

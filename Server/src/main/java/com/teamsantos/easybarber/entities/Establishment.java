@@ -30,6 +30,10 @@ public class Establishment extends EntityWithImages<Establishment, Establishment
     private String address;
     @Column
     private Point location;
+    @Column
+    private Long nVotes;
+    @Column
+    private Long sumVotes;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<EstablishmentStaff> staff;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -37,6 +41,13 @@ public class Establishment extends EntityWithImages<Establishment, Establishment
 
     @PrePersist
     public void prePersist() {
+        super.prePersist();
+        if (nVotes == null) {
+            nVotes = 0L;
+        }
+        if (sumVotes == null) {
+            sumVotes = 0L;
+        }
         if (getServices() == null)
             setServices(new HashSet<>());
         if (getStaff() == null)

@@ -9,7 +9,9 @@ import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.EstablishmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -17,7 +19,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/establishment")
@@ -61,7 +65,7 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         }
     }
 
-    // GET /establishments/list?page=0&size=15&sort=id,desc
+    // GET /establishment/list?page=0&size=15&sort=id,desc
     @GetMapping("/list")
     public ResponseEntity<BasePageDTO<EstablishmentDTO>> listEstablishments(
             @RequestParam(name = "latitude", required = false) Double latitude,
@@ -70,6 +74,16 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         BasePageDTO<EstablishmentDTO> listDTO = new BasePageDTO<>();
         try {
             listDTO.setItems(establishmentService.findByLocation(latitude, longitude, serviceType, pageable));
+            for (EstablishmentDTO establishment : listDTO.getItems()) {
+                Optional<ImageDTO> image = establishmentService
+                        .getImages(establishment.getId(), PageRequest.of(0, 1, Sort.by("id").ascending())).stream()
+                        .findFirst();
+                if (image.isPresent()) {
+                    ArrayList<ImageDTO> images = new ArrayList<>();
+                    images.add(image.get());
+                    establishment.setImages(images);
+                }
+            }
             return ResponseEntity.ok(listDTO);
         } catch (Exception e) {
             listDTO.setResponseMessage(e.getMessage());
