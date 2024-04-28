@@ -23,7 +23,7 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
     Page<BaseEstablishmentDTO> findAllBase(Pageable pageable);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location, :location))
+            SELECT DISTINCT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location, :location))
             FROM Establishment e
             INNER JOIN EstablishmentService es ON :serviceType IS NULL OR es.service.id = :serviceType
             WHERE es.establishment.id = e.id
@@ -32,7 +32,7 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
     Page<EstablishmentDTO> findClosestEstablishments(Point location, Long serviceType, Pageable pageable);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location)
+            SELECT DISTINCT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location)
             FROM Establishment e
             INNER JOIN EstablishmentService es ON :serviceType IS NULL OR es.service.id = :serviceType
             WHERE es.establishment.id = e.id
