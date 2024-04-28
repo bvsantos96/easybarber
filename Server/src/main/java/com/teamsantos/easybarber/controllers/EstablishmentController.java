@@ -108,7 +108,7 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     }
 
     @PostMapping("/{establishmentId}/service")
-    @PreAuthorize(PrePermissionEvaluator.SERVICE_OWNER_OBJECT)
+    @PreAuthorize(PrePermissionEvaluator.SERVICE_OWNER_OBJECT_SERVICE_ID)
     public ResponseEntity<BaseResponseDTO> addService(@PathVariable Long establishmentId,
             @RequestBody CreateEstablishmentServiceDTO service) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
@@ -128,7 +128,7 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     }
 
     @PutMapping("/{establishmentId}/service")
-    @PreAuthorize(PrePermissionEvaluator.SERVICE_OWNER_OBJECT)
+    @PreAuthorize(PrePermissionEvaluator.SERVICE_OWNER_OBJECT_SERVICE_ID)
     public ResponseEntity<BaseResponseDTO> updateService(@PathVariable Long establishmentId,
             CreateEstablishmentServiceDTO service) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();

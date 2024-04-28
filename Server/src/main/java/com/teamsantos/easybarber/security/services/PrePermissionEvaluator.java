@@ -21,6 +21,7 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
     public static final String ESTABLISHMENT_ADMIN = "hasPermission(#establishmentId, '" + _ESTABLISHMENT_ADMIN + "')";
     public static final String _SERVICE_OWNER = "SERVICE_OWNER";
     public static final String SERVICE_OWNER_OBJECT = "hasPermission(#service.getId(), '" + _SERVICE_OWNER + "')";
+    public static final String SERVICE_OWNER_OBJECT_SERVICE_ID = "hasPermission(#service.getServiceId(), '" + _SERVICE_OWNER + "')";
     public static final String SERVICE_OWNER = "hasPermission(#serviceId, '" + _SERVICE_OWNER + "')";
     public static final String IS_EMPLOYEE = "hasRole('EMPLOYEE')";
     public static final String IS_SYSTEM_ADMIN = "hasRole('SYSTEM_ADMIN')";

@@ -37,7 +37,8 @@ public class EstablishmentData {
                 temp = ServiceData.services.get(2);
                 add(new CreateEstablishmentServiceDTO(3L, temp.getId(), establishments.get(1).getId(), temp.getPrice(),
                         true));
-                add(new CreateEstablishmentServiceDTO(4L, temp.getId(), establishments.get(0).getId(), temp.getPrice(),
+                temp = ServiceData.services.get(0);
+                add(new CreateEstablishmentServiceDTO(4L, temp.getId(), establishments.get(1).getId(), temp.getPrice(),
                         true));
             }
         };

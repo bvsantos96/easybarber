@@ -126,6 +126,11 @@ public class EmployeeTests {
             jwt = login(1, false);
             result = CreateTest.put(mockMvc, "/employee/service", jwt, ServiceData.serviceUpdate.get(2).toString());
             result.andExpect(MockMvcResultMatchers.status().isOk());
+            for (ServiceDTO service : ServiceData.services) {
+                jwt = loginServiceAdmin(service.getId(), false);
+                result = CreateTest.put(mockMvc, String.format("/employee/service", service.getId()), jwt, service.toString());
+                result.andExpect(MockMvcResultMatchers.status().isOk());
+            }
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());

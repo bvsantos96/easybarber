@@ -26,4 +26,21 @@ public class UserCreateDTO extends BaseDTO {
         this.password = password;
         this.name = name;
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+
+        if (obj == null) {
+            return false;
+        }
+        if (obj instanceof EmployeeDTO) {
+            EmployeeDTO employeeDTO = (EmployeeDTO) obj;
+            return this.countryMobile.equals(employeeDTO.getCountryMobile())
+                    && this.mobile.equals(employeeDTO.getMobile()) && this.name.equals(employeeDTO.getName());
+        }
+        return this.equals(obj);
+    }
 }
