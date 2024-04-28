@@ -19,13 +19,16 @@ async function getLocation(): Promise<void> {
 }
 
 export type BarberInfo = {
-    id: number,
-    name: string,
-    description: string,
-    distance: number,
-    rating: number,
-    nVotes: number,
-    photo: string,
+    id: Long,
+    name: String, 
+    description: String, 
+    address: String, 
+    latitude: Double, 
+    longitude: Double, 
+    distance: Double,
+    nVotes: Long,
+    sumVotes: Long,
+    photos: String[]
 }
 
 export type Appointment = {
@@ -176,7 +179,6 @@ const request = async (url: string, method: string, body: any, successMessage: s
 }
 
 const isValidNumberString = (input: string): boolean => {
-    alert(input)
     const pattern = /^[-+]?\d*\.?\d+$/;
     return pattern.test(input);
 }
@@ -200,6 +202,8 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
     const _countryCode = countryCode.startsWith('+') ? countryCode : `+${countryCode}`;
     if (!isValidNumberString(`${_countryCode}${phone}`))
         return { success: false, message: langs.apiMessages.invalidPhone };
+
+    removeData("token");
 
     const result = await request("login", "POST", { countryMobile: _countryCode, mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed);
 
@@ -227,4 +231,10 @@ export const doRegister = async (countryCode: string, phone: string, password: s
     if (result.success)
         doLogin(countryCode, phone, password);
     return result;
+}
+
+export const doNearBySearch = async (): Promise<BarberInfo[]> => {
+    // get Localtion
+    // get nearByEstablishments -> filtered
+    // Maybe get only the needed to fill screen and then cache a couple more
 }
