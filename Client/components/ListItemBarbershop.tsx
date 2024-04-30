@@ -14,12 +14,12 @@ export default function ListItem({ barber }: { barber: BarberInfo }) {
     return (
         <View style={styles.itemContainer}>
             <Pressable onPress={() => { alert(`Open barber ${barber.name}`); }} style={[styles.container, styles.shadow]}>
-                <Image source={{ uri: barber.photo }} style={styles.imageStyle} />
+                <Image source={{ uri: barber.photos[0]?.url }} style={styles.imageStyle} />
                 <View style={[styles.ratingContainer, mainStyles.shadow]} >
                     <View style={[styles.ratingIconContainer, mainStyles.alignCenter, mainStyles.justifyCenter, mainStyles.shadow]}>
                         <StarIcon style={styles.ratingIcon} width="75%" height="75%" />
                     </View>
-                    <Text style={[styles.ratingText, mainStyles.shadow]}>{barber.rating.toFixed(1)}</Text>
+                    <Text style={[styles.ratingText, mainStyles.shadow]}>{barber.nVotes.toFixed(1)}</Text>
                     <Text style={[styles.numberOfVotes, mainStyles.shadow]}>({barber.nVotes})</Text>
                 </View>
                 <View style={styles.textContainer} >

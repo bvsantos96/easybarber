@@ -25,7 +25,7 @@ public class AuthController {
         try {
             return ResponseEntity.ok(userService.loginUser(userDTO));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
     }
 
