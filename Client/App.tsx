@@ -1,9 +1,10 @@
 import { NavigationContainer, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useCallback, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import { getToken } from './utils/ApiRequest';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -80,6 +81,7 @@ const Router = () => {
     const Tabs = require('./screens/Tabs').default;
     const AccountTypeSelection = require('./screens/AccountTypeSelection').default;
     const SignIn = require('./screens/SignIn').default;
+    const [defaultTab, setDefaultTab] = useState<string>("Tabs");
 
     const Stack = createNativeStackNavigator();
     const [fontsLoaded, fontError] = Font.useFonts({
@@ -90,6 +92,7 @@ const Router = () => {
 
     const onLayoutRootView = useCallback(async () => {
         if (fontsLoaded || fontError) {
+            setDefaultTab(getToken() !== null  ? "Tabs" : "OnBoarding");
             await SplashScreen.hideAsync();
         }
     }, [fontsLoaded, fontError]);
@@ -120,29 +123,29 @@ const Router = () => {
         <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView} >
             <NavigationContainer>
                 <Stack.Navigator
-                    initialRouteName="Sign"
+                    initialRouteName={defaultTab} 
                 >
-                    <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
-                        {props => containerizedComponent(<OnBoarding {...props} />)}
-                    </Stack.Screen>
-                    <Stack.Screen name="AccountTypeSelection" options={{ headerShown: false }} >
-                        {props => containerizedComponent(<AccountTypeSelection {...props} />)}
-                    </Stack.Screen>
-                    <Stack.Screen name="Sign" options={{ headerShown: false, gestureEnabled: false }} >
-                        {props => <SignIn {...props} />}
-                    </Stack.Screen>
-                    <Stack.Screen name="Tabs" options={{ headerShown: false }} >
-                        {props => <Tabs {...props} />}
-                    </Stack.Screen>
-                    <Stack.Screen name="Loading" options={{ headerShown: false }} >
-                        {props => containerizedComponent(<Loading {...props} />)}
-                    </Stack.Screen>
-                    <Stack.Screen name="Test" options={{ headerShown: false, gestureEnabled: false }}>
-                        {_ => containerizedComponent(<View style={{backgroundColor: "red", minHeight: 50, minWidth: 50}}><Text>Test</Text></View>)}
-                    </Stack.Screen>
-                </Stack.Navigator>
-            </NavigationContainer>
-        </GestureHandlerRootView>
+                <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
+                    {props => containerizedComponent(<OnBoarding {...props} />)}
+                </Stack.Screen>
+                <Stack.Screen name="AccountTypeSelection" options={{ headerShown: false }} >
+                    {props => containerizedComponent(<AccountTypeSelection {...props} />)}
+                </Stack.Screen>
+                <Stack.Screen name="Sign" options={{ headerShown: false, gestureEnabled: false }} >
+                    {props => <SignIn {...props} />}
+                </Stack.Screen>
+                <Stack.Screen name="Tabs" options={{ headerShown: false }} >
+                    {props => <Tabs {...props} />}
+                </Stack.Screen>
+                <Stack.Screen name="Loading" options={{ headerShown: false }} >
+                    {props => containerizedComponent(<Loading {...props} />)}
+                </Stack.Screen>
+                <Stack.Screen name="Test" options={{ headerShown: false, gestureEnabled: false }}>
+                    {_ => containerizedComponent(<View style={{ backgroundColor: "red", minHeight: 50, minWidth: 50 }}><Text>Test</Text></View>)}
+                </Stack.Screen>
+            </Stack.Navigator>
+        </NavigationContainer>
+        </GestureHandlerRootView >
     );
 }
 
