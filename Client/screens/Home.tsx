@@ -35,7 +35,6 @@ export default function Home() {
         const fetchBarbers = async () => {
             const barbers = await getBarbersNearMe(barberListPage);
             if (!barbers) return;
-            console.log(barbers);
             setBarberList(prevBarbers => prevBarbers.concat(barbers.content));
             setBarberListPage(barbers);
         }
