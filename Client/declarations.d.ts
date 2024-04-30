@@ -5,3 +5,13 @@ declare module "*.svg" {
   const content: React.FC<SvgProps>;
   export default content;
 }
+
+interface Page<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  currentPage: number;
+  pageSize: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}

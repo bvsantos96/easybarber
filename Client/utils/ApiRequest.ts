@@ -4,31 +4,37 @@ import langs from '../langs/en.json';
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 
-async function getLocation(): Promise<void> {
-    let { status }: PermissionResponse = await requestForegroundPermissionsAsync();
-    if (status !== 'granted') {
-        console.error('Permission to access location was denied');
-        return;
-    }
-
+async function getLocation(): Promise<LocationObject> {
     try {
-        let location: LocationObject = await getCurrentPositionAsync({ accuracy: Accuracy.High });
+        const { status }: PermissionResponse = await requestForegroundPermissionsAsync();
+
+        if (status !== 'granted') {
+            throw new Error('Permission to access location was denied');
+        }
+
+        return await getCurrentPositionAsync({ accuracy: Accuracy.High });
     } catch (error) {
-        console.log(error);
+        console.error('Error getting location:', error);
+        throw error;
     }
 }
 
-export type BarberInfo = {
-    id: Long,
-    name: String, 
-    description: String, 
-    address: String, 
-    latitude: Double, 
-    longitude: Double, 
-    distance: Double,
-    nVotes: Long,
-    sumVotes: Long,
-    photos: String[]
+export interface Image {
+    id: number;
+    url: string;
+}
+
+export interface BarberInfo {
+    id: number;
+    name: string;
+    description: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+    distance: number;
+    nVotes: number;
+    sumVotes: number;
+    photos: Image[];
 }
 
 export type Appointment = {
@@ -39,20 +45,13 @@ export type Appointment = {
     photo: string,
 }
 
-export const getNearByBarbers = async (location: any): Promise<BarberInfo[]> => {
-    return require("../assets/fakeAPI/nearBarbers.json");
-}
-
-export const getBarbersNearMe = async (): Promise<BarberInfo[]> => {
-    return getNearByBarbers(getLocation());
-}
-
 export const getAppointments = async (): Promise<Appointment[]> => {
     return require("../assets/fakeAPI/appointments.json");
 }
 
 import comboboxes from "../assets/fakeAPI/comboboxes.json";
 import { PickerItem } from '../components/Picker';
+import { Pageable, createPageable, parsePage } from './PageHandling';
 
 export const getCategories = async (): Promise<PickerItem[]> => {
     return comboboxes.categories;
@@ -84,9 +83,11 @@ export const getTimes = async ({ from, to }: { from?: string, to?: string }): Pr
     return times;
 }
 
-export type Result = {
+export type Result<T> = {
     success: boolean,
-    message: string
+    message: string,
+    items?: Pageable<T>,
+    data?: any
 }
 
 const storeData = async (key: string, value: string) => {
@@ -118,22 +119,18 @@ const removeData = async (key: string) => {
     }
 }
 
-const hasData = async (key: string): Promise<boolean> => {
-    try {
-        const value = await AsyncStorage.getItem(key);
-        return value !== null;
-    } catch (e) {
-        return false;
-    }
+export const getToken = async (): Promise<string | null> => {
+    return getData("token");
 }
 
-const request = async (url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed): Promise<Result> => {
+const request = async<T>(url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed): Promise<Result<T>> => {
+    console.log("request");
     if (!apiUrl)
         return { success: false, message: langs.apiMessages.failed };
     if (url.startsWith("/"))
         url = url.substring(1);
     let separator = apiUrl.endsWith("/") ? "" : "/";
-    let token = await getData("token");
+    let token = getToken();
 
     console.log(`${apiUrl}${separator}${url}`);
     console.log({
@@ -160,20 +157,24 @@ const request = async (url: string, method: string, body: any, successMessage: s
             body: JSON.stringify(body)
         })
     }).then(async response => {
+        const json = await response.json();
         if (response.status != 200 && response.status != 201) {
-            try {
-                const json = await response.json();
-                if (json.responseMessage)
-                    return { success: false, message: json.responseMessage };
+            if (json !== undefined && json !== null) {
+                try {
+                    if (json.responseMessage)
+                        return { success: false, message: json.responseMessage };
+                    return { success: false, message: errorMessage };
+                } catch (e) {
+                    return { success: false, message: response }
+                }
+            } else
                 return { success: false, message: errorMessage };
-            } catch (e) {
-                return { success: false, message: response }
-            }
-        }
+        } else if (json !== undefined && json !== null)
+            return { success: true, message: successMessage, data: json, items: json.items };
         else
             return { success: true, message: successMessage };
     }).catch(error => {
-        console.log(error);
+        console.error(error);
         return { success: false, message: errorMessage };
     });
 }
@@ -197,7 +198,7 @@ const isValidPassword = (password: string): boolean => {
     return hasMinLength && hasUppercase && hasLowercase && hasDigit;
 }
 
-export const doLogin = async (countryCode: string, phone: string, password: string): Promise<Result> => {
+export const doLogin = async (countryCode: string, phone: string, password: string): Promise<Result<any>> => {
     phone = phone.trim();
     const _countryCode = countryCode.startsWith('+') ? countryCode : `+${countryCode}`;
     if (!isValidNumberString(`${_countryCode}${phone}`))
@@ -207,8 +208,6 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
 
     const result = await request("login", "POST", { countryMobile: _countryCode, mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed);
 
-    console.log(result)
-
     if (result.success)
         storeData("token", result.message);
     else
@@ -216,7 +215,7 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
     return result;
 }
 
-export const doRegister = async (countryCode: string, phone: string, password: string, confirmPassword: string, name: string): Promise<Result> => {
+export const doRegister = async (countryCode: string, phone: string, password: string, confirmPassword: string, name: string): Promise<Result<any>> => {
     phone = phone.trim();
     if (!isValidNumberString(phone))
         return { success: false, message: langs.apiMessages.invalidPhone };
@@ -233,8 +232,25 @@ export const doRegister = async (countryCode: string, phone: string, password: s
     return result;
 }
 
-export const doNearBySearch = async (): Promise<BarberInfo[]> => {
-    // get Localtion
-    // get nearByEstablishments -> filtered
-    // Maybe get only the needed to fill screen and then cache a couple more
+export const getNearByBarbers = async (page?: Page<BarberInfo>, location?: LocationObject): Promise<Page<BarberInfo> | undefined> => {
+    console.log("getNearByBarbers");
+    if (page === undefined || page === null) {
+        page = createPageable();
+    } else if (!page.hasNextPage) {
+        page.content = [];
+        return page;
+    }
+    console.log(page);
+    location = location ?? await getLocation();
+    console.log(location);
+    if (location === undefined || location === null || location.coords === undefined || location.coords === null) {
+        return page;
+    }
+    const result: Result<BarberInfo> = await request(`establishment/list?latitude=${location.coords.latitude}&longiture=${location.coords.longitude}&page=${page.currentPage}&size=${page.pageSize}`, `GET`, null, langs.apiMessages.success, langs.apiMessages.failed);
+    return result.items ? parsePage(result.items) : page;
 }
+
+export const getBarbersNearMe = async (page: Page<BarberInfo>): Promise<Page<BarberInfo> | undefined> => {
+    return await getNearByBarbers(page);
+}
+

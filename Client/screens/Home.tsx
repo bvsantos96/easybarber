@@ -17,12 +17,14 @@ import ExpandableView from '../components/ExpandableView';
 import Divider from '../components/Divider';
 import Category from '../components/Category';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { createPageable } from '../utils/PageHandling';
 
 export default function Home() {
     const topBarStyles = topBarGetStyles();
     const homeStyles = getHomeGetStyles();
     const filterRef = useRef<FilterRef>(null);
     const [barberList, setBarberList] = useState<BarberInfo[]>([]);
+    const [barberListPage, setBarberListPage] = useState<Page<BarberInfo>>(createPageable());
     const [topCategoriesExpanded, setTopCategoriesExpanded] = useState(true);
     const [nearbyBarbersExpanded, setNearbyBarbersExpanded] = useState(false);
     const [filterExpanded, setFilterExpanded] = useState(false);
@@ -31,8 +33,11 @@ export default function Home() {
 
     useEffect(() => {
         const fetchBarbers = async () => {
-            const barbers: BarberInfo[] = await getBarbersNearMe();
-            setBarberList(barbers);
+            const barbers = await getBarbersNearMe(barberListPage);
+            if (!barbers) return;
+            console.log(barbers);
+            setBarberList(prevBarbers => prevBarbers.concat(barbers.content));
+            setBarberListPage(barbers);
         }
 
         fetchBarbers();
@@ -94,7 +99,7 @@ export default function Home() {
                 <ExpandableView
                     style={homeStyles.nearByBarbersContainer}
                     maxHeight={homeStyles.nearByBarbersContainerHeights.maxHeight - inserts.bottom * 2}
-                    minHeight={homeStyles.nearByBarbersContainerHeights.minHeight - inserts.bottom * 2}
+                    minHeight={homeStyles.nearByBarbersContainerHeights.minHeight - inserts.bottom}
                     expanded={nearbyBarbersExpanded}
                     onExpand={() => { setTopCategoriesExpanded(nearbyBarbersExpanded); setNearbyBarbersExpanded(!nearbyBarbersExpanded) }}
                     title={texts.nearbyBarbers}>
