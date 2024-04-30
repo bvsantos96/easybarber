@@ -21,7 +21,7 @@ async function getLocation(): Promise<LocationObject> {
 
 export interface Image {
     id: number;
-    url: string;
+    data: string;
 }
 
 export interface BarberInfo {
@@ -32,9 +32,9 @@ export interface BarberInfo {
     latitude: number;
     longitude: number;
     distance: number;
-    nVotes: number;
+    nvotes: number;
     sumVotes: number;
-    photos: Image[];
+    images: Image[];
 }
 
 export type Appointment = {
@@ -124,7 +124,6 @@ export const getToken = async (): Promise<string | null> => {
 }
 
 const request = async<T>(url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed): Promise<Result<T>> => {
-    console.log("request");
     if (!apiUrl)
         return { success: false, message: langs.apiMessages.failed };
     if (url.startsWith("/"))
@@ -233,16 +232,13 @@ export const doRegister = async (countryCode: string, phone: string, password: s
 }
 
 export const getNearByBarbers = async (page?: Page<BarberInfo>, location?: LocationObject): Promise<Page<BarberInfo> | undefined> => {
-    console.log("getNearByBarbers");
     if (page === undefined || page === null) {
         page = createPageable();
     } else if (!page.hasNextPage) {
         page.content = [];
         return page;
     }
-    console.log(page);
     location = location ?? await getLocation();
-    console.log(location);
     if (location === undefined || location === null || location.coords === undefined || location.coords === null) {
         return page;
     }
