@@ -12,6 +12,8 @@ import com.teamsantos.easybarber.repositories.*;
 import com.teamsantos.easybarber.repositories.base.ImageRepository;
 import com.teamsantos.easybarber.utils.GeometryUtils;
 import jakarta.transaction.Transactional;
+
+import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
