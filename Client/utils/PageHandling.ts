@@ -26,8 +26,8 @@ export interface Pageable<T> {
     numberOfElements: number;
     empty: boolean;
 }
-    
-export const createPageable = <T>(): Page<T> => {
+
+export const createPageable = <T>(): IPage<T> => {
     return {
         content: [],
         totalPages: 0,
@@ -39,7 +39,7 @@ export const createPageable = <T>(): Page<T> => {
     };
 }
 
-export const parsePage = <T>(page: Pageable<T>): Page<T> => {
+export const parsePage = <T>(page: Pageable<T>): IPage<T> => {
     return {
         content: page.content,
         totalPages: page.totalPages,
@@ -48,5 +48,17 @@ export const parsePage = <T>(page: Pageable<T>): Page<T> => {
         pageSize: page.pageable.pageSize,
         hasNextPage: !page.last,
         hasPreviousPage: !page.first
+    }
+}
+
+export const pageToRequest = (page: IPage<any>): IPage<any> => {
+    return {
+        content: [],
+        totalPages: page.totalPages,
+        totalElements: page.totalElements,
+        currentPage: page.currentPage,
+        pageSize: page.pageSize,
+        hasNextPage: page.hasNextPage,
+        hasPreviousPage: page.hasPreviousPage
     }
 }

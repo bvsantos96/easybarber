@@ -1,17 +1,31 @@
 declare module 'react-native-stars';
 declare module "*.svg" {
-  import React from "react";
-  import { SvgProps } from "react-native-svg";
-  const content: React.FC<SvgProps>;
-  export default content;
+    import React from "react";
+    import { SvgProps } from "react-native-svg";
+    const content: React.FC<SvgProps>;
+    export default content;
 }
 
-interface Page<T> {
-  content: T[];
-  totalPages: number;
-  totalElements: number;
-  currentPage: number;
-  pageSize: number;
-  hasNextPage: boolean;
-  hasPreviousPage: boolean;
+interface IPage<T> {
+    content: T[];
+    totalPages: number;
+    totalElements: number;
+    currentPage: number;
+    pageSize: number;
+    hasNextPage: boolean;
+    hasPreviousPage: boolean;
+}
+
+interface IResult<T> {
+    success: boolean;
+    message: string;
+    items?: IPageable<T>;
+    data?: T;
+}
+
+interface ITimedRequest<T> {
+    page: IPage<T>;
+    lastRequest: number;
+    loadingMore?: boolean;
+    async request(func: (page: IPage<T>) => Promise<IPage<T> | undefined>): Promise<boolean>;
 }

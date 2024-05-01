@@ -3,6 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import langs from '../langs/en.json';
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
+const debugRequests = process.env.EXPO_PUBLIC_DEBUG_REQUESTS;
 
 async function getLocation(): Promise<LocationObject> {
     try {
@@ -51,7 +52,7 @@ export const getAppointments = async (): Promise<Appointment[]> => {
 
 import comboboxes from "../assets/fakeAPI/comboboxes.json";
 import { PickerItem } from '../components/Picker';
-import { Pageable, createPageable, parsePage } from './PageHandling';
+import { createPageable, parsePage } from './PageHandling';
 
 export const getCategories = async (): Promise<PickerItem[]> => {
     return comboboxes.categories;
@@ -81,13 +82,6 @@ export const getTimes = async ({ from, to }: { from?: string, to?: string }): Pr
     }
 
     return times;
-}
-
-export type Result<T> = {
-    success: boolean,
-    message: string,
-    items?: Pageable<T>,
-    data?: any
 }
 
 const storeData = async (key: string, value: string) => {
@@ -123,7 +117,7 @@ export const getToken = async (): Promise<string | null> => {
     return getData("token");
 }
 
-const request = async<T>(url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed): Promise<Result<T>> => {
+const request = async<T>(url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed): Promise<IResult<T>> => {
     if (!apiUrl)
         return { success: false, message: langs.apiMessages.failed };
     if (url.startsWith("/"))
@@ -131,18 +125,20 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
     let separator = apiUrl.endsWith("/") ? "" : "/";
     let token = getToken();
 
-    console.log(`${apiUrl}${separator}${url}`);
-    console.log({
-        method: method,
-        ...(method !== "GET" && {
-            mode: 'cors',
-            headers: {
-                'Content-Type': 'application/json',
-                ...(token !== null && token !== undefined && { 'Authorization': `Bearer ${token}` })
-            },
-            body: JSON.stringify(body)
-        })
-    });
+    if (debugRequests) {
+        console.log(`${apiUrl}${separator}${url}`);
+        console.log({
+            method: method,
+            ...(method !== "GET" && {
+                mode: 'cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token !== null && token !== undefined && { 'Authorization': `Bearer ${token}` })
+                },
+                body: JSON.stringify(body)
+            })
+        });
+    }
 
 
     return fetch(`${apiUrl}${separator}${url}`, {
@@ -197,7 +193,7 @@ const isValidPassword = (password: string): boolean => {
     return hasMinLength && hasUppercase && hasLowercase && hasDigit;
 }
 
-export const doLogin = async (countryCode: string, phone: string, password: string): Promise<Result<any>> => {
+export const doLogin = async (countryCode: string, phone: string, password: string): Promise<IResult<any>> => {
     phone = phone.trim();
     const _countryCode = countryCode.startsWith('+') ? countryCode : `+${countryCode}`;
     if (!isValidNumberString(`${_countryCode}${phone}`))
@@ -214,7 +210,7 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
     return result;
 }
 
-export const doRegister = async (countryCode: string, phone: string, password: string, confirmPassword: string, name: string): Promise<Result<any>> => {
+export const doRegister = async (countryCode: string, phone: string, password: string, confirmPassword: string, name: string): Promise<IResult<any>> => {
     phone = phone.trim();
     if (!isValidNumberString(phone))
         return { success: false, message: langs.apiMessages.invalidPhone };
@@ -231,7 +227,7 @@ export const doRegister = async (countryCode: string, phone: string, password: s
     return result;
 }
 
-export const getNearByBarbers = async (page?: Page<BarberInfo>, location?: LocationObject): Promise<Page<BarberInfo> | undefined> => {
+export const getNearByBarbers = async (page?: IPage<BarberInfo>, location?: LocationObject): Promise<IPage<BarberInfo> | undefined> => {
     if (page === undefined || page === null) {
         page = createPageable();
     } else if (!page.hasNextPage) {
@@ -242,11 +238,11 @@ export const getNearByBarbers = async (page?: Page<BarberInfo>, location?: Locat
     if (location === undefined || location === null || location.coords === undefined || location.coords === null) {
         return page;
     }
-    const result: Result<BarberInfo> = await request(`establishment/list?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&page=${page.currentPage}&size=${page.pageSize}`, `GET`, null, langs.apiMessages.success, langs.apiMessages.failed);
+    const result: IResult<BarberInfo> = await request(`establishment/list?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&page=${page.currentPage}&size=${page.pageSize}`, `GET`, null, langs.apiMessages.success, langs.apiMessages.failed);
     return result.items ? parsePage(result.items) : page;
 }
 
-export const getBarbersNearMe = async (page: Page<BarberInfo>): Promise<Page<BarberInfo> | undefined> => {
+export const getBarbersNearMe = async (page: IPage<BarberInfo>): Promise<IPage<BarberInfo> | undefined> => {
     return await getNearByBarbers(page);
 }
 
