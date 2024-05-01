@@ -1,4 +1,4 @@
-import { ScrollView, View } from 'react-native';
+import { FlatList, Text, View } from 'react-native';
 import { useEffect, useRef, useState } from 'react';
 
 import { getStyles as topBarGetStyles } from '../styles/TopBar';
@@ -28,18 +28,31 @@ export default function Home() {
     const [topCategoriesExpanded, setTopCategoriesExpanded] = useState(true);
     const [nearbyBarbersExpanded, setNearbyBarbersExpanded] = useState(false);
     const [filterExpanded, setFilterExpanded] = useState(false);
+    const [loadingMore, setLoadingMore] = useState(false);
     const texts = require("../langs/en.json");
     const inserts = useSafeAreaInsets();
 
-    useEffect(() => {
-        const fetchBarbers = async () => {
+ const loadMoreItems = async () => {
+        if (!barberListPage.hasNextPage || loadingMore) { 
+            return;
+        }
+        setLoadingMore(true); 
+
+        try {
             const barbers = await getBarbersNearMe(barberListPage);
             if (!barbers) return;
+            
             setBarberList(prevBarbers => prevBarbers.concat(barbers.content));
             setBarberListPage(barbers);
+        } catch (error) {
+            console.error('Error loading more items:', error);
+        } finally {
+            setLoadingMore(false); 
         }
+    };
 
-        fetchBarbers();
+    useEffect(() => {
+        loadMoreItems();
     }, []);
 
     const toggleFilter = () => {
@@ -103,13 +116,22 @@ export default function Home() {
                     onExpand={() => { setTopCategoriesExpanded(nearbyBarbersExpanded); setNearbyBarbersExpanded(!nearbyBarbersExpanded) }}
                     title={texts.nearbyBarbers}>
                     <Divider size={10} />
-                    <ScrollView style={homeStyles.homeListContainer}>
-                        {barberList && barberList.map((barber: BarberInfo, idx: number) => {
-                            return (
-                                <ListItem key={idx} barber={barber} />
-                            );
-                        })}
-                    </ScrollView>
+                    <FlatList
+                        data={barberList}
+                        style={homeStyles.homeListContainer}
+                        contentContainerStyle={{paddingBottom: homeStyles.listBottom.paddingBottom}}
+                        renderItem={({ item }) => <ListItem barber={item} />}
+                        keyExtractor={(item) => item.id.toString()}
+                        onEndReached={loadMoreItems}
+                        onEndReachedThreshold={0.1}
+                        ListFooterComponent={() => (
+                            loadingMore && (
+                                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
+                                    <Text>Loading more...</Text>
+                                </View>
+                            )
+                        )}
+                    />
                 </ExpandableView>
             </View>
             <Filter ref={filterRef} />

@@ -23,7 +23,7 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
     Page<BaseEstablishmentDTO> findAllBase(Pageable pageable);
 
     @Query("""
-            SELECT DISTINCT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location, :location), e.nVotes, e.sumVotes)
+            SELECT DISTINCT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location, :location) AS distance, e.nVotes, e.sumVotes)
             FROM Establishment e
             INNER JOIN EstablishmentService es ON :serviceType IS NULL OR es.service.id = :serviceType
             WHERE es.establishment.id = e.id

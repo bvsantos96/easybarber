@@ -33,7 +33,7 @@ export const createPageable = <T>(): Page<T> => {
         totalPages: 0,
         totalElements: 0,
         currentPage: 0,
-        pageSize: 0,
+        pageSize: 10,
         hasNextPage: true,
         hasPreviousPage: false
     };
@@ -44,7 +44,7 @@ export const parsePage = <T>(page: Pageable<T>): Page<T> => {
         content: page.content,
         totalPages: page.totalPages,
         totalElements: page.totalElements,
-        currentPage: page.pageable.pageNumber,
+        currentPage: page.pageable.pageNumber + 1,
         pageSize: page.pageable.pageSize,
         hasNextPage: !page.last,
         hasPreviousPage: !page.first

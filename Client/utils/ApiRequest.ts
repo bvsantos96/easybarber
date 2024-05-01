@@ -242,7 +242,7 @@ export const getNearByBarbers = async (page?: Page<BarberInfo>, location?: Locat
     if (location === undefined || location === null || location.coords === undefined || location.coords === null) {
         return page;
     }
-    const result: Result<BarberInfo> = await request(`establishment/list?latitude=${location.coords.latitude}&longiture=${location.coords.longitude}&page=${page.currentPage}&size=${page.pageSize}`, `GET`, null, langs.apiMessages.success, langs.apiMessages.failed);
+    const result: Result<BarberInfo> = await request(`establishment/list?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&page=${page.currentPage}&size=${page.pageSize}`, `GET`, null, langs.apiMessages.success, langs.apiMessages.failed);
     return result.items ? parsePage(result.items) : page;
 }
 
