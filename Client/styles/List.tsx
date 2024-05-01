@@ -7,7 +7,7 @@ export const getStyles = () => {
         shadow: {
             ...theme.shadow as any,
         },
-        itemContainer:{
+        itemContainer: {
             width: '100%',
             alignItems: 'center',
         },
@@ -24,6 +24,7 @@ export const getStyles = () => {
             left: 0,
             width: 168 * theme.dimensions.absoluteWidth,
             height: 138 * theme.dimensions.absoluteHeight,
+            maxHeight: 138 * theme.dimensions.absoluteHeight,
             borderRadius: 11,
         },
         textContainer: {
@@ -32,7 +33,7 @@ export const getStyles = () => {
             width: 143 * theme.dimensions.absoluteWidth,
         },
         title: {
-            position: 'absolute',
+            position: 'relative',
             top: 14 * theme.dimensions.absoluteHeight,
             color: theme.colors.text.main,
             fontSize: 18,
@@ -40,8 +41,8 @@ export const getStyles = () => {
             fontWeight: '600',
         },
         locationContainer: {
-            position: 'absolute',
-            top: 46 * theme.dimensions.absoluteHeight,
+            position: 'relative',
+            top: 20 * theme.dimensions.absoluteHeight,
             flexDirection: 'row',
             alignItems: 'flex-start',
         },
@@ -62,13 +63,14 @@ export const getStyles = () => {
             marginRight: 5,
         },
         description: {
-            position: 'absolute',
-            top: 69 * theme.dimensions.absoluteHeight,
+            position: 'relative',
+            top: 20 * theme.dimensions.absoluteHeight,
             color: theme.colors.text.lightBlack,
             fontSize: 10,
             fontFamily: 'Poppins',
             fontWeight: '400',
             lineHeight: 18,
+            height: 50 * theme.dimensions.absoluteHeight,
         },
         ratingContainer: {
             position: 'absolute',

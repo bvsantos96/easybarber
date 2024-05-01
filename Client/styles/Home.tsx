@@ -39,5 +39,8 @@ export const getStyles = () => {
             width: "100%",
             alighItems: 'center',
         },
+        listBottom: {
+            paddingBottom: 90 * theme.dimensions.absoluteHeight,
+        },
     })
 };
