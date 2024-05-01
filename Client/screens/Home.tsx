@@ -18,13 +18,13 @@ import Divider from '../components/Divider';
 import Category from '../components/Category';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createPageable } from '../utils/PageHandling';
+import { TimedRequest } from '../utils/TimedRequest';
 
 export default function Home() {
     const topBarStyles = topBarGetStyles();
     const homeStyles = getHomeGetStyles();
     const filterRef = useRef<FilterRef>(null);
-    const [barberList, setBarberList] = useState<BarberInfo[]>([]);
-    const [barberListPage, setBarberListPage] = useState<Page<BarberInfo>>(createPageable());
+    const [barberRequest, setBarberRequest] = useState<ITimedRequest<BarberInfo>>(new TimedRequest(createPageable<BarberInfo>(), 0));
     const [topCategoriesExpanded, setTopCategoriesExpanded] = useState(true);
     const [nearbyBarbersExpanded, setNearbyBarbersExpanded] = useState(false);
     const [filterExpanded, setFilterExpanded] = useState(false);
@@ -32,23 +32,12 @@ export default function Home() {
     const texts = require("../langs/en.json");
     const inserts = useSafeAreaInsets();
 
- const loadMoreItems = async () => {
-        if (!barberListPage.hasNextPage || loadingMore) { 
-            return;
+    const loadMoreItems = async () => {
+        const result = await barberRequest.request(getBarbersNearMe);
+        if (result) {
+            setBarberRequest(new TimedRequest(barberRequest.page, barberRequest.lastRequest));
         }
-        setLoadingMore(true); 
-
-        try {
-            const barbers = await getBarbersNearMe(barberListPage);
-            if (!barbers) return;
-            
-            setBarberList(prevBarbers => prevBarbers.concat(barbers.content));
-            setBarberListPage(barbers);
-        } catch (error) {
-            console.error('Error loading more items:', error);
-        } finally {
-            setLoadingMore(false); 
-        }
+        setLoadingMore(result);
     };
 
     useEffect(() => {
@@ -117,9 +106,9 @@ export default function Home() {
                     title={texts.nearbyBarbers}>
                     <Divider size={10} />
                     <FlatList
-                        data={barberList}
+                        data={barberRequest?.page?.content}
                         style={homeStyles.homeListContainer}
-                        contentContainerStyle={{paddingBottom: homeStyles.listBottom.paddingBottom}}
+                        contentContainerStyle={{ paddingBottom: homeStyles.listBottom.paddingBottom }}
                         renderItem={({ item }) => <ListItem barber={item} />}
                         keyExtractor={(item) => item.id.toString()}
                         onEndReached={loadMoreItems}
