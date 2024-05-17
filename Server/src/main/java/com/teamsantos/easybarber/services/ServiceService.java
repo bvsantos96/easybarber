@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.services;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +33,10 @@ public class ServiceService extends
     private final ModelMapper modelMapper;
 
     @Autowired
-    public ServiceService(ServiceRepository repository, ServiceTypeRepository serviceTypeRepository,
-            UserTypeService userTypeService, EstablishmentServiceRepository establishmentServiceRepository,
+    public ServiceService(ServiceRepository repository,
+            ServiceTypeRepository serviceTypeRepository,
+            UserTypeService userTypeService,
+            EstablishmentServiceRepository establishmentServiceRepository,
             ServiceImageRepository imageRepository,
             ModelMapper modelMapper) {
         super(repository, imageRepository, modelMapper);
@@ -105,6 +108,10 @@ public class ServiceService extends
         }
         return PageDTO.toDTO(modelMapper, serviceRepository.listByServiceTypeId(serviceTypeId, pageable),
                 ServiceDTO.class, pageable);
+    }
 
+    public List<ServiceTypeDTO> listTypes() {
+        return serviceTypeRepository.list().stream().map(e -> modelMapper.map(e, ServiceTypeDTO.class))
+                .toList();
     }
 }

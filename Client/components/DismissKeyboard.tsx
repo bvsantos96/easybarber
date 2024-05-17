@@ -2,19 +2,19 @@ import React from 'react';
 import { TouchableWithoutFeedback, Keyboard, View } from 'react-native';
 
 interface DismissKeyboardProps {
-  children: React.ReactNode;
+    children: React.ReactNode;
 }
 
 const DismissKeyboard: React.FC<DismissKeyboardProps> = ({ children }) => {
-  const handlePress = () => {
-    Keyboard.dismiss();
-  };
+    const handlePress = () => {
+        Keyboard.dismiss();
+    };
 
-  return (
-    <TouchableWithoutFeedback onPress={handlePress}>
-      <View style={{ flex: 1 }}>{children}</View>
-    </TouchableWithoutFeedback>
-  );
+    return (
+        <TouchableWithoutFeedback onPress={handlePress}>
+            <View style={{ flex: 1 }}>{children}</View>
+        </TouchableWithoutFeedback>
+    );
 };
 
 export default DismissKeyboard;

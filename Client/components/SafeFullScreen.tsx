@@ -1,7 +1,7 @@
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../styles/ThemeContext";
 
-export default function SafeFullScreen({ children = <></>  }) {
+export default function SafeFullScreen({ children = <></> }) {
     const theme = useTheme();
     const insets = useSafeAreaInsets();
     return (

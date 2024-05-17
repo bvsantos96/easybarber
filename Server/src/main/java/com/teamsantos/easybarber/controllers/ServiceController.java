@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.controllers;
 
+import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.ImageDTO;
@@ -64,9 +65,22 @@ public class ServiceController extends ImageController<Service, ServiceImage> {
         }
     }
 
+    @GetMapping("/types")
+    public ResponseEntity<BaseListDTO<ServiceTypeDTO>> listTypes() {
+        BaseListDTO<ServiceTypeDTO> response = new BaseListDTO<>();
+        try {
+            response.setItems(serviceService.listTypes());
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
     @GetMapping("/list")
     public ResponseEntity<BasePageDTO<ServiceDTO>> list(
-            @RequestParam(name = "serviceType", required = false) Long serviceType, Pageable pageable) {
+            @RequestParam(name = "serviceType", required = false) Long serviceType,
+            Pageable pageable) {
         BasePageDTO<ServiceDTO> response = new BasePageDTO<>();
         try {
             response.setItems(serviceService.list(serviceType, pageable));

@@ -20,10 +20,10 @@ public class ServiceData {
         try {
             serviceTypes = new ArrayList<>() {
                 {
-                    add(new ServiceTypeDTO(1L, "Haircut", "Simple haircut", "https://google.com"));
-                    add(new ServiceTypeDTO(2L, "Beard", "Simple beard trim", "https://google.com"));
-                    add(new ServiceTypeDTO(3L, "Beard and haircut", "Simple haircut and beard trim",
-                            "https://google.com"));
+                    add(new ServiceTypeDTO(1L, "Haircut", "Simple haircut", "/icons/categories/haircut.svg"));
+                    add(new ServiceTypeDTO(2L, "Spa", "Spa", "/icons/categories/spa.svg"));
+                    add(new ServiceTypeDTO(3L, "Creambath", "Creambath", "/icons/categories/creamBath.svg"));
+                    add(new ServiceTypeDTO(4L, "Massage", "Massage", "/icons/categories/massage.svg"));
                 }
             };
             serviceTypes.sort(Comparator.comparing(ServiceTypeDTO::getId));

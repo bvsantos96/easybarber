@@ -5,20 +5,18 @@ import { getStyles as topBarGetStyles } from '../styles/TopBar';
 import { getStyles as getHomeGetStyles } from '../styles/Home';
 
 import TopBar from '../components/TopBar';
-import { BarberInfo, getBarbersNearMe } from '../utils/ApiRequest';
+import { getBarbersNearMe } from '../utils/ApiRequest';
 import ListItem from '../components/ListItemBarbershop';
 import Filter, { FilterRef } from './Filter';
 
-import BarberIcon from '@assets/icons/haircut.svg';
-import SpaIcon from '@assets/icons/spa.svg';
-import CreamBathIcon from '@assets/icons/creamBath.svg';
-import MassageIcon from '@assets/icons/massage.svg';
 import ExpandableView from '../components/ExpandableView';
 import Divider from '../components/Divider';
 import Category from '../components/Category';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createPageable } from '../utils/PageHandling';
 import { TimedRequest } from '../utils/TimedRequest';
+import { retrieveCategories } from '../storage/ApiLongTermStorage';
+import { SvgUri } from 'react-native-svg';
 
 export default function Home() {
     const topBarStyles = topBarGetStyles();
@@ -31,6 +29,7 @@ export default function Home() {
     const [loadingMore, setLoadingMore] = useState(false);
     const texts = require("../langs/en.json");
     const inserts = useSafeAreaInsets();
+    const [categories, setCategories] = useState<ICategory[]>([]);
 
     const loadMoreItems = async () => {
         const result = await barberRequest.request(getBarbersNearMe);
@@ -40,8 +39,13 @@ export default function Home() {
         setLoadingMore(result);
     };
 
+    const loadCategories = async () => {
+        setCategories(await retrieveCategories());
+    }
+
     useEffect(() => {
         loadMoreItems();
+        loadCategories();
     }, []);
 
     const toggleFilter = () => {
@@ -62,38 +66,18 @@ export default function Home() {
                     title={texts.topCategories}>
                     <Divider size={19} />
                     <View style={homeStyles.topCategoriesList}>
-                        <Category
-                            icon={
-                                <BarberIcon width={topBarStyles.categoryIcon.width}
-                                    height={topBarStyles.categoryIcon.height}
-                                    style={homeStyles.alignCenter} />}
-                            title={texts.haircut}
-                            expanded={topCategoriesExpanded}
-                        />
-                        <Category
-                            icon={
-                                <SpaIcon width={topBarStyles.categoryIcon.width}
-                                    height={topBarStyles.categoryIcon.height}
-                                    style={homeStyles.alignCenter} />}
-                            title={texts.spa}
-                            expanded={topCategoriesExpanded}
-                        />
-                        <Category
-                            icon={
-                                <CreamBathIcon width={topBarStyles.categoryIcon.width}
-                                    height={topBarStyles.categoryIcon.height}
-                                    style={homeStyles.alignCenter} />}
-                            title={texts.creamBath}
-                            expanded={topCategoriesExpanded}
-                        />
-                        <Category
-                            icon={
-                                <MassageIcon width={topBarStyles.categoryIcon.width}
-                                    height={topBarStyles.categoryIcon.height}
-                                    style={homeStyles.alignCenter} />}
-                            title={texts.massage}
-                            expanded={topCategoriesExpanded}
-                        />
+                        {categories && categories.map((category) => (
+                            <Category
+                                key={category.id}
+                                icon={
+                                    <SvgUri width={topBarStyles.categoryIcon.width}
+                                        height={topBarStyles.categoryIcon.height}
+                                        style={homeStyles.alignCenter}
+                                        uri={category.imageURL} />}
+                                title={category.name}
+                                expanded={topCategoriesExpanded}
+                            />
+                        ))}
                     </View>
                     <Divider size={19} />
                 </ExpandableView>

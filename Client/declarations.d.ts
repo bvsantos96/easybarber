@@ -29,3 +29,37 @@ interface ITimedRequest<T> {
     loadingMore?: boolean;
     async request(func: (page: IPage<T>) => Promise<IPage<T> | undefined>): Promise<boolean>;
 }
+
+interface ICategory {
+    id: number;
+    name: string;
+    description: string;
+    imageURL: string;
+}
+
+interface Image {
+    id: number;
+    data: string;
+}
+
+interface BarberInfo {
+    id: number;
+    name: string;
+    description: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+    distance: number;
+    nvotes: number;
+    sumVotes: number;
+    images: Image[];
+}
+
+type Appointment = {
+    id: number,
+    name: string,
+    from: string,
+    to: string,
+    photo: string,
+}
+

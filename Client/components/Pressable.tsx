@@ -3,7 +3,7 @@ import { Pressable as DefaultPressable, StyleProp, ViewStyle } from 'react-nativ
 import { useTheme } from '../styles/ThemeContext';
 
 interface MyPressableProps {
-    style?: StyleProp<ViewStyle>; 
+    style?: StyleProp<ViewStyle>;
     onPress: () => void;
     children: ReactNode | ReactNode[];
     shadow?: boolean;
