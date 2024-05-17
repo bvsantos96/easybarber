@@ -9,25 +9,25 @@ import AppleIcon from '../assets/icons/apple.svg';
 import texts from '../langs/en.json';
 import { useTheme } from '../styles/ThemeContext';
 
-export function GoogleLoginButton({onPress = () => { }}) {
+export function GoogleLoginButton({ onPress = () => { } }) {
     const theme = useTheme();
     const icon = <GoogleIcon
-        width={33 * theme.dimensions.absoluteWidth} 
-        height={33 * theme.dimensions.absoluteHeight} 
+        width={33 * theme.dimensions.absoluteWidth}
+        height={33 * theme.dimensions.absoluteHeight}
     />;
-    return BrandButton(onPress, icon, texts.login.google) ;
+    return BrandButton(onPress, icon, texts.login.google);
 }
 
-export function AppleLoginButton({onPress = () => { }}) {
+export function AppleLoginButton({ onPress = () => { } }) {
     const theme = useTheme();
-    const icon = <AppleIcon 
-        width={33 * theme.dimensions.absoluteWidth} 
-        height={33 * theme.dimensions.absoluteHeight} 
+    const icon = <AppleIcon
+        width={33 * theme.dimensions.absoluteWidth}
+        height={33 * theme.dimensions.absoluteHeight}
     />;
-    return BrandButton(onPress, icon, texts.login.apple) ;
+    return BrandButton(onPress, icon, texts.login.apple);
 }
 
-function BrandButton( onPress = () => { }, icon = <></>, name = "" ) {
+function BrandButton(onPress = () => { }, icon = <></>, name = "") {
     const styles = getStyles();
     return (
         <Pressable style={styles.brandButton} shadow onPress={onPress}>

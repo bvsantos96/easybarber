@@ -8,7 +8,7 @@ export interface PickerItem {
     value: string;
 }
 
-export default function Picker({ 
+export default function Picker({
     style = {},
     placeholder,
     selectedValue = "",

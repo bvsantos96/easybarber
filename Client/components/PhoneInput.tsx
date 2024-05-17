@@ -4,14 +4,14 @@ import CountryPicker, { Country } from 'react-native-country-picker-modal';
 
 interface NationSelectionProps {
     setNation: Dispatch<SetStateAction<Country | null | undefined>>;
-    nation: Country | null | undefined; 
+    nation: Country | null | undefined;
 }
 
 interface PhoneInputProps extends NationSelectionProps {
     setPhone: Dispatch<SetStateAction<string>>;
 }
 
-export default function PhoneInput({ setPhone, setNation, nation}: PhoneInputProps) {
+export default function PhoneInput({ setPhone, setNation, nation }: PhoneInputProps) {
     const texts = require("@lang/en.json");
 
     return (

@@ -14,7 +14,7 @@ export default function Category({ expanded = true, icon = <></>, title = "" }) 
         Animated.timing(
             heightAnim,
             {
-                toValue: expanded ? homeStyles.categoryContainer.height: 0,
+                toValue: expanded ? homeStyles.categoryContainer.height : 0,
                 duration: 300,
                 easing: Easing.ease,
                 useNativeDriver: false,
