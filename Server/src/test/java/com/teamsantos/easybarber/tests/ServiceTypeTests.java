@@ -1,6 +1,5 @@
 package com.teamsantos.easybarber.tests;
 
-import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.testData.ServiceData;
 import com.teamsantos.easybarber.utils.CreateTest;
@@ -40,9 +39,14 @@ public class ServiceTypeTests {
     public void createServiceTypes(boolean init) {
         try {
             String jwt = new EmployeeTests(mockMvc).login(init);
-            create("/service", jwt, ServiceData.serviceTypes.get(0).toString());
-            create("/service", jwt, ServiceData.serviceTypes.get(1).toString());
-            create("/service", jwt, ServiceData.serviceTypes.get(2).toString());
+            ServiceData.serviceTypes.forEach(serviceType -> {
+                try {
+                    create("/service", jwt, serviceType.toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    org.junit.jupiter.api.Assertions.fail(e.getMessage());
+                }
+            });
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());

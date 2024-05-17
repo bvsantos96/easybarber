@@ -1,6 +1,6 @@
 import React from "react";
 import WebView from "react-native-webview";
-import {useWindowDimensions, StyleSheet} from 'react-native';
+import { useWindowDimensions, StyleSheet } from 'react-native';
 import { backgroundColor } from "../styles/Main";
 
 function getHtml() {
@@ -70,9 +70,9 @@ class SVGatorPlayer {
                 return;
             }
             const events = ['reverse', 'pause', 'restart', 'stop', 'end', 'play'];
-            const _map = () => events.forEach(function (event) {
-                player.on(event, function (offset) {
-                    window.ReactNativeWebView.postMessage(JSON.stringify({'event': event, 'offset': offset}));
+            const _map = () => events.forEach(function(event) {
+                player.on(event, function(offset) {
+                    window.ReactNativeWebView.postMessage(JSON.stringify({ 'event': event, 'offset': offset }));
                 });
             });
             if (player.totalTime) {
@@ -108,11 +108,11 @@ class SVGatorPlayer {
         const svgWidth = attributes.width ? attributes.width : viewBox[2] || 100;
         const svgHeight = attributes.height ? attributes.height : viewBox[3] || 100;
         const ratio = svgWidth / svgHeight;
-        return {svgWidth, svgHeight, ratio};
+        return { svgWidth, svgHeight, ratio };
     }
 
     static parseProps(props, html) {
-        let newProps = {...props};
+        let newProps = { ...props };
         if (newProps.hasOwnProperty('height')) {
             if (!newProps.hasOwnProperty('width')) {
                 newProps.width = '100%';
@@ -121,7 +121,7 @@ class SVGatorPlayer {
         }
 
         const attributes = this._parseAttributes(html);
-        const { ratio} = this._getSizes(attributes);
+        const { ratio } = this._getSizes(attributes);
         const window = useWindowDimensions();
 
         if (newProps.hasOwnProperty('width')) {
@@ -164,20 +164,20 @@ class SVGatorPlayer {
         }
         const styles = StyleSheet.create(_styles);
         newProps.injectedJavaScript = this.getInjectCode();
-        delete(newProps.width);
-        delete(newProps.height);
-        return {newProps, styles};
+        delete (newProps.width);
+        delete (newProps.height);
+        return { newProps, styles };
     }
 }
 
 const SVGatorComponent = React.forwardRef((props, ref) => {
     const html = getHtml();
-    const {newProps, styles} = SVGatorPlayer.getWebViewProps(props, html);
+    const { newProps, styles } = SVGatorPlayer.getWebViewProps(props, html);
     return (
         <WebView
             ref={ref}
             {...newProps}
-            source={{html}}
+            source={{ html }}
             containerStyle={styles.container}
             style={styles.style}
         />

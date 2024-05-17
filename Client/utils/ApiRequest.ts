@@ -1,9 +1,12 @@
 import { LocationObject, getCurrentPositionAsync, Accuracy, PermissionResponse, requestForegroundPermissionsAsync } from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import langs from '../langs/en.json';
+import { PickerItem } from '../components/Picker';
+import { createPageable, parsePage } from './PageHandling';
+import { downloadToDevice } from '../storage/StorageUtils';
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-const debugRequests = process.env.EXPO_PUBLIC_DEBUG_REQUESTS;
+const debugRequests = process.env.EXPO_PUBLIC_DEBUG_SERVER_REQUESTS;
 
 async function getLocation(): Promise<LocationObject> {
     try {
@@ -20,42 +23,8 @@ async function getLocation(): Promise<LocationObject> {
     }
 }
 
-export interface Image {
-    id: number;
-    data: string;
-}
-
-export interface BarberInfo {
-    id: number;
-    name: string;
-    description: string;
-    address: string;
-    latitude: number;
-    longitude: number;
-    distance: number;
-    nvotes: number;
-    sumVotes: number;
-    images: Image[];
-}
-
-export type Appointment = {
-    id: number,
-    name: string,
-    from: string,
-    to: string,
-    photo: string,
-}
-
 export const getAppointments = async (): Promise<Appointment[]> => {
     return require("../assets/fakeAPI/appointments.json");
-}
-
-import comboboxes from "../assets/fakeAPI/comboboxes.json";
-import { PickerItem } from '../components/Picker';
-import { createPageable, parsePage } from './PageHandling';
-
-export const getCategories = async (): Promise<PickerItem[]> => {
-    return comboboxes.categories;
 }
 
 export const getTimes = async ({ from, to }: { from?: string, to?: string }): Promise<PickerItem[]> => {
@@ -117,16 +86,25 @@ export const getToken = async (): Promise<string | null> => {
     return getData("token");
 }
 
-const request = async<T>(url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed): Promise<IResult<T>> => {
-    if (!apiUrl)
-        return { success: false, message: langs.apiMessages.failed };
+export const apiUrlMaker = (url: string): string => {
     if (url.startsWith("/"))
         url = url.substring(1);
+    if (!apiUrl) {
+        console.error("API URL is not set");
+        return "";
+    }
     let separator = apiUrl.endsWith("/") ? "" : "/";
+    return `${apiUrl}${separator}${url}`;
+}
+
+const request = async<T>(url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed): Promise<IResult<T>> => {
+    let _url = apiUrlMaker(url);
+    if (_url.length <= 0)
+        return { success: false, message: langs.apiMessages.failed };
     let token = getToken();
 
     if (debugRequests) {
-        console.log(`${apiUrl}${separator}${url}`);
+        console.log(_url);
         console.log({
             method: method,
             ...(method !== "GET" && {
@@ -141,7 +119,7 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
     }
 
 
-    return fetch(`${apiUrl}${separator}${url}`, {
+    return fetch(_url, {
         method: method,
         mode: 'cors',
         ...(method !== "GET" && {
@@ -164,10 +142,19 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
                 }
             } else
                 return { success: false, message: errorMessage };
-        } else if (json !== undefined && json !== null)
-            return { success: true, message: successMessage, data: json, items: json.items };
-        else
-            return { success: true, message: successMessage };
+        } else if (json !== undefined && json !== null) {
+            const _response = {
+                success: true,
+                message: successMessage,
+                ...(json.items ? { items: json.items } : { data: json.data })
+            };
+
+            if (debugRequests) {
+                console.log(_response);
+            }
+            return _response;
+        }
+        return { success: true, message: successMessage };
     }).catch(error => {
         console.error(error);
         return { success: false, message: errorMessage };
@@ -246,3 +233,16 @@ export const getBarbersNearMe = async (page: IPage<BarberInfo>): Promise<IPage<B
     return await getNearByBarbers(page);
 }
 
+export const getCategories = async (): Promise<ICategory[]> => {
+    const response = await request("/service/types", "GET", null, langs.apiMessages.success, langs.apiMessages.failed);
+    if (response.hasOwnProperty("items")) {
+        // TODO: save the retrieve images into device storage and replace the imageUrls with the local paths
+        for (const element of response.items) {
+            if (element.hasOwnProperty("imageURL")) {
+                element.imageURL = await downloadToDevice(element.name, apiUrlMaker(element.imageURL));
+            }
+        }
+        return response.items;
+    }
+    throw new Error(langs.apiMessages.failed);
+}

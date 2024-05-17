@@ -6,8 +6,9 @@ import Stars from 'react-native-stars';
 import { getStyles } from '../styles/Filter';
 import Button from '../components/Button';
 import Picker, { PickerItem } from '../components/Picker';
-import { getCategories, getTimes } from '../utils/ApiRequest';
+import { getTimes } from '../utils/ApiRequest';
 import { useTheme } from '../styles/ThemeContext';
+import { retrieveCategories } from '../storage/ApiLongTermStorage';
 
 
 interface FilterProps { }
@@ -59,8 +60,8 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
 
     useEffect(() => {
         const fetchComboBoxes = async () => {
-            const cats: PickerItem[] = await getCategories();
-            setCategories(cats);
+            const cats: ICategory[] = await retrieveCategories();
+            setCategories(cats.map(cat => ({ label: cat.name, value: cat.id.toString() })));
             const fromTime: PickerItem[] = await getTimes({});
             setFromTimes(fromTime);
             const toTime: PickerItem[] = await getTimes({ from: fromTime[0].value });

@@ -13,16 +13,7 @@ import lombok.Setter;
 public class ServiceTypeDTO extends BaseDTO {
     private String name;
     private String description;
-    private String imageUrl;
-
-    public ServiceType getServiceType() {
-        ServiceType service = new ServiceType();
-        service.setId(getId());
-        service.setName(getName());
-        service.setDescription(getDescription());
-        service.setImageUrl(getImageUrl());
-        return service;
-    }
+    private String imageURL;
 
     public ServiceTypeDTO(Long id, String name, String description) {
         super(id);
@@ -30,11 +21,11 @@ public class ServiceTypeDTO extends BaseDTO {
         this.description = description;
     }
 
-    public ServiceTypeDTO(Long id, String name, String description, String imageUrl) {
+    public ServiceTypeDTO(Long id, String name, String description, String imageURL) {
         super(id);
         this.name = name;
         this.description = description;
-        this.imageUrl = imageUrl;
+        this.imageURL = imageURL;
     }
 
     @Override

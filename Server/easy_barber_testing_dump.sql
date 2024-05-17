@@ -312,10 +312,10 @@ DROP TABLE IF EXISTS `service_type`;
 CREATE TABLE `service_type` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `description` varchar(255) DEFAULT NULL,
-  `image_url` varchar(255) DEFAULT NULL,
+  `imageurl` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -324,7 +324,7 @@ CREATE TABLE `service_type` (
 
 LOCK TABLES `service_type` WRITE;
 /*!40000 ALTER TABLE `service_type` DISABLE KEYS */;
-INSERT INTO `service_type` VALUES (1,'Simple haircut','https://google.com','Haircut'),(2,'Simple beard trim','https://google.com','Beard'),(3,'Simple haircut and beard trim','https://google.com','Beard and haircut');
+INSERT INTO `service_type` VALUES (1,'Simple haircut','/icons/categories/haircut.svg','Haircut'),(2,'Spa','/icons/categories/spa.svg','Spa'),(3,'Creambath','/icons/categories/creamBath.svg','Creambath'),(4,'Massage','/icons/categories/massage.svg','Massage');
 /*!40000 ALTER TABLE `service_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -357,7 +357,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,NULL,2,'+351',NULL,'999999999','+351999999999','Henrique','$argon2id$v=19$m=16384,t=2,p=1$csgGPPJ7A3X4EKyLGDdvIA$2HPN3KsLY5YBBtnUMItPjzj5CBHtx9Y5Pwli7F+KPUk'),(2,NULL,2,'+351',NULL,'900000000','+351900000000','Amigo do Joao','$argon2id$v=19$m=16384,t=2,p=1$kW0CTOpcKI82MxO6OEAaAw$hP6Q+rHMLaGqPW116TtAbQWjVKB1bStEqAVzkOrLoks'),(3,NULL,1,'+351',NULL,'927030780','+351927030780','Bruno Vicente dos Santos','$argon2id$v=19$m=16384,t=2,p=1$R8DrrYzxSFbzaR9q84BDdw$fimRjo1GyqD/5HpYu57Pp55ftvGbNyQDf6LDonYOsks'),(4,NULL,1,'+351',NULL,'962844407','+351962844407','Filipe Santos','$argon2id$v=19$m=16384,t=2,p=1$KygdeaC05CsbLWaVRnBNZw$JgZ/rWZcCDNhLdIU5KdBNnNc6yxWuZS/GzejRryzirU');
+INSERT INTO `user` VALUES (1,NULL,2,'+351',NULL,'999999999','+351999999999','Henrique','$argon2id$v=19$m=16384,t=2,p=1$96DdpWx/zBE5On3QDd9eOQ$izRnQbqyDCj9c5F1u4MSxxXgZiBWrQQYtk0ctqqglS4'),(2,NULL,2,'+351',NULL,'900000000','+351900000000','Amigo do Joao','$argon2id$v=19$m=16384,t=2,p=1$S0eLj45P6j2Rn/sPPc969g$NCoUSWNuIMQYhkRwszr+h6pzAam9k4vYWrqESIL3Xik'),(3,NULL,1,'+351',NULL,'927030780','+351927030780','Bruno Vicente dos Santos','$argon2id$v=19$m=16384,t=2,p=1$+xvL6t6IQb9Jxm52qDLOLQ$RnmrAKhvaAJXVUQ7yuiUtCDyEajqM4nvhWdZ4kIesTQ'),(4,NULL,1,'+351',NULL,'962844407','+351962844407','Filipe Santos','$argon2id$v=19$m=16384,t=2,p=1$LuigtRiAKXBhZVRbKx77HQ$/o3iDiTvmvLkW7yeH9vqE4/1XGOVPL66sODm6vJg2F4');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -394,4 +394,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-04-29  1:48:36
+-- Dump completed on 2024-05-12 16:17:31

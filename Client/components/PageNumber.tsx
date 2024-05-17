@@ -6,9 +6,9 @@ export default function PageNumber({ selected = false }) {
     const theme = useTheme();
     return (
         selected ? (
-            <TabIcon width={ 18 * theme.dimensions.absoluteWidth} height={ 6 * theme.dimensions.absoluteWidth} style={{marginHorizontal: 3 * theme.dimensions.absoluteWidth}} />
+            <TabIcon width={18 * theme.dimensions.absoluteWidth} height={6 * theme.dimensions.absoluteWidth} style={{ marginHorizontal: 3 * theme.dimensions.absoluteWidth }} />
         ) : (
-            <InactiveTabIcon width={ 18 * theme.dimensions.absoluteWidth} height={ 6 * theme.dimensions.absoluteWidth} style={{marginHorizontal: 3 * theme.dimensions.absoluteWidth}} />
+            <InactiveTabIcon width={18 * theme.dimensions.absoluteWidth} height={6 * theme.dimensions.absoluteWidth} style={{ marginHorizontal: 3 * theme.dimensions.absoluteWidth }} />
         )
     );
 }

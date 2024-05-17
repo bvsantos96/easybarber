@@ -55,7 +55,9 @@ public class ApplicationSecurity {
                                 "/establishment/list",
                                 "/establishment/{id}/services",
                                 "/establishment/{id}/employees",
-                                "/service/list")
+                                "/service/list",
+                                "/service/types",
+                                "/icons/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .cors(AbstractHttpConfigurer::disable)

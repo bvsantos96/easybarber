@@ -1,6 +1,10 @@
 package com.teamsantos.easybarber.repositories;
 
 import com.teamsantos.easybarber.entities.Service;
+import com.teamsantos.easybarber.entities.ServiceType;
+
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -33,9 +37,9 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
     Page<Service> findByServiceTypeId(Long serviceTypeId, Pageable pageable);
 
     @Query("""
-             SELECT s
-             FROM Service s
-             WHERE :serviceTypeId IS NULL OR s.serviceType.id = :serviceTypeId
+            SELECT s
+            FROM Service s
+            WHERE :serviceTypeId IS NULL OR s.serviceType.id = :serviceTypeId
             """)
     Page<Service> listByServiceTypeId(Long serviceTypeId, Pageable pageable);
 

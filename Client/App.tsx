@@ -1,6 +1,6 @@
 import { NavigationContainer, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -13,6 +13,7 @@ import { ThemeProvider, useTheme } from './styles/ThemeContext';
 import { Animated, View, Text } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import DismissKeyboard from './components/DismissKeyboard';
+import { loadLongTermItems } from './storage/ApiLongTermStorage';
 
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
@@ -81,24 +82,30 @@ const Router = () => {
     const Tabs = require('./screens/Tabs').default;
     const AccountTypeSelection = require('./screens/AccountTypeSelection').default;
     const SignIn = require('./screens/SignIn').default;
+
+    const [isLoading, setIsLoading] = useState(true);
     const [defaultTab, setDefaultTab] = useState<string>("Tabs");
 
     const Stack = createNativeStackNavigator();
-    const [fontsLoaded, fontError] = Font.useFonts({
-        'Mazzard': require('./assets/fonts/mazzard/MazzardM-Regular.otf'),
-        'Poppins': require('./assets/fonts/Poppins/Poppins-Regular.ttf'),
-        'Nunito': require('./assets/fonts/Nunito/Nunito-VariableFont_wght.ttf'),
-    });
 
-    const onLayoutRootView = useCallback(async () => {
-        if (fontsLoaded || fontError) {
-            setDefaultTab(getToken() !== null  ? "Tabs" : "OnBoarding");
+    useEffect(() => {
+        const loadInitialData = async () => {
+            await Font.loadAsync({
+                'Mazzard': require('./assets/fonts/mazzard/MazzardM-Regular.otf'),
+                'Poppins': require('./assets/fonts/Poppins/Poppins-Regular.ttf'),
+                'Nunito': require('./assets/fonts/Nunito/Nunito-VariableFont_wght.ttf'),
+            });
+            await loadLongTermItems();
+            setDefaultTab(getToken() !== null ? "Tabs" : "OnBoarding");
+            setIsLoading(false);
             await SplashScreen.hideAsync();
-        }
-    }, [fontsLoaded, fontError]);
+        };
 
-    if (!fontsLoaded && !fontError) {
-        return null;
+        loadInitialData();
+    }, []);
+
+    if (isLoading) {
+        return null; // or render a loading indicator
     }
 
     const containerizedComponent = (component: JSX.Element) => {
@@ -120,31 +127,31 @@ const Router = () => {
     }
 
     return (
-        <GestureHandlerRootView style={{ flex: 1 }} onLayout={onLayoutRootView} >
+        <GestureHandlerRootView style={{ flex: 1 }} >
             <NavigationContainer>
                 <Stack.Navigator
-                    initialRouteName={defaultTab} 
+                    initialRouteName={defaultTab}
                 >
-                <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
-                    {props => containerizedComponent(<OnBoarding {...props} />)}
-                </Stack.Screen>
-                <Stack.Screen name="AccountTypeSelection" options={{ headerShown: false }} >
-                    {props => containerizedComponent(<AccountTypeSelection {...props} />)}
-                </Stack.Screen>
-                <Stack.Screen name="Sign" options={{ headerShown: false, gestureEnabled: false }} >
-                    {props => <SignIn {...props} />}
-                </Stack.Screen>
-                <Stack.Screen name="Tabs" options={{ headerShown: false }} >
-                    {props => <Tabs {...props} />}
-                </Stack.Screen>
-                <Stack.Screen name="Loading" options={{ headerShown: false }} >
-                    {props => containerizedComponent(<Loading {...props} />)}
-                </Stack.Screen>
-                <Stack.Screen name="Test" options={{ headerShown: false, gestureEnabled: false }}>
-                    {_ => containerizedComponent(<View style={{ backgroundColor: "red", minHeight: 50, minWidth: 50 }}><Text>Test</Text></View>)}
-                </Stack.Screen>
-            </Stack.Navigator>
-        </NavigationContainer>
+                    <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
+                        {props => containerizedComponent(<OnBoarding {...props} />)}
+                    </Stack.Screen>
+                    <Stack.Screen name="AccountTypeSelection" options={{ headerShown: false }} >
+                        {props => containerizedComponent(<AccountTypeSelection {...props} />)}
+                    </Stack.Screen>
+                    <Stack.Screen name="Sign" options={{ headerShown: false, gestureEnabled: false }} >
+                        {props => <SignIn {...props} />}
+                    </Stack.Screen>
+                    <Stack.Screen name="Tabs" options={{ headerShown: false }} >
+                        {props => <Tabs {...props} />}
+                    </Stack.Screen>
+                    <Stack.Screen name="Loading" options={{ headerShown: false }} >
+                        {props => containerizedComponent(<Loading {...props} />)}
+                    </Stack.Screen>
+                    <Stack.Screen name="Test" options={{ headerShown: false, gestureEnabled: false }}>
+                        {_ => containerizedComponent(<View style={{ backgroundColor: "red", minHeight: 50, minWidth: 50 }}><Text>Test</Text></View>)}
+                    </Stack.Screen>
+                </Stack.Navigator>
+            </NavigationContainer>
         </GestureHandlerRootView >
     );
 }
