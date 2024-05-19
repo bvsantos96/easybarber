@@ -1,17 +1,25 @@
 package com.teamsantos.easybarber.DTO;
 
+import java.lang.reflect.Field;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import jakarta.annotation.Nullable;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.lang.reflect.Field;
-
 @Getter
 @Setter
+@Component
 public class BaseDTO {
     @Nullable
     private Long id;
+
+    @Value("${version}")
+    private String version;
 
     public BaseDTO(@Nullable Long id) {
         if (id != null && id.equals(0L))

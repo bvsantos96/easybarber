@@ -19,8 +19,8 @@ public class BaseEstablishmentDTO extends BaseResponseDTO {
     private String name;
     private String description;
     private String address;
-    private double latitude;
-    private double longitude;
+    private Double latitude;
+    private Double longitude;
     private List<ImageDTO> images;
 
     // Note the serialization of Point class is not implemented by default, to send

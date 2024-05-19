@@ -26,18 +26,18 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
             SELECT DISTINCT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location, :location) AS distance, e.nVotes, e.sumVotes)
             FROM Establishment e
             INNER JOIN EstablishmentService es ON :serviceType IS NULL OR es.service.id = :serviceType
-            WHERE es.establishment.id = e.id
+            WHERE es.establishment.id = e.id AND :rating IS NULL OR ( e.nVotes > 0 AND e.sumVotes / e.nVotes >= :rating)
             ORDER BY ST_Distance_Sphere(e.location, :location) ASC
             """)
-    Page<EstablishmentDTO> findClosestEstablishments(Point location, Long serviceType, Pageable pageable);
+    Page<EstablishmentDTO> findClosestEstablishments(Point location, Long serviceType, Double rating, Pageable pageable);
 
     @Query("""
             SELECT DISTINCT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, e.nVotes, e.sumVotes)
             FROM Establishment e
             INNER JOIN EstablishmentService es ON :serviceType IS NULL OR es.service.id = :serviceType
-            WHERE es.establishment.id = e.id
+            WHERE es.establishment.id = e.id AND :rating IS NULL OR (e.nVotes > 0 AND e.sumVotes / e.nVotes >= :rating)
             """)
-    Page<EstablishmentDTO> list(Long serviceType, Pageable pageable);
+    Page<EstablishmentDTO> list(Long serviceType, Double rating, Pageable pageable);
 
     @Query("SELECT es.establishment FROM EstablishmentStaff es WHERE es.employee.id = :employeeId AND (:admin = false OR es.admin = true)")
     Page<Establishment> findEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable);

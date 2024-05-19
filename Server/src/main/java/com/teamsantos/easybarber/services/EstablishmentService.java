@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.services;
 
 import com.teamsantos.easybarber.DTO.*;
+import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.EstablishmentStaff;
@@ -130,14 +131,20 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         }
     }
 
-    public Page<EstablishmentDTO> findByLocation(Double latitude, Double longitude, Long serviceType, Pageable pageable)
+    public Page<EstablishmentDTO> list(EstablishmentFilter filter, Pageable pageable)
             throws ParseException {
-        if (latitude != null && longitude != null) {
+        if (filter.getLatitude() != null && filter.getLongitude() != null) {
+            filter.setLocation(GeometryUtils.parseLocation(filter.getLongitude(), filter.getLatitude()));
             return ((EstablishmentRepository) repository).findClosestEstablishments(
-                    GeometryUtils.parseLocation(latitude, longitude),
-                    serviceType, pageable);
+                    filter.getLocation(),
+                    filter.getServiceType(),
+                    filter.getRating(),
+                    pageable);
         }
-        return ((EstablishmentRepository) repository).list(serviceType, pageable);
+        return ((EstablishmentRepository) repository).list(
+            filter.getServiceType(), 
+            filter.getRating(),
+            pageable);
     }
 
     public Page<ServiceDTO> listServices(Long id, Pageable pageable) {

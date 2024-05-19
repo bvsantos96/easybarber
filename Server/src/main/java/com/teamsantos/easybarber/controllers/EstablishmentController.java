@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.controllers;
 
 import com.teamsantos.easybarber.DTO.*;
+import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.images.EstablishmentImage;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -70,10 +72,21 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     public ResponseEntity<BasePageDTO<EstablishmentDTO>> listEstablishments(
             @RequestParam(name = "latitude", required = false) Double latitude,
             @RequestParam(name = "longitude", required = false) Double longitude,
-            @RequestParam(name = "serviceType", required = false) Long serviceType, Pageable pageable) {
+            @RequestParam(name = "serviceType", required = false) Long serviceType,
+            @RequestParam(name = "rating", required = false) Double rating,
+            @RequestParam(name = "timeFrom", required = false) LocalTime timeFrom,
+            @RequestParam(name = "timeTo", required = false) LocalTime timeTo,
+            Pageable pageable) {
         BasePageDTO<EstablishmentDTO> listDTO = new BasePageDTO<>();
         try {
-            listDTO.setItems(establishmentService.findByLocation(latitude, longitude, serviceType, pageable));
+            EstablishmentFilter filter = new EstablishmentFilter();
+            filter.setLatitude(latitude);
+            filter.setLongitude(longitude);
+            filter.setServiceType(serviceType);
+            filter.setRating(rating);
+            filter.setFrom(timeFrom);
+            filter.setTo(timeTo);
+            listDTO.setItems(establishmentService.list(filter, pageable));
             for (EstablishmentDTO establishment : listDTO.getItems()) {
                 Optional<ImageDTO> image = establishmentService
                         .getImages(establishment.getId(), PageRequest.of(0, 1, Sort.by("id").ascending())).stream()
