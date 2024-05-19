@@ -30,9 +30,9 @@ public class Establishment extends EntityWithImages<Establishment, Establishment
     private String address;
     @Column
     private Point location;
-    @Column
+    @Column(nullable = false, columnDefinition = "SMALLINT DEFAULT 0")
     private Long nVotes;
-    @Column
+    @Column(nullable = false, columnDefinition = "SMALLINT DEFAULT 0")
     private Long sumVotes;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<EstablishmentStaff> staff;

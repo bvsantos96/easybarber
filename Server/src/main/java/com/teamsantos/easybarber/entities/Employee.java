@@ -21,10 +21,10 @@ public class Employee extends EntityWithImages<Employee, EmployeeImage> {
     private Long id;
     @Column
     private String description;
-    @Column(nullable = false, columnDefinition = "DOUBLE DEFAULT 0.0")
-    private double rating;
     @Column(nullable = false, columnDefinition = "SMALLINT DEFAULT 0")
-    private short nRating;
+    private double sumVotes;
+    @Column(nullable = false, columnDefinition = "SMALLINT DEFAULT 0")
+    private short nVotes;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean enabled;
     @OneToOne(fetch = FetchType.LAZY)

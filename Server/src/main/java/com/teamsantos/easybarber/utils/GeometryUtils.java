@@ -15,6 +15,10 @@ public class GeometryUtils {
         return geometry;
     }
 
+    public static Point parseLocation(Double latitude, Double longitude) throws ParseException {
+        return parseLocation(latitude.doubleValue(), longitude.doubleValue());
+    }
+
     public static Point parseLocation(double latitude, double longitude) throws ParseException {
         Geometry geometry = GeometryUtils.wktToGeometry(String.format("POINT (%s %s)", longitude, latitude));
         Point p = (Point) geometry;
