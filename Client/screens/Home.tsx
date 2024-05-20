@@ -17,6 +17,7 @@ import { createPageable } from '../utils/PageHandling';
 import { TimedRequest } from '../utils/TimedRequest';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
 import { SvgUri } from 'react-native-svg';
+import { ITimedRequest } from '../declarations';
 
 export default function Home() {
     const topBarStyles = topBarGetStyles();
@@ -31,26 +32,41 @@ export default function Home() {
     const inserts = useSafeAreaInsets();
     const [categories, setCategories] = useState<ICategory[]>([]);
 
-    const loadMoreItems = async () => {
-        const result = await barberRequest.request(getBarbersNearMe);
+    const _loadMoreItems = () => {
+        setLoadingMore(true);
+    }
+
+    const loadMoreItems = async (req = barberRequest) => {
+        const result = await req.request(getBarbersNearMe);
         if (result) {
-            setBarberRequest(new TimedRequest(barberRequest.page, barberRequest.lastRequest));
+            setBarberRequest(new TimedRequest(req.page, req.lastRequest, req.pathParams));
         }
-        setLoadingMore(result);
+        setLoadingMore(false);
     };
+
+    useEffect(() => {
+        if (loadingMore) {
+            loadMoreItems();
+        }
+    }, [loadingMore]);
 
     const loadCategories = async () => {
         setCategories(await retrieveCategories());
     }
 
     useEffect(() => {
-        loadMoreItems();
+        _loadMoreItems();
         loadCategories();
     }, []);
 
     const toggleFilter = () => {
         setFilterExpanded(!filterExpanded);
         filterRef.current?.handlePresentModalPress();
+    }
+
+    const setFilter = (filter: IFilterRequest) => {
+        let req: ITimedRequest<BarberInfo> = new TimedRequest(createPageable<BarberInfo>(), 0, filter);
+        loadMoreItems(req);
     }
 
     return (
@@ -69,6 +85,7 @@ export default function Home() {
                         {categories && categories.map((category) => (
                             <Category
                                 key={category.id}
+                                id={category.id}
                                 icon={
                                     <SvgUri width={topBarStyles.categoryIcon.width}
                                         height={topBarStyles.categoryIcon.height}
@@ -76,6 +93,7 @@ export default function Home() {
                                         uri={category.imageURL} />}
                                 title={category.name}
                                 expanded={topCategoriesExpanded}
+                                select={setFilter}
                             />
                         ))}
                     </View>
@@ -95,7 +113,7 @@ export default function Home() {
                         contentContainerStyle={{ paddingBottom: homeStyles.listBottom.paddingBottom }}
                         renderItem={({ item }) => <ListItem barber={item} />}
                         keyExtractor={(item) => item.id.toString()}
-                        onEndReached={loadMoreItems}
+                        onEndReached={_loadMoreItems}
                         onEndReachedThreshold={0.1}
                         ListFooterComponent={() => (
                             loadingMore && (
@@ -107,7 +125,7 @@ export default function Home() {
                     />
                 </ExpandableView>
             </View>
-            <Filter ref={filterRef} />
+            <Filter ref={filterRef} setFilter={setFilter}/>
         </>
     );
 }

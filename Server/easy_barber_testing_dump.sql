@@ -77,8 +77,8 @@ DROP TABLE IF EXISTS `employee`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `employee` (
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
-  `n_rating` smallint NOT NULL DEFAULT '0',
-  `rating` double NOT NULL DEFAULT '0',
+  `n_votes` smallint NOT NULL DEFAULT '0',
+  `sum_votes` smallint NOT NULL DEFAULT '0',
   `id` bigint NOT NULL AUTO_INCREMENT,
   `description` varchar(255) DEFAULT NULL,
   `user_mobile_information` varchar(255) DEFAULT NULL,
@@ -112,7 +112,7 @@ CREATE TABLE `employee_image` (
   PRIMARY KEY (`id`),
   KEY `FKjqtgbx7ipqgo9j7mqh07tpuyv` (`entity_id`),
   CONSTRAINT `FKjqtgbx7ipqgo9j7mqh07tpuyv` FOREIGN KEY (`entity_id`) REFERENCES `employee` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -121,7 +121,6 @@ CREATE TABLE `employee_image` (
 
 LOCK TABLES `employee_image` WRITE;
 /*!40000 ALTER TABLE `employee_image` DISABLE KEYS */;
-INSERT INTO `employee_image` VALUES (2,1,'https://d2zdpiztbgorvt.cloudfront.net/region1/us/807905/biz_photo/c2da6e290fa84b0392079ca2ae658f-pedro-barber-biz-photo-cf22ec40162841139be5358ccd8193-booksy.jpeg'),(3,3,'https://cdn.camberwellshopping.com.au/wp-content/uploads/2021/07/13111806/The-best-barbers-in-Camberwell.jpg'),(2,5,'https://www.ringmybarber.com/wp-content/uploads/2022/10/qualities-of-a-highly-professional-barber.jpg'),(3,6,'https://www.josephguinbarber.com/uploads/1/2/4/4/124499791/josephguinhome_orig.jpg');
 /*!40000 ALTER TABLE `employee_image` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -134,8 +133,8 @@ DROP TABLE IF EXISTS `establishment`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `establishment` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `n_votes` bigint DEFAULT NULL,
-  `sum_votes` bigint DEFAULT NULL,
+  `n_votes` smallint NOT NULL DEFAULT '0',
+  `sum_votes` smallint NOT NULL DEFAULT '0',
   `address` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
@@ -168,7 +167,7 @@ CREATE TABLE `establishment_image` (
   PRIMARY KEY (`id`),
   KEY `FKdvuqxcsya8hxjtfsqqdtoy618` (`entity_id`),
   CONSTRAINT `FKdvuqxcsya8hxjtfsqqdtoy618` FOREIGN KEY (`entity_id`) REFERENCES `establishment` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -177,7 +176,6 @@ CREATE TABLE `establishment_image` (
 
 LOCK TABLES `establishment_image` WRITE;
 /*!40000 ALTER TABLE `establishment_image` DISABLE KEYS */;
-INSERT INTO `establishment_image` VALUES (1,1,'https://us-en-cdn.square.ncms.io/content/uploads/2022/10/BlackCat3.jpg.jpeg'),(2,3,'https://img.freepik.com/premium-vector/barbershop-logo-barber-shop-logo-vector-template_664675-709.jpg'),(1,5,'https://assets-global.website-files.com/644a9d9ce529ef8812f82a28/647fb85c69e95444243ef9bd_Henley%27s%20Gentlemen%27s%20Grooming%20-%20Barbershop%20and%20Mens%20Grooming.webp'),(2,6,'https://images.squarespace-cdn.com/content/v1/6499eadde1c0a02a7d1be4ac/66036202-71d4-465f-b189-75fd80017d66/110A2577.jpg');
 /*!40000 ALTER TABLE `establishment_image` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -289,7 +287,7 @@ CREATE TABLE `service_image` (
   PRIMARY KEY (`id`),
   KEY `FKaig970fq9p87bl3ee87fotd1x` (`entity_id`),
   CONSTRAINT `FKaig970fq9p87bl3ee87fotd1x` FOREIGN KEY (`entity_id`) REFERENCES `service` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -298,7 +296,6 @@ CREATE TABLE `service_image` (
 
 LOCK TABLES `service_image` WRITE;
 /*!40000 ALTER TABLE `service_image` DISABLE KEYS */;
-INSERT INTO `service_image` VALUES (1,1,'https://cdn-fnknc.nitrocdn.com/jwqHRGAzpUgGskUSHlppNQzwuXgXIKwg/assets/images/optimized/rev-99e07b0/www.fashionbeans.com/wp-content/uploads/2023/08/smartcutzbarbers_manwithnumber2andskinfadehaircut-696x445.jpg'),(2,4,'https://i.ytimg.com/vi/KBKAIdtRinc/maxresdefault.jpg'),(3,7,'https://cdn11.bigcommerce.com/s-h7l2pcerei/product_images/uploaded_images/trimming-beard.jpg'),(1,10,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg6C-koP0XN8yAeszXhRukicFHhQnSkhVQUrQABvhnKQ&s'),(1,11,'https://i.pinimg.com/736x/09/25/9d/09259d4ab3cbf58d8d09312d4c1816b8.jpg'),(2,12,'https://i.ytimg.com/vi/V4aG7_zsyrg/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCQSDIXessxdD6pYgn5Wr5uI2AGcA'),(2,13,'https://cdn.thebeardclub.com/articles/Trim_Your_Beard_2_3202ea96-9f43-43af-bc17-81955f6ddabc_1920x.jpg?ixlib=imgixjs-4.0.1'),(3,14,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOfIzEg-rxJJg7GqAE9vsPYE9NaduGYpFsh0NDOR8DGw&s'),(3,15,'https://cdn.shopify.com/s/files/1/0013/3536/1603/files/Short-And-Shaped.jpg?v=1603734407');
 /*!40000 ALTER TABLE `service_image` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -357,7 +354,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,NULL,2,'+351',NULL,'999999999','+351999999999','Henrique','$argon2id$v=19$m=16384,t=2,p=1$96DdpWx/zBE5On3QDd9eOQ$izRnQbqyDCj9c5F1u4MSxxXgZiBWrQQYtk0ctqqglS4'),(2,NULL,2,'+351',NULL,'900000000','+351900000000','Amigo do Joao','$argon2id$v=19$m=16384,t=2,p=1$S0eLj45P6j2Rn/sPPc969g$NCoUSWNuIMQYhkRwszr+h6pzAam9k4vYWrqESIL3Xik'),(3,NULL,1,'+351',NULL,'927030780','+351927030780','Bruno Vicente dos Santos','$argon2id$v=19$m=16384,t=2,p=1$+xvL6t6IQb9Jxm52qDLOLQ$RnmrAKhvaAJXVUQ7yuiUtCDyEajqM4nvhWdZ4kIesTQ'),(4,NULL,1,'+351',NULL,'962844407','+351962844407','Filipe Santos','$argon2id$v=19$m=16384,t=2,p=1$LuigtRiAKXBhZVRbKx77HQ$/o3iDiTvmvLkW7yeH9vqE4/1XGOVPL66sODm6vJg2F4');
+INSERT INTO `user` VALUES (1,NULL,1,'+351',NULL,'927030780','+351927030780','Bruno Santos','$argon2id$v=19$m=16384,t=2,p=1$N02kiP5csTBO5Zut0CFRGA$er/u9JLNXQtSrfOAI+/UXPpfRYXD1Nri/fsArSw4k3Q'),(2,NULL,2,'+351',NULL,'999999999','+351999999999','Henrique','$argon2id$v=19$m=16384,t=2,p=1$usPz1GCdzi+z7SzpPJ1+tg$FXip5+kKarx0ABzE5P2h8TynhFkWq+mdkWIKUcvMm60'),(3,NULL,2,'+351',NULL,'900000000','+351900000000','Amigo do Joao','$argon2id$v=19$m=16384,t=2,p=1$nNr5RsJk4QCgTireig0ClA$eo19JnAooNE2GdDh+wSNYWA7kwwQRtsHr4fGc2Zr2Tw'),(4,NULL,1,'+351',NULL,'962844407','+351962844407','Filipe Santos','$argon2id$v=19$m=16384,t=2,p=1$Ap71gscl5suigK47YwL6Cg$zfTT+fLW/260ymY1hOibEzSa7oOjAXRCWeIEhxoCpCc');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -394,4 +391,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-05-12 16:17:31
+-- Dump completed on 2024-05-19 19:20:59
