@@ -1,3 +1,5 @@
+import { Timespan } from "react-native/Libraries/Utilities/IPerformanceLogger";
+
 declare module 'react-native-stars';
 declare module "*.svg" {
     import React from "react";
@@ -27,6 +29,7 @@ interface ITimedRequest<T> {
     page: IPage<T>;
     lastRequest: number;
     loadingMore?: boolean;
+    pathParams?: {};
     async request(func: (page: IPage<T>) => Promise<IPage<T> | undefined>): Promise<boolean>;
 }
 
@@ -63,3 +66,10 @@ type Appointment = {
     photo: string,
 }
 
+interface IFilterRequest {
+    serviceType?: string;
+    rating?: number;
+    availableFrom?: Timespan;
+    availableTo?: Timespan;
+    name?: string;
+}

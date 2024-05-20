@@ -214,7 +214,16 @@ export const doRegister = async (countryCode: string, phone: string, password: s
     return result;
 }
 
-export const getNearByBarbers = async (page?: IPage<BarberInfo>, location?: LocationObject): Promise<IPage<BarberInfo> | undefined> => {
+const parsePathParams = (_path: string, params: Record<string, string | number | boolean>): string => {
+    let first = true;
+    for (const key in params) {
+        _path += `${first? '?' : '&'}${key}=${params[key]}`;
+        first = false;
+    }
+    return _path;
+}
+
+export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record<string, string | number | boolean>, location?: LocationObject): Promise<IPage<BarberInfo> | undefined> => {
     if (page === undefined || page === null) {
         page = createPageable();
     } else if (!page.hasNextPage) {
@@ -225,12 +234,22 @@ export const getNearByBarbers = async (page?: IPage<BarberInfo>, location?: Loca
     if (location === undefined || location === null || location.coords === undefined || location.coords === null) {
         return page;
     }
-    const result: IResult<BarberInfo> = await request(`establishment/list?latitude=${location.coords.latitude}&longitude=${location.coords.longitude}&page=${page.currentPage}&size=${page.pageSize}`, `GET`, null, langs.apiMessages.success, langs.apiMessages.failed);
+    if(params === undefined || params === null)
+        params = {};
+    if (!params.hasOwnProperty("latitude"))
+        params["latitude"] = location.coords.latitude;
+    if (!params.hasOwnProperty("longitude"))
+        params["longitude"] = location.coords.longitude;
+    if (!params.hasOwnProperty("page"))
+        params["page"] = page.currentPage;
+    if (!params.hasOwnProperty("size"))
+        params["size"] = page.pageSize;
+    const result: IResult<BarberInfo> = await request(parsePathParams("establishment/list", params), `GET`, null, langs.apiMessages.success, langs.apiMessages.failed);
     return result.items ? parsePage(result.items) : page;
-}
 
-export const getBarbersNearMe = async (page: IPage<BarberInfo>): Promise<IPage<BarberInfo> | undefined> => {
-    return await getNearByBarbers(page);
+}
+export const getBarbersNearMe = async (page: IPage<BarberInfo>, params?: Record<string, string | number | boolean> ): Promise<IPage<BarberInfo> | undefined> => {
+    return await getNearByBarbers(page, params);
 }
 
 export const getCategories = async (): Promise<ICategory[]> => {

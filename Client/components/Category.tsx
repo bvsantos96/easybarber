@@ -5,7 +5,21 @@ import { getStyles as topBarGetStyles } from "../styles/TopBar";
 import { getStyles as homeGetStyles } from "../styles/Home";
 import { useEffect, useState } from "react";
 
-export default function Category({ expanded = true, icon = <></>, title = "" }) {
+interface CategoryProps {
+    id: number;
+    expanded?: boolean;
+    icon?: React.ReactNode;
+    title?: string;
+    select?: (filter: IFilterRequest) => void;
+}
+
+export default function Category({
+    id,
+    expanded = true,
+    icon = <></>,
+    title = "",
+    select = (filter: IFilterRequest) => { }
+}: CategoryProps) {
     const topBarStyles = topBarGetStyles();
     const homeStyles = homeGetStyles();
     const [heightAnim] = useState(new Animated.Value(expanded ? homeStyles.categoryContainer.height : 0));
@@ -26,7 +40,10 @@ export default function Category({ expanded = true, icon = <></>, title = "" }) 
 
     return (
         <Animated.View style={{ height: heightAnim }}>
-            <Pressable onPress={() => { }}>
+            <Pressable onPress={() => {
+                let filter: IFilterRequest = { serviceType: id };
+                select(filter);
+            }}>
                 <View style={topBarStyles.categoryIconContainer}>
                     {icon}
                 </View>

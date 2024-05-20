@@ -134,7 +134,7 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     public Page<EstablishmentDTO> list(EstablishmentFilter filter, Pageable pageable)
             throws ParseException {
         if (filter.getLatitude() != null && filter.getLongitude() != null) {
-            filter.setLocation(GeometryUtils.parseLocation(filter.getLongitude(), filter.getLatitude()));
+            filter.setLocation(GeometryUtils.parseLocation(filter.getLatitude(), filter.getLongitude()));
             return ((EstablishmentRepository) repository).findClosestEstablishments(
                     filter.getLocation(),
                     filter.getServiceType(),

@@ -2,11 +2,13 @@ export class TimedRequest<T> implements ITimedRequest<T> {
     page: IPage<T>;
     lastRequest: number;
     loadingMore?: boolean | undefined;
+    pathParams?: {};
 
-    constructor(page: IPage<T>, lastRequest: number) {
+    constructor(page: IPage<T>, lastRequest: number, pathParams?: {}) {
         this.page = page;
         this.lastRequest = lastRequest;
         this.loadingMore = false;
+        this.pathParams = pathParams;
     }
 
     pageToRequest(): IPage<T> {
@@ -31,13 +33,13 @@ export class TimedRequest<T> implements ITimedRequest<T> {
         this.page.hasPreviousPage = page.hasPreviousPage;
     }
 
-    async request(func: (page: IPage<T>) => Promise<IPage<T> | undefined>): Promise<boolean> {
+    async request(func: (page: IPage<T>, params: Record<string, string | number | boolean> | undefined) => Promise<IPage<T> | undefined>): Promise<boolean> {
         if (!this.page.hasNextPage || this.loadingMore || Date.now() - this.lastRequest < 5000) {
             return false;
         }
         try {
             this.loadingMore = true;
-            const result = await func(this.pageToRequest());
+            const result = await func(this.pageToRequest(), this.pathParams);
             this.loadingMore = false;
             if (!result || !result.content || result.content.length === 0) {
                 this.lastRequest = Date.now();
