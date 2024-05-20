@@ -11,13 +11,15 @@ import { useTheme } from '../styles/ThemeContext';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
 
 
-interface FilterProps { }
+interface FilterProps {
+    setFilter: (filter: IFilterRequest) => void;
+}
 
 export interface FilterRef {
     handlePresentModalPress: () => void;
 }
 
-const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
+const Filter = forwardRef<FilterRef, FilterProps>(({ setFilter }, ref) => {
     const styles = getStyles();
     const theme = useTheme();
     const [categories, setCategories] = useState<PickerItem[]>([]);
@@ -26,13 +28,21 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
     const [from, setFrom] = useState('');
     const [to, setTo] = useState('');
     const [category, setCategory] = useState('');
-    const [starsSelected, setStarsSelected] = useState(4);
+    const [starsSelected, setStars] = useState(0);
     const texts = require("@lang/en.json");
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ["70%"], []);
     const handlePresentModalPress = useCallback(() => {
         bottomSheetModalRef.current?.present();
     }, []);
+
+    const setStarsSelected = (value: number) => {
+        if (value === starsSelected && value === 1) {
+            setStars(0);
+            return;
+        }
+        setStars(value);
+    }
 
     useImperativeHandle(
         ref,
@@ -112,6 +122,7 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
                             spacing={10 * theme.dimensions.absoluteWidth}
                             starSize={50 * theme.dimensions.absoluteWidth}
                             count={5}
+                            zero={true}
                             fullStar={require('@assets/icons/star.png')}
                             emplyStar={require('@assets/icons/starEmpty.png')}
                         />
@@ -137,7 +148,28 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ }, ref) => {
                     </View>
                 </View>
                 <View style={styles.applyContainer}>
-                    <Button title={texts.applyFilter} />
+                    <Button onPress={
+                        () => {
+                            let filter: IFilterRequest = {};
+
+                            if (category) {
+                                filter.serviceType = parseInt(category);
+                            }
+
+                            if (starsSelected) {
+                                filter.rating = starsSelected;
+                            }
+
+                            if (from) {
+                                filter.from = from;
+                            }
+
+                            if (to) {
+                                filter.to = to;
+                            }
+                            setFilter(filter);
+                        }
+                    } title={texts.applyFilter} />
                 </View>
             </BottomSheetModal>
         </BottomSheetModalProvider>
