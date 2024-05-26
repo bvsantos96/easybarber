@@ -138,6 +138,7 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
             return ((EstablishmentRepository) repository).findClosestEstablishments(
                     filter.getLocation(),
                     filter.getServiceType(),
+                    filter.getPartialName(),
                     filter.getRating(),
                     pageable);
         }
