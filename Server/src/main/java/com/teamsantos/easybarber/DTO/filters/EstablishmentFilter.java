@@ -20,6 +20,7 @@ public class EstablishmentFilter {
     private Double latitude;
     private Double longitude;
     private Point location;
+    private String partialName;
     private Double rating;
     private Long serviceType;
     private LocalTime from;

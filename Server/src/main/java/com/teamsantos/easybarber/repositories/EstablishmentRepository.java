@@ -23,13 +23,15 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
     Page<BaseEstablishmentDTO> findAllBase(Pageable pageable);
 
     @Query("""
-            SELECT DISTINCT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location, :location) AS distance, e.nVotes, e.sumVotes)
-            FROM Establishment e
-            INNER JOIN EstablishmentService es ON :serviceType IS NULL OR es.service.id = :serviceType
-            WHERE es.establishment.id = e.id AND :rating IS NULL OR ( e.nVotes > 0 AND e.sumVotes / e.nVotes >= :rating)
-            ORDER BY ST_Distance_Sphere(e.location, :location) ASC
+                SELECT DISTINCT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location, :location) AS distance, e.nVotes, e.sumVotes)
+                FROM Establishment e
+                INNER JOIN EstablishmentService es ON :serviceType IS NULL OR es.service.id = :serviceType
+                WHERE es.establishment.id = e.id
+                AND (:partialName IS NULL OR lower(e.name) LIKE concat('%', lower(:partialName), '%'))
+                AND (:rating IS NULL OR (e.nVotes > 0 AND e.sumVotes / e.nVotes >= :rating))
+                ORDER BY ST_Distance_Sphere(e.location, :location) ASC
             """)
-    Page<EstablishmentDTO> findClosestEstablishments(Point location, Long serviceType, Double rating, Pageable pageable);
+    Page<EstablishmentDTO> findClosestEstablishments(Point location, Long serviceType, String partialName, Double rating, Pageable pageable);
 
     @Query("""
             SELECT DISTINCT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, e.nVotes, e.sumVotes)

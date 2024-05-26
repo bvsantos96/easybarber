@@ -17,7 +17,7 @@ import { createPageable } from '../utils/PageHandling';
 import { TimedRequest } from '../utils/TimedRequest';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
 import { SvgUri } from 'react-native-svg';
-import { ITimedRequest } from '../declarations';
+import { BarberInfo, ICategory, IFilterRequest, ITimedRequest } from '../declarations';
 
 export default function Home() {
     const topBarStyles = topBarGetStyles();
