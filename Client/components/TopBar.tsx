@@ -17,7 +17,7 @@ interface TopBarProps {
     setName: (partialName: string) => void;
 }
 
-export default function TopBar({ name = "Jane Doe", toggleFilter, setFilter, setName}: TopBarProps) {
+export default function TopBar({ name = "Jane Doe", toggleFilter, setFilter, setName }: TopBarProps) {
     const styles = getStyles();
     const texts = require("../langs/en.json");
     const theme = useTheme();
@@ -34,7 +34,7 @@ export default function TopBar({ name = "Jane Doe", toggleFilter, setFilter, set
                     <ProfileImage />
                 </View>
                 <View style={styles.searchContainer}>
-                    <SearchBar search={()=>setFilter({})} onTextChange={setName} />
+                    <SearchBar search={() => setFilter({})} onTextChange={setName} />
                     <Pressable style={styles.filterView} onPress={toggleFilter}>
                         <FilterIcon width={styles.filter.width} height={styles.filter.height} />
                     </Pressable>

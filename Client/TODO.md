@@ -1,7 +1,7 @@
 # TODO:
 - [x] Add search by name
-- [ ] Remove filter on repressing
-- [ ] Change color if category is pressed
+- [x] Remove filter on repressing
+- [x] Change color if category is pressed
 - [x] Get serviceTypes from API to be used in Top Categories
     - [x] Create a method that saves most pressistent information, this information will only be updated from the API on user request or when API has a version update
     - [ ] API new version will be checked on app start

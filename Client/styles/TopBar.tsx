@@ -162,6 +162,9 @@ export const getStyles = () => {
             justifyContent: 'center',
             backgroundColor: theme.colors.text.black,
         },
+        categorySelected: {
+            backgroundColor: theme.colors.button.border,
+        },
         categoryIcon: {
             width: 25 * theme.dimensions.absoluteWidth,
             height: 25 * theme.dimensions.absoluteHeight,
