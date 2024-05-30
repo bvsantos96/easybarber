@@ -14,40 +14,48 @@ import Pressable from '../components/Pressable';
 
 
 interface FilterProps {
-    resetFilter: () => void;
     filter?: IFilterRequest;
     setFilter: (filter: IFilterRequest) => void;
 }
 
 export interface FilterRef {
+    hide: () => void;
     handlePresentModalPress: () => void;
+    contructNewFilter: (filter?: IFilterRequest) => void;
 }
 
-const Filter = forwardRef<FilterRef, FilterProps>(({ resetFilter, filter, setFilter }, ref) => {
+const Filter = forwardRef<FilterRef, FilterProps>(({ filter, setFilter }, ref) => {
     const styles = getStyles();
     const theme = useTheme();
     const [categories, setCategories] = useState<PickerItem[]>([]);
+    const [from, setFrom] = useState<string>(filter?.from || '');
+    const [to, setTo] = useState<string>(filter?.to || '');
+    const [category, setCategory] = useState<string>(filter?.serviceType || '');
+    const [rating, setRating] = useState<number>(filter?.rating || 0);
     const [fromTimes, setFromTimes] = useState<PickerItem[]>([]);
     const [toTimes, setToTimes] = useState<PickerItem[]>([]);
     const texts = require("@lang/en.json");
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ["70%"], []);
     const handlePresentModalPress = useCallback(() => {
+        console.log('present modal');
         bottomSheetModalRef.current?.present();
     }, []);
 
     const setStarsSelected = (value: number) => {
-        if (value === filter?.rating && value === 1) {
-            setFilter({ ...filter, rating: 0 });
+        if (value === rating && value === 1) {
+            setRating(0);
             return;
         }
-        setFilter({ ...filter, rating: value });
+        setRating(value);
     }
 
     useImperativeHandle(
         ref,
         () => ({
+            hide: () => bottomSheetModalRef.current?.dismiss(),
             handlePresentModalPress,
+            contructNewFilter: constructNewFilter,
         }),
     );
 
@@ -59,12 +67,12 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ resetFilter, filter, setFil
     }), []);
 
     const fromChange = async (value: string) => {
-        setFilter({ ...filter, from: value });
+        setFrom(value);
         setToTimes(await getTimes({ from: value }));
     }
 
     const toChange = async (value: string) => {
-        setFilter({ ...filter, to: value });
+        setTo(value);
         setFromTimes(await getTimes({ to: value }));
     }
 
@@ -80,6 +88,20 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ resetFilter, filter, setFil
 
         fetchComboBoxes();
     }, []);
+
+    const constructNewFilter = (filter?: IFilterRequest) => {
+        setCategory(filter?.serviceType || '');
+        setRating(filter?.rating || 0);
+        setFrom(filter?.from || '');
+        setTo(filter?.to || '');
+    }
+
+    const resetFilter = () => {
+        setCategory('');
+        setRating(0);
+        setFrom('');
+        setTo('');
+    }
 
     return (
         <BottomSheetModalProvider>
@@ -107,19 +129,19 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ resetFilter, filter, setFil
                     <Picker
                         placeholder={texts.category}
                         style={{ viewContainer: styles.picker }}
-                        selectedValue={`${filter?.serviceType || ""}`}
-                        onValueChange={(value) => setFilter({ ...filter, serviceType: value })}
+                        selectedValue={`${category}`}
+                        onValueChange={(value) => setCategory(value)}
                         items={categories} />
                 </View>
                 <View style={styles.ratingTitleContainer}>
                     <Text style={styles.ratingTitle}>{texts.rating}</Text>
-                    <Text style={styles.ratingStars}>{filter?.rating} {texts.stars}</Text>
+                    <Text style={styles.ratingStars}>{rating} {texts.stars}</Text>
                 </View>
                 <View style={styles.starsContainer}>
                     <View style={{ alignItems: 'center' }}>
                         <Stars
                             half={false}
-                            default={filter?.rating}
+                            default={rating}
                             update={setStarsSelected}
                             spacing={10 * theme.dimensions.absoluteWidth}
                             starSize={50 * theme.dimensions.absoluteWidth}
@@ -136,7 +158,7 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ resetFilter, filter, setFil
                         <Picker
                             placeholder={texts.from}
                             style={{ viewContainer: styles.picker }}
-                            selectedValue={filter?.from || ""}
+                            selectedValue={from || ""}
                             onValueChange={fromChange}
                             items={fromTimes} />
                     </View>
@@ -144,7 +166,7 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ resetFilter, filter, setFil
                         <Picker
                             placeholder={texts.to}
                             style={{ viewContainer: styles.picker }}
-                            selectedValue={filter?.to || ''}
+                            selectedValue={to || ''}
                             onValueChange={toChange}
                             items={toTimes} />
                     </View>
@@ -152,6 +174,23 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ resetFilter, filter, setFil
                 <View style={styles.applyContainer}>
                     <Button onPress={
                         () => {
+                            let filter: IFilterRequest = {};
+
+                            if (category) {
+                                filter.serviceType = category;
+                            }
+
+                            if (rating) {
+                                filter.rating = rating;
+                            }
+
+                            if (from) {
+                                filter.from = from;
+                            }
+
+                            if (to) {
+                                filter.to = to;
+                            }
                             setFilter(filter);
                         }
                     } title={texts.applyFilter} />
