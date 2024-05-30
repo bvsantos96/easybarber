@@ -3,14 +3,21 @@ import { View, Text } from 'react-native';
 import ProfileImage from './ProfileImage';
 import SearchBar from './SearchBar';
 import Pressable from './Pressable';
+import { getStyles } from '../styles/TopBar';
+import { useTheme } from '../styles/ThemeContext';
+import { IFilterRequest } from '../declarations';
 
 import FilterIcon from '@assets/icons/filter.svg';
 import BellIcon from '@assets/icons/bell.svg';
 
-import { getStyles } from '../styles/TopBar';
-import { useTheme } from '../styles/ThemeContext';
+interface TopBarProps {
+    name?: string;
+    toggleFilter: () => void;
+    setFilter: (_filter: IFilterRequest) => void;
+    setName: (partialName: string) => void;
+}
 
-export default function TopBar({ name = "Jonh Doe", toggleFilter = () => { } }) {
+export default function TopBar({ name = "Jane Doe", toggleFilter, setFilter, setName}: TopBarProps) {
     const styles = getStyles();
     const texts = require("../langs/en.json");
     const theme = useTheme();
@@ -27,7 +34,7 @@ export default function TopBar({ name = "Jonh Doe", toggleFilter = () => { } }) 
                     <ProfileImage />
                 </View>
                 <View style={styles.searchContainer}>
-                    <SearchBar onTextChange={(e: string) => { console.log(e) }} />
+                    <SearchBar search={()=>setFilter({})} onTextChange={setName} />
                     <Pressable style={styles.filterView} onPress={toggleFilter}>
                         <FilterIcon width={styles.filter.width} height={styles.filter.height} />
                     </Pressable>

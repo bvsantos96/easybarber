@@ -71,5 +71,7 @@ interface IFilterRequest {
     rating?: number;
     availableFrom?: Timespan;
     availableTo?: Timespan;
-    name?: string;
+    partialName?: string;
+    from?: string;
+    to?: string;
 }
