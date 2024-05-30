@@ -64,14 +64,23 @@ export default function Home() {
         filterRef.current?.handlePresentModalPress();
     }
 
-    const setFilter = (filter: IFilterRequest) => {
+    const replaceFilter = (filter: IFilterRequest) => {
+        console.log("Filter: ", JSON.stringify(filter));
         let req: ITimedRequest<BarberInfo> = new TimedRequest(createPageable<BarberInfo>(), 0, filter);
         loadMoreItems(req);
     }
 
+    const setFilter = (_filter: IFilterRequest) => {
+        replaceFilter({ ...barberRequest.pathParams, ..._filter });
+    }
+
+    const setName = (name: string) => {
+        setBarberRequest({ ...barberRequest, pathParams: { ...barberRequest.pathParams, partialName: name } });
+    }
+
     return (
         <>
-            <TopBar toggleFilter={toggleFilter} />
+            <TopBar toggleFilter={toggleFilter} setFilter={setFilter} setName={setName} />
             <View style={topBarStyles.homeContainer}>
                 <Divider size={28.44} color="transparent" />
                 <ExpandableView
@@ -118,14 +127,14 @@ export default function Home() {
                         ListFooterComponent={() => (
                             loadingMore && (
                                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
-                                    <Text>Loading more...</Text>
+                                    <Text>`${texts.loaingMore}`</Text>
                                 </View>
                             )
                         )}
                     />
                 </ExpandableView>
             </View>
-            <Filter ref={filterRef} setFilter={setFilter}/>
+            <Filter ref={filterRef} resetFilter={() => { replaceFilter({}) }} filter={barberRequest.pathParams} setFilter={setFilter} />
         </>
     );
 }

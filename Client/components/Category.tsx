@@ -4,6 +4,7 @@ import Divider from "./Divider";
 import { getStyles as topBarGetStyles } from "../styles/TopBar";
 import { getStyles as homeGetStyles } from "../styles/Home";
 import { useEffect, useState } from "react";
+import { IFilterRequest } from "../declarations";
 
 interface CategoryProps {
     id: number;
@@ -18,7 +19,7 @@ export default function Category({
     expanded = true,
     icon = <></>,
     title = "",
-    select = (filter: IFilterRequest) => { }
+    select = (_filter: IFilterRequest) => { }
 }: CategoryProps) {
     const topBarStyles = topBarGetStyles();
     const homeStyles = homeGetStyles();
@@ -41,7 +42,7 @@ export default function Category({
     return (
         <Animated.View style={{ height: heightAnim }}>
             <Pressable onPress={() => {
-                let filter: IFilterRequest = { serviceType: id };
+                let filter: IFilterRequest = { serviceType: `${id}` };
                 select(filter);
             }}>
                 <View style={topBarStyles.categoryIconContainer}>

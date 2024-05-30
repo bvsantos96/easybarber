@@ -70,22 +70,10 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     // GET /establishment/list?page=0&size=15&sort=id,desc
     @GetMapping("/list")
     public ResponseEntity<BasePageDTO<EstablishmentDTO>> listEstablishments(
-            @RequestParam(name = "latitude", required = false) Double latitude,
-            @RequestParam(name = "longitude", required = false) Double longitude,
-            @RequestParam(name = "serviceType", required = false) Long serviceType,
-            @RequestParam(name = "rating", required = false) Double rating,
-            @RequestParam(name = "timeFrom", required = false) LocalTime timeFrom,
-            @RequestParam(name = "timeTo", required = false) LocalTime timeTo,
+            @ModelAttribute EstablishmentFilter filter,
             Pageable pageable) {
         BasePageDTO<EstablishmentDTO> listDTO = new BasePageDTO<>();
         try {
-            EstablishmentFilter filter = new EstablishmentFilter();
-            filter.setLatitude(latitude);
-            filter.setLongitude(longitude);
-            filter.setServiceType(serviceType);
-            filter.setRating(rating);
-            filter.setFrom(timeFrom);
-            filter.setTo(timeTo);
             listDTO.setItems(establishmentService.list(filter, pageable));
             for (EstablishmentDTO establishment : listDTO.getItems()) {
                 Optional<ImageDTO> image = establishmentService
