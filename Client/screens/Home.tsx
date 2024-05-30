@@ -60,6 +60,7 @@ export default function Home() {
     }, []);
 
     const toggleFilter = () => {
+        filterRef.current?.contructNewFilter(barberRequest.pathParams);
         setFilterExpanded(!filterExpanded);
         filterRef.current?.handlePresentModalPress();
     }
@@ -67,6 +68,7 @@ export default function Home() {
     const replaceFilter = (filter: IFilterRequest) => {
         let req: ITimedRequest<BarberInfo> = new TimedRequest(createPageable<BarberInfo>(), 0, filter);
         loadMoreItems(req);
+        filterRef.current?.hide();
     }
 
     const setFilter = (_filter: IFilterRequest) => {
@@ -140,7 +142,7 @@ export default function Home() {
                     />
                 </ExpandableView>
             </View>
-            <Filter ref={filterRef} resetFilter={() => { replaceFilter({}) }} filter={barberRequest.pathParams} setFilter={setFilter} />
+            <Filter ref={filterRef} filter={barberRequest.pathParams} setFilter={setFilter} />
         </>
     );
 }
