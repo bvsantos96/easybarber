@@ -1,3 +1,5 @@
+import { IPage } from "../declarations";
+
 export interface Pageable<T> {
     content: T[];
     pageable: {

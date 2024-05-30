@@ -4,6 +4,7 @@ import langs from '../langs/en.json';
 import { PickerItem } from '../components/Picker';
 import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
+import { BarberInfo, ICategory, IPage, IResult } from '../declarations';
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 const debugRequests = process.env.EXPO_PUBLIC_DEBUG_SERVER_REQUESTS;
@@ -217,7 +218,9 @@ export const doRegister = async (countryCode: string, phone: string, password: s
 const parsePathParams = (_path: string, params: Record<string, string | number | boolean>): string => {
     let first = true;
     for (const key in params) {
-        _path += `${first? '?' : '&'}${key}=${params[key]}`;
+        if (params[key] === null || params[key] === undefined)
+            continue;
+        _path += `${first ? '?' : '&'}${key}=${params[key]}`;
         first = false;
     }
     return _path;
@@ -234,7 +237,7 @@ export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record
     if (location === undefined || location === null || location.coords === undefined || location.coords === null) {
         return page;
     }
-    if(params === undefined || params === null)
+    if (params === undefined || params === null)
         params = {};
     if (!params.hasOwnProperty("latitude"))
         params["latitude"] = location.coords.latitude;
@@ -248,7 +251,7 @@ export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record
     return result.items ? parsePage(result.items) : page;
 
 }
-export const getBarbersNearMe = async (page: IPage<BarberInfo>, params?: Record<string, string | number | boolean> ): Promise<IPage<BarberInfo> | undefined> => {
+export const getBarbersNearMe = async (page: IPage<BarberInfo>, params?: Record<string, string | number | boolean>): Promise<IPage<BarberInfo> | undefined> => {
     return await getNearByBarbers(page, params);
 }
 

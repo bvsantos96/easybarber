@@ -67,7 +67,7 @@ type Appointment = {
 }
 
 interface IFilterRequest {
-    serviceType?: string;
+    serviceType?: string | null;
     rating?: number;
     availableFrom?: Timespan;
     availableTo?: Timespan;
