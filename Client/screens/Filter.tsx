@@ -9,9 +9,13 @@ import Picker, { PickerItem } from '../components/Picker';
 import { getTimes } from '../utils/ApiRequest';
 import { useTheme } from '../styles/ThemeContext';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
+import { ICategory, IFilterRequest } from '../declarations';
+import Pressable from '../components/Pressable';
 
 
 interface FilterProps {
+    resetFilter: () => void;
+    filter?: IFilterRequest;
     setFilter: (filter: IFilterRequest) => void;
 }
 
@@ -19,16 +23,12 @@ export interface FilterRef {
     handlePresentModalPress: () => void;
 }
 
-const Filter = forwardRef<FilterRef, FilterProps>(({ setFilter }, ref) => {
+const Filter = forwardRef<FilterRef, FilterProps>(({ resetFilter, filter, setFilter }, ref) => {
     const styles = getStyles();
     const theme = useTheme();
     const [categories, setCategories] = useState<PickerItem[]>([]);
     const [fromTimes, setFromTimes] = useState<PickerItem[]>([]);
     const [toTimes, setToTimes] = useState<PickerItem[]>([]);
-    const [from, setFrom] = useState('');
-    const [to, setTo] = useState('');
-    const [category, setCategory] = useState('');
-    const [starsSelected, setStars] = useState(0);
     const texts = require("@lang/en.json");
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ["70%"], []);
@@ -37,11 +37,11 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ setFilter }, ref) => {
     }, []);
 
     const setStarsSelected = (value: number) => {
-        if (value === starsSelected && value === 1) {
-            setStars(0);
+        if (value === filter?.rating && value === 1) {
+            setFilter({ ...filter, rating: 0 });
             return;
         }
-        setStars(value);
+        setFilter({ ...filter, rating: value });
     }
 
     useImperativeHandle(
@@ -59,12 +59,12 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ setFilter }, ref) => {
     }), []);
 
     const fromChange = async (value: string) => {
-        setFrom(value);
+        setFilter({ ...filter, from: value });
         setToTimes(await getTimes({ from: value }));
     }
 
     const toChange = async (value: string) => {
-        setTo(value);
+        setFilter({ ...filter, to: value });
         setFromTimes(await getTimes({ to: value }));
     }
 
@@ -99,25 +99,27 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ setFilter }, ref) => {
                 onChange={() => { }} >
                 <View style={styles.topBarContainer}>
                     <Text style={styles.title}>{texts.findBarber}</Text>
-                    <Text style={styles.clear}>{texts.clear}</Text>
+                    <Pressable onPress={resetFilter}>
+                        <Text style={styles.clear}>{texts.clear}</Text>
+                    </Pressable>
                 </View>
                 <View style={styles.input}>
                     <Picker
                         placeholder={texts.category}
                         style={{ viewContainer: styles.picker }}
-                        selectedValue={category}
-                        onValueChange={setCategory}
+                        selectedValue={`${filter?.serviceType || ""}`}
+                        onValueChange={(value) => setFilter({ ...filter, serviceType: value })}
                         items={categories} />
                 </View>
                 <View style={styles.ratingTitleContainer}>
                     <Text style={styles.ratingTitle}>{texts.rating}</Text>
-                    <Text style={styles.ratingStars}>{starsSelected} {texts.stars}</Text>
+                    <Text style={styles.ratingStars}>{filter?.rating} {texts.stars}</Text>
                 </View>
                 <View style={styles.starsContainer}>
                     <View style={{ alignItems: 'center' }}>
                         <Stars
                             half={false}
-                            default={starsSelected}
+                            default={filter?.rating}
                             update={setStarsSelected}
                             spacing={10 * theme.dimensions.absoluteWidth}
                             starSize={50 * theme.dimensions.absoluteWidth}
@@ -134,7 +136,7 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ setFilter }, ref) => {
                         <Picker
                             placeholder={texts.from}
                             style={{ viewContainer: styles.picker }}
-                            selectedValue={from}
+                            selectedValue={filter?.from || ""}
                             onValueChange={fromChange}
                             items={fromTimes} />
                     </View>
@@ -142,7 +144,7 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ setFilter }, ref) => {
                         <Picker
                             placeholder={texts.to}
                             style={{ viewContainer: styles.picker }}
-                            selectedValue={to}
+                            selectedValue={filter?.to || ''}
                             onValueChange={toChange}
                             items={toTimes} />
                     </View>
@@ -150,23 +152,6 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ setFilter }, ref) => {
                 <View style={styles.applyContainer}>
                     <Button onPress={
                         () => {
-                            let filter: IFilterRequest = {};
-
-                            if (category) {
-                                filter.serviceType = parseInt(category);
-                            }
-
-                            if (starsSelected) {
-                                filter.rating = starsSelected;
-                            }
-
-                            if (from) {
-                                filter.from = from;
-                            }
-
-                            if (to) {
-                                filter.to = to;
-                            }
                             setFilter(filter);
                         }
                     } title={texts.applyFilter} />

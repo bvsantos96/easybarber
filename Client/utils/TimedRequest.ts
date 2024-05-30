@@ -1,3 +1,5 @@
+import { IPage, ITimedRequest } from "../declarations";
+
 export class TimedRequest<T> implements ITimedRequest<T> {
     page: IPage<T>;
     lastRequest: number;
