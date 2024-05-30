@@ -65,7 +65,6 @@ export default function Home() {
     }
 
     const replaceFilter = (filter: IFilterRequest) => {
-        console.log("Filter: ", JSON.stringify(filter));
         let req: ITimedRequest<BarberInfo> = new TimedRequest(createPageable<BarberInfo>(), 0, filter);
         loadMoreItems(req);
     }
@@ -103,6 +102,13 @@ export default function Home() {
                                 title={category.name}
                                 expanded={topCategoriesExpanded}
                                 select={setFilter}
+                                selectedCategory={
+                                    barberRequest.pathParams && typeof barberRequest.pathParams === 'object'
+                                        && 'serviceType' in barberRequest.pathParams
+                                        && typeof barberRequest.pathParams.serviceType === 'string'
+                                        ? parseInt(barberRequest.pathParams.serviceType)
+                                        : -1
+                                }
                             />
                         ))}
                     </View>

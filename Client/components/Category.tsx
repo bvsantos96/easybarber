@@ -12,6 +12,7 @@ interface CategoryProps {
     icon?: React.ReactNode;
     title?: string;
     select?: (filter: IFilterRequest) => void;
+    selectedCategory: number;
 }
 
 export default function Category({
@@ -19,7 +20,8 @@ export default function Category({
     expanded = true,
     icon = <></>,
     title = "",
-    select = (_filter: IFilterRequest) => { }
+    select = (_filter: IFilterRequest) => { },
+    selectedCategory = -1
 }: CategoryProps) {
     const topBarStyles = topBarGetStyles();
     const homeStyles = homeGetStyles();
@@ -38,14 +40,19 @@ export default function Category({
 
     }, [expanded, heightAnim]);
 
+    useEffect(() => {
+        console.log("selectedCategory", selectedCategory);
+    }, [selectedCategory]);
 
     return (
         <Animated.View style={{ height: heightAnim }}>
             <Pressable onPress={() => {
-                let filter: IFilterRequest = { serviceType: `${id}` };
+                const filter: IFilterRequest = {
+                    serviceType: id == selectedCategory ? null: `${id}`
+                }
                 select(filter);
             }}>
-                <View style={topBarStyles.categoryIconContainer}>
+                <View style={[topBarStyles.categoryIconContainer, id != selectedCategory && selectedCategory != -1 ? topBarStyles.categorySelected : null]}>
                     {icon}
                 </View>
                 <Divider size={8} />
