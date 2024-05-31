@@ -38,7 +38,6 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ filter, setFilter }, ref) =
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ["70%"], []);
     const handlePresentModalPress = useCallback(() => {
-        console.log('present modal');
         bottomSheetModalRef.current?.present();
     }, []);
 

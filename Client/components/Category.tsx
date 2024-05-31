@@ -40,10 +40,6 @@ export default function Category({
 
     }, [expanded, heightAnim]);
 
-    useEffect(() => {
-        console.log("selectedCategory", selectedCategory);
-    }, [selectedCategory]);
-
     return (
         <Animated.View style={{ height: heightAnim }}>
             <Pressable onPress={() => {
