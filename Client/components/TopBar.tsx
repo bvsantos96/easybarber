@@ -1,3 +1,4 @@
+import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { View, Text } from 'react-native';
 import ProfileImage from './ProfileImage';
@@ -6,9 +7,12 @@ import Pressable from './Pressable';
 import { getStyles } from '../styles/TopBar';
 import { useTheme } from '../styles/ThemeContext';
 import { IFilterRequest } from '../declarations';
+import ModalTextButton from './ModalTextButton';
+import { getCachedAddress } from '../utils/Location';
 
 import FilterIcon from '@assets/icons/filter.svg';
 import BellIcon from '@assets/icons/bell.svg';
+import { LocationGeocodedAddress } from 'expo-location';
 
 interface TopBarProps {
     name?: string;
@@ -22,12 +26,27 @@ export default function TopBar({ name = "Jane Doe", toggleFilter, setFilter, set
     const texts = require("../langs/en.json");
     const theme = useTheme();
 
+    const [currentSelectedAddress, setCurrentSelectedAddress] = useState<LocationGeocodedAddress | undefined>(undefined);
+
+    useEffect(() => {
+        const fetchCachedAddress = async () => {
+            try {
+                const address = await getCachedAddress();
+                setCurrentSelectedAddress(address);
+            } catch (error) {
+                console.error('Error fetching cached address:', error);
+            }
+        };
+
+        fetchCachedAddress();
+    }, []);
+
     return (
         <View style={styles.container}>
             <StatusBar style={theme.colors.statusBarOnHome} />
             <View style={styles.elementsContainer}>
                 <View style={styles.topElements}>
-                    <Text style={styles.nameText}>{`${texts.hi}, ${name}`}</Text>
+                    <ModalTextButton buttonText={currentSelectedAddress?.name || ""} />
                     <Pressable onPress={() => { alert("See notification") }} style={styles.bellContainer}>
                         <BellIcon width={styles.bell.width} height={styles.bell.height} fill={"none"} />
                     </Pressable>
