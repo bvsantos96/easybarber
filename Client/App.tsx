@@ -1,19 +1,24 @@
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Platform, Linking } from 'react-native';
 import { NavigationContainer, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useEffect, useRef, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { getToken } from './utils/ApiRequest';
+import { getDefaultCountryString } from './utils/Constants';
 
 SplashScreen.preventAutoHideAsync();
 
 //screens
 import { ThemeProvider, useTheme } from './styles/ThemeContext';
-import { Animated, View, Text } from 'react-native';
+import { Animated, View, Text, Alert } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import DismissKeyboard from './components/DismissKeyboard';
 import { loadLongTermItems } from './storage/ApiLongTermStorage';
+import Constants from 'expo-constants';
+import { validateVersion } from './utils/VersionValidation';
+import { UpdateType } from './enums';
 
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
@@ -157,6 +162,50 @@ const Router = () => {
 }
 
 export default function App() {
+    const handleMajorUpdate = () => {
+        const texts = require('./langs/en.json');
+        const redirectToStore = () => {
+            const iosBundle = Constants.expoManifest?.ios?.bundleIdentifier || '';
+            const androidBundle = Constants.expoManifest?.android?.package || '';
+            const url = Platform.OS === 'ios' ? `${texts.appStoreLink}${getDefaultCountryString().toLowerCase()}/${iosBundle}` : `${texts.playStoreLink}${androidBundle}`;
+            Linking.openURL(url).catch((err) => console.error('An error occurred', err));
+        };
+        Alert.alert(
+            texts.updateRequired,
+            texts.updateRequiredMessage,
+            [{ text: texts.update, onPress: () => { redirectToStore(); retryVersionCheck(); } }],
+            { cancelable: false }
+        );
+    };
+
+    const errorWhileUpdating = () => {
+        const texts = require('./langs/en.json');
+        Alert.alert(
+            texts.errorWhileUpdating,
+            texts.errorWhileUpdatingMessage,
+            [{ text: texts.retry, onPress: retryVersionCheck }],
+        );
+    }
+    const versionCheck = useCallback(async () => {
+        switch (await validateVersion()) {
+            case UpdateType.MAJOR:
+                handleMajorUpdate();
+                break;
+            case UpdateType.FAILED:
+                errorWhileUpdating();
+                break;
+            default:
+                break;
+        }
+    }, []);
+
+    const retryVersionCheck = useCallback(() => {
+        versionCheck();
+    }, [versionCheck]);
+    useEffect(() => {
+        versionCheck();
+    }, [versionCheck]);
+
     return (
         <SafeAreaProvider>
             <ThemeProvider>

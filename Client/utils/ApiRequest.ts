@@ -4,7 +4,7 @@ import langs from '../langs/en.json';
 import { PickerItem } from '../components/Picker';
 import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
-import { BarberInfo, ICategory, IPage, IResult } from '../declarations';
+import { Appointment, BarberInfo, ICategory, IPage, IResult } from '../declarations';
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 const debugRequests = process.env.EXPO_PUBLIC_DEBUG_SERVER_REQUESTS;
@@ -98,7 +98,12 @@ export const apiUrlMaker = (url: string): string => {
     return `${apiUrl}${separator}${url}`;
 }
 
-const request = async<T>(url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed): Promise<IResult<T>> => {
+const stringRequest = async (url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed): Promise<string> => {
+    const result = await request<string>(url, method, body, successMessage, errorMessage, true);
+    return result.data ?? "";
+}
+
+const request = async<T>(url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed, stringResponse = false): Promise<IResult<T>> => {
     let _url = apiUrlMaker(url);
     if (_url.length <= 0)
         return { success: false, message: langs.apiMessages.failed };
@@ -131,6 +136,9 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
             body: JSON.stringify(body)
         })
     }).then(async response => {
+        if (stringResponse && response.status == 200) {
+            return { success: true, message: "", data: response.text() };
+        }
         const json = await response.json();
         if (response.status != 200 && response.status != 201) {
             if (json !== undefined && json !== null) {
@@ -259,12 +267,19 @@ export const getCategories = async (): Promise<ICategory[]> => {
     const response = await request("/service/types", "GET", null, langs.apiMessages.success, langs.apiMessages.failed);
     if (response.hasOwnProperty("items")) {
         // TODO: save the retrieve images into device storage and replace the imageUrls with the local paths
-        for (const element of response.items) {
+        for (const element of response?.items) {
             if (element.hasOwnProperty("imageURL")) {
                 element.imageURL = await downloadToDevice(element.name, apiUrlMaker(element.imageURL));
             }
         }
         return response.items;
     }
+    throw new Error(langs.apiMessages.failed);
+}
+
+export const getApiVersion = async (): Promise<string> => {
+    const response: string = await stringRequest("version", "GET", null, langs.apiMessages.success, langs.apiMessages.failed);
+    if (response.length > 0)
+        return response;
     throw new Error(langs.apiMessages.failed);
 }

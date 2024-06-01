@@ -4,16 +4,16 @@
 - [x] Change color if category is pressed
 - [x] Get serviceTypes from API to be used in Top Categories
     - [x] Create a method that saves most pressistent information, this information will only be updated from the API on user request or when API has a version update
-    - [ ] API new version will be checked on app start
-        - [ ] Version update protocol:
-            - [ ] vx.y.z
-            - [ ] x - Major update
-                - [ ] This will require user to update the app
-            - [ ] y - Minor update
-                - [ ] This will require update of long term storage
-            - [ ] z - Patch update
-                - [ ] This in not used at the moment but exists for future use
-                - [ ] This means that in the future we can use something like vx.y.z.a.b... etc
+    - [x] API new version will be checked on app start
+        - [x] Version update protocol:
+            - [x] vx.y.z
+            - [x] x - Major update
+                - [x] This will require user to update the app
+            - [x] y - Minor update
+                - [x] This will require update of long term storage
+            - [x] z - Patch update
+                - [x] This in not used at the moment but exists for future use
+                - [x] This means that in the future we can use something like vx.y.z.a.b... etc
 - [ ] Location will work like ubereats app
     - [ ] Default location will be preset
     - [ ] If no location is set, the app will ask for location

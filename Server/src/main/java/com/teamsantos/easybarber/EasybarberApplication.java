@@ -22,5 +22,4 @@ public class EasybarberApplication {
     public static void main(String[] args) {
         SpringApplication.run(EasybarberApplication.class, args);
     }
-
 }

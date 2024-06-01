@@ -18,7 +18,7 @@ public class BaseDTO {
     @Nullable
     private Long id;
 
-    @Value("${version}")
+    @Value("${app.data.version}")
     private String version;
 
     public BaseDTO(@Nullable Long id) {
