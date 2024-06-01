@@ -11,3 +11,7 @@ export const getDefaultCountryAsync = async (): Promise<Country | undefined> => 
 
     return filteredCountry;
 };
+
+export const getDefaultCountryString = (): string => {
+    return defaultCountryType || "PT";
+}

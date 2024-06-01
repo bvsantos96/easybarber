@@ -1,14 +1,6 @@
-import { Timespan } from "react-native/Libraries/Utilities/IPerformanceLogger";
+import { SvgProps } from "react-native-svg";
 
-declare module 'react-native-stars';
-declare module "*.svg" {
-    import React from "react";
-    import { SvgProps } from "react-native-svg";
-    const content: React.FC<SvgProps>;
-    export default content;
-}
-
-interface IPage<T> {
+declare interface IPage<T> {
     content: T[];
     totalPages: number;
     totalElements: number;
@@ -18,34 +10,34 @@ interface IPage<T> {
     hasPreviousPage: boolean;
 }
 
-interface IResult<T> {
+declare interface IResult<T> {
     success: boolean;
     message: string;
-    items?: IPageable<T>;
+    items?: Pageable<T>;
     data?: T;
 }
 
-interface ITimedRequest<T> {
+declare interface ITimedRequest<T> {
     page: IPage<T>;
     lastRequest: number;
     loadingMore?: boolean;
     pathParams?: {};
-    async request(func: (page: IPage<T>) => Promise<IPage<T> | undefined>): Promise<boolean>;
+    request(func: (page: IPage<T>) => Promise<IPage<T> | undefined>): Promise<boolean>;
 }
 
-interface ICategory {
+declare interface ICategory {
     id: number;
     name: string;
     description: string;
     imageURL: string;
 }
 
-interface Image {
+declare interface Image {
     id: number;
     data: string;
 }
 
-interface BarberInfo {
+declare interface BarberInfo {
     id: number;
     name: string;
     description: string;
@@ -58,15 +50,15 @@ interface BarberInfo {
     images: Image[];
 }
 
-type Appointment = {
-    id: number,
-    name: string,
-    from: string,
-    to: string,
-    photo: string,
+declare type Appointment = {
+    id: number;
+    name: string;
+    from: string;
+    to: string;
+    photo: string;
 }
 
-interface IFilterRequest {
+declare interface IFilterRequest {
     serviceType?: string | null;
     rating?: number;
     availableFrom?: Timespan;
@@ -74,4 +66,11 @@ interface IFilterRequest {
     partialName?: string;
     from?: string;
     to?: string;
+}
+
+declare interface IAPIResponse {
+    success: boolean;
+    message: string;
+    data?: any;
+    items?: any;
 }

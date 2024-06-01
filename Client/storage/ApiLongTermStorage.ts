@@ -1,3 +1,4 @@
+import { ICategory } from "../declarations";
 import { getCategories } from "../utils/ApiRequest";
 import { clearAll, getArray, store } from "./StorageUtils";
 
