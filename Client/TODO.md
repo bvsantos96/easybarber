@@ -15,6 +15,9 @@
                 - [x] This in not used at the moment but exists for future use
                 - [x] This means that in the future we can use something like vx.y.z.a.b... etc
 - [ ] Location will work like ubereats app
-    - [ ] Default location will be preset
-    - [ ] If no location is set, the app will ask for location
-    - [ ] Location can be updated on search
+    - [x] Default location will be preset
+    - [x] If no location is set, the app will ask for location
+    - [x] Location can be updated on search
+    - [ ] Location can be picked from map
+    - [ ] Location can be picked from history
+    - [ ] Location picker modal

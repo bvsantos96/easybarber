@@ -1,28 +1,14 @@
-import { LocationObject, getCurrentPositionAsync, Accuracy, PermissionResponse, requestForegroundPermissionsAsync } from 'expo-location';
+import { LocationObject } from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import langs from '../langs/en.json';
 import { PickerItem } from '../components/Picker';
 import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
 import { Appointment, BarberInfo, ICategory, IPage, IResult } from '../declarations';
+import { getCachedLocation } from './Location';
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 const debugRequests = process.env.EXPO_PUBLIC_DEBUG_SERVER_REQUESTS;
-
-async function getLocation(): Promise<LocationObject> {
-    try {
-        const { status }: PermissionResponse = await requestForegroundPermissionsAsync();
-
-        if (status !== 'granted') {
-            throw new Error('Permission to access location was denied');
-        }
-
-        return await getCurrentPositionAsync({ accuracy: Accuracy.High });
-    } catch (error) {
-        console.error('Error getting location:', error);
-        throw error;
-    }
-}
 
 export const getAppointments = async (): Promise<Appointment[]> => {
     return require("../assets/fakeAPI/appointments.json");
@@ -241,7 +227,7 @@ export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record
         page.content = [];
         return page;
     }
-    location = location ?? await getLocation();
+    location = location ?? await getCachedLocation();
     if (location === undefined || location === null || location.coords === undefined || location.coords === null) {
         return page;
     }
