@@ -10,13 +10,14 @@ import Divider from '../components/Divider';
 import Button from '../components/Button';
 import { AppleLoginButton, GoogleLoginButton } from '../components/LoginBrandButton';
 
-import { doLogin, Result } from '../utils/ApiRequest';
+import { doLogin } from '../utils/ApiRequest';
 
 import { getStyles } from '../styles/Sign';
 import { resetNavigation } from '../App';
 import { Props } from '../screens/SignIn';
 import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
+import { IAPIResponse, IResult } from '../declarations';
 
 export default function Login({ navigation, toggleNewUser }: Props) {
     const styles = getStyles();
@@ -43,7 +44,7 @@ export default function Login({ navigation, toggleNewUser }: Props) {
             alert(texts.apiMessages.invalidCountry);
             return;
         }
-        const result: Result = await doLogin(nation.callingCode[0], phone, password);
+        const result: IResult<IAPIResponse> = await doLogin(nation.callingCode[0], phone, password);
         if (result.success)
             resetNavigation(navigation, 'Tabs');
         else {

@@ -1,6 +1,17 @@
 {
     "loadingMore": "Loading More...",
+    "updateAvailable": "Update Available",
+    "updateAvailableMessage": "A minor update is available. Updating local data.",
+    "updateRequired": "Update Required",
+    "updateRequiredMessage": "A new version of the app is available. Please update to continue using the app.",
+    "errorWhileUpdating": "Error while updating",
+    "errorWhileUpdatingMessage": "An error occurred while updating the app. Please retry.",
+    "ok": "OK",
+    "update": "Update",
     "continue": "Continue",
+    "appStoreLink": "https://apps.apple.com/",
+    "playStoreLink": "https://play.google.com/store/apps/details?id=",
+    "retry": "Retry",
     "getStarted": "Get Started",
     "firstPage": {
         "title1": "Schedule appointment",

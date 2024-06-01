@@ -3,6 +3,9 @@
   "compilerOptions": {
     "module": "esnext",
     "strict": true
-  }
+  },
+  "include": [
+    "./**/*.ts",
+    "declarations.d.ts",
+  ],
 }
-
