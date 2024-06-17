@@ -1,3 +1,4 @@
+import React from 'react';
 import Home from './Home';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Appointments from './Appointments';
