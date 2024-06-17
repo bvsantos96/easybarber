@@ -14,6 +14,9 @@
             - [x] z - Patch update
                 - [x] This in not used at the moment but exists for future use
                 - [x] This means that in the future we can use something like vx.y.z.a.b... etc
+- [ ] Create a generic modal to be used in the app
+    - [ ] Modal should work the same everywhere
+    - [ ] Modal for filter needs to use this
 - [ ] Location will work like ubereats app
     - [x] Default location will be preset
     - [x] If no location is set, the app will ask for location
