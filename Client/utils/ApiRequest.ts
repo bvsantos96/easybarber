@@ -183,7 +183,7 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
 
     removeData("token");
 
-    const result = await request("login", "POST", { countryMobile: _countryCode, mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed);
+    const result = await request("login", "POST", { countryMobile: _countryCode, mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed, true);
 
     if (result.success)
         storeData("token", result.message);
@@ -229,6 +229,7 @@ export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record
     }
     location = location ?? await getCachedLocation();
     if (location === undefined || location === null || location.coords === undefined || location.coords === null) {
+        // TODO: alerta para ativar localizacao
         return page;
     }
     if (params === undefined || params === null)
