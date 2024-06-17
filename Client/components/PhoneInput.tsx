@@ -1,3 +1,4 @@
+import React from 'react';
 import { SetStateAction, Dispatch } from 'react';
 import Input from '../components/Input';
 import CountryPicker, { Country } from 'react-native-country-picker-modal';
