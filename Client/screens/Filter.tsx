@@ -1,4 +1,4 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { View, Text } from 'react-native';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import Stars from 'react-native-stars';
@@ -24,7 +24,7 @@ export interface FilterRef {
     contructNewFilter: (filter?: IFilterRequest) => void;
 }
 
-const Filter = forwardRef<FilterRef, FilterProps>(({ filter, setFilter }, ref) => {
+export default function Filter ({ filter, setFilter }) {
     const styles = getStyles();
     const theme = useTheme();
     const [categories, setCategories] = useState<PickerItem[]>([]);
@@ -37,9 +37,6 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ filter, setFilter }, ref) =
     const texts = require("@lang/en.json");
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const snapPoints = useMemo(() => ["70%"], []);
-    const handlePresentModalPress = useCallback(() => {
-        bottomSheetModalRef.current?.present();
-    }, []);
 
     const setStarsSelected = (value: number) => {
         if (value === rating && value === 1) {
@@ -48,15 +45,6 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ filter, setFilter }, ref) =
         }
         setRating(value);
     }
-
-    useImperativeHandle(
-        ref,
-        () => ({
-            hide: () => bottomSheetModalRef.current?.dismiss(),
-            handlePresentModalPress,
-            contructNewFilter: constructNewFilter,
-        }),
-    );
 
     const backdropProps = useMemo(() => ({
         closeOnPress: true,
@@ -197,6 +185,4 @@ const Filter = forwardRef<FilterRef, FilterProps>(({ filter, setFilter }, ref) =
             </BottomSheetModal>
         </BottomSheetModalProvider>
     );
-});
-
-export default Filter;
+};
