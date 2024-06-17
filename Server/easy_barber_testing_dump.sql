@@ -2,7 +2,7 @@
 --
 -- Host: 172.233.245.119    Database: easy_barber_testing
 -- ------------------------------------------------------
--- Server version	8.0.36-0ubuntu0.23.10.1
+-- Server version	8.0.37-0ubuntu0.23.10.2
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -199,7 +199,7 @@ CREATE TABLE `establishment_service` (
   KEY `FKe7cftoweu00yb0j4go9606rlc` (`service_id`),
   CONSTRAINT `FKe2gcddysc6njum0xmu68gwjlq` FOREIGN KEY (`establishment_id`) REFERENCES `establishment` (`id`),
   CONSTRAINT `FKe7cftoweu00yb0j4go9606rlc` FOREIGN KEY (`service_id`) REFERENCES `service` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -208,7 +208,7 @@ CREATE TABLE `establishment_service` (
 
 LOCK TABLES `establishment_service` WRITE;
 /*!40000 ALTER TABLE `establishment_service` DISABLE KEYS */;
-INSERT INTO `establishment_service` VALUES (1,10,1,1,1),(1,5,1,2,2),(1,15,2,3,3),(1,10,2,4,1),(1,45,2,5,4);
+INSERT INTO `establishment_service` VALUES (1,10,1,1,1),(1,5,1,2,2),(1,15,2,3,3),(1,10,2,4,1);
 /*!40000 ALTER TABLE `establishment_service` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -262,7 +262,7 @@ CREATE TABLE `service` (
   KEY `FK3xthwhrkfejag3mpvp5ep6ppu` (`employee_id`),
   CONSTRAINT `FK3xthwhrkfejag3mpvp5ep6ppu` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`),
   CONSTRAINT `FK8e4s0klc1xdmf3dwoy16k7fmi` FOREIGN KEY (`service_type_id`) REFERENCES `service_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -271,7 +271,7 @@ CREATE TABLE `service` (
 
 LOCK TABLES `service` WRITE;
 /*!40000 ALTER TABLE `service` DISABLE KEYS */;
-INSERT INTO `service` VALUES (2,1,1,'Simple haircut','Haircut'),(2,2,2,'Simple beard trim','Beard'),(3,3,3,'Simple haircut and beard trim','Beard and haircut'),(3,4,4,'Massage','Massage');
+INSERT INTO `service` VALUES (2,1,1,'Simple haircut','Haircut'),(2,2,2,'Simple beard trim','Beard'),(3,3,3,'Simple haircut and beard trim','Beard and haircut');
 /*!40000 ALTER TABLE `service` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -357,7 +357,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,NULL,2,'+351',NULL,'999999999','+351999999999','Henrique','$argon2id$v=19$m=16384,t=2,p=1$bNLWkZDVYr7fmFVvWRgw3Q$4vztmErWLzx5LgGgOcySy/WggWjmGjntR+/+tY1mrcg'),(2,NULL,2,'+351',NULL,'900000000','+351900000000','Amigo do Joao','$argon2id$v=19$m=16384,t=2,p=1$LKUtcFwgs49xUceFuYcWHA$wC1C2SZbV2nO7A223QFVqmIcgzlddc3HAfnf8JExg88'),(3,NULL,1,'+351',NULL,'927030780','+351927030780','Bruno Vicente dos Santos','$argon2id$v=19$m=16384,t=2,p=1$Ev5FdBRBC0BwytTZKJmhkw$ehh+tdVQXB0h3Wd9t3bldQF2EiEiTAgWkkQLxoIoGBY'),(4,NULL,1,'+351',NULL,'962844407','+351962844407','Filipe Santos','$argon2id$v=19$m=16384,t=2,p=1$umg2EswOveonioBUieKzzw$x7VINoiEn3p1+S2XHPFm7POA2mXX2D0SLuKKeBMnxho');
+INSERT INTO `user` VALUES (1,NULL,2,'+351',NULL,'999999999','+351999999999','Henrique','$argon2id$v=19$m=16384,t=2,p=1$Ct1OuU/c9IESi7NfVgibfQ$2zPAIVy7ZMvUAhwuoQhRXON7G+nFwvL22L1dwEQavBQ'),(2,NULL,2,'+351',NULL,'900000000','+351900000000','Amigo do Joao','$argon2id$v=19$m=16384,t=2,p=1$51NmzMswZnIaexI26Ni63g$qsM2dtXYM+uLO+pIYIT89FIc7pysXlMn+iBZhBHqco0'),(3,NULL,1,'+351',NULL,'927030780','+351927030780','Bruno Vicente dos Santos','$argon2id$v=19$m=16384,t=2,p=1$F5AZF5evfMx+2dxw89jpLg$4FSjxjj3TS/WVUjify9gxMEnnf7DW9jRdIJNIA3ldik'),(4,NULL,1,'+351',NULL,'962844407','+351962844407','Filipe Santos','$argon2id$v=19$m=16384,t=2,p=1$oJBCPTR35Pv1zt6x/nm2Ew$a7rxJEjfB5tn9dnnAm3hoCjPV/V8gq4Bg3W+aLbo0W8');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -394,4 +394,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-01  1:44:53
+-- Dump completed on 2024-06-13 23:06:17
