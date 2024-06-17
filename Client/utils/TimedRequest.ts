@@ -36,6 +36,7 @@ export class TimedRequest<T> implements ITimedRequest<T> {
     }
 
     async request(func: (page: IPage<T>, params: Record<string, string | number | boolean> | undefined) => Promise<IPage<T> | undefined>): Promise<boolean> {
+        // TODO: Test 5000ms
         if (!this.page.hasNextPage || this.loadingMore || Date.now() - this.lastRequest < 5000) {
             return false;
         }
