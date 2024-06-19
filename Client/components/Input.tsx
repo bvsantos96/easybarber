@@ -26,31 +26,19 @@ const Input = ({
     const styles = getStyles();
     const textInputRef = React.useRef<TextInput>(null);
     const [showPassword, setShowPassword] = useState(!password);
-    const [text, setText] = useState("");
 
     const handleViewPress = () => {
         textInputRef.current?.focus();
     };
 
-    useEffect(()=> {console.log("yo")},[textInputRef.current?.props?.secureTextEntry]);
-    const handleChangeText = (newText: string) => {
+    const handleChangeText = (text: string) => {
         if (onInputChange) {
-            if(!newText && text){
-                console.log(text, 1);
-                textInputRef.current?.
-                setNativeProps({text: text });
-                onInputChange(text);
-            }else{
-                console.log(newText, 2);
-                onInputChange(newText);
-                setText(newText);
-            }
+            onInputChange(text);
         }
     };
 
     const handleShowPasswordPress= () => {
         setShowPassword(!showPassword);
-        setText(text);
     };
 
     return (
