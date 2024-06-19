@@ -5,8 +5,8 @@ export const getStyles = () => {
     const theme = useTheme();
     return StyleSheet.create({
         container: {
+            backgroundColor: theme.colors.backgroundColor,
             borderRadius: 40,
-            overflow: 'hidden',
             zIndex: 20,
         },
         topBarContainer: {

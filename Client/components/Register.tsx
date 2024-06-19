@@ -9,9 +9,10 @@ import Button from '../components/Button';
 import { getStyles } from '../styles/Sign';
 import { resetNavigation } from '../App';
 import { Props } from '../screens/SignIn';
-import { Result, doRegister } from '../utils/ApiRequest';
+import { doRegister } from '../utils/ApiRequest';
 import { Country } from 'react-native-country-picker-modal';
 import PhoneInput from './PhoneInput';
+import { IResult } from '../declarations';
 
 export default function Register({ navigation, toggleNewUser }: Props) {
     const styles = getStyles();
@@ -23,7 +24,7 @@ export default function Register({ navigation, toggleNewUser }: Props) {
     const [nation, setNation] = useState<Country | null | undefined>();
 
     const register = async () => {
-        const result: Result = await doRegister(phone, password, confirmPassword, name);
+        const result: IResult = await doRegister(phone, password, confirmPassword, name);
         if (result.success)
             resetNavigation(navigation, 'Tabs');
         else

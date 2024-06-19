@@ -19,6 +19,8 @@ import { loadLongTermItems } from './storage/ApiLongTermStorage';
 import Constants from 'expo-constants';
 import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
+import { PortalProvider } from '@gorhom/portal';
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
@@ -101,7 +103,8 @@ const Router = () => {
                 'Nunito': require('./assets/fonts/Nunito/Nunito-VariableFont_wght.ttf'),
             });
             await loadLongTermItems();
-            setDefaultTab(getToken() !== null ? "Tabs" : "OnBoarding");
+            // setDefaultTab(getToken() !== null ? "Tabs" : "OnBoarding");
+            setDefaultTab("Login");
             setIsLoading(false);
             await SplashScreen.hideAsync();
         };
@@ -134,28 +137,28 @@ const Router = () => {
     return (
         <GestureHandlerRootView style={{ flex: 1 }} >
             <NavigationContainer>
-                <Stack.Navigator
-                    initialRouteName={defaultTab}
-                >
-                    <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
-                        {props => containerizedComponent(<OnBoarding {...props} />)}
-                    </Stack.Screen>
-                    <Stack.Screen name="AccountTypeSelection" options={{ headerShown: false }} >
-                        {props => containerizedComponent(<AccountTypeSelection {...props} />)}
-                    </Stack.Screen>
-                    <Stack.Screen name="Sign" options={{ headerShown: false, gestureEnabled: false }} >
-                        {props => <SignIn {...props} />}
-                    </Stack.Screen>
-                    <Stack.Screen name="Tabs" options={{ headerShown: false }} >
-                        {props => <Tabs {...props} />}
-                    </Stack.Screen>
-                    <Stack.Screen name="Loading" options={{ headerShown: false }} >
-                        {props => containerizedComponent(<Loading {...props} />)}
-                    </Stack.Screen>
-                    <Stack.Screen name="Test" options={{ headerShown: false, gestureEnabled: false }}>
-                        {_ => containerizedComponent(<View style={{ backgroundColor: "red", minHeight: 50, minWidth: 50 }}><Text>Test</Text></View>)}
-                    </Stack.Screen>
-                </Stack.Navigator>
+                    <Stack.Navigator
+                        initialRouteName={defaultTab}
+                    >
+                        <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
+                            {props => containerizedComponent(<OnBoarding {...props} />)}
+                        </Stack.Screen>
+                        <Stack.Screen name="AccountTypeSelection" options={{ headerShown: false }} >
+                            {props => containerizedComponent(<AccountTypeSelection {...props} />)}
+                        </Stack.Screen>
+                        <Stack.Screen name="Sign" options={{ headerShown: false, gestureEnabled: false }} >
+                            {props => <SignIn {...props} />}
+                        </Stack.Screen>
+                        <Stack.Screen name="Tabs" options={{ headerShown: false }} >
+                            {props => <Tabs {...props} />}
+                        </Stack.Screen>
+                        <Stack.Screen name="Loading" options={{ headerShown: false }} >
+                            {props => containerizedComponent(<Loading {...props} />)}
+                        </Stack.Screen>
+                        <Stack.Screen name="Test" options={{ headerShown: false, gestureEnabled: false }}>
+                            {_ => containerizedComponent(<View style={{ backgroundColor: "red", minHeight: 50, minWidth: 50 }}><Text>Test</Text></View>)}
+                        </Stack.Screen>
+                    </Stack.Navigator>
             </NavigationContainer>
         </GestureHandlerRootView >
     );
@@ -207,7 +210,7 @@ export default function App() {
     }, [versionCheck]);
 
     return (
-        <SafeAreaProvider>
+        <SafeAreaProvider style={{ flex: 1 }}>
             <ThemeProvider>
                 <DismissKeyboard>
                     <Router />
