@@ -2,6 +2,7 @@ import { Text, StyleProp, ViewStyle, Animated, Easing, View } from "react-native
 import { getStyles } from "../styles/ExpandableView";
 import Pressable from "./Pressable";
 import { useEffect, useState } from "react";
+import React from "react";
 
 type ExpandableViewProps = {
     children?: React.ReactNode,
