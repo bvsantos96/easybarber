@@ -6,7 +6,7 @@ import { Country } from 'react-native-country-picker-modal';
 
 import Input from '../components/Input';
 import Title from '../components/Title';
-import { PasswordIcon } from '../components/Icons';
+import { HidePasswordIcon, PasswordIcon, ShowPasswordIcon } from '../components/Icons';
 import Divider from '../components/Divider';
 import Button from '../components/Button';
 import { AppleLoginButton, GoogleLoginButton } from '../components/LoginBrandButton';
@@ -69,10 +69,11 @@ export default function Login({ navigation, toggleNewUser }: Props) {
                 />
                 <Divider size={20} />
                 <Input
-                    icon={<PasswordIcon />}
+                    leftIcon={<PasswordIcon/>}
                     placeholder={texts.password}
                     password={true}
                     onInputChange={setPassword}
+                    rightIcon={[<ShowPasswordIcon/>, <HidePasswordIcon/>]}
                 />
             </View>
             <View style={styles.forgotPassContainer}>
