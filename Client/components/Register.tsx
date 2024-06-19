@@ -2,16 +2,17 @@ import { useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Input from '../components/Input';
 import Title from '../components/Title';
-import { PasswordIcon, NameIcon } from '../components/Icons';
+import { PasswordIcon, NameIcon, ShowPasswordIcon, HidePasswordIcon } from '../components/Icons';
 import Divider from '../components/Divider';
 import Button from '../components/Button';
 
 import { getStyles } from '../styles/Sign';
 import { resetNavigation } from '../App';
 import { Props } from '../screens/SignIn';
-import { Result, doRegister } from '../utils/ApiRequest';
+import { doRegister } from '../utils/ApiRequest';
 import { Country } from 'react-native-country-picker-modal';
 import PhoneInput from './PhoneInput';
+import { IResult } from '../declarations';
 
 export default function Register({ navigation, toggleNewUser }: Props) {
     const styles = getStyles();
@@ -23,7 +24,7 @@ export default function Register({ navigation, toggleNewUser }: Props) {
     const [nation, setNation] = useState<Country | null | undefined>();
 
     const register = async () => {
-        const result: Result = await doRegister(phone, password, confirmPassword, name);
+        const result: IResult<any> = await doRegister(nation?nation.callingCode[0]:"", phone, password, confirmPassword, name);
         if (result.success)
             resetNavigation(navigation, 'Tabs');
         else
@@ -55,6 +56,7 @@ export default function Register({ navigation, toggleNewUser }: Props) {
                     placeholder={texts.password}
                     password={true}
                     onInputChange={setPassword}
+                    rightIcon={[<ShowPasswordIcon/>, <HidePasswordIcon/>]}
                 />
                 <Divider size={19.25} />
                 <Input
@@ -62,6 +64,7 @@ export default function Register({ navigation, toggleNewUser }: Props) {
                     placeholder={texts.confirmPassword}
                     password={true}
                     onInputChange={setConfirmPassword}
+                    rightIcon={[<ShowPasswordIcon/>, <HidePasswordIcon/>]}
                 />
                 <Divider size={36.25} />
                 <Button title={texts.register.button} onPress={register} />
