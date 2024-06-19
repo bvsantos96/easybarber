@@ -13,6 +13,7 @@ import { doRegister } from '../utils/ApiRequest';
 import { Country } from 'react-native-country-picker-modal';
 import PhoneInput from './PhoneInput';
 import { IResult } from '../declarations';
+import React from 'react';
 
 export default function Register({ navigation, toggleNewUser }: Props) {
     const styles = getStyles();
@@ -24,15 +25,7 @@ export default function Register({ navigation, toggleNewUser }: Props) {
     const [nation, setNation] = useState<Country | null | undefined>();
 
     const register = async () => {
-<<<<<<< HEAD
-<<<<<<< HEAD
-        const result: IResult = await doRegister(phone, password, confirmPassword, name);
-=======
         const result: IResult<any> = await doRegister(nation?nation.callingCode[0]:"", phone, password, confirmPassword, name);
->>>>>>> refs/remotes/origin/main
-=======
-        const result: IResult<any> = await doRegister(nation?nation.callingCode[0]:"", phone, password, confirmPassword, name);
->>>>>>> refs/remotes/origin/main
         if (result.success)
             resetNavigation(navigation, 'Tabs');
         else
@@ -45,7 +38,7 @@ export default function Register({ navigation, toggleNewUser }: Props) {
                 <Title line={[{ text: texts.register.title, highlight: false }]} />
                 <Divider size={23} />
                 <Input
-                    icon={<NameIcon />}
+                    leftIcon={<NameIcon />}
                     placeholder={texts.name}
                     type="text"
                     onInputChange={setName}
@@ -60,7 +53,7 @@ export default function Register({ navigation, toggleNewUser }: Props) {
                 />
                 <Divider size={19.25} />
                 <Input
-                    icon={<PasswordIcon />}
+                    leftIcon={<PasswordIcon />}
                     placeholder={texts.password}
                     password={true}
                     onInputChange={setPassword}
@@ -68,7 +61,7 @@ export default function Register({ navigation, toggleNewUser }: Props) {
                 />
                 <Divider size={19.25} />
                 <Input
-                    icon={<PasswordIcon />}
+                    leftIcon={<PasswordIcon />}
                     placeholder={texts.confirmPassword}
                     password={true}
                     onInputChange={setConfirmPassword}
