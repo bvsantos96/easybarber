@@ -1,28 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, TextInput, InputModeOptions } from 'react-native';
 import Pressable from '../components/Pressable';
 import { getStyles } from '../styles/Input';
 import { useTheme } from '../styles/ThemeContext';
 
 type InputProps = {
-    icon?: JSX.Element,
+    leftIcon?: JSX.Element,
     placeholder?: string,
     onInputChange?: (e: string) => void,
     type?: InputModeOptions,
-    password?: boolean
+    password?: boolean,
+    rightIcon?: JSX.Element[],
 }
 
 // types can be found here: https://reactnative.dev/docs/textinput#autocomplete
 const Input = ({
-    icon = <></>,
+    leftIcon = <></>,
     placeholder = "",
     onInputChange = (e: string) => { alert(`No onInputChange(${e}) passed in props`) },
     type = "text",
-    password = false
+    password = false,
+    rightIcon= []
 }: InputProps) => {
     const theme = useTheme();
     const styles = getStyles();
     const textInputRef = React.useRef<TextInput>(null);
+    const [showPassword, setShowPassword] = useState(!password);
 
     const handleViewPress = () => {
         textInputRef.current?.focus();
@@ -34,21 +37,31 @@ const Input = ({
         }
     };
 
+    const handleShowPasswordPress= () => {
+        setShowPassword(!showPassword);
+    };
+
     return (
         <Pressable style={styles.container} onPress={handleViewPress}>
             <View style={styles.inputView}>
                 <View style={styles.iconView}>
-                    {icon}
+                    {leftIcon}
                 </View>
                 <TextInput
                     ref={textInputRef}
-                    style={styles.textInput}
+                    style={rightIcon?styles.textInputWithShowPasswordIcon:styles.textInput}
                     placeholder={placeholder}
                     placeholderTextColor={theme.colors.text.lightBlack}
                     onChangeText={handleChangeText}
-                    secureTextEntry={password}
+                    secureTextEntry={!showPassword}
+                    clearTextOnFocus={false}
                     inputMode={type}
                 />
+                {rightIcon.length >= 0 &&(
+                    <Pressable style={styles.showPasswordIcon} onPress={handleShowPasswordPress}>
+                        {rightIcon[+showPassword]}
+                    </Pressable>
+                )}
             </View>
         </Pressable>
     );
