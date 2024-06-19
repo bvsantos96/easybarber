@@ -1,18 +1,24 @@
-import React, { useMemo, useRef, useState } from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, StyleSheet, TouchableWithoutFeedback, StyleProp, ViewStyle } from 'react-native';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useSharedValue } from 'react-native-reanimated';
+import { useTheme } from '../styles/ThemeContext';
+import Pressable from './Pressable';
 
 type CustomModalProps = {
     children: React.ReactNode;
     modalContent: React.ReactNode;
-    _snapPoints?: (string | number)[];
+    modalHeight: number;
+    buttonStyle?: StyleProp<ViewStyle>;
 };
 
-const CustomModal: React.FC<CustomModalProps> = ({ children, modalContent }) => {
+const CustomModal: React.FC<CustomModalProps> = ({ children, modalContent, modalHeight, buttonStyle }) => {
+    const theme = useTheme();
     const [isVisible, setIsVisible] = useState(false);
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const sharedVal = useSharedValue(0);
+    const modalBottomPadding = 10 * theme.dimensions.absoluteHeight;
+    const [modalContentHeight, setModalContentHeight] = useState(modalHeight ? modalHeight + modalBottomPadding : 0);
 
     const toggleModal = () => {
         if (isVisible) {
@@ -31,13 +37,13 @@ const CustomModal: React.FC<CustomModalProps> = ({ children, modalContent }) => 
     };
 
     return (
-        <View>
-            <TouchableOpacity onPress={toggleModal}>
+        <>
+            <Pressable style={buttonStyle} onPress={toggleModal}>
                 {children}
-            </TouchableOpacity>
+            </Pressable>
             <BottomSheetModal
                 ref={bottomSheetModalRef}
-                style={styles.modalContainer}
+                onDismiss={() => setIsVisible(false)}
                 enableDynamicSizing
                 backdropComponent={() => (
                     <BottomSheetBackdrop
@@ -47,30 +53,14 @@ const CustomModal: React.FC<CustomModalProps> = ({ children, modalContent }) => 
                     />
                 )}
             >
-                <BottomSheetScrollView>
-                    {modalContent}
+                <BottomSheetScrollView >
+                    <View style={{ "height": modalContentHeight }} >
+                        {modalContent}
+                    </View>
                 </BottomSheetScrollView>
-            </BottomSheetModal>
-        </View>
+            </BottomSheetModal >
+        </>
     );
 };
-
-const styles = StyleSheet.create({
-    overlay: {
-        flex: 1,
-    },
-    background: {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-    },
-    modalContainer: {
-        backgroundColor: 'white',
-        borderRadius: 40,
-        zIndex: 20,
-    },
-});
 
 export default CustomModal;

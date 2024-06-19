@@ -19,8 +19,6 @@ import { loadLongTermItems } from './storage/ApiLongTermStorage';
 import Constants from 'expo-constants';
 import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
-import { PortalProvider } from '@gorhom/portal';
-import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
@@ -103,8 +101,7 @@ const Router = () => {
                 'Nunito': require('./assets/fonts/Nunito/Nunito-VariableFont_wght.ttf'),
             });
             await loadLongTermItems();
-            // setDefaultTab(getToken() !== null ? "Tabs" : "OnBoarding");
-            setDefaultTab("Login");
+            setDefaultTab(getToken() !== null ? "Tabs" : "OnBoarding");
             setIsLoading(false);
             await SplashScreen.hideAsync();
         };
@@ -205,6 +202,7 @@ export default function App() {
     const retryVersionCheck = useCallback(() => {
         versionCheck();
     }, [versionCheck]);
+
     useEffect(() => {
         versionCheck();
     }, [versionCheck]);

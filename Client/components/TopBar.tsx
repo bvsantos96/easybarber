@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import ProfileImage from './ProfileImage';
 import SearchBar from './SearchBar';
 import Pressable from './Pressable';
@@ -25,7 +25,6 @@ interface TopBarProps {
 
 export default function TopBar({ filter, setFilter, setName }: TopBarProps) {
     const styles = getStyles();
-    const texts = require("../langs/en.json");
     const theme = useTheme();
 
     const [currentSelectedAddress, setCurrentSelectedAddress] = useState<LocationGeocodedAddress | undefined>(undefined);
@@ -48,7 +47,21 @@ export default function TopBar({ filter, setFilter, setName }: TopBarProps) {
             <StatusBar style={theme.colors.statusBarOnHome} />
             <View style={styles.elementsContainer}>
                 <View style={styles.topElements}>
-                    <CustomModal modalContent={<View />} >
+                    <CustomModal modalContent={
+                        <View >
+                            <Text>Modal content</Text>
+                            <Text>Modal content</Text>
+                            <Text>Modal content</Text>
+                            <Text>Modal content</Text>
+                            <Text>Modal content</Text>
+                            <Text>Modal content</Text>
+                            <Text>Modal content</Text>
+                            <Text>Modal content</Text>
+                        </View>
+                    } 
+                        
+                        modalHeight={250}
+                    >
                         <ModalTextButton buttonText={currentSelectedAddress?.name || ""} />
                     </CustomModal>
                     <Pressable onPress={() => { alert("See notification") }} style={styles.bellContainer}>
@@ -58,10 +71,11 @@ export default function TopBar({ filter, setFilter, setName }: TopBarProps) {
                 </View>
                 <View style={styles.searchContainer}>
                     <SearchBar search={() => setFilter({})} onTextChange={setName} />
-                    <CustomModal modalContent={<Filter filter={filter} setFilter={setFilter} />} >
-                        <View style={styles.filterView} >
-                            <FilterIcon width={styles.filter.width} height={styles.filter.height} />
-                        </View>
+                    <CustomModal
+                        buttonStyle={styles.filterView}
+                        modalContent={<Filter filter={filter} setFilter={setFilter} />}
+                        modalHeight={422 * theme.dimensions.absoluteHeight + theme.dimensions.input.height} >
+                        <FilterIcon width={styles.filter.width} height={styles.filter.height} />
                     </CustomModal>
                 </View>
             </View>

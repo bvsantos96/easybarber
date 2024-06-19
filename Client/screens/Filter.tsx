@@ -1,6 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import Stars from 'react-native-stars';
 
 import { getStyles } from '../styles/Filter';
@@ -12,11 +11,6 @@ import { retrieveCategories } from '../storage/ApiLongTermStorage';
 import { ICategory, IFilterRequest } from '../declarations';
 import Pressable from '../components/Pressable';
 
-
-interface FilterProps {
-    filter?: IFilterRequest;
-    setFilter: (filter: IFilterRequest) => void;
-}
 
 export interface FilterRef {
     hide: () => void;
