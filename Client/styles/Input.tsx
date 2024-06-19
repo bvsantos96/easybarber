@@ -28,8 +28,26 @@ export const getStyles = () => {
             margin: 5 * theme.dimensions.absoluteHeight,
             marginRight: 10 * theme.dimensions.absoluteWidth,
         },
+        showPasswordIcon: {
+            width: 0.8 * theme.dimensions.input.height,
+            height: 0.8 * theme.dimensions.input.height,
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: 5 * theme.dimensions.absoluteHeight,
+            marginRight: 10 * theme.dimensions.absoluteWidth,
+            zIndex: 9999
+        },
         textInput: {
-            width: '100%',
+            width: theme.dimensions.input.width-(0.8 * theme.dimensions.input.height),
+            height: 40 * theme.dimensions.absoluteHeight,
+            borderWidth: 0,
+            color: theme.colors.text.main,
+            fontSize: theme.fonts.size._15,
+            fontFamily: 'Mazzard',
+            fontWeight: '400',
+        },
+        textInputWithShowPasswordIcon: {
+            width: theme.dimensions.input.width-(1.6 * theme.dimensions.input.height)-10 * theme.dimensions.absoluteHeight-20 * theme.dimensions.absoluteWidth,
             height: 40 * theme.dimensions.absoluteHeight,
             borderWidth: 0,
             color: theme.colors.text.main,
