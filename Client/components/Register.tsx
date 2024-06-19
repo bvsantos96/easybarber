@@ -25,7 +25,11 @@ export default function Register({ navigation, toggleNewUser }: Props) {
 
     const register = async () => {
 <<<<<<< HEAD
+<<<<<<< HEAD
         const result: IResult = await doRegister(phone, password, confirmPassword, name);
+=======
+        const result: IResult<any> = await doRegister(nation?nation.callingCode[0]:"", phone, password, confirmPassword, name);
+>>>>>>> refs/remotes/origin/main
 =======
         const result: IResult<any> = await doRegister(nation?nation.callingCode[0]:"", phone, password, confirmPassword, name);
 >>>>>>> refs/remotes/origin/main
