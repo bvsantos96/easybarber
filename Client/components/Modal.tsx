@@ -1,55 +1,76 @@
-import React, { useState } from 'react';
-import { Modal, View, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useMemo, useRef, useState } from 'react';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { useSharedValue } from 'react-native-reanimated';
 
-const CustomModal = ({ children, modalContent }) => {
-  const [isVisible, setIsVisible] = useState(false);
+type CustomModalProps = {
+    children: React.ReactNode;
+    modalContent: React.ReactNode;
+    _snapPoints?: (string | number)[];
+};
 
-  const toggleModal = () => {
-    setIsVisible(!isVisible);
-  };
+const CustomModal: React.FC<CustomModalProps> = ({ children, modalContent }) => {
+    const [isVisible, setIsVisible] = useState(false);
+    const bottomSheetModalRef = useRef<BottomSheetModal>(null);
+    const sharedVal = useSharedValue(0);
 
-  return (
-    <>
-      <TouchableOpacity onPress={toggleModal}>
-        {children}
-      </TouchableOpacity>
-      <Modal
-        transparent={true}
-        visible={isVisible}
-        onRequestClose={toggleModal}
-        animationType="slide"
-      >
-        <View style={styles.overlay}>
-          <TouchableOpacity style={styles.background} onPress={toggleModal} />
-          <View style={styles.modalContainer}>
-            {modalContent}
-          </View>
+    const toggleModal = () => {
+        if (isVisible) {
+            bottomSheetModalRef.current?.dismiss();
+        } else {
+            bottomSheetModalRef.current?.present();
+        }
+        setIsVisible(!isVisible);
+    };
+
+    const backdropProps = {
+        closeOnPress: true,
+        appearsOnIndex: 0,
+        disappearsOnIndex: -1,
+        enableTouchThrough: false,
+    };
+
+    return (
+        <View>
+            <TouchableOpacity onPress={toggleModal}>
+                {children}
+            </TouchableOpacity>
+            <BottomSheetModal
+                ref={bottomSheetModalRef}
+                style={styles.modalContainer}
+                enableDynamicSizing
+                backdropComponent={() => (
+                    <BottomSheetBackdrop
+                        animatedIndex={sharedVal}
+                        animatedPosition={sharedVal}
+                        {...backdropProps}
+                    />
+                )}
+            >
+                <BottomSheetScrollView>
+                    {modalContent}
+                </BottomSheetScrollView>
+            </BottomSheetModal>
         </View>
-      </Modal>
-    </>
-  );
+    );
 };
 
 const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  background: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContainer: {
-    backgroundColor: 'white',
-    padding: 20,
-    borderRadius: 10,
-    zIndex: 10,
-  },
+    overlay: {
+        flex: 1,
+    },
+    background: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+    },
+    modalContainer: {
+        backgroundColor: 'white',
+        borderRadius: 40,
+        zIndex: 20,
+    },
 });
 
 export default CustomModal;

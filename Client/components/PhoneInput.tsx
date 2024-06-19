@@ -12,7 +12,7 @@ interface PhoneInputProps extends NationSelectionProps {
     setPhone: Dispatch<SetStateAction<string>>;
 }
 
-export default function PhoneInput({ setPhone, setNation, nation }: PhoneInputProps) {
+const PhoneInput: React.FC<PhoneInputProps> = ({ setPhone, setNation, nation }) => {
     const texts = require("@lang/en.json");
 
     return (
@@ -22,10 +22,10 @@ export default function PhoneInput({ setPhone, setNation, nation }: PhoneInputPr
             type="tel"
             onInputChange={setPhone}
         />
-    )
-}
+    );
+};
 
-export function NationPicker({ nation, setNation }: NationSelectionProps) {
+export const NationPicker: React.FC<NationSelectionProps> = ({ nation, setNation }) => {
     return (
         <CountryPicker
             countryCode={nation ? nation.cca2 : "PT"}
@@ -36,4 +36,6 @@ export function NationPicker({ nation, setNation }: NationSelectionProps) {
             onSelect={(country: Country) => { country && setNation(country) }}
         />
     );
-}
+};
+
+export default PhoneInput;
