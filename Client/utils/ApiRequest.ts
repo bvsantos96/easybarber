@@ -6,6 +6,7 @@ import { downloadToDevice } from '../storage/StorageUtils';
 import { Appointment, BarberInfo, ICategory, ILocation, IPage, IResult } from '../declarations';
 import { getCurrentSelectedLocation } from '../storage/ApiLongTermStorage';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
+import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
 
 export const getAppointments = async (): Promise<Appointment[]> => {
     return require("../assets/fakeAPI/appointments.json");
@@ -68,7 +69,7 @@ const removeData = async (key: string) => {
 }
 
 export const getToken = async (): Promise<string | null> => {
-    return getData("token");
+    return getData(TOKEN_STORAGE_KEY);
 }
 
 export const apiUrlMaker = (url: string): string => {
@@ -188,12 +189,13 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
     if (!isValidNumberString(`${_countryCode}${phone}`))
         return { success: false, message: langs.apiMessages.invalidPhone };
 
-    removeData("token");
+    removeData(TOKEN_STORAGE_KEY);
+    removeData(LOCATIONS_STORAGE_KEY);
 
     const result = await request("login", "POST", { countryMobile: _countryCode, mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed, true);
 
     if (result.success)
-        await storeData("token", result.message);
+        await storeData(TOKEN_STORAGE_KEY, result.message);
     else
         alert(result.message);
     return result;
@@ -260,7 +262,6 @@ export const getBarbersNearMe = async (page: IPage<BarberInfo>, params?: Record<
 
 export const setNewLocation = async (location: ILocation): Promise<boolean> => {
     const response = await request("/location", "POST", location, langs.apiMessages.success, langs.apiMessages.failed, true);
-    console.log(response);
     if (response.success) {
         return true;
     }

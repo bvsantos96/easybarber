@@ -23,3 +23,7 @@ export const getDefaultCountryAsync = async (): Promise<Country | undefined> => 
 export const getDefaultCountryString = (): string => {
     return DEFAULT_COUNTRY || "PT";
 };
+
+export const LOCATIONS_STORAGE_KEY = "locations";
+export const TOKEN_STORAGE_KEY = "token";
+export const CATEGORY_STORAGE_KEY = "categories";
