@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.util.Date;
 import java.util.Objects;
 
 @Getter
@@ -24,6 +25,8 @@ public class Appointment {
     private Employee employee;
     @Column
     private String description;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date appointmentDateTime;
 
     @Override
     public final boolean equals(Object o) {
