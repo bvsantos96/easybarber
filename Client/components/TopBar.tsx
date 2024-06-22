@@ -15,6 +15,7 @@ import BellIcon from '@assets/icons/bell.svg';
 import { LocationGeocodedAddress } from 'expo-location';
 import CustomModal from './Modal';
 import Filter from '../screens/Filter';
+import ChangeLocation from './ChangeLocation';
 
 interface TopBarProps {
     name?: string;
@@ -48,19 +49,9 @@ export default function TopBar({ filter, setFilter, setName }: TopBarProps) {
             <View style={styles.elementsContainer}>
                 <View style={styles.topElements}>
                     <CustomModal modalContent={
-                        <View >
-                            <Text>Modal content</Text>
-                            <Text>Modal content</Text>
-                            <Text>Modal content</Text>
-                            <Text>Modal content</Text>
-                            <Text>Modal content</Text>
-                            <Text>Modal content</Text>
-                            <Text>Modal content</Text>
-                            <Text>Modal content</Text>
-                        </View>
-                    } 
-                        
-                        modalHeight={250}
+                        <ChangeLocation />
+                    }
+                        modalHeight={theme.dimensions.height * 0.7}
                     >
                         <ModalTextButton buttonText={currentSelectedAddress?.name || ""} />
                     </CustomModal>
