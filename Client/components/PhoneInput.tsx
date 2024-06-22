@@ -17,7 +17,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({ setPhone, setNation, nation }) 
 
     return (
         <Input
-            icon={<NationPicker {...{ setNation, nation }} />}
+            leftIcon={<NationPicker {...{ setNation, nation }} />}
             placeholder={texts.phoneNumber}
             type="tel"
             onInputChange={setPhone}
