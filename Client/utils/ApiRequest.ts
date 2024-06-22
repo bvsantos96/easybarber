@@ -4,11 +4,8 @@ import { PickerItem } from '../components/Picker';
 import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
 import { Appointment, BarberInfo, ICategory, ILocation, IPage, IResult } from '../declarations';
-import { getCachedLocation } from './Location';
 import { getCurrentSelectedLocation } from '../storage/ApiLongTermStorage';
-
-const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-const debugRequests = process.env.EXPO_PUBLIC_DEBUG_SERVER_REQUESTS?.toLowerCase() == "true";
+import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
 
 export const getAppointments = async (): Promise<Appointment[]> => {
     return require("../assets/fakeAPI/appointments.json");
@@ -77,12 +74,12 @@ export const getToken = async (): Promise<string | null> => {
 export const apiUrlMaker = (url: string): string => {
     if (url.startsWith("/"))
         url = url.substring(1);
-    if (!apiUrl) {
+    if (!API_URL) {
         console.error("API URL is not set");
         return "";
     }
-    let separator = apiUrl.endsWith("/") ? "" : "/";
-    return `${apiUrl}${separator}${url}`;
+    let separator = API_URL.endsWith("/") ? "" : "/";
+    return `${API_URL}${separator}${url}`;
 }
 
 const stringRequest = async (url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed): Promise<string> => {
@@ -95,7 +92,7 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
     if (_url.length <= 0)
         return { success: false, message: langs.apiMessages.failed };
     let token = await getToken();
-    if (debugRequests) {
+    if (DEBUG_SERVER_REQUESTS) {
         console.log(_url);
         console.log({
             method: method,
@@ -121,15 +118,20 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
             body: JSON.stringify(body)
         })
     }).then(async response => {
-        if (stringResponse && response.status == 200) {
+        let json;
+        if (stringResponse) {
             const text = await response.text();
-            const _response = { success: true, message: text, data: text };
-            if (debugRequests) {
-                console.log(_response);
+            if (response.status == 200) {
+                const _response = { success: true, message: text, data: text };
+                if (DEBUG_SERVER_REQUESTS) {
+                    console.log(_response);
+                }
+                return _response;
             }
-            return _response;
+            json = text;
+        } else {
+            json = await response.json();
         }
-        const json = await response.json();
         if (response.status != 200 && response.status != 201) {
             if (json !== undefined && json !== null) {
                 try {
@@ -148,7 +150,7 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
                 ...(json.items ? { items: json.items } : { data: json.data })
             };
 
-            if (debugRequests) {
+            if (DEBUG_SERVER_REQUESTS) {
                 console.log(_response);
             }
 
@@ -258,6 +260,7 @@ export const getBarbersNearMe = async (page: IPage<BarberInfo>, params?: Record<
 
 export const setNewLocation = async (location: ILocation): Promise<boolean> => {
     const response = await request("/location", "POST", location, langs.apiMessages.success, langs.apiMessages.failed, true);
+    console.log(response);
     if (response.success) {
         return true;
     }

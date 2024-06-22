@@ -1,7 +1,6 @@
 import { getAllCountries, FlagType, Country } from 'react-native-country-picker-modal';
 import {getLocales} from 'expo-localization';
-
-let defaultCountryType = process.env.EXPO_PUBLIC_DEFAULT_COUNTRY;
+import { DEFAULT_COUNTRY } from './EnvVariables';
 
 export const getDefaultCountryAsync = async (): Promise<Country | undefined> => {
     try {
@@ -22,5 +21,5 @@ export const getDefaultCountryAsync = async (): Promise<Country | undefined> => 
 };
 
 export const getDefaultCountryString = (): string => {
-    return defaultCountryType || "PT";
+    return DEFAULT_COUNTRY || "PT";
 };

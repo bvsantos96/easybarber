@@ -48,7 +48,6 @@ export const retrieveLocations = async (): Promise<ILocation[]> => {
 
 export const appendLocation = async (location: ILocation) => {
     try {
-        console.log("Appending location", location);
         await setNewLocation(location);
     } catch (e) {
         console.error("Error appending location", e);
