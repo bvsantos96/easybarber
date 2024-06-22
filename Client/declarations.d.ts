@@ -74,3 +74,9 @@ declare interface IAPIResponse {
     data?: any;
     items?: any;
 }
+
+declare interface ILocation {
+    latitude: number;
+    longitude: number;
+    address: string;
+}
