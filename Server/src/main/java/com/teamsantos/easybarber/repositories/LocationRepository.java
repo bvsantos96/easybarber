@@ -11,4 +11,6 @@ import com.teamsantos.easybarber.entities.User;
 @Repository
 public interface LocationRepository extends JpaRepository<Location, Long> {
     List<Location> findLocationByUser(User user);
+
+	// void deleteIfExist(float latitude, float longitude, User user);
 }

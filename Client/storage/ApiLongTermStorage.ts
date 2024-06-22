@@ -1,4 +1,3 @@
-import { LocationObject, LocationObjectCoords } from "expo-location";
 import { ICategory, ILocation } from "../declarations";
 import { getCategories, getLocations, setNewLocation } from "../utils/ApiRequest";
 import { clearAll, getArray, getArrayOrEmpty, store } from "./StorageUtils";
@@ -29,6 +28,15 @@ export const loadOnLogin = async () => {
     }
 }
 
+export const getCurrentSelectedLocation = async (): Promise<ILocation | undefined> => {
+    const locations = await getArrayOrEmpty<ILocation>("locations");
+    if (locations && locations.length === 0) {
+        const location = await getLocation();
+        return location
+    }
+    return undefined;
+}
+
 export const retrieveLocations = async (): Promise<ILocation[]> => {
     const locations = await getArrayOrEmpty<ILocation>("locations");
     if (locations === null || locations === undefined || locations.length === 0) {
@@ -40,16 +48,22 @@ export const retrieveLocations = async (): Promise<ILocation[]> => {
 
 export const appendLocation = async (location: ILocation) => {
     try {
+        console.log("Appending location", location);
         await setNewLocation(location);
     } catch (e) {
+        console.error("Error appending location", e);
         return;
     }
 
-    let locations = await retrieveLocations();
-    const index = locations.findIndex((location) => location.latitude === location.latitude && location.longitude === location.longitude);
+    let locations: ILocation[] = await getArrayOrEmpty<ILocation>("locations");
+    let index = -1;
 
-    if (index !== -1)
+    if (locations && locations.length > 0) {
+        index = locations.findIndex((location) => location.latitude === location.latitude && location.longitude === location.longitude);
         locations.splice(index, 1);
+    } else {
+        locations = [];
+    }
 
     locations = [location, ...locations];
     await store("locations", JSON.stringify(locations));
