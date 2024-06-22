@@ -1,5 +1,5 @@
 import { FlatList, Text, View } from 'react-native';
-import { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { getStyles as topBarGetStyles } from '../styles/TopBar';
 import { getStyles as getHomeGetStyles } from '../styles/Home';
@@ -7,7 +7,6 @@ import { getStyles as getHomeGetStyles } from '../styles/Home';
 import TopBar from '../components/TopBar';
 import { getBarbersNearMe } from '../utils/ApiRequest';
 import ListItem from '../components/ListItemBarbershop';
-import Filter, { FilterRef } from './Filter';
 
 import ExpandableView from '../components/ExpandableView';
 import Divider from '../components/Divider';
@@ -22,11 +21,9 @@ import { BarberInfo, ICategory, IFilterRequest, ITimedRequest } from '../declara
 export default function Home() {
     const topBarStyles = topBarGetStyles();
     const homeStyles = getHomeGetStyles();
-    const filterRef = useRef<FilterRef>(null);
     const [barberRequest, setBarberRequest] = useState<ITimedRequest<BarberInfo>>(new TimedRequest(createPageable<BarberInfo>(), 0));
     const [topCategoriesExpanded, setTopCategoriesExpanded] = useState(true);
     const [nearbyBarbersExpanded, setNearbyBarbersExpanded] = useState(false);
-    const [filterExpanded, setFilterExpanded] = useState(false);
     const [loadingMore, setLoadingMore] = useState(false);
     const texts = require("../langs/en.json");
     const inserts = useSafeAreaInsets();
@@ -59,16 +56,10 @@ export default function Home() {
         loadCategories();
     }, []);
 
-    const toggleFilter = () => {
-        filterRef.current?.contructNewFilter(barberRequest.pathParams);
-        setFilterExpanded(!filterExpanded);
-        filterRef.current?.handlePresentModalPress();
-    }
 
     const replaceFilter = (filter: IFilterRequest) => {
         let req: ITimedRequest<BarberInfo> = new TimedRequest(createPageable<BarberInfo>(), 0, filter);
         loadMoreItems(req);
-        filterRef.current?.hide();
     }
 
     const setFilter = (_filter: IFilterRequest) => {
@@ -81,7 +72,7 @@ export default function Home() {
 
     return (
         <>
-            <TopBar toggleFilter={toggleFilter} setFilter={setFilter} setName={setName} />
+            <TopBar filter={barberRequest.pathParams} setFilter={setFilter} setName={setName} />
             <View style={topBarStyles.homeContainer}>
                 <Divider size={28.44} color="transparent" />
                 <ExpandableView
@@ -142,7 +133,6 @@ export default function Home() {
                     />
                 </ExpandableView>
             </View>
-            <Filter ref={filterRef} filter={barberRequest.pathParams} setFilter={setFilter} />
         </>
     );
 }

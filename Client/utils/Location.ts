@@ -1,7 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
+import { appendLocation, retrieveLocations } from '../storage/ApiLongTermStorage';
+import { ILocation } from '../declarations';
 
-export async function getLocation(): Promise<Location.LocationObject> {
+export async function getLocation(): Promise<ILocation> {
     try {
         const { status }: Location.PermissionResponse = await Location.requestForegroundPermissionsAsync();
 
@@ -9,43 +11,35 @@ export async function getLocation(): Promise<Location.LocationObject> {
             throw new Error('Permission to access location was denied');
         }
 
-        return await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
+        const coords = (await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High })).coords;
+        const address = await getAddressFromCoordinates(coords.latitude, coords.longitude);
+        const location: ILocation = {
+            latitude: coords.latitude,
+            longitude: coords.longitude,
+            address: address ? address.name ?? "" : '',
+        };
+        return location;
     } catch (error) {
         console.error('Error getting location:', error);
         throw error;
     }
 }
 
-export async function getCachedLocation(): Promise<Location.LocationObject> {
-    try {
-        if (cache.latitude && cache.longitude) {
-            return {
-                coords: {
-                    latitude: cache.latitude,
-                    longitude: cache.longitude,
-                    altitude: 0,
-                    accuracy: 0,
-                    altitudeAccuracy: 0,
-                    heading: 0,
-                    speed: 0,
-                },
-                timestamp: Date.now(),
-                mocked: false,
-            };
-        }
-        else {
-            return getLocation();
-        }
-    } catch (error) {
-        console.error('Error getting location:', error);
-        throw error;
+export async function getCachedLocation(): Promise<ILocation> {
+    const locations = await retrieveLocations();
+    if (locations.length > 0) {
+        return locations[0];
+    } else {
+        var location = await getLocation();
+        appendLocation(location);
+        return location;
     }
 }
 
 export const getCurrentAddress = async (): Promise<Location.LocationGeocodedAddress | undefined> => {
     try {
         const location = await getLocation();
-        const { latitude, longitude } = location.coords;
+        const { latitude, longitude } = location;
         return await getAddressFromCoordinates(latitude, longitude);
     } catch (error) {
         console.error(error);
@@ -94,9 +88,8 @@ export const getCachedAddress = async (): Promise<Location.LocationGeocodedAddre
         if (cache.location) {
             return cache.location;
         }
-
         const location = await getCachedLocation();
-        const { latitude, longitude } = location.coords;
+        const { latitude, longitude } = location;
         return await getAddressFromCoordinates(latitude, longitude);
     } catch (error) {
         console.error('Error getting cached address:', error);

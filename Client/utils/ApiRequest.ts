@@ -1,14 +1,13 @@
-import { LocationObject } from 'expo-location';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import langs from '../langs/en.json';
 import { PickerItem } from '../components/Picker';
 import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
-import { Appointment, BarberInfo, ICategory, IPage, IResult } from '../declarations';
+import { Appointment, BarberInfo, ICategory, ILocation, IPage, IResult } from '../declarations';
 import { getCachedLocation } from './Location';
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
-const debugRequests = process.env.EXPO_PUBLIC_DEBUG_SERVER_REQUESTS;
+const debugRequests = process.env.EXPO_PUBLIC_DEBUG_SERVER_REQUESTS?.toLowerCase() == "true";
 
 export const getAppointments = async (): Promise<Appointment[]> => {
     return require("../assets/fakeAPI/appointments.json");
@@ -45,6 +44,7 @@ const storeData = async (key: string, value: string) => {
         await AsyncStorage.setItem(key, value);
     } catch (e) {
         // saving error
+        alert(`Error saving data(${key},${value}): ${e}`);
     }
 };
 
@@ -93,8 +93,7 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
     let _url = apiUrlMaker(url);
     if (_url.length <= 0)
         return { success: false, message: langs.apiMessages.failed };
-    let token = getToken();
-
+    let token = await getToken();
     if (debugRequests) {
         console.log(_url);
         console.log({
@@ -110,7 +109,6 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
         });
     }
 
-
     return fetch(_url, {
         method: method,
         mode: 'cors',
@@ -122,8 +120,12 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
             body: JSON.stringify(body)
         })
     }).then(async response => {
+        if (debugRequests) {
+            console.log(response);
+        }
         if (stringResponse && response.status == 200) {
-            return { success: true, message: "", data: response.text() };
+            const text = await response.text();
+            return { success: true, message: text, data: text };
         }
         const json = await response.json();
         if (response.status != 200 && response.status != 201) {
@@ -144,9 +146,6 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
                 ...(json.items ? { items: json.items } : { data: json.data })
             };
 
-            if (debugRequests) {
-                console.log(_response);
-            }
             return _response;
         }
         return { success: true, message: successMessage };
@@ -186,7 +185,7 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
     const result = await request("login", "POST", { countryMobile: _countryCode, mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed, true);
 
     if (result.success)
-        storeData("token", result.message);
+        await storeData("token", result.message);
     else
         alert(result.message);
     return result;
@@ -220,7 +219,7 @@ const parsePathParams = (_path: string, params: Record<string, string | number |
     return _path;
 }
 
-export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record<string, string | number | boolean>, location?: LocationObject): Promise<IPage<BarberInfo> | undefined> => {
+export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record<string, string | number | boolean>, location?: ILocation): Promise<IPage<BarberInfo> | undefined> => {
     if (page === undefined || page === null) {
         page = createPageable();
     } else if (!page.hasNextPage) {
@@ -228,16 +227,16 @@ export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record
         return page;
     }
     location = location ?? await getCachedLocation();
-    if (location === undefined || location === null || location.coords === undefined || location.coords === null) {
+    if (location === undefined || location === null) {
         // TODO: alerta para ativar localizacao
         return page;
     }
     if (params === undefined || params === null)
         params = {};
     if (!params.hasOwnProperty("latitude"))
-        params["latitude"] = location.coords.latitude;
+        params["latitude"] = location.latitude;
     if (!params.hasOwnProperty("longitude"))
-        params["longitude"] = location.coords.longitude;
+        params["longitude"] = location.longitude;
     if (!params.hasOwnProperty("page"))
         params["page"] = page.currentPage;
     if (!params.hasOwnProperty("size"))
@@ -246,8 +245,28 @@ export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record
     return result.items ? parsePage(result.items) : page;
 
 }
+
 export const getBarbersNearMe = async (page: IPage<BarberInfo>, params?: Record<string, string | number | boolean>): Promise<IPage<BarberInfo> | undefined> => {
     return await getNearByBarbers(page, params);
+}
+
+export const setNewLocation = async (location: ILocation): Promise<boolean> => {
+    const response = await request("/location", "POST", location, langs.apiMessages.success, langs.apiMessages.failed, true);
+    if (response.success) {
+        return true;
+    }
+    throw new Error(langs.apiMessages.failed);
+}
+
+export const getLocations = async (): Promise<ILocation[]> => {
+    const reponse = await request("/locations", "GET", null, langs.apiMessages.success, langs.apiMessages.failed);
+    if (reponse.hasOwnProperty("items")) {
+        for (const element of reponse?.items) {
+            element.hash = `${element.latitude}${element.longitude}`;
+        }
+        return reponse.items;
+    }
+    throw new Error(langs.apiMessages.failed);
 }
 
 export const getCategories = async (): Promise<ICategory[]> => {
