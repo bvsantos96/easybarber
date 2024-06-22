@@ -5,6 +5,7 @@ import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
 import { Appointment, BarberInfo, ICategory, ILocation, IPage, IResult } from '../declarations';
 import { getCachedLocation } from './Location';
+import { getCurrentSelectedLocation } from '../storage/ApiLongTermStorage';
 
 const apiUrl = process.env.EXPO_PUBLIC_API_URL;
 const debugRequests = process.env.EXPO_PUBLIC_DEBUG_SERVER_REQUESTS?.toLowerCase() == "true";
@@ -120,12 +121,13 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
             body: JSON.stringify(body)
         })
     }).then(async response => {
-        if (debugRequests) {
-            console.log(response);
-        }
         if (stringResponse && response.status == 200) {
             const text = await response.text();
-            return { success: true, message: text, data: text };
+            const _response = { success: true, message: text, data: text };
+            if (debugRequests) {
+                console.log(_response);
+            }
+            return _response;
         }
         const json = await response.json();
         if (response.status != 200 && response.status != 201) {
@@ -145,6 +147,10 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
                 message: successMessage,
                 ...(json.items ? { items: json.items } : { data: json.data })
             };
+
+            if (debugRequests) {
+                console.log(_response);
+            }
 
             return _response;
         }
@@ -226,7 +232,7 @@ export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record
         page.content = [];
         return page;
     }
-    location = location ?? await getCachedLocation();
+    location = location ?? await getCurrentSelectedLocation();
     if (location === undefined || location === null) {
         // TODO: alerta para ativar localizacao
         return page;

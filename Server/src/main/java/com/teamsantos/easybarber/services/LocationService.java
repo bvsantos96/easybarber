@@ -31,6 +31,7 @@ public class LocationService {
     }
 
     public void addLocation(LocationDTO locationDTO, User user) {
+        // locationRepository.deleteIfExist(locationDTO.getLatitude(), locationDTO.getLongitude(), user);
         Location location = new Location();
         location.setLatitude(locationDTO.getLatitude());
         location.setLongitude(locationDTO.getLongitude());
