@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Location from 'expo-location';
-import { appendLocation, retrieveLocations } from '../storage/ApiLongTermStorage';
+import { retrieveLocations } from '../storage/ApiLongTermStorage';
 import { ILocation } from '../declarations';
 
 export async function getLocation(): Promise<ILocation> {
@@ -27,23 +27,10 @@ export async function getLocation(): Promise<ILocation> {
 
 export async function getCachedLocation(): Promise<ILocation> {
     const locations = await retrieveLocations();
-    if (locations.length > 0) {
-        return locations[0];
-    } else {
-        var location = await getLocation();
-        appendLocation(location);
-        return location;
+    if (locations.length === 0) {
+        alert('No locations found');
     }
-}
-
-export const getCurrentAddress = async (): Promise<Location.LocationGeocodedAddress | undefined> => {
-    try {
-        const location = await getLocation();
-        const { latitude, longitude } = location;
-        return await getAddressFromCoordinates(latitude, longitude);
-    } catch (error) {
-        console.error(error);
-    }
+    return locations[0];
 }
 
 interface CachedLocation {
