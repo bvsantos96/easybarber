@@ -1,8 +1,12 @@
 package com.teamsantos.easybarber.controllers;
 
+import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
+import com.teamsantos.easybarber.DTO.LocationDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
+import com.teamsantos.easybarber.entities.User;
+import com.teamsantos.easybarber.services.LocationService;
 import com.teamsantos.easybarber.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,10 +25,12 @@ import java.security.Principal;
 @Controller
 public class UserController {
     private final UserService userService;
+    private final LocationService locationService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, LocationService locationService) {
         this.userService = userService;
+        this.locationService = locationService;
     }
 
     @GetMapping("/users")
@@ -50,6 +57,29 @@ public class UserController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to update user: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/locations")
+    public ResponseEntity<BaseListDTO<LocationDTO>> getUserLocations(Principal principal) {
+        try {
+            User user = userService.getUser(principal);
+            BaseListDTO<LocationDTO> locations = new BaseListDTO<LocationDTO>(locationService.getUserLocations(user));
+            return ResponseEntity.ok(locations);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new BaseListDTO<>(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/location")
+    public ResponseEntity<String> addUserLocation(@RequestBody LocationDTO locationDTO, Principal principal) {
+        try {
+            User user = userService.getUser(principal);
+            locationService.addLocation(locationDTO, user);
+            return ResponseEntity.ok("Location added successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to add location: " + e.getMessage());
         }
     }
 }

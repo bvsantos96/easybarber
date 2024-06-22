@@ -101,7 +101,7 @@ const Router = () => {
                 'Nunito': require('./assets/fonts/Nunito/Nunito-VariableFont_wght.ttf'),
             });
             await loadLongTermItems();
-            setDefaultTab(getToken() !== null ? "Tabs" : "OnBoarding");
+            setDefaultTab(await getToken() !== null ? "Tabs" : "OnBoarding");
             setIsLoading(false);
             await SplashScreen.hideAsync();
         };
