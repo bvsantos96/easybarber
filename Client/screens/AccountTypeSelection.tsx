@@ -6,6 +6,7 @@ import { PropNavigation } from '../App';
 import Logo from '@assets/images/logo.svg';
 
 import  {useTheme} from '../styles/ThemeContext';
+import { DEBUG_AUTO_LOGIN } from '../utils/EnvVariables';
 
 export default function AccountTypeSelection({ navigation }: PropNavigation) {
     const screenStyles = getScreensStyles();
@@ -15,7 +16,7 @@ export default function AccountTypeSelection({ navigation }: PropNavigation) {
     return (
         <>
             <Logo width={264.965 * theme.dimensions.absoluteMinDimension} height={264.965 * theme.dimensions.absoluteMinDimension} style={screenStyles.centeredLogo} />
-            <Button title={texts.imUser} stylesInput={buttonStyles.button11} onPress={() => { alert("I'm a user"); navigation.navigate('Sign'); }} />
+            <Button title={texts.imUser} stylesInput={buttonStyles.button11} onPress={() => { if(!DEBUG_AUTO_LOGIN) alert("I'm a user"); navigation.navigate('Sign'); }} />
             <Button title={texts.imBarber} stylesInput={buttonStyles.button12} backgroundColor={theme.colors.backgroundColor} buttonTextColor={theme.colors.text.main} borderColor={theme.colors.text.main} onPress={() => { alert("I'm a Barber"); navigation.navigate('Sign') }} />
         </>
     )

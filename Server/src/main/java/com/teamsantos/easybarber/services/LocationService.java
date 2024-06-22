@@ -11,6 +11,8 @@ import com.teamsantos.easybarber.entities.Location;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.repositories.LocationRepository;
 
+import jakarta.transaction.Transactional;
+
 @Service
 public class LocationService {
     private final LocationRepository locationRepository;
@@ -30,8 +32,9 @@ public class LocationService {
         }).collect(Collectors.toList());
     }
 
+    @Transactional
     public void addLocation(LocationDTO locationDTO, User user) {
-        // locationRepository.deleteIfExist(locationDTO.getLatitude(), locationDTO.getLongitude(), user);
+        locationRepository.deleteIfExist(locationDTO.getLatitude(), locationDTO.getLongitude(), user);
         Location location = new Location();
         location.setLatitude(locationDTO.getLatitude());
         location.setLongitude(locationDTO.getLongitude());

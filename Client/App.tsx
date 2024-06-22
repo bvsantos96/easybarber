@@ -19,6 +19,7 @@ import { loadLongTermItems } from './storage/ApiLongTermStorage';
 import Constants from 'expo-constants';
 import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
+import { DEBUG_AUTO_LOGIN } from './utils/EnvVariables';
 
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
@@ -101,7 +102,12 @@ const Router = () => {
                 'Nunito': require('./assets/fonts/Nunito/Nunito-VariableFont_wght.ttf'),
             });
             await loadLongTermItems();
-            setDefaultTab(await getToken() !== null ? "Tabs" : "OnBoarding");
+            if(DEBUG_AUTO_LOGIN) {
+                console.log("DEBUG AUTO LOGIN");
+                setDefaultTab("Sign");
+            } else {
+                setDefaultTab(await getToken() !== null ? "Tabs" : "OnBoarding");
+            }
             setIsLoading(false);
             await SplashScreen.hideAsync();
         };
