@@ -17,7 +17,7 @@ export default function PhoneInput({ setPhone, setNation, nation }: PhoneInputPr
 
     return (
         <Input
-            icon={<NationPicker {...{ setNation, nation }} />}
+            leftIcon={<NationPicker {...{ setNation, nation }} />}
             placeholder={texts.phoneNumber}
             type="tel"
             onInputChange={setPhone}
