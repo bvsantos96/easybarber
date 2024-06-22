@@ -19,6 +19,7 @@ import { Props } from '../screens/SignIn';
 import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
 import { IAPIResponse, IResult } from '../declarations';
+import { DEBUG_AUTO_LOGIN, DEBUG_AUTO_LOGIN_PASSWORD, DEBUG_AUTO_LOGIN_PHONE } from '../utils/EnvVariables';
 
 export default function Login({ navigation, toggleNewUser }: Props) {
     const styles = getStyles();
@@ -28,6 +29,22 @@ export default function Login({ navigation, toggleNewUser }: Props) {
     const [password, setPassword] = useState("");
 
     useEffect(() => {
+        const fakeLogin = async () => {
+            const DEFAULT_COUNTRY = await getDefaultCountryAsync();
+            setNation(DEFAULT_COUNTRY);
+            const result: IResult<IAPIResponse> = await doLogin(DEFAULT_COUNTRY?.callingCode[0] || "351", DEBUG_AUTO_LOGIN_PHONE, DEBUG_AUTO_LOGIN_PASSWORD);
+            if (result.success)
+                resetNavigation(navigation, 'Tabs');
+            else {
+                alert(result.message);
+            }
+        }
+
+        if (DEBUG_AUTO_LOGIN) {
+            fakeLogin();
+            return;
+        }
+
         const fetchDefaultCountry = async () => {
             try {
                 const DEFAULT_COUNTRY = await getDefaultCountryAsync();
@@ -69,11 +86,11 @@ export default function Login({ navigation, toggleNewUser }: Props) {
                 />
                 <Divider size={20} />
                 <Input
-                    leftIcon={<PasswordIcon/>}
+                    leftIcon={<PasswordIcon />}
                     placeholder={texts.password}
                     password={true}
                     onInputChange={setPassword}
-                    rightIcon={[<ShowPasswordIcon/>, <HidePasswordIcon/>]}
+                    rightIcon={[<ShowPasswordIcon />, <HidePasswordIcon />]}
                 />
             </View>
             <View style={styles.forgotPassContainer}>
