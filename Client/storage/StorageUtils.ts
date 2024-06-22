@@ -35,6 +35,14 @@ export const clearAll = async () => {
     await AsyncStorage.clear();
 }
 
+export const getArrayOrEmpty = async <T>(id: string): Promise<T[]> => {
+    try {
+        return await getArray(id);
+    } catch (error) {
+        return [];
+    }
+}
+
 export const getArray = async <T>(id: string): Promise<T[]> => {
     const result = await retrieve(id);
     if (Array.isArray(result)) {
@@ -43,6 +51,5 @@ export const getArray = async <T>(id: string): Promise<T[]> => {
     // TODO: If the item is not present in the storage and it is part of the required long term items we should try and load it
     // await loadLongTermItems();
     // return getArray(id);
-    console.error(`getArray: is not an array: ${result}`);
     throw new Error(`getArray: is not an array: ${result}`);
 }
