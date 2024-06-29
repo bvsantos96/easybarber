@@ -97,27 +97,23 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
         console.log(_url);
         console.log({
             method: method,
-            ...(method !== "GET" && {
-                mode: 'cors',
-                headers: {
-                    'Content-Type': 'application/json',
-                    ...(token !== null && token !== undefined && { 'Authorization': `Bearer ${token}` })
-                },
-                body: JSON.stringify(body)
-            })
+            mode: 'cors',
+            headers: {
+                ...(token && { 'Authorization': `Bearer ${token}` }),
+                ...(method !== "GET" && { 'Content-Type': 'application/json' }),
+            },
+            ...(method !== "GET" && { body: JSON.stringify(body) }),
         });
     }
 
     return fetch(_url, {
         method: method,
         mode: 'cors',
-        ...(method !== "GET" && {
-            headers: {
-                'Content-Type': 'application/json',
-                ...(token !== null && token !== undefined && { 'Authorization': `Bearer ${token}` })
-            },
-            body: JSON.stringify(body)
-        })
+        headers: {
+            ...(token && { 'Authorization': `Bearer ${token}` }),
+            ...(method !== "GET" && { 'Content-Type': 'application/json' }),
+        },
+        ...(method !== "GET" && { body: JSON.stringify(body) }),
     }).then(async response => {
         let json;
         if (stringResponse) {
@@ -229,13 +225,28 @@ const parsePathParams = (_path: string, params: Record<string, string | number |
     return _path;
 }
 
-export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record<string, string | number | boolean>, location?: ILocation): Promise<IPage<BarberInfo> | undefined> => {
+export const pageGet = async <T>(url: string, page?: IPage<T>, params?: Record<string, string | number | boolean>): Promise<IPage<T> | undefined> => {
     if (page === undefined || page === null) {
         page = createPageable();
     } else if (!page.hasNextPage) {
         page.content = [];
         return page;
     }
+    if (params === undefined || params === null)
+        params = {};
+    if (!params.hasOwnProperty("page"))
+        params["page"] = page.currentPage;
+    if (!params.hasOwnProperty("size"))
+        params["size"] = page.pageSize;
+    const result: IResult<T> = await request(parsePathParams(url, params), `GET`, null, langs.apiMessages.success, langs.apiMessages.failed);
+    return result.items ? parsePage<T>(result.items) : page;
+}
+
+export const getLocationsRequest = async (page?: IPage<ILocation>, params?: Record<string, string | number | boolean>): Promise<IPage<ILocation> | undefined> => {
+    return await pageGet("locations", page, params);
+}
+
+export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record<string, string | number | boolean>, location?: ILocation): Promise<IPage<BarberInfo> | undefined> => {
     location = location ?? await getCurrentSelectedLocation();
     if (location === undefined || location === null) {
         // TODO: alerta para ativar localizacao
@@ -247,17 +258,20 @@ export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record
         params["latitude"] = location.latitude;
     if (!params.hasOwnProperty("longitude"))
         params["longitude"] = location.longitude;
-    if (!params.hasOwnProperty("page"))
-        params["page"] = page.currentPage;
-    if (!params.hasOwnProperty("size"))
-        params["size"] = page.pageSize;
-    const result: IResult<BarberInfo> = await request(parsePathParams("establishment/list", params), `GET`, null, langs.apiMessages.success, langs.apiMessages.failed);
-    return result.items ? parsePage(result.items) : page;
-
+    return await pageGet("establishment/list", page, params);
 }
 
 export const getBarbersNearMe = async (page: IPage<BarberInfo>, params?: Record<string, string | number | boolean>): Promise<IPage<BarberInfo> | undefined> => {
     return await getNearByBarbers(page, params);
+}
+
+export const getSavedLocations = async (numItems = -1): Promise<ILocation[]> => {
+    const path = `/locations${numItems > 0 ? `?size=${numItems}` : ""}`;
+    const response = await request(path, "GET", null, langs.apiMessages.success, langs.apiMessages.failed);
+    if (response.success) {
+        return response.items;
+    }
+    throw new Error(langs.apiMessages.failed);
 }
 
 export const setNewLocation = async (location: ILocation): Promise<boolean> => {

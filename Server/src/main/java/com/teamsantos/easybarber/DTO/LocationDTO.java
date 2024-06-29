@@ -10,7 +10,10 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LocationDTO extends BaseDTO {
-    private float latitude;
-    private float longitude;
+    private double latitude;
+    private double longitude;
     private String address;
+    private String country;
+    private String city;
+    private String name;
 }

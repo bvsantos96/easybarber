@@ -17,7 +17,7 @@ declare interface IResult<T> {
     data?: T;
 }
 
-declare interface ITimedRequest<T> {
+declare interface ITimedRequest<T extends Identifiable> {
     page: IPage<T>;
     lastRequest: number;
     loadingMore?: boolean;
@@ -37,7 +37,11 @@ declare interface Image {
     data: string;
 }
 
-declare interface BarberInfo {
+interface Identifiable {
+    id: string | number;
+}
+
+declare interface BarberInfo extends Identifiable {
     id: number;
     name: string;
     description: string;
@@ -75,8 +79,11 @@ declare interface IAPIResponse {
     items?: any;
 }
 
-declare interface ILocation {
+declare interface ILocation extends Identifiable {
     latitude: number;
     longitude: number;
     address: string;
+    country: string;
+    city: string;
+    name: string | null;
 }

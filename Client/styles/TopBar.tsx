@@ -88,10 +88,13 @@ export const getStyles = () => {
             width: 31 * theme.dimensions.absoluteWidth,
             height: 31 * theme.dimensions.absoluteWidth,
         },
+        searchBarContainer: {
+            width: 290 * theme.dimensions.absoluteWidth,
+        },
         searchBarInput: {
             position: 'absolute',
-            width: 290 * theme.dimensions.absoluteWidth,
-            height: "100%",
+            width: "100%",
+            height: 50 * theme.dimensions.absoluteHeight,
             borderWidth: 1,
             borderColor: theme.colors.button.alt,
             borderRadius: 12,

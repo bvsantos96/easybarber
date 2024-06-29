@@ -1,11 +1,12 @@
 import { View, Image, Text } from "react-native";
 import { getStyles } from "../styles/List";
 import { getStyles as mainGetStyles } from "../styles/Main"
-import { BarberInfo } from "../utils/ApiRequest";
 import Pressable from "../components/Pressable";
 
 import StarIcon from '@assets/icons/star.svg';
 import LocationIcon from '@assets/icons/location.svg';
+import React from "react";
+import { BarberInfo } from "../declarations";
 
 export default function ListItem({ barber }: { barber: BarberInfo }) {
     const styles = getStyles();
