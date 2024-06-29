@@ -45,6 +45,7 @@
     "confirmPassword": "Confirm Password",
     "hi": "Hi",
     "search": "Search Barber Here",
+    "searchAddress": "Search address here",
     "tabs": {
         "home": "Home",
         "appointments": "Appointments",
@@ -93,5 +94,7 @@
     },
     "errors": {
         defaultCountry: "Error fetching default country:"
-    }
+    },
+    "recentAddresses": "Recent addresses",
+    "savedAddresses": "Saved addresses",
 }

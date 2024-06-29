@@ -15,7 +15,7 @@ import BellIcon from '@assets/icons/bell.svg';
 import { LocationGeocodedAddress } from 'expo-location';
 import CustomModal from './Modal';
 import Filter from '../screens/Filter';
-import ChangeLocation from './ChangeLocation';
+import LocationModal from './LocationModal';
 
 interface TopBarProps {
     name?: string;
@@ -27,6 +27,7 @@ interface TopBarProps {
 export default function TopBar({ filter, setFilter, setName }: TopBarProps) {
     const styles = getStyles();
     const theme = useTheme();
+    const texts = require('../langs/en.json');
 
     const [currentSelectedAddress, setCurrentSelectedAddress] = useState<LocationGeocodedAddress | undefined>(undefined);
 
@@ -49,7 +50,7 @@ export default function TopBar({ filter, setFilter, setName }: TopBarProps) {
             <View style={styles.elementsContainer}>
                 <View style={styles.topElements}>
                     <CustomModal modalContent={
-                        <ChangeLocation />
+                        <LocationModal />
                     }
                         modalHeight={theme.dimensions.height * 0.7}
                     >
@@ -61,7 +62,9 @@ export default function TopBar({ filter, setFilter, setName }: TopBarProps) {
                     <ProfileImage />
                 </View>
                 <View style={styles.searchContainer}>
-                    <SearchBar search={() => setFilter({})} onTextChange={setName} />
+                    <View style={styles.searchBarContainer} >
+                        <SearchBar placeholder={texts.search} search={() => setFilter({})} onTextChange={setName} />
+                    </View>
                     <CustomModal
                         buttonStyle={styles.filterView}
                         modalContent={<Filter filter={filter} setFilter={setFilter} />}

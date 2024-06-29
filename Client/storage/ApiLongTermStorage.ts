@@ -1,5 +1,5 @@
 import { ICategory, ILocation } from "../declarations";
-import { getCategories, getLocations, setNewLocation } from "../utils/ApiRequest";
+import { getCategories, getLocations, getSavedLocations, setNewLocation } from "../utils/ApiRequest";
 import { clearAll, getArray, getArrayOrEmpty, store } from "./StorageUtils";
 import { getLocation } from "../utils/Location";
 import { CATEGORY_STORAGE_KEY, LOCATIONS_STORAGE_KEY } from "../utils/Constants";
@@ -38,21 +38,33 @@ export const getCurrentSelectedLocation = async (): Promise<ILocation | undefine
     return undefined;
 }
 
-export const retrieveLocations = async (): Promise<ILocation[]> => {
-    const locations = await getArrayOrEmpty<ILocation>(LOCATIONS_STORAGE_KEY);
+export const retrieveLocations = async (numItems = -1): Promise<ILocation[]> => {
+    let locations = await getArrayOrEmpty<ILocation>(LOCATIONS_STORAGE_KEY);
     if (locations === null || locations === undefined || locations.length === 0) {
-        locations.push(await getLocation());
-        appendLocation(locations[0]);
+        locations = await getSavedLocations();
+        if (locations === null || locations === undefined || locations.length === 0) {
+            locations = [];
+            locations.push(await getLocation());
+            appendLocation(locations[0]);
+        }
+        else {
+            await store(LOCATIONS_STORAGE_KEY, JSON.stringify(locations));
+        }
+    }
+    if(numItems > 0) {
+        locations = locations.slice(0, Math.min(locations.length, numItems));
     }
     return locations;
 }
 
-export const appendLocation = async (location: ILocation) => {
-    try {
-        await setNewLocation(location);
-    } catch (e) {
-        console.error("Error appending location", e);
-        return;
+export const appendLocation = async (location: ILocation, sendToServer = true) => {
+    if (sendToServer) {
+        try {
+            await setNewLocation(location);
+        } catch (e) {
+            console.error("Error appending location", e);
+            return;
+        }
     }
 
     let locations: ILocation[] = await getArrayOrEmpty<ILocation>(LOCATIONS_STORAGE_KEY);
