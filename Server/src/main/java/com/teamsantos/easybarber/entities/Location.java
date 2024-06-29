@@ -20,14 +20,21 @@ public class Location {
     @Column(nullable = false)
     private String address;
     @Column(nullable = false)
-    private float latitude;
+    private double latitude;
     @Column(nullable = false)
-    private float longitude;
+    private double longitude;
+    @Column(nullable = false)
+    private String country;
+    @Column(nullable = false)
+    private String city;
+    @Column
+    private String name;
 
     @Override
     public int hashCode() {
-        return Long.hashCode(user.getId()) + hashCodeWithNullCheck(address) + Float.hashCode(latitude)
-                + Float.hashCode(longitude);
+        return Long.hashCode(user.getId()) + hashCodeWithNullCheck(country) + hashCodeWithNullCheck(city)
+                + hashCodeWithNullCheck(address) + Double.hashCode(latitude)
+                + Double.hashCode(longitude);
     }
 
     private int hashCodeWithNullCheck(String item) {

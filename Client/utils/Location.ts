@@ -17,6 +17,9 @@ export async function getLocation(): Promise<ILocation> {
             latitude: coords.latitude,
             longitude: coords.longitude,
             address: address ? address.name ?? "" : '',
+            country: address ? address.country ?? "" : '',
+            city: address ? address.city ?? "" : '',
+            name: ""
         };
         return location;
     } catch (error) {

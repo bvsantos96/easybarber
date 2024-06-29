@@ -1,9 +1,8 @@
 package com.teamsantos.easybarber.services;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.teamsantos.easybarber.DTO.LocationDTO;
@@ -22,14 +21,17 @@ public class LocationService {
         this.locationRepository = locationRepository;
     }
 
-    public List<LocationDTO> getUserLocations(User user) {
-        return locationRepository.findLocationByUser(user).stream().map(location -> {
+    public Page<LocationDTO> getUserLocations(User user, Pageable pageable) {
+        return locationRepository.findLocationByUser(user, pageable).map(location -> {
             LocationDTO locationDTO = new LocationDTO();
             locationDTO.setLatitude(location.getLatitude());
             locationDTO.setLongitude(location.getLongitude());
             locationDTO.setAddress(location.getAddress());
+            locationDTO.setCity(location.getCity());
+            locationDTO.setCountry(location.getCountry());
+            locationDTO.setName(location.getName());
             return locationDTO;
-        }).collect(Collectors.toList());
+        });
     }
 
     @Transactional
@@ -39,6 +41,9 @@ public class LocationService {
         location.setLatitude(locationDTO.getLatitude());
         location.setLongitude(locationDTO.getLongitude());
         location.setAddress(locationDTO.getAddress());
+        location.setCountry(locationDTO.getCountry());
+        location.setCity(locationDTO.getCity());
+        location.setName(locationDTO.getName());
         location.setUser(user);
         locationRepository.save(location);
     }

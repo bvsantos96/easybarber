@@ -15,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -61,13 +62,15 @@ public class UserController {
     }
 
     @GetMapping("/locations")
-    public ResponseEntity<BaseListDTO<LocationDTO>> getUserLocations(Principal principal) {
+    public ResponseEntity<BasePageDTO<LocationDTO>> getUserLocations(Principal principal, Pageable pageable) {
+        BasePageDTO<LocationDTO> locations = new BasePageDTO<>();
         try {
             User user = userService.getUser(principal);
-            BaseListDTO<LocationDTO> locations = new BaseListDTO<LocationDTO>(locationService.getUserLocations(user));
+            locations.setItems(locationService.getUserLocations(user, pageable));
             return ResponseEntity.ok(locations);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new BaseListDTO<>(e.getMessage()));
+            locations.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(locations);
         }
     }
 
