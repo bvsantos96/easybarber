@@ -35,7 +35,7 @@ public class LocationService {
     }
 
     @Transactional
-    public void addLocation(LocationDTO locationDTO, User user) {
+    public Long addLocation(LocationDTO locationDTO, User user) {
         locationRepository.deleteIfExist(locationDTO.getLatitude(), locationDTO.getLongitude(), user);
         Location location = new Location();
         location.setLatitude(locationDTO.getLatitude());
@@ -45,6 +45,6 @@ public class LocationService {
         location.setCity(locationDTO.getCity());
         location.setName(locationDTO.getName());
         location.setUser(user);
-        locationRepository.save(location);
+        return locationRepository.save(location).getId();
     }
 }

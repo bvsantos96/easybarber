@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
+import { IPage } from '../declarations';
 
 export const store = async (id: string, data: string) => {
     await AsyncStorage.setItem(id, data);
@@ -41,6 +42,10 @@ export const getArrayOrEmpty = async <T>(id: string): Promise<T[]> => {
     } catch (error) {
         return [];
     }
+}
+
+export const getArrayFromPage = <T>(page?: IPage<T>): T[] => {
+    return page?.content || [];
 }
 
 export const getArray = async <T>(id: string): Promise<T[]> => {

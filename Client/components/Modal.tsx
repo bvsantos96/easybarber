@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, StyleSheet, TouchableWithoutFeedback, StyleProp, ViewStyle } from 'react-native';
+import { View, StyleProp, ViewStyle } from 'react-native';
 import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useSharedValue } from 'react-native-reanimated';
 import { useTheme } from '../styles/ThemeContext';
@@ -18,7 +18,7 @@ const CustomModal: React.FC<CustomModalProps> = ({ children, modalContent, modal
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const sharedVal = useSharedValue(0);
     const modalBottomPadding = 10 * theme.dimensions.absoluteHeight;
-    const [modalContentHeight, setModalContentHeight] = useState(modalHeight ? modalHeight + modalBottomPadding : 0);
+    const [modalContentHeight] = useState(modalHeight ? modalHeight + modalBottomPadding : 0);
 
     const toggleModal = () => {
         if (isVisible) {

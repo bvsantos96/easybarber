@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { Image } from "react-native";
 import Pressable from '../components/Pressable';
 import { getStyles } from '../styles/TopBar';

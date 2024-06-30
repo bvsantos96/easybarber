@@ -1,9 +1,11 @@
+import React from "react";
 import { View, Image, Text } from "react-native";
+import { Appointment } from "../declarations";
+
 import { getStyles } from "../styles/Appointments";
-import { Appointment } from "../utils/ApiRequest";
+import ClockIcon from "@assets/icons/clock.svg";
 import Pressable from "../components/Pressable";
 
-import ClockIcon from "../assets/icons/clock.svg";
 
 export default function ListAppointments({ appointment }: { appointment: Appointment }) {
     const styles = getStyles();

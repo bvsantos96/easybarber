@@ -4,6 +4,7 @@ import { getStyles } from '../styles/OnBoarding';
 import { PropNavigation, resetNavigation } from '../App';
 
 import Image from '@assets/images/firstPage2.svg';
+import React from 'react';
 
 export default function Onboarding2({ navigation }: PropNavigation) {
     const styles = getStyles();

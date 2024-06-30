@@ -8,7 +8,7 @@ import Divider from './Divider';
 import { EvilIcons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import PageList, { PageListRef } from './PageList';
-import { getLocationsRequest, pageGet } from '../utils/ApiRequest';
+import { getLocationsRequest } from '../utils/ApiRequest';
 
 export default function LocationModal() {
     const styles = getStyles();
@@ -48,7 +48,7 @@ export default function LocationModal() {
                 </View>
                 <Divider size={styles.divider.minHeight} />
             </View>
-            <PageList<ILocation> ref={null} renderItem={({ item }) => <Item idx={item.id} location={item} />} requestFunction={getLocationsRequest} />
+            <PageList<ILocation> ref={pageListRef} renderItem={({ item }) => <Item idx={item.id} location={item} />} requestFunction={getLocationsRequest} />
         </View>
     );
 }

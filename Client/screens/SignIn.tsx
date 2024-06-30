@@ -7,6 +7,7 @@ import { getStyles } from '../styles/Sign';
 import { useRef, useState } from 'react';
 import { PropNavigation } from '../App';
 import { NavigationProp } from '@react-navigation/native';
+import React from 'react';
 
 export type Props = {
     navigation: NavigationProp<any, any>,
