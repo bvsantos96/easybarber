@@ -1,6 +1,6 @@
-import { IPage, ITimedRequest } from "../declarations";
+import { IPage, ITimedRequest, Identifiable } from "../declarations";
 
-export class TimedRequest<T> implements ITimedRequest<T> {
+export class TimedRequest<T extends Identifiable> implements ITimedRequest<T> {
     page: IPage<T>;
     lastRequest: number;
     loadingMore?: boolean | undefined;

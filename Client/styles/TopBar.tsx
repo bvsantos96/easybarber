@@ -40,7 +40,6 @@ export const getStyles = () => {
             height: 24 * theme.dimensions.absoluteHeight,
         },
         nameText: {
-            position: 'absolute',
             color: theme.colors.text.alt,
             fontSize: theme.fonts.size._19,
             fontFamily: 'Poppins',
@@ -201,6 +200,9 @@ export const getStyles = () => {
             width: theme.dimensions.width,
             height: theme.dimensions.height - topBarHeight - 213 * theme.dimensions.absoluteHeight,
             marginTop: 5 * theme.dimensions.absoluteHeight,
+        },
+        flexDirection: {
+            flexDirection: 'row',
         },
     })
 };

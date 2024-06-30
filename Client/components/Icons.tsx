@@ -24,14 +24,14 @@ export const PasswordIcon = () => {
 export const ShowPasswordIcon = () => {
     const theme = useTheme();
     return (
-        <AntDesign name="eyeo" size={24} color="black" />
+        <AntDesign name="eyeo" size={24 * theme.dimensions.absoluteWidth} color="black" />
     );
 };
 
 export const HidePasswordIcon = () => {
     const theme = useTheme();
     return (
-        <Entypo name="eye-with-line" size={24} color="black" />
+        <Entypo name="eye-with-line" size={24 * theme.dimensions.absoluteWidth} color="black" />
     );
 };
 

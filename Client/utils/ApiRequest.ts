@@ -4,9 +4,9 @@ import { PickerItem } from '../components/Picker';
 import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
 import { Appointment, BarberInfo, ICategory, ILocation, IPage, IResult } from '../declarations';
-import { getCurrentSelectedLocation } from '../storage/ApiLongTermStorage';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
 import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
+import { getSelectedLocation } from './Location';
 
 export const getAppointments = async (): Promise<Appointment[]> => {
     return require("../assets/fakeAPI/appointments.json");
@@ -247,7 +247,7 @@ export const getLocationsRequest = async (page?: IPage<ILocation>, params?: Reco
 }
 
 export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record<string, string | number | boolean>, location?: ILocation): Promise<IPage<BarberInfo> | undefined> => {
-    location = location ?? await getCurrentSelectedLocation();
+    location = location ?? await getSelectedLocation();
     if (location === undefined || location === null) {
         // TODO: alerta para ativar localizacao
         return page;
@@ -265,19 +265,10 @@ export const getBarbersNearMe = async (page: IPage<BarberInfo>, params?: Record<
     return await getNearByBarbers(page, params);
 }
 
-export const getSavedLocations = async (numItems = -1): Promise<ILocation[]> => {
-    const path = `/locations${numItems > 0 ? `?size=${numItems}` : ""}`;
-    const response = await request(path, "GET", null, langs.apiMessages.success, langs.apiMessages.failed);
-    if (response.success) {
-        return response.items;
-    }
-    throw new Error(langs.apiMessages.failed);
-}
-
-export const setNewLocation = async (location: ILocation): Promise<boolean> => {
-    const response = await request("/location", "POST", location, langs.apiMessages.success, langs.apiMessages.failed, true);
-    if (response.success) {
-        return true;
+export const setNewLocation = async (location: ILocation): Promise<number> => {
+    const response = await request<number>("/location", "POST", location, langs.apiMessages.success, langs.apiMessages.failed, true);
+    if (response.success && response.data !== undefined && response.data !== null) {
+        return response.data;
     }
     throw new Error(langs.apiMessages.failed);
 }

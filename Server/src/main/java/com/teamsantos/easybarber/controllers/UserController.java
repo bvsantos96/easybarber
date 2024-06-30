@@ -75,14 +75,12 @@ public class UserController {
     }
 
     @PostMapping("/location")
-    public ResponseEntity<String> addUserLocation(@RequestBody LocationDTO locationDTO, Principal principal) {
+    public ResponseEntity<Long> addUserLocation(@RequestBody LocationDTO locationDTO, Principal principal) {
         try {
             User user = userService.getUser(principal);
-            locationService.addLocation(locationDTO, user);
-            return ResponseEntity.ok("Location added successfully.");
+            return ResponseEntity.ok(locationService.addLocation(locationDTO, user));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to add location: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(-1L);
         }
     }
 }

@@ -4,6 +4,7 @@ import SubTitle from '../components/SubTitle';
 import PageNumber from '../components/PageNumber';
 import Button from '../components/Button';
 import { getStyles } from '../styles/OnBoarding';
+import React from 'react';
 
 type OnboardingProps = {
     title: Line[][],

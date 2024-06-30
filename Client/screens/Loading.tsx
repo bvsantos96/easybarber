@@ -1,6 +1,7 @@
 import { Image, Text, View, StyleSheet } from "react-native";
 
 import { useTheme } from "../styles/ThemeContext";
+import React from "react";
 
 export default function Loading() {
     const texts = require("@lang/en.json");

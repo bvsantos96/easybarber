@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, TextInput, InputModeOptions } from 'react-native';
 import Pressable from '../components/Pressable';
 import { getStyles } from '../styles/Input';
