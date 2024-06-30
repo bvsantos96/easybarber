@@ -1,3 +1,4 @@
+import React from "react";
 import { Animated, View, Text, Easing } from "react-native";
 import Pressable from "./Pressable";
 import Divider from "./Divider";

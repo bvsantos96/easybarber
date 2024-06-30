@@ -1,3 +1,4 @@
+import React from 'react';
 import OnBoarding from '../components/Onboarding';
 
 import { getStyles } from '../styles/OnBoarding';

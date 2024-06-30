@@ -1,3 +1,5 @@
+import React from "react";
+
 import TabIcon from "@assets/icons/activePage.svg";
 import InactiveTabIcon from "@assets/icons/inactivePage.svg";
 import { useTheme } from '../styles/ThemeContext';

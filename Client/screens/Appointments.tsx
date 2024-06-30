@@ -1,8 +1,10 @@
 import { ScrollView, View } from 'react-native';
 import { getStyles } from '../styles/Appointments';
 import { useEffect, useState } from 'react';
-import { Appointment, getAppointments } from '../utils/ApiRequest';
+import { getAppointments } from '../utils/ApiRequest';
 import ListAppointments from '../components/ListAppointments';
+import React from 'react';
+import { Appointment } from '../declarations';
 
 export default function Home() {
     const styles = getStyles();
