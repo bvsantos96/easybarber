@@ -16,8 +16,9 @@ import { createPageable } from '../utils/PageHandling';
 import { TimedRequest } from '../utils/TimedRequest';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
 import { SvgUri } from 'react-native-svg';
-import { BarberInfo, ICategory, IFilterRequest, ITimedRequest } from '../declarations';
+import { BarberInfo, ICategory, IFilterRequest, IPage, ITimedRequest } from '../declarations';
 import PageList, { PageListRef } from '../components/PageList';
+import useLocationStore from '../storage/stores/LocationStore';
 
 export default function Home() {
     const topBarStyles = topBarGetStyles();
@@ -28,16 +29,26 @@ export default function Home() {
     const texts = require("../langs/en.json");
     const inserts = useSafeAreaInsets();
     const [categories, setCategories] = useState<ICategory[]>([]);
+    const [resetSearch, setResetSearch] = useState(false);
 
+    const {
+        selectedLocation,
+        getSelectedLocation,
+        setLocations
+    } = useLocationStore();
 
     const loadCategories = async () => {
         setCategories(await retrieveCategories());
     }
 
     useEffect(() => {
+        getSelectedLocation();
         loadCategories();
     }, []);
 
+    useEffect(() => {
+        setResetSearch(!resetSearch);
+    }, [selectedLocation]);
 
     const replaceFilter = (filter: IFilterRequest) => {
         let req: ITimedRequest<BarberInfo> = new TimedRequest(createPageable<BarberInfo>(), 0, filter);
@@ -52,9 +63,15 @@ export default function Home() {
         pageListRef?.current?.setRequest({ ...pageListRef?.current?.request, pathParams: { ...pageListRef?.current?.request.pathParams, partialName: name } });
     }
 
+    const loadMoreLocations = async (page?: IPage<BarberInfo>, params?: Record<string, string | number | boolean>) => {
+        if (selectedLocation)
+            return await getNearByBarbers(page, params, selectedLocation);
+        return undefined;
+    }
+
     return (
         <>
-            <TopBar filter={pageListRef?.current?.request.pathParams} setFilter={setFilter} setName={setName} />
+            <TopBar location={selectedLocation} filter={pageListRef?.current?.request.pathParams} setFilter={setFilter} setName={setName} />
             <View style={topBarStyles.homeContainer}>
                 <Divider size={28.44} color="transparent" />
                 <ExpandableView
@@ -97,7 +114,7 @@ export default function Home() {
                     onExpand={() => { setTopCategoriesExpanded(nearbyBarbersExpanded); setNearbyBarbersExpanded(!nearbyBarbersExpanded) }}
                     title={texts.nearbyBarbers}>
                     <Divider size={10} />
-                    <PageList<BarberInfo> ref={pageListRef} renderItem={({ item }: { item: BarberInfo }) => <ListItem barber={item} />} requestFunction={getNearByBarbers} />
+                    <PageList<BarberInfo> reset={resetSearch} ref={pageListRef} renderItem={({ item }: { item: BarberInfo }) => <ListItem barber={item} />} requestFunction={loadMoreLocations} />
                 </ExpandableView>
             </View>
         </>

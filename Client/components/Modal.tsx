@@ -1,6 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useImperativeHandle, useRef, useState } from 'react';
 import { View, StyleProp, ViewStyle } from 'react-native';
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet';
 import { useSharedValue } from 'react-native-reanimated';
 import { useTheme } from '../styles/ThemeContext';
 import Pressable from './Pressable';
@@ -12,13 +12,24 @@ type CustomModalProps = {
     buttonStyle?: StyleProp<ViewStyle>;
 };
 
-const CustomModal: React.FC<CustomModalProps> = ({ children, modalContent, modalHeight, buttonStyle }) => {
+export interface CustomModalRef {
+  toggleModal: () => void;
+}
+
+const CustomModal: React.ForwardRefRenderFunction<CustomModalRef, CustomModalProps> = (
+    { children, modalContent, modalHeight, buttonStyle },
+    ref
+) => {
     const theme = useTheme();
     const [isVisible, setIsVisible] = useState(false);
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const sharedVal = useSharedValue(0);
     const modalBottomPadding = 10 * theme.dimensions.absoluteHeight;
     const [modalContentHeight] = useState(modalHeight ? modalHeight + modalBottomPadding : 0);
+
+    useImperativeHandle(ref, () => ({
+        toggleModal,
+    }));
 
     const toggleModal = () => {
         if (isVisible) {
@@ -44,7 +55,7 @@ const CustomModal: React.FC<CustomModalProps> = ({ children, modalContent, modal
             <BottomSheetModal
                 ref={bottomSheetModalRef}
                 onDismiss={() => setIsVisible(false)}
-                enableDynamicSizing
+                snapPoints={[modalContentHeight + theme.dimensions.tabHeight, theme.dimensions.maxSnapPoint]}
                 backdropComponent={() => (
                     <BottomSheetBackdrop
                         animatedIndex={sharedVal}
@@ -53,14 +64,14 @@ const CustomModal: React.FC<CustomModalProps> = ({ children, modalContent, modal
                     />
                 )}
             >
-                <BottomSheetScrollView >
-                    <View style={{ "height": modalContentHeight }} >
+                <BottomSheetView>
+                    <View style={{ "minHeight": modalContentHeight }} >
                         {modalContent}
                     </View>
-                </BottomSheetScrollView>
-            </BottomSheetModal >
+                </BottomSheetView>
+            </BottomSheetModal>
         </>
     );
 };
 
-export default CustomModal;
+export default React.forwardRef(CustomModal);

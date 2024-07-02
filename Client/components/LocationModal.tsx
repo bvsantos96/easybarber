@@ -8,9 +8,15 @@ import Divider from './Divider';
 import { EvilIcons } from '@expo/vector-icons';
 import { Feather } from '@expo/vector-icons';
 import PageList, { PageListRef } from './PageList';
-import { getLocationsRequest } from '../utils/ApiRequest';
+import { getLocationList } from '../utils/ApiRequest';
+import Pressable from './Pressable';
+import useLocationStore from '../storage/stores/LocationStore';
 
-export default function LocationModal() {
+interface LocationModalProps {
+    toggleModal: () => void;
+}
+
+const LocationModal: React.FC<LocationModalProps> = ({ toggleModal }) => {
     const styles = getStyles();
     const texts = require("@lang/en.json");
     const theme = useTheme();
@@ -18,6 +24,13 @@ export default function LocationModal() {
     const [topHeight, setTopHeight] = useState(0);
     const [height, setHeight] = useState(0);
     const [numItems, setNumItems] = useState(0);
+    const [resetList, setResetList] = useState(false);
+
+    const {
+        locations,
+        setLocations
+    } = useLocationStore();
+
     useEffect(() => {
         if (numItems === 0) {
             return;
@@ -48,23 +61,32 @@ export default function LocationModal() {
                 </View>
                 <Divider size={styles.divider.minHeight} />
             </View>
-            <PageList<ILocation> ref={pageListRef} renderItem={({ item }) => <Item idx={item.id} location={item} />} requestFunction={getLocationsRequest} />
+            <PageList<ILocation> saveCache={setLocations} loadCache={() => locations} reset={resetList} inModal ref={pageListRef} renderItem={({ item, index }) => <Item reset={() => { setResetList(!resetList); toggleModal() }} key={index} idx={index} location={item} />} requestFunction={getLocationList} />
         </View>
     );
 }
 
-const Item = ({ idx, location }: { idx: Number | string, location: ILocation }) => {
+const Item = ({ idx, location, reset }: { idx: Number | string, location: ILocation, reset: () => void }) => {
     const theme = useTheme();
     const styles = getStyles();
     const [numLines, setNumLines] = useState(1);
+
+    const {
+        selectLocation
+    } = useLocationStore();
 
     const handleAddressLayout = (event: any) => {
         let nLines = Math.floor(event.nativeEvent.layout.height / styles.itemTitle.fontSize);
         setNumLines(nLines);
     }
 
+    const handleSelectNewLocation = async () => {
+        selectLocation(location);
+        reset();
+    }
+
     return (
-        <View style={[styles.itemContainer, idx === 0 && styles.selectedItem]}>
+        <Pressable key={+idx} style={[styles.itemContainer, idx === 0 && styles.selectedItem]} onPress={handleSelectNewLocation} >
             <View style={[styles.paddingHorizontal, styles.maxHeight, styles.maxWidth, styles.rowContainer]}>
                 <View style={[styles.itemIconContainer, { 'marginRight': styles.itemIconPadding.padding }]}>
                     <EvilIcons name="location" size={styles.itemIcon.width} color={theme.colors.text.main} />
@@ -81,10 +103,14 @@ const Item = ({ idx, location }: { idx: Number | string, location: ILocation }) 
                             </>
                     }
                 </View>
-                <View style={[styles.itemIconContainer]}>
-                    <Feather name="edit-2" size={styles.itemIcon.width * 0.7} color={theme.colors.text.main} />
-                </View>
+                {
+                    // <View style={[styles.itemIconContainer]}>
+                    //     <Feather name="edit-2" size={styles.itemIcon.width * 0.7} color={theme.colors.text.main} />
+                    // </View>
+                    // 
+                }
             </View>
-        </View>
+        </Pressable>
     );
 }
+export default LocationModal;
