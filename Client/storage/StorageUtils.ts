@@ -44,6 +44,14 @@ export const getArrayOrEmpty = async <T>(id: string): Promise<T[]> => {
     }
 }
 
+export const getArrayFromPageOrEmpty = async <T>(id: string): Promise<T[]> => {
+    try {
+        return await getArray(id);
+    } catch (error) {
+        return [];
+    }
+}
+
 export const getArrayFromPage = <T>(page?: IPage<T>): T[] => {
     return page?.content || [];
 }

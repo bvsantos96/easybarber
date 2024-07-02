@@ -44,6 +44,21 @@ export const getAddressFromCoordinates = async (latitude: number, longitude: num
     }
 };
 
+export const selectLocation = async (location: ILocation): Promise<void> => {
+    try {
+        location.id = await setNewLocation(location);
+        const locations = await getLocations();
+        const index = locations.findIndex((l) => l.latitude === location.latitude && l.longitude === location.longitude);
+        if (index !== -1) {
+            locations.splice(index, 1);
+        }
+        locations.unshift(location);
+        await store(LOCATIONS_STORAGE_KEY, JSON.stringify(locations));
+    } catch (error) {
+        console.error('Error selecting location:', error);
+    }
+}
+
 export const saveLocation = async (location: ILocation, first = false): Promise<void> => {
     try {
         location.id = await setNewLocation(location);
@@ -58,7 +73,6 @@ export const saveLocation = async (location: ILocation, first = false): Promise<
             }
         }
         locations.unshift(location);
-        locations = [location, ...locations];
         await store(LOCATIONS_STORAGE_KEY, JSON.stringify(locations));
     } catch (error) {
         console.error('Error saving location:', error);

@@ -6,7 +6,7 @@ import { downloadToDevice } from '../storage/StorageUtils';
 import { Appointment, BarberInfo, ICategory, ILocation, IPage, IResult } from '../declarations';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
 import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
-import { getSelectedLocation } from './Location';
+import { getLocations, getSelectedLocation } from './Location';
 
 export const getAppointments = async (): Promise<Appointment[]> => {
     return require("../assets/fakeAPI/appointments.json");
@@ -243,7 +243,27 @@ export const pageGet = async <T>(url: string, page?: IPage<T>, params?: Record<s
 }
 
 export const getLocationsRequest = async (page?: IPage<ILocation>, params?: Record<string, string | number | boolean>): Promise<IPage<ILocation> | undefined> => {
+    if (params === undefined || params === null) {
+        params = {};
+    }
+    params.sort = "selected,desc";
     return await pageGet("locations", page, params);
+}
+
+export const getLocationList = async (page: IPage<ILocation>, params?: Record<string, string | number | boolean>): Promise<IPage<ILocation> | undefined> => {
+    let locations: ILocation[] = [];
+    if (page && page.content.length === 0 && page.currentPage === 0) {
+        locations = await getLocations();
+        page.content = locations;
+        page.totalElements = locations.length;
+        page.currentPage = 1;
+        page.pageSize = locations.length;
+        page.hasNextPage = true;
+        page.hasPreviousPage = false;
+        return page;
+    }
+    const temp = await getLocationsRequest(page, params);
+    return temp;
 }
 
 export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record<string, string | number | boolean>, location?: ILocation): Promise<IPage<BarberInfo> | undefined> => {
@@ -269,17 +289,6 @@ export const setNewLocation = async (location: ILocation): Promise<number> => {
     const response = await request<number>("/location", "POST", location, langs.apiMessages.success, langs.apiMessages.failed, true);
     if (response.success && response.data !== undefined && response.data !== null) {
         return response.data;
-    }
-    throw new Error(langs.apiMessages.failed);
-}
-
-export const getLocations = async (): Promise<ILocation[]> => {
-    const reponse = await request("/locations", "GET", null, langs.apiMessages.success, langs.apiMessages.failed);
-    if (reponse.hasOwnProperty("items")) {
-        for (const element of reponse?.items) {
-            element.hash = `${element.latitude}${element.longitude}`;
-        }
-        return reponse.items;
     }
     throw new Error(langs.apiMessages.failed);
 }

@@ -16,4 +16,5 @@ public class LocationDTO extends BaseDTO {
     private String country;
     private String city;
     private String name;
+    private Boolean selected;
 }

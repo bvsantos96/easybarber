@@ -3,7 +3,7 @@ import { StatusBar, Dimensions, Platform, StyleProp, ViewStyle } from 'react-nat
 import Constants from 'expo-constants';
 import { StatusBarStyle } from 'expo-status-bar';
 
-const getStatusBarHeight = () : number  => {
+const getStatusBarHeight = (): number => {
     if (Platform.OS === 'ios') {
         return StatusBar.currentHeight || 20; // Default iOS status bar height
     } else if (Platform.OS === 'android') {
@@ -15,6 +15,7 @@ const getStatusBarHeight = () : number  => {
 const width = Dimensions.get('window').width;
 const height = Dimensions.get('window').height + Constants.statusBarHeight;
 const minDimension = Math.min(width, height);
+const tabHeight = 50 * height / 844;
 
 interface Colors {
     mainColor: string;
@@ -46,6 +47,7 @@ interface DimensionsData {
     absoluteHeight: number;
     absoluteWidth: number;
     tabHeight: number;
+    maxSnapPoint: string;
     input: {
         width: number;
         height: number;
@@ -127,7 +129,8 @@ const defaultTheme: Theme = {
         absoluteHeight: height / 844,
         absoluteWidth: width / 390,
         absoluteMinDimension: minDimension / 390,
-        tabHeight: 50 * height / 844,
+        tabHeight: tabHeight,
+        maxSnapPoint: `${100 - Math.floor(tabHeight * 100 / height)}%`,
         input: {
             width: (320 * width) / 390,
             height: (58.75 * height) / 844,
