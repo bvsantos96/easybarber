@@ -29,6 +29,8 @@ public class Location {
     private String city;
     @Column
     private String name;
+    @Column
+    private boolean selected;
 
     @Override
     public int hashCode() {

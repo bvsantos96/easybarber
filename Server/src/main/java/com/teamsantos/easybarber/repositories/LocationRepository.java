@@ -17,6 +17,10 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     @Modifying
     @Query("DELETE FROM Location l WHERE l.latitude = :latitude AND l.longitude = :longitude AND l.user = :user")
-    void deleteIfExist(@Param("latitude") double latitude, @Param("longitude") double longitude,
+    int deleteIfExist(@Param("latitude") double latitude, @Param("longitude") double longitude,
             @Param("user") User user);
+
+    @Modifying
+    @Query("UPDATE Location l SET l.selected = false WHERE l.user = :user AND l.selected = true")
+    int unSelectAll(User user);
 }
