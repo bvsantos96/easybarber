@@ -10,6 +10,12 @@ import { getDefaultCountryString } from './utils/Constants';
 
 SplashScreen.preventAutoHideAsync();
 
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs([
+  'Support for defaultProps will be removed from function components',
+]);
+
 //screens
 import { ThemeProvider, useTheme } from './styles/ThemeContext';
 import { Animated, View, Text, Alert } from 'react-native';
