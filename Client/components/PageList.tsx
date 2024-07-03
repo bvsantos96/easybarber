@@ -1,7 +1,7 @@
 import React, { useEffect, useImperativeHandle, useState } from "react";
 import { FlatList, View, Text } from "react-native";
 import { getStyles } from "../styles/Home";
-import { ICache, IPage, ITimedRequest, Identifiable } from "../declarations";
+import { IPage, ITimedRequest, Identifiable } from "../declarations";
 import { TimedRequest } from "../utils/TimedRequest";
 import { createPageable } from "../utils/PageHandling";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
