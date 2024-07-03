@@ -35,7 +35,7 @@ export const createPageable = <T>(): IPage<T> => {
         totalPages: 0,
         totalElements: 0,
         currentPage: 0,
-        pageSize: 4,
+        pageSize: 10,
         hasNextPage: true,
         hasPreviousPage: false
     };
