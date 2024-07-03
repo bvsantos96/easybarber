@@ -42,7 +42,10 @@ export default function Home() {
     }
 
     useEffect(() => {
-        getSelectedLocation();
+        const _getSelectedLocation = async () => {
+            await getSelectedLocation();
+        };
+        _getSelectedLocation();
         loadCategories();
     }, []);
 
@@ -53,7 +56,6 @@ export default function Home() {
     const replaceFilter = (filter: IFilterRequest) => {
         let req: ITimedRequest<BarberInfo> = new TimedRequest(createPageable<BarberInfo>(), 0, filter);
         pageListRef?.current?.loadMoreItems(req);
-        console.log("Filter", filter);
         _setFilter(filter);
     }
 
@@ -98,7 +100,7 @@ export default function Home() {
                                 select={setFilter}
                                 selectedCategory={
                                     filter && typeof filter === 'object'
-                                        && 'serviceType' in filter 
+                                        && 'serviceType' in filter
                                         && typeof filter.serviceType === 'string'
                                         ? parseInt(filter.serviceType)
                                         : -1

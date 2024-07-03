@@ -6,7 +6,8 @@ import { downloadToDevice } from '../storage/StorageUtils';
 import { Appointment, BarberInfo, ICategory, ILocation, IPage, IResult } from '../declarations';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
 import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
-import { getLocations, getSelectedLocation } from './Location';
+import { getSelectedLocation } from './Location';
+import useLocationStore from '../storage/stores/LocationStore';
 
 export const getAppointments = async (): Promise<Appointment[]> => {
     return require("../assets/fakeAPI/appointments.json");
@@ -246,14 +247,15 @@ export const getLocationsRequest = async (page?: IPage<ILocation>, params?: Reco
     if (params === undefined || params === null) {
         params = {};
     }
-    params.sort = "selected,desc";
+    params.sort = "selected,desc&sort=id,desc";
     return await pageGet("locations", page, params);
 }
 
 export const getLocationList = async (page: IPage<ILocation>, params?: Record<string, string | number | boolean>): Promise<IPage<ILocation> | undefined> => {
-    let locations: ILocation[] = [];
-    if (page && page.content.length === 0 && page.currentPage === 0) {
-        locations = await getLocations();
+    const {
+        locations,
+    } = useLocationStore.getState();
+    if (page && page.content.length === 0 && page.currentPage === 0 && locations.length > 0) {
         page.content = locations;
         page.totalElements = locations.length;
         page.currentPage = 1;
@@ -262,8 +264,7 @@ export const getLocationList = async (page: IPage<ILocation>, params?: Record<st
         page.hasPreviousPage = false;
         return page;
     }
-    const temp = await getLocationsRequest(page, params);
-    return temp;
+    return await getLocationsRequest(page, params);
 }
 
 export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record<string, string | number | boolean>, location?: ILocation): Promise<IPage<BarberInfo> | undefined> => {
