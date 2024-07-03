@@ -5,6 +5,7 @@ import { IPage, ITimedRequest, Identifiable } from "../declarations";
 import { TimedRequest } from "../utils/TimedRequest";
 import { createPageable } from "../utils/PageHandling";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import useLocationStore from "../storage/stores/LocationStore";
 
 interface PageListProps<T extends Identifiable> {
     renderItem: (item: { item: T, index: number }) => React.JSX.Element;
@@ -28,6 +29,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     const styles = getStyles();
     const [loadingMore, setLoadingMore] = useState(false);
     const [request, setRequest] = useState<ITimedRequest<T>>(new TimedRequest(createPageable<T>(), 0));
+    const [firstLoad, setFirstLoad] = useState(true);
 
     useImperativeHandle(ref, () => ({
         loadMoreItems,
@@ -57,8 +59,14 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     }, [loadingMore]);
 
     useEffect(() => {
-        setRequest(new TimedRequest(createPageable<T>(), 0));
-        _loadMoreItems();
+        if (!firstLoad) {
+            setRequest(new TimedRequest(createPageable<T>(), 0));
+            saveCache && saveCache([]);
+            _loadMoreItems();
+            return;
+        } else {
+            setFirstLoad(false);
+        }
     }, [props.reset]);
 
     useEffect(() => {

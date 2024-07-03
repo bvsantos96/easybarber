@@ -57,9 +57,8 @@ const useLocationStore = create<LocationState>()(
                 if (locations.length <= 0) {
                     locations[0] = await getLocation();
                     locations[0].id = await setNewLocation(locations[0]);
-                    useLocationStore.setState({ locations: locations, selectedLocation: locations[0] });
                 }
-                useLocationStore.setState({ selectedLocation: locations[0] });
+                useLocationStore.setState({ locations: locations, selectedLocation: locations[0] });
                 return locations[0];
             }
             return state.selectedLocation;
