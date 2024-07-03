@@ -3,6 +3,7 @@ import { ILocation } from "../declarations";
 import { getLocationsRequest, setNewLocation } from './ApiRequest';
 import { getArrayFromPage, getArrayOrEmpty, store } from '../storage/StorageUtils';
 import { LOCATIONS_STORAGE_KEY } from './Constants';
+import useLocationStore from '../storage/stores/LocationStore';
 
 export async function getLocation(): Promise<ILocation> {
     try {
@@ -97,6 +98,12 @@ export const getLocations = async (): Promise<ILocation[]> => {
 }
 
 export const getSelectedLocation = async (): Promise<ILocation> => {
-    const locations = await getLocations();
-    return locations[0];
+    const {
+        getSelectedLocation
+    } = useLocationStore.getState();
+    const location = await getSelectedLocation();
+    if (location === undefined) {
+        throw new Error('No location selected');
+    }
+    return location;
 }
