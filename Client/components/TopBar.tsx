@@ -30,6 +30,7 @@ export default function TopBar({ filter, setFilter, setName, location }: TopBarP
     const texts = require('../langs/en.json');
     const [currentSelectedAddress, setCurrentSelectedAddress] = useState<string | undefined>(undefined);
     const locationModalRef = React.createRef<CustomModalRef>();
+    const filterModalRef = React.createRef<CustomModalRef>();
 
     useEffect(() => {
         const _getAddress = async (_location: ILocation) => {
@@ -68,8 +69,9 @@ export default function TopBar({ filter, setFilter, setName, location }: TopBarP
                         <SearchBar placeholder={texts.search} search={() => setFilter({})} onTextChange={setName} />
                     </View>
                     <CustomModal
+                        ref={filterModalRef}
                         buttonStyle={styles.filterView}
-                        modalContent={<Filter filter={filter} setFilter={setFilter} />}
+                        modalContent={<Filter filter={filter} setFilter={(filter: IFilterRequest)=>{setFilter(filter);filterModalRef.current?.toggleModal()}} />}
                         modalHeight={422 * theme.dimensions.absoluteHeight + theme.dimensions.input.height} >
                         <FilterIcon width={styles.filter.width} height={styles.filter.height} />
                     </CustomModal>

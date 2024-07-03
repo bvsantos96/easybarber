@@ -30,11 +30,11 @@ export default function Home() {
     const inserts = useSafeAreaInsets();
     const [categories, setCategories] = useState<ICategory[]>([]);
     const [resetSearch, setResetSearch] = useState(false);
+    const [filter, _setFilter] = useState<IFilterRequest | undefined>({});
 
     const {
         selectedLocation,
         getSelectedLocation,
-        setLocations
     } = useLocationStore();
 
     const loadCategories = async () => {
@@ -53,6 +53,8 @@ export default function Home() {
     const replaceFilter = (filter: IFilterRequest) => {
         let req: ITimedRequest<BarberInfo> = new TimedRequest(createPageable<BarberInfo>(), 0, filter);
         pageListRef?.current?.loadMoreItems(req);
+        console.log("Filter", filter);
+        _setFilter(filter);
     }
 
     const setFilter = (_filter: IFilterRequest) => {
@@ -71,7 +73,7 @@ export default function Home() {
 
     return (
         <>
-            <TopBar location={selectedLocation} filter={pageListRef?.current?.request.pathParams} setFilter={setFilter} setName={setName} />
+            <TopBar location={selectedLocation} filter={filter} setFilter={setFilter} setName={setName} />
             <View style={topBarStyles.homeContainer}>
                 <Divider size={28.44} color="transparent" />
                 <ExpandableView
@@ -95,10 +97,10 @@ export default function Home() {
                                 expanded={topCategoriesExpanded}
                                 select={setFilter}
                                 selectedCategory={
-                                    pageListRef?.current?.request.pathParams && typeof pageListRef?.current?.request.pathParams === 'object'
-                                        && 'serviceType' in pageListRef?.current?.request.pathParams
-                                        && typeof pageListRef?.current?.request.pathParams.serviceType === 'string'
-                                        ? parseInt(pageListRef?.current?.request.pathParams.serviceType)
+                                    filter && typeof filter === 'object'
+                                        && 'serviceType' in filter 
+                                        && typeof filter.serviceType === 'string'
+                                        ? parseInt(filter.serviceType)
                                         : -1
                                 }
                             />
