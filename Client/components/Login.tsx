@@ -30,9 +30,7 @@ export default function Login({ navigation, toggleNewUser }: Props) {
 
     useEffect(() => {
         const fakeLogin = async () => {
-            const DEFAULT_COUNTRY = await getDefaultCountryAsync();
-            setNation(DEFAULT_COUNTRY);
-            const result: IResult<IAPIResponse> = await doLogin(DEFAULT_COUNTRY?.callingCode[0] || "351", DEBUG_AUTO_LOGIN_PHONE, DEBUG_AUTO_LOGIN_PASSWORD);
+            const result: IResult<IAPIResponse> = await doLogin("351", DEBUG_AUTO_LOGIN_PHONE, DEBUG_AUTO_LOGIN_PASSWORD);
             if (result.success)
                 resetNavigation(navigation, 'Tabs');
             else {
