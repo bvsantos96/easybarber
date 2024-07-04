@@ -5,7 +5,6 @@ import { IPage, ITimedRequest, Identifiable } from "../declarations";
 import { TimedRequest } from "../utils/TimedRequest";
 import { createPageable } from "../utils/PageHandling";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
-import useLocationStore from "../storage/stores/LocationStore";
 
 interface PageListProps<T extends Identifiable> {
     renderItem: (item: { item: T, index: number }) => React.JSX.Element;
@@ -38,9 +37,10 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     }));
 
     const loadMoreItems = async (req = request) => {
+        const reqElements = req.page.content.length;
         const result = await req.request(requestFunction);
         if (result) {
-            if (saveCache) {
+            if (saveCache && reqElements !== req.page.content.length) {
                 saveCache(req.page.content);
             }
             setRequest(new TimedRequest(req.page, req.lastRequest, req.pathParams));
