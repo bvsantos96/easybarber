@@ -254,7 +254,14 @@ export const getLocationsRequest = async (page?: IPage<ILocation>, params?: Reco
 export const getLocationList = async (page: IPage<ILocation>, params?: Record<string, string | number | boolean>): Promise<IPage<ILocation> | undefined> => {
     const {
         locations,
+        hasMoreLocations
     } = useLocationStore.getState();
+
+    if (!hasMoreLocations) {
+        page.hasNextPage = false;
+        return page;
+    }
+
     if (page && page.content.length === 0 && page.currentPage === 0 && locations.length > 0) {
         page.content = locations;
         page.totalElements = locations.length;
@@ -264,7 +271,13 @@ export const getLocationList = async (page: IPage<ILocation>, params?: Record<st
         page.hasPreviousPage = false;
         return page;
     }
-    return await getLocationsRequest(page, params);
+    const _locations = await getLocationsRequest(page, params);
+
+    if (_locations?.hasNextPage === false) {
+        useLocationStore.setState({ hasMoreLocations: false });
+    }
+
+    return _locations;
 }
 
 export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record<string, string | number | boolean>, location?: ILocation): Promise<IPage<BarberInfo> | undefined> => {

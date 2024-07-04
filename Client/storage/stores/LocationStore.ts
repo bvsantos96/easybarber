@@ -5,6 +5,7 @@ import { getArrayFromPage } from '../StorageUtils';
 import { getLocationsRequest, setNewLocation } from '../../utils/ApiRequest';
 
 interface LocationState {
+    hasMoreLocations: boolean;
     locations: ILocation[];
     selectedLocation: ILocation | undefined;
     setLocations: (locations: ILocation[]) => void;
@@ -17,9 +18,14 @@ interface LocationState {
 
 const useLocationStore = create<LocationState>()(
     (set) => ({
+        hasMoreLocations: true,
         locations: [],
         selectedLocation: undefined,
-        setLocations: (locations) => set({ locations: locations }),
+        setLocations: (locations) => {
+            if (locations.length === 0)
+                return set({ hasMoreLocations: true, locations: locations });
+            return set({ locations: locations })
+        },
         addLocations: (locations) => {
             set((state: LocationState) => ({
                 locations: state.locations.concat(locations),
@@ -63,7 +69,7 @@ const useLocationStore = create<LocationState>()(
             }
             return state.selectedLocation;
         },
-        clearLocations: () => set({ locations: [] }),
+        clearLocations: () => set({ hasMoreLocations: true, locations: [] }),
     }));
 
 export default useLocationStore;
