@@ -6,7 +6,6 @@ import { useTheme } from '../styles/ThemeContext';
 import { getStyles } from '../styles/LocationModal';
 import Divider from './Divider';
 import { EvilIcons } from '@expo/vector-icons';
-import { Feather } from '@expo/vector-icons';
 import PageList, { PageListRef } from './PageList';
 import { getLocationList } from '../utils/ApiRequest';
 import Pressable from './Pressable';
