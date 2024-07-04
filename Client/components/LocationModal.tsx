@@ -24,6 +24,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ toggleModal }) => {
     const [height, setHeight] = useState(0);
     const [numItems, setNumItems] = useState(0);
     const [resetList, setResetList] = useState(false);
+    const [addresses, setAddresses] = useState<ILocation[]>([]);
 
     const {
         locations,
@@ -50,10 +51,13 @@ const LocationModal: React.FC<LocationModalProps> = ({ toggleModal }) => {
         }
     }
 
+    const searchAddress = async (address: string) => {
+    }
+
     return (
         <View style={styles.container} onLayout={handleLayout}>
             <View onLayout={handleTopLayout} style={[styles.paddingHorizontal, styles.centerHorizontal, styles.maxWidth]}>
-                <SearchBar placeholder={texts.searchAddress} altColor backgroundColor={theme.colors.backgroundColor} borderColor={theme.colors.text.main} />
+                <SearchBar onTextChange={searchAddress} placeholder={texts.searchAddress} altColor backgroundColor={theme.colors.backgroundColor} borderColor={theme.colors.text.main} />
                 <Divider size={styles.divider.maxHeight} />
                 <View style={styles.titleContainer}>
                     <Text style={styles.title}>{texts.recentAddresses}</Text>
