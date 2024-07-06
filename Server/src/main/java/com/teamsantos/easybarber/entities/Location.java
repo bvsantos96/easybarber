@@ -25,7 +25,7 @@ public class Location {
     private double longitude;
     @Column(nullable = false)
     private String country;
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String city;
     @Column
     private String name;

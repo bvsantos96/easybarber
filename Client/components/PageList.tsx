@@ -1,5 +1,5 @@
 import React, { useEffect, useImperativeHandle, useState } from "react";
-import { FlatList, View, Text } from "react-native";
+import { FlatList, View, Text, ViewStyle } from "react-native";
 import { getStyles } from "../styles/Home";
 import { IPage, ITimedRequest, Identifiable } from "../declarations";
 import { TimedRequest } from "../utils/TimedRequest";
@@ -13,16 +13,19 @@ interface PageListProps<T extends Identifiable> {
     reset?: boolean;
     loadCache?: () => T[];
     saveCache?: (items: T[]) => void;
+    style?: ViewStyle;
+    listHeader?: () => React.JSX.Element;
 }
 
 export interface PageListRef<T extends Identifiable> {
+    _loadMoreItems: () => void;
     loadMoreItems: (req: ITimedRequest<T>) => void;
     request: ITimedRequest<T>;
     setRequest: React.Dispatch<React.SetStateAction<ITimedRequest<any>>>;
 }
 
 const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Ref<PageListRef<T>>) => {
-    const { renderItem, requestFunction, loadCache, saveCache } = props;
+    const { renderItem, requestFunction, loadCache, saveCache, style, listHeader } = props;
     const inModal = props.inModal || false;
     const texts = require("@lang/en.json");
     const styles = getStyles();
@@ -31,6 +34,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     const [firstLoad, setFirstLoad] = useState(true);
 
     useImperativeHandle(ref, () => ({
+        _loadMoreItems,
         loadMoreItems,
         request,
         setRequest
@@ -83,10 +87,10 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
         return (
             <BottomSheetFlatList
                 data={request?.page?.content}
-                style={styles.homeListContainer}
+                style={[styles.homeListContainer, { ...style }]}
                 contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom }}
                 renderItem={renderItem}
-                keyExtractor={(item) => { return item.id.toString(); }}
+                keyExtractor={(item) => item.id.toString()}
                 onEndReached={_loadMoreItems}
                 onEndReachedThreshold={0.1}
                 ListFooterComponent={() => (
@@ -102,7 +106,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     return (
         <FlatList
             data={request?.page?.content}
-            style={styles.homeListContainer}
+            style={[styles.homeListContainer, { ...style }]}
             contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom }}
             renderItem={renderItem}
             keyExtractor={(item) => item.id.toString()}

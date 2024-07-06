@@ -13,7 +13,7 @@ type CustomModalProps = {
 };
 
 export interface CustomModalRef {
-  toggleModal: () => void;
+    toggleModal: () => void;
 }
 
 const CustomModal: React.ForwardRefRenderFunction<CustomModalRef, CustomModalProps> = (
@@ -24,7 +24,7 @@ const CustomModal: React.ForwardRefRenderFunction<CustomModalRef, CustomModalPro
     const [isVisible, setIsVisible] = useState(false);
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const sharedVal = useSharedValue(0);
-    const modalBottomPadding = 10 * theme.dimensions.absoluteHeight;
+    const modalBottomPadding = 20 * theme.dimensions.absoluteHeight;
     const [modalContentHeight] = useState(modalHeight ? modalHeight + modalBottomPadding : 0);
 
     useImperativeHandle(ref, () => ({

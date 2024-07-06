@@ -90,9 +90,10 @@ export const getStyles = () => {
         searchBarContainer: {
             width: 290 * theme.dimensions.absoluteWidth,
         },
-        searchBarInput: {
-            position: 'absolute',
+        searchBarContainerExpanded: {
             width: "100%",
+        },
+        searchBarInput: {
             height: 50 * theme.dimensions.absoluteHeight,
             borderWidth: 1,
             borderColor: theme.colors.button.alt,
@@ -203,6 +204,12 @@ export const getStyles = () => {
         },
         flexDirection: {
             flexDirection: 'row',
+        },
+        optionsList: {
+            position: 'absolute',
+            elevation: 100,
+            zIndex: 100,
+            backgroundColor: theme.colors.backgroundColor,
         },
     })
 };
