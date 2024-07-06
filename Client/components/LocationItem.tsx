@@ -8,7 +8,7 @@ import Pressable from "./Pressable";
 import { getStyles } from '../styles/LocationModal';
 import useLocationStore from "../storage/stores/LocationStore";
 
-const LocationItem = ({ idx, location, reset, highlightFirst, style, preReset }: { preReset?: () => void, style?: ViewStyle, idx: Number | string, location: ILocation, reset: () => void, highlightFirst?: boolean }) => {
+const LocationItem = ({ idx, location, reset, highlightFirst, style }: { style?: ViewStyle, idx: Number | string, location: ILocation, reset: () => void, highlightFirst?: boolean }) => {
     const theme = useTheme();
     const styles = getStyles();
     const [numLines, setNumLines] = useState(1);
