@@ -10,7 +10,7 @@ import { getSelectedLocation } from './Location';
 import useLocationStore from '../storage/stores/LocationStore';
 
 export const getAppointments = async (): Promise<Appointment[]> => {
-    return require("../assets/fakeAPI/appointments.json");
+    return [];
 }
 
 export const getTimes = async ({ from, to }: { from?: string, to?: string }): Promise<PickerItem[]> => {
