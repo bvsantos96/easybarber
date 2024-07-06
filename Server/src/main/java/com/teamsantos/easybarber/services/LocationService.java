@@ -1,7 +1,6 @@
 package com.teamsantos.easybarber.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.CannotAcquireLockException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -47,7 +46,7 @@ public class LocationService {
                 location.setLongitude(locationDTO.getLongitude());
                 location.setAddress(locationDTO.getAddress());
                 location.setCountry(locationDTO.getCountry());
-                location.setCity(locationDTO.getCity());
+                location.setCity(locationDTO.getCity() == null ? "" : locationDTO.getCity());
                 location.setName(locationDTO.getName());
                 location.setUser(user);
                 return locationRepository.save(location).getId();

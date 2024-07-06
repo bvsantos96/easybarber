@@ -1,5 +1,5 @@
 import * as Location from 'expo-location';
-import { ILocation } from "../declarations";
+import { ILocation, IAddressSuggestion } from "../declarations";
 import { getLocationsRequest, setNewLocation } from './ApiRequest';
 import { getArrayFromPage, getArrayOrEmpty, store } from '../storage/StorageUtils';
 import { LOCATIONS_STORAGE_KEY } from './Constants';
@@ -29,6 +29,11 @@ export async function getLocation(): Promise<ILocation> {
         console.error('Error getting location:', error);
         throw error;
     }
+}
+
+export const setCountry = async (): Promise<void> => {
+    const location: ILocation = await getLocation();
+    useLocationStore.setState({ country: location.country });
 }
 
 export const getAddressFromCoordinates = async (latitude: number, longitude: number): Promise<Location.LocationGeocodedAddress | undefined> => {
@@ -106,4 +111,102 @@ export const getSelectedLocation = async (): Promise<ILocation> => {
         throw new Error('No location selected');
     }
     return location;
+}
+
+const blacklist = [
+    // Portuguese
+    'rua', 'avenida', 'estrada', 'travessa', 'praça', 'alameda', 'largo', 'rodovia',
+    // English
+    'street', 'road', 'avenue', 'boulevard', 'lane', 'drive', 'way', 'court', 'place', 'square', 'circle', 'highway', 'parkway', 'plaza', 'trail', 'terrace',
+    // German
+    'straße', 'weg', 'platz', 'allee', 'gasse', 'ring', 'chaussee',
+    // Spanish
+    'calle', 'avenida', 'camino', 'plaza', 'carrer', 'bulevar', 'carretera', 'pasaje', 'ronda',
+    // Italian
+    'via', 'viale', 'piazza', 'corso', 'largo', 'strada', 'vicolo', 'rotatoria',
+    // French
+    'rue', 'avenue', 'boulevard', 'chemin', 'place', 'route', 'cours', 'voie', 'allée', 'impasse', 'quai',
+    // Polish
+    'ulica', 'plac', 'aleja', 'droga', 'osiedle',
+    // Dutch
+    'straat', 'laan', 'weg', 'plein', 'gracht', 'dreef', 'kade', 'pad',
+    // Russian
+    'улица', 'проспект', 'площадь', 'бульвар', 'переулок', 'шоссе',
+    // Chinese (Simplified)
+    '街道', '大道', '路', '广场', '巷', '胡同', '环路',
+    // Japanese
+    '通り', '道路', '街', '区', '丁目',
+    // Arabic
+    'شارع', 'طريق', 'ميدان', 'زقاق', 'حارة', 'جادة',
+    // Hindi
+    'सड़क', 'मार्ग', 'चौक', 'गल्ली', 'पथ', 'राजमार्ग',
+    // Other
+    'route', 'trunk', 'motorway', 'expressway', 'freeway'
+    // Add more terms as needed
+];
+
+export const suggestionsInputValidation = (address: string): boolean => {
+    if (address.length < 3) {
+        return false;
+    }
+
+    let size = address.length
+    const words = address.split(' ');
+    for (const word of words) {
+        if (blacklist.includes(word.toLowerCase())) {
+            size -= word.length + 1;
+        }
+    }
+
+    return size >= 3;
+}
+
+export const fetchSuggestions = async (address: string): Promise<ILocation[]> => {
+    try {
+        const {
+            country
+        } = useLocationStore.getState();
+
+        let localSuggestions: IAddressSuggestion[] = [];
+
+        const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1`;
+        if (country) {
+            const response = await fetch(
+                `${url}&countrycodes=${country}&limit=3`
+            );
+            localSuggestions = await response.json();
+        }
+
+        let suggestionsHash: Set<string> = new Set();
+        let suggestions: ILocation[] = [];
+        const globalSugestions: IAddressSuggestion[] = await fetch(`${url}&limit=${5 - localSuggestions.length}`).then(response => response.json())
+        if (localSuggestions.length > 0) {
+            appendUniqueSuggestions(suggestions, localSuggestions, suggestionsHash);
+        }
+        appendUniqueSuggestions(suggestions, globalSugestions, suggestionsHash);
+        return suggestions
+    } catch (error) {
+        console.error('Error fetching suggestions:', error);
+        return [];
+    }
+}
+
+const appendUniqueSuggestions = async (suggestions: ILocation[], newSuggestions: IAddressSuggestion[], hash: Set<string>): Promise<ILocation[]> => {
+    for (const suggestion of newSuggestions) {
+        const key = `${suggestion.address.road}$$$${suggestion.address.city}$$$${suggestion.address.country}`;
+        if (hash.has(key)) {
+            continue;
+        }
+        suggestions.push({
+            id: hash.size,
+            latitude: parseFloat(suggestion.lat),
+            longitude: parseFloat(suggestion.lon),
+            address: suggestion.address.road ?? suggestion.display_name,
+            country: suggestion.address.country,
+            city: suggestion.address.city,
+            name: ""
+        });
+        hash.add(key);
+    }
+    return suggestions;
 }

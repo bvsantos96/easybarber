@@ -7,10 +7,12 @@ export const getStyles = () => {
         container: {
             width: '100%',
             height: '100%',
-            alignItems: 'center',
             backgroundColor: theme.colors.backgroundColor,
             borderTopLeftRadius: 31 * theme.dimensions.absoluteWidth,
             borderTopRightRadius: 31 * theme.dimensions.absoluteWidth,
+        },
+        horizontalPadding: {
+            paddingHorizontal: 20 * theme.dimensions.absoluteWidth,
         },
         maxHeight: {
             height: '70%',
@@ -18,15 +20,12 @@ export const getStyles = () => {
         maxWidth: {
             width: '100%',
         },
-        paddingHorizontal: {
-            paddingHorizontal: 20 * theme.dimensions.absoluteWidth,
-        },
         centerHorizontal: {
             alignItems: 'center',
             width: '100%',
         },
         divider: {
-            maxHeight: 65 * theme.dimensions.absoluteHeight,
+            maxHeight: 25 * theme.dimensions.absoluteHeight,
             minHeight: 10 * theme.dimensions.absoluteHeight,
         },
         titleContainer: {

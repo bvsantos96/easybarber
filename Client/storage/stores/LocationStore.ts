@@ -10,14 +10,16 @@ interface LocationState {
     selectedLocation: ILocation | undefined;
     setLocations: (locations: ILocation[]) => void;
     addLocations: (locations: ILocation[]) => void;
-    selectLocation: (location: ILocation) => void;
+    selectLocation: (location: ILocation) => Promise<void>;
     selectLocationIdx: (idx: number) => void;
     getSelectedLocation: () => Promise<ILocation | undefined>;
     clearLocations: () => void;
+    country: string;
 }
 
 const useLocationStore = create<LocationState>()(
     (set) => ({
+        country: "",
         hasMoreLocations: true,
         locations: [],
         selectedLocation: undefined,
