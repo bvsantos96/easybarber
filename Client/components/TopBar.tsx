@@ -53,7 +53,7 @@ export default function TopBar({ filter, setFilter, setName, location }: TopBarP
             <View style={styles.elementsContainer}>
                 <View style={styles.topElements}>
                     <CustomModal ref={locationModalRef} modalContent={
-                        <LocationModal toggleModal={() => locationModalRef?.current?.toggleModal()} />
+                        <LocationModal toggleModal={() => { locationModalRef?.current?.toggleModal(); }} />
                     }
                         modalHeight={theme.dimensions.height * 0.7}
                     >
@@ -71,7 +71,7 @@ export default function TopBar({ filter, setFilter, setName, location }: TopBarP
                     <CustomModal
                         ref={filterModalRef}
                         buttonStyle={styles.filterView}
-                        modalContent={<Filter filter={filter} setFilter={(filter: IFilterRequest)=>{setFilter(filter);filterModalRef.current?.toggleModal()}} />}
+                        modalContent={<Filter filter={filter} setFilter={(filter: IFilterRequest) => { setFilter(filter); filterModalRef.current?.toggleModal() }} />}
                         modalHeight={422 * theme.dimensions.absoluteHeight + theme.dimensions.input.height} >
                         <FilterIcon width={styles.filter.width} height={styles.filter.height} />
                     </CustomModal>

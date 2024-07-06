@@ -13,7 +13,7 @@ SplashScreen.preventAutoHideAsync();
 import { LogBox } from 'react-native';
 
 LogBox.ignoreLogs([
-  'Support for defaultProps will be removed from function components',
+    'Support for defaultProps will be removed from function components',
 ]);
 
 //screens
@@ -26,6 +26,7 @@ import Constants from 'expo-constants';
 import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
 import { DEBUG_AUTO_LOGIN } from './utils/EnvVariables';
+import { setCountry } from './utils/Location';
 
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
@@ -108,11 +109,16 @@ const Router = () => {
                 'Nunito': require('./assets/fonts/Nunito/Nunito-VariableFont_wght.ttf'),
             });
             await loadLongTermItems();
-            if(DEBUG_AUTO_LOGIN) {
+            if (DEBUG_AUTO_LOGIN) {
                 console.log("DEBUG AUTO LOGIN");
                 setDefaultTab("Sign");
             } else {
                 setDefaultTab(await getToken() !== null ? "Tabs" : "OnBoarding");
+            }
+            try {
+                await setCountry();
+            } catch (error) {
+                console.error('Error setting country:', error);
             }
             setIsLoading(false);
             await SplashScreen.hideAsync();
@@ -146,28 +152,28 @@ const Router = () => {
     return (
         <GestureHandlerRootView style={{ flex: 1 }} >
             <NavigationContainer>
-                    <Stack.Navigator
-                        initialRouteName={defaultTab}
-                    >
-                        <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
-                            {props => containerizedComponent(<OnBoarding {...props} />)}
-                        </Stack.Screen>
-                        <Stack.Screen name="AccountTypeSelection" options={{ headerShown: false }} >
-                            {props => containerizedComponent(<AccountTypeSelection {...props} />)}
-                        </Stack.Screen>
-                        <Stack.Screen name="Sign" options={{ headerShown: false, gestureEnabled: false }} >
-                            {props => <SignIn {...props} />}
-                        </Stack.Screen>
-                        <Stack.Screen name="Tabs" options={{ headerShown: false }} >
-                            {props => <Tabs {...props} />}
-                        </Stack.Screen>
-                        <Stack.Screen name="Loading" options={{ headerShown: false }} >
-                            {props => containerizedComponent(<Loading {...props} />)}
-                        </Stack.Screen>
-                        <Stack.Screen name="Test" options={{ headerShown: false, gestureEnabled: false }}>
-                            {_ => containerizedComponent(<View style={{ backgroundColor: "red", minHeight: 50, minWidth: 50 }}><Text>Test</Text></View>)}
-                        </Stack.Screen>
-                    </Stack.Navigator>
+                <Stack.Navigator
+                    initialRouteName={defaultTab}
+                >
+                    <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
+                        {props => containerizedComponent(<OnBoarding {...props} />)}
+                    </Stack.Screen>
+                    <Stack.Screen name="AccountTypeSelection" options={{ headerShown: false }} >
+                        {props => containerizedComponent(<AccountTypeSelection {...props} />)}
+                    </Stack.Screen>
+                    <Stack.Screen name="Sign" options={{ headerShown: false, gestureEnabled: false }} >
+                        {props => <SignIn {...props} />}
+                    </Stack.Screen>
+                    <Stack.Screen name="Tabs" options={{ headerShown: false }} >
+                        {props => <Tabs {...props} />}
+                    </Stack.Screen>
+                    <Stack.Screen name="Loading" options={{ headerShown: false }} >
+                        {props => containerizedComponent(<Loading {...props} />)}
+                    </Stack.Screen>
+                    <Stack.Screen name="Test" options={{ headerShown: false, gestureEnabled: false }}>
+                        {_ => containerizedComponent(<View style={{ backgroundColor: "red", minHeight: 50, minWidth: 50 }}><Text>Test</Text></View>)}
+                    </Stack.Screen>
+                </Stack.Navigator>
             </NavigationContainer>
         </GestureHandlerRootView >
     );

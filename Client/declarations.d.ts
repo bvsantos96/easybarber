@@ -87,3 +87,35 @@ declare interface ILocation extends Identifiable {
     city: string;
     name: string | null;
 }
+
+declare interface IAddress {
+    historic: string;
+    house_number: string;
+    road: string;
+    neighbourhood: string;
+    suburb: string;
+    borough: string;
+    city: string;
+    'ISO3166-2-lvl4': string;
+    postcode: string;
+    country: string;
+    country_code: string;
+}
+
+declare interface IAddressSuggestion {
+    place_id: number;
+    licence: string;
+    osm_type: string;
+    osm_id: number;
+    lat: string;
+    lon: string;
+    class: string;
+    type: string;
+    place_rank: number;
+    importance: number;
+    addresstype: string;
+    name: string;
+    display_name: string;
+    address: IAddress;
+    boundingbox: string[];
+}
