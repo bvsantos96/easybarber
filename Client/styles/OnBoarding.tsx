@@ -38,7 +38,7 @@ export const getStyles = () => {
             position: "absolute",
             width: 300 * theme.dimensions.absoluteWidth,
             height: 66 * theme.dimensions.absoluteHeight,
-            top: 45 * theme.dimensions.absoluteHeight,
+            top: (theme.dimensions.statusBarHeight + 45) * theme.dimensions.absoluteHeight,
             justifyContent: 'center',
             alignItems: 'center',
         },
