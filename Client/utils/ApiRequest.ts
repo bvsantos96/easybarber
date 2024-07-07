@@ -190,8 +190,7 @@ const isValidPassword = (password: string): boolean => {
 export const doLogin = async (countryCode: string, phone: string, password: string): Promise<IResult<any>> => {
     phone = phone.trim();
     const _countryCode = countryCode.startsWith('+') ? countryCode : `+${countryCode}`;
-    if (!isValidNumberString(`${_countryCode}${phone}`)){
-        Banner({ type: ALERT_TYPE.WARNING, title: "", message: langs.apiMessages.invalidPhone });
+    if (!isValidNumberString(`${_countryCode}${phone}`)) {
         return { success: false, message: langs.apiMessages.invalidPhone };
     }
 
@@ -211,10 +210,10 @@ export const doRegister = async (countryCode: string, phone: string, password: s
     phone = phone.trim();
     if (!isValidNumberString(phone))
         return { success: false, message: langs.apiMessages.invalidPhone };
-    if (!isValidPassword(password))
-        return { success: false, message: langs.apiMessages.register.invalidPassword };
     if (password != confirmPassword)
         return { success: false, message: langs.apiMessages.register.passwordMismatch };
+    if (!isValidPassword(password))
+        return { success: false, message: langs.apiMessages.register.invalidPassword };
     name = name.trim();
     if (name.length < 3)
         return { success: false, message: langs.apiMessages.register.invalidName };
