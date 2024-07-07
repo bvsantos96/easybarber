@@ -20,10 +20,12 @@ import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
 import { IAPIResponse, IResult } from '../declarations';
 import { DEBUG_AUTO_LOGIN, DEBUG_AUTO_LOGIN_PASSWORD, DEBUG_AUTO_LOGIN_PHONE } from '../utils/EnvVariables';
+import { ALERT_TYPE } from 'react-native-alert-notification';
+import { Alert } from './Alert';
+import texts from "../langs/en.json";
 
 export default function Login({ navigation, toggleNewUser }: Props) {
     const styles = getStyles();
-    const texts = require("@lang/en.json");
     const [phone, setPhone] = useState("");
     const [nation, setNation] = useState<Country | null>();
     const [password, setPassword] = useState("");
@@ -34,7 +36,7 @@ export default function Login({ navigation, toggleNewUser }: Props) {
             if (result.success)
                 resetNavigation(navigation, 'Tabs');
             else {
-                alert(result.message);
+                console.error(result.message);
             }
         }
 
@@ -57,14 +59,14 @@ export default function Login({ navigation, toggleNewUser }: Props) {
 
     const login = async () => {
         if (!nation) {
-            alert(texts.apiMessages.invalidCountry);
+            Alert({ type: ALERT_TYPE.WARNING, title: "", message: texts.apiMessages.invalidCountry });
             return;
         }
         const result: IResult<IAPIResponse> = await doLogin(nation.callingCode[0], phone, password);
         if (result.success)
             resetNavigation(navigation, 'Tabs');
         else {
-            alert(result.message);
+            Alert({ type: ALERT_TYPE.DANGER, title: texts.apiMessages.login.failed, message: result.message });
         }
     }
 

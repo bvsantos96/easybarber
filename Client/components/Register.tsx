@@ -15,10 +15,12 @@ import { Country } from 'react-native-country-picker-modal';
 import PhoneInput from './PhoneInput';
 import { IResult } from '../declarations';
 import { getDefaultCountryAsync } from '../utils/Constants';
+import { Alert } from './Alert';
+import { ALERT_TYPE } from 'react-native-alert-notification';
+import texts from "../langs/en.json";
 
 export default function Register({ navigation, toggleNewUser }: Props) {
     const styles = getStyles();
-    const texts = require("../langs/en.json");
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
@@ -37,13 +39,13 @@ export default function Register({ navigation, toggleNewUser }: Props) {
 
         fetchDefaultCountry();
     }, []);
-    
+
     const register = async () => {
-        const result: IResult<any> = await doRegister(nation?nation.callingCode[0]:"", phone, password, confirmPassword, name);
+        const result: IResult<any> = await doRegister(nation ? nation.callingCode[0] : "", phone, password, confirmPassword, name);
         if (result.success)
             resetNavigation(navigation, 'Tabs');
         else
-            alert(result.message);
+            Alert({ type: ALERT_TYPE.WARNING, title: texts.apiMessages.register.failed, message: result.message });
     }
 
     return (
@@ -71,7 +73,7 @@ export default function Register({ navigation, toggleNewUser }: Props) {
                     placeholder={texts.password}
                     password={true}
                     onInputChange={setPassword}
-                    rightIcon={[<ShowPasswordIcon/>, <HidePasswordIcon/>]}
+                    rightIcon={[<ShowPasswordIcon />, <HidePasswordIcon />]}
                 />
                 <Divider size={19.25} />
                 <Input
@@ -79,7 +81,7 @@ export default function Register({ navigation, toggleNewUser }: Props) {
                     placeholder={texts.confirmPassword}
                     password={true}
                     onInputChange={setConfirmPassword}
-                    rightIcon={[<ShowPasswordIcon/>, <HidePasswordIcon/>]}
+                    rightIcon={[<ShowPasswordIcon />, <HidePasswordIcon />]}
                 />
                 <Divider size={36.25} />
                 <Button title={texts.register.button} onPress={register} />

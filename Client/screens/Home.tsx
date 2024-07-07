@@ -81,8 +81,8 @@ export default function Home() {
                 <ExpandableView
                     style={homeStyles.topCategoriesContainer}
                     maxHeight={homeStyles.topCategoriesHeights.maxHeight}
-                    expanded={topCategoriesExpanded}
                     onExpand={() => { setNearbyBarbersExpanded(topCategoriesExpanded); setTopCategoriesExpanded(!topCategoriesExpanded) }}
+                    expanded={topCategoriesExpanded}
                     title={texts.topCategories}>
                     <Divider size={19} />
                     <View style={homeStyles.topCategoriesList}>
