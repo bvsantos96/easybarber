@@ -18,7 +18,7 @@ LogBox.ignoreLogs([
 
 //screens
 import { ThemeProvider, useTheme } from './styles/ThemeContext';
-import { Animated, View, Text, Alert } from 'react-native';
+import { Animated, View, Text } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import DismissKeyboard from './components/DismissKeyboard';
 import { loadLongTermItems } from './storage/ApiLongTermStorage';
@@ -27,6 +27,8 @@ import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
 import { DEBUG_AUTO_LOGIN } from './utils/EnvVariables';
 import { setCountry } from './utils/Location';
+import { ALERT_TYPE, AlertNotificationRoot } from 'react-native-alert-notification';
+import { Alert } from './components/Alert';
 
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
@@ -188,21 +190,24 @@ export default function App() {
             const url = Platform.OS === 'ios' ? `${texts.appStoreLink}${getDefaultCountryString().toLowerCase()}/${iosBundle}` : `${texts.playStoreLink}${androidBundle}`;
             Linking.openURL(url).catch((err) => console.error('An error occurred', err));
         };
-        Alert.alert(
-            texts.updateRequired,
-            texts.updateRequiredMessage,
-            [{ text: texts.update, onPress: () => { redirectToStore(); retryVersionCheck(); } }],
-            { cancelable: false }
-        );
+        Alert({
+            type: ALERT_TYPE.INFO,
+            title: texts.updateRequired,
+            message: texts.updateRequiredMessage,
+            onPress: () => { redirectToStore(); retryVersionCheck(); },
+            buttonText: texts.update
+        });
     };
 
     const errorWhileUpdating = () => {
         const texts = require('./langs/en.json');
-        Alert.alert(
-            texts.errorWhileUpdating,
-            texts.errorWhileUpdatingMessage,
-            [{ text: texts.retry, onPress: retryVersionCheck }],
-        );
+        Alert({
+            type: ALERT_TYPE.DANGER,
+            title: texts.errorWhileUpdating,
+            message: texts.errorWhileUpdatingMessage,
+            onPress: retryVersionCheck,
+            buttonText: texts.retry
+        });
     }
     const versionCheck = useCallback(async () => {
         switch (await validateVersion()) {
@@ -229,7 +234,9 @@ export default function App() {
         <SafeAreaProvider style={{ flex: 1 }}>
             <ThemeProvider>
                 <DismissKeyboard>
-                    <Router />
+                    <AlertNotificationRoot>
+                        <Router />
+                    </AlertNotificationRoot>
                 </DismissKeyboard>
             </ThemeProvider>
         </SafeAreaProvider>

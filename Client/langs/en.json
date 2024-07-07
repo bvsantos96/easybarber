@@ -8,6 +8,7 @@
     "errorWhileUpdatingMessage": "An error occurred while updating the app. Please retry.",
     "ok": "OK",
     "update": "Update",
+    "close": "Close",
     "continue": "Continue",
     "appStoreLink": "https://apps.apple.com/",
     "playStoreLink": "https://play.google.com/store/apps/details?id=",
@@ -93,7 +94,18 @@
         }
     },
     "errors": {
-        defaultCountry: "Error fetching default country:"
+        "defaultCountry": "Error fetching default country:",
+        "apiDownTitle": "Server Error",
+        "apiDown": "Connection to server failed. Please try again later.",
+        "versionCheckTitle": "Version Check Failed",
+        "versionCheckFailed": "Error checking application version, please try again later.",
+        "loadingMoreItemsTitle": "Error Loading More Items",
+        "loadingMoreItems": "An error occurred while loading more items. Please try again.",
+        "locationError": "Application doesn't have location permission",
+        "reverseGeocodingError": "An error as occured while trying to get the address from your current location. Please try again.",
+        "selectLocationError": "An error as occured while trying to update your location. Please try again.",
+        "saveLocationError": "An error as occured while trying to save a new location. Please try again.",
+        "fetchSuggestionsError": "Unable to parse your current location"
     },
     "recentAddresses": "Recent addresses",
     "savedAddresses": "Saved addresses",
