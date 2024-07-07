@@ -25,10 +25,17 @@ export class TimedRequest<T extends Identifiable> implements ITimedRequest<T> {
         }
     }
 
+    combineUniqueItems(items: T[], newItems: T[]): T[] {
+        let uniqueItems = new Set<T>();
+        items.forEach(item => uniqueItems.add(item));
+        newItems.forEach(item => uniqueItems.add(item));
+        return Array.from(uniqueItems);
+    }
+
     handlePage(page: IPage<T>) {
-        this.page.content.push(...page.content);
+        this.page.content = this.combineUniqueItems(this.page.content, page.content);
         this.page.totalPages = page.totalPages;
-        this.page.totalElements = page.totalElements;
+        // this.page.totalElements = page.totalElements;
         this.page.currentPage++;
         this.page.pageSize = page.pageSize;
         this.page.hasNextPage = page.hasNextPage;
