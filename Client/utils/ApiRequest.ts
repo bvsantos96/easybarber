@@ -8,6 +8,10 @@ import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
 import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
 import { getSelectedLocation } from './Location';
 import useLocationStore from '../storage/stores/LocationStore';
+import { Alert, Banner } from '../components/Alert';
+import { ALERT_TYPE } from 'react-native-alert-notification';
+
+import texts from '../langs/en.json';
 
 export const getAppointments = async (): Promise<Appointment[]> => {
     return [];
@@ -44,7 +48,7 @@ const storeData = async (key: string, value: string) => {
         await AsyncStorage.setItem(key, value);
     } catch (e) {
         // saving error
-        alert(`Error saving data(${key},${value}): ${e}`);
+        console.error(`Error saving data(${key},${value}): ${e}`);
     }
 };
 
@@ -77,7 +81,7 @@ export const apiUrlMaker = (url: string): string => {
     if (url.startsWith("/"))
         url = url.substring(1);
     if (!API_URL) {
-        console.error("API URL is not set");
+        Alert({ type: ALERT_TYPE.DANGER, title: texts.errors.apiDownTitle, message: texts.errors.apiDown });
         return "";
     }
     let separator = API_URL.endsWith("/") ? "" : "/";
@@ -133,8 +137,11 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
         if (response.status != 200 && response.status != 201) {
             if (json !== undefined && json !== null) {
                 try {
-                    if (json.responseMessage)
+                    if (json.responseMessage) {
+                        Banner({ type: ALERT_TYPE.WARNING, message: json.responseMessage });
                         return { success: false, message: json.responseMessage };
+                    }
+                    Banner({ type: ALERT_TYPE.WARNING, message: errorMessage });
                     return { success: false, message: errorMessage };
                 } catch (e) {
                     return { success: false, message: response }
@@ -183,8 +190,10 @@ const isValidPassword = (password: string): boolean => {
 export const doLogin = async (countryCode: string, phone: string, password: string): Promise<IResult<any>> => {
     phone = phone.trim();
     const _countryCode = countryCode.startsWith('+') ? countryCode : `+${countryCode}`;
-    if (!isValidNumberString(`${_countryCode}${phone}`))
+    if (!isValidNumberString(`${_countryCode}${phone}`)){
+        Banner({ type: ALERT_TYPE.WARNING, title: "", message: langs.apiMessages.invalidPhone });
         return { success: false, message: langs.apiMessages.invalidPhone };
+    }
 
     removeData(TOKEN_STORAGE_KEY);
     removeData(LOCATIONS_STORAGE_KEY);
@@ -194,7 +203,7 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
     if (result.success)
         await storeData(TOKEN_STORAGE_KEY, result.message);
     else
-        alert(result.message);
+        Banner({ type: ALERT_TYPE.WARNING, title: "", message: result.message });
     return result;
 }
 

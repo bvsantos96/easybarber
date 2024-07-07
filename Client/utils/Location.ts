@@ -4,6 +4,9 @@ import { getLocationsRequest, setNewLocation } from './ApiRequest';
 import { getArrayFromPage, getArrayOrEmpty, store } from '../storage/StorageUtils';
 import { LOCATIONS_STORAGE_KEY } from './Constants';
 import useLocationStore from '../storage/stores/LocationStore';
+import { Alert, Banner } from '../components/Alert';
+import { ALERT_TYPE } from 'react-native-alert-notification';
+import texts from '../langs/en.json';
 
 export async function getLocation(): Promise<ILocation> {
     try {
@@ -26,6 +29,7 @@ export async function getLocation(): Promise<ILocation> {
         };
         return location;
     } catch (error) {
+        Banner({ type: ALERT_TYPE.INFO, title: "",message: texts.errors.locationError });
         console.error('Error getting location:', error);
         throw error;
     }
@@ -45,6 +49,7 @@ export const getAddressFromCoordinates = async (latitude: number, longitude: num
 
         return reverseGeocodedAddress[0];
     } catch (error) {
+        Banner({ type: ALERT_TYPE.WARNING, title: "", message: texts.errors.reverseGeocodingError });
         console.error('Error reverse geocoding:', error);
         return undefined;
     }
@@ -61,6 +66,7 @@ export const selectLocation = async (location: ILocation): Promise<void> => {
         locations.unshift(location);
         await store(LOCATIONS_STORAGE_KEY, JSON.stringify(locations));
     } catch (error) {
+        Banner({ type: ALERT_TYPE.DANGER, title: "", message: texts.errors.selectLocationError });
         console.error('Error selecting location:', error);
     }
 }
@@ -81,6 +87,7 @@ export const saveLocation = async (location: ILocation, first = false): Promise<
         locations.unshift(location);
         await store(LOCATIONS_STORAGE_KEY, JSON.stringify(locations));
     } catch (error) {
+        Banner({ type: ALERT_TYPE.DANGER, title: "", message: texts.errors.saveLocationError });
         console.error('Error saving location:', error);
     }
 }
@@ -186,6 +193,7 @@ export const fetchSuggestions = async (address: string): Promise<ILocation[]> =>
         appendUniqueSuggestions(suggestions, globalSugestions, suggestionsHash);
         return suggestions
     } catch (error) {
+        Banner({ type: ALERT_TYPE.DANGER, title: "", message: texts.errors.fetchSuggestionsError });
         console.error('Error fetching suggestions:', error);
         return [];
     }
