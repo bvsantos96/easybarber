@@ -48,7 +48,8 @@ public class ApplicationSecurity {
                         .requestMatchers(HttpMethod.POST,
                                 "/register",
                                 "/login",
-                                "/employee")
+                                "/employee",
+                                "/sms/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/version",

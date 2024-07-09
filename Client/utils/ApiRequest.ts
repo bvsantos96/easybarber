@@ -247,7 +247,7 @@ export const pageGet = async <T>(url: string, page?: IPage<T>, params?: Record<s
         params["page"] = page.currentPage;
     if (!params.hasOwnProperty("size"))
         params["size"] = page.pageSize;
-    const result: IResult<T> = await request(parsePathParams(url, params), `GET`, null, langs.apiMessages.success, langs.apiMessages.failed);
+    const result = await request<T>(parsePathParams(url, params), `GET`, null, langs.apiMessages.success, langs.apiMessages.failed);
     return result.items ? parsePage<T>(result.items) : page;
 }
 
@@ -256,7 +256,7 @@ export const getLocationsRequest = async (page?: IPage<ILocation>, params?: Reco
         params = {};
     }
     params.sort = "selected,desc&sort=id,desc";
-    return await pageGet("locations", page, params);
+    return await pageGet<ILocation>("locations", page, params);
 }
 
 export const getLocationList = async (page: IPage<ILocation>, params?: Record<string, string | number | boolean>): Promise<IPage<ILocation> | undefined> => {
@@ -300,7 +300,7 @@ export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record
         params["latitude"] = location.latitude;
     if (!params.hasOwnProperty("longitude"))
         params["longitude"] = location.longitude;
-    return await pageGet("establishment/list", page, params);
+    return await pageGet<BarberInfo>("establishment/list", page, params);
 }
 
 export const getBarbersNearMe = async (page: IPage<BarberInfo>, params?: Record<string, string | number | boolean>): Promise<IPage<BarberInfo> | undefined> => {
