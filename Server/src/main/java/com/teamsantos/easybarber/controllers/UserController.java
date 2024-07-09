@@ -33,6 +33,15 @@ public class UserController {
         this.locationService = locationService;
     }
 
+    @PostMapping("/sms/confirm")
+    public ResponseEntity<String> confirmMobileCode(@RequestBody UserDTO sms) {
+        try {
+            return new ResponseEntity<>("Code confirmed: " + sms.getName(), HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Failed to confirm code", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @GetMapping("/users")
     public ResponseEntity<BasePageDTO<UserDTO>> getAllUsers(@RequestParam(required = false) String userType,
             Pageable pageable) {
