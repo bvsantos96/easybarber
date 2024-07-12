@@ -1,0 +1,36 @@
+package com.teamsantos.easybarber.entities;
+
+import java.util.Date;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+@Entity
+public class ScheduleExceptions {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+    @ManyToOne
+    @JoinColumn(nullable = false, name = "employee_id", referencedColumnName = "id")
+    private Employee employee;
+    @ManyToOne
+    @JoinColumn(nullable = true, name = "establishment_id", referencedColumnName = "id")
+    private Establishment establishment;
+    @Column
+    private Date date;
+    @Column
+    private String startHour;
+    @Column
+    private String endHour;
+}

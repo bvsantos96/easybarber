@@ -38,6 +38,10 @@ public class Establishment extends EntityWithImages<Establishment, Establishment
     private Set<EstablishmentStaff> staff;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<EstablishmentService> services;
+    @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<ScheduleExceptions> exceptions;
+    @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Set<EmployeeSchedule> schedules;
 
     @PrePersist
     public void prePersist() {
