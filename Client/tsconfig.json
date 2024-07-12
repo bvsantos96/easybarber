@@ -2,10 +2,19 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "module": "esnext",
-    "strict": true
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": ["./components/*"],
+      "@assets/*": ["./assets/*"],
+      "@screens/*": ["./screens/*"],
+      "@styles/*": ["./styles/*"],
+      "@icons/*": ["./components/icons/*"],
+      "@lang/*": ["./langs/*"]
+    }
   },
   "include": [
     "./**/*.ts",
-    "declarations.d.ts",
-  ],
+    "declarations.d.ts"
+  ]
 }
