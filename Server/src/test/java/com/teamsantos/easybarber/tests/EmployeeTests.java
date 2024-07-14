@@ -128,7 +128,8 @@ public class EmployeeTests {
             result.andExpect(MockMvcResultMatchers.status().isOk());
             for (ServiceDTO service : ServiceData.services) {
                 jwt = loginServiceAdmin(service.getId(), false);
-                result = CreateTest.put(mockMvc, String.format("/employee/service", service.getId()), jwt, service.toString());
+                result = CreateTest.put(mockMvc, String.format("/employee/service", service.getId()), jwt,
+                        service.toString());
                 result.andExpect(MockMvcResultMatchers.status().isOk());
             }
         } catch (Exception e) {
