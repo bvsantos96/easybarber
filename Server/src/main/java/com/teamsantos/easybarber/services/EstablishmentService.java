@@ -143,9 +143,9 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
                     pageable);
         }
         return ((EstablishmentRepository) repository).list(
-            filter.getServiceType(), 
-            filter.getRating(),
-            pageable);
+                filter.getServiceType(),
+                filter.getRating(),
+                pageable);
     }
 
     public Page<ServiceDTO> listServices(Long id, Pageable pageable) {

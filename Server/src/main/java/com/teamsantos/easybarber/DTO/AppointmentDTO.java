@@ -9,5 +9,5 @@ public class AppointmentDTO {
     private Long userID;
     private Long employeeID;
     private String description;
-    private Date appointmentDateTime; 
+    private Date appointmentDateTime;
 }

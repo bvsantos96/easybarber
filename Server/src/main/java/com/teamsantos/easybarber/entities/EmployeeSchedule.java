@@ -19,6 +19,7 @@ public class EmployeeSchedule {
     public static enum DAY_OF_WEEK {
         SUNDAY, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY
     }
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

@@ -38,17 +38,17 @@ public class LocationService {
 
     @Transactional
     public Long addLocation(LocationDTO locationDTO, User user) {
-                locationRepository.deleteIfExist(locationDTO.getLatitude(), locationDTO.getLongitude(), user);
-                locationRepository.unSelectAll(user);
-                Location location = new Location();
-                location.setSelected(true);
-                location.setLatitude(locationDTO.getLatitude());
-                location.setLongitude(locationDTO.getLongitude());
-                location.setAddress(locationDTO.getAddress());
-                location.setCountry(locationDTO.getCountry());
-                location.setCity(locationDTO.getCity() == null ? "" : locationDTO.getCity());
-                location.setName(locationDTO.getName());
-                location.setUser(user);
-                return locationRepository.save(location).getId();
+        locationRepository.deleteIfExist(locationDTO.getLatitude(), locationDTO.getLongitude(), user);
+        locationRepository.unSelectAll(user);
+        Location location = new Location();
+        location.setSelected(true);
+        location.setLatitude(locationDTO.getLatitude());
+        location.setLongitude(locationDTO.getLongitude());
+        location.setAddress(locationDTO.getAddress());
+        location.setCountry(locationDTO.getCountry());
+        location.setCity(locationDTO.getCity() == null ? "" : locationDTO.getCity());
+        location.setName(locationDTO.getName());
+        location.setUser(user);
+        return locationRepository.save(location).getId();
     }
 }

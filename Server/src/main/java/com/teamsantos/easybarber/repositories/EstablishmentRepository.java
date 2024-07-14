@@ -31,7 +31,8 @@ public interface EstablishmentRepository extends JpaRepository<Establishment, Lo
                 AND (:rating IS NULL OR (e.nVotes > 0 AND e.sumVotes / e.nVotes >= :rating))
                 ORDER BY ST_Distance_Sphere(e.location, :location) ASC
             """)
-    Page<EstablishmentDTO> findClosestEstablishments(Point location, Long serviceType, String partialName, Double rating, Pageable pageable);
+    Page<EstablishmentDTO> findClosestEstablishments(Point location, Long serviceType, String partialName,
+            Double rating, Pageable pageable);
 
     @Query("""
             SELECT DISTINCT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, e.nVotes, e.sumVotes)

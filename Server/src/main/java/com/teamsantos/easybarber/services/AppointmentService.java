@@ -19,13 +19,14 @@ public class AppointmentService {
     private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public AppointmentService(AppoinmentRepository appoinmentRepository, UserRepository userRepository, EmployeeRepository employeeRepository) {
+    public AppointmentService(AppoinmentRepository appoinmentRepository, UserRepository userRepository,
+            EmployeeRepository employeeRepository) {
         this.appoinmentRepository = appoinmentRepository;
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
     }
 
-    public void createAppointment(AppointmentDTO _appointmentDTO) throws Exception{
+    public void createAppointment(AppointmentDTO _appointmentDTO) throws Exception {
         if (_appointmentDTO.getUserID() == null) {
             throw new IllegalArgumentException("User ID must not be null");
         }
@@ -33,12 +34,12 @@ public class AppointmentService {
         Optional<User> userOpt = userRepository.findById(_appointmentDTO.getUserID());
         Optional<Employee> employeeOpt = employeeRepository.findById(_appointmentDTO.getEmployeeID());
 
-        if(!userOpt.isPresent() || !employeeOpt.isPresent()){
-            throw new IllegalArgumentException("User ID must not be null");//TODO: change exception
+        if (!userOpt.isPresent() || !employeeOpt.isPresent()) {
+            throw new IllegalArgumentException("User ID must not be null");// TODO: change exception
         }
 
         User user = userOpt.get();
         Employee employee = employeeOpt.get();
-        
+
     }
 }
