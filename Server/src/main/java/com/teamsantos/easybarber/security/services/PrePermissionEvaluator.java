@@ -17,6 +17,11 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
     private final EstablishmentStaffRepository establishmentStaffRepository;
     private final ServiceRepository serviceRepository;
 
+    public static final String _ESTABLISHMENT_EMPLOYEE = "ESTABLISHMENT_EMPLOYEE";
+    public static final String ESTABLISHMENT_EMPLOYEE = "hasPermission(#establishmentId, '" + _ESTABLISHMENT_EMPLOYEE
+            + "')";
+    public static final String ESTABLISHMENT_EMPLOYEE_OBJECT = "hasPermission(#obj.getEstablishmentId(), '"
+            + _ESTABLISHMENT_EMPLOYEE + "')";
     public static final String _ESTABLISHMENT_ADMIN = "ESTABLISHMENT_ADMIN";
     public static final String ESTABLISHMENT_ADMIN = "hasPermission(#establishmentId, '" + _ESTABLISHMENT_ADMIN + "')";
     public static final String _SERVICE_OWNER = "SERVICE_OWNER";
@@ -44,6 +49,11 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
         }
         String strPermission = ((String) permission).toUpperCase();
         return switch (strPermission) {
+            case _ESTABLISHMENT_EMPLOYEE -> {
+                EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
+                        employeeRepository, establishmentStaffRepository);
+                yield root.hasEmployeePermission((Long) targetDomainObject);
+            }
             case _ESTABLISHMENT_ADMIN -> {
                 EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
                         employeeRepository, establishmentStaffRepository);
@@ -67,6 +77,11 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
         }
         String sPermission = ((String) permission).toUpperCase();
         return switch (sPermission) {
+            case _ESTABLISHMENT_EMPLOYEE -> {
+                EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
+                        employeeRepository, establishmentStaffRepository);
+                yield root.hasEmployeePermission(Long.parseLong(targetType));
+            }
             case _ESTABLISHMENT_ADMIN -> {
                 EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
                         employeeRepository, establishmentStaffRepository);

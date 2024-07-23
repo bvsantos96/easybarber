@@ -23,7 +23,17 @@ public class ScheduleDTO extends BaseDTO {
         super();
     }
 
-	public EmployeeSchedule toEntity(Employee employee, Establishment establishment) {
+    public ScheduleDTO(Long id, Long employeeId, Long establishmentId, DAY_OF_WEEK day, String startHour,
+            String endHour) {
+        super(id);
+        this.employeeId = employeeId;
+        this.establishmentId = establishmentId;
+        this.day = day;
+        this.startHour = startHour;
+        this.endHour = endHour;
+    }
+
+    public EmployeeSchedule toEntity(Employee employee, Establishment establishment) {
         EmployeeSchedule schedule = new EmployeeSchedule();
         schedule.setEmployee(employee);
         schedule.setEstablishment(establishment);
@@ -32,5 +42,5 @@ public class ScheduleDTO extends BaseDTO {
         schedule.setEndHour(endHour);
         schedule.setActive(true);
         return schedule;
-	}
+    }
 }

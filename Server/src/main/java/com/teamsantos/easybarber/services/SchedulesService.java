@@ -1,47 +1,72 @@
 package com.teamsantos.easybarber.services;
 
+import java.util.Optional;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.ScheduleDTO;
+import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.EmployeeSchedule;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.repositories.EmployeeScheduleRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentRepository;
-import com.teamsantos.easybarber.repositories.ScheduleExceptionsRepository;
 
 @Service
 public class SchedulesService {
     private final EmployeeScheduleRepository employeeScheduleRepository;
-    private final ScheduleExceptionsRepository scheduleExceptionsRepository;
     private final EstablishmentRepository establishmentRepository;
 
     public SchedulesService(EmployeeScheduleRepository employeeScheduleRepository,
-            ScheduleExceptionsRepository scheduleExceptionsRepository,
             EstablishmentRepository establishmentRepository) {
         this.employeeScheduleRepository = employeeScheduleRepository;
-        this.scheduleExceptionsRepository = scheduleExceptionsRepository;
         this.establishmentRepository = establishmentRepository;
     }
 
-    public EmployeeSchedule create(ScheduleDTO schedule, Employee employee) {
+    public String[] create(ScheduleDTO schedule, Employee employee, Boolean forceSave) {
+        String response = "";
         Establishment establishment = establishmentRepository.findById(schedule.getEstablishmentId())
                 .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
-        if (employee.getEstablishments().stream().noneMatch(e -> e.getId().equals(schedule.getEstablishmentId()))) {
-            throw new IllegalArgumentException("Employee does not belong to this establishment");
+        Optional<EmployeeSchedule> oSchedule = employeeScheduleRepository
+                .findByEmployeeIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(employee.getId(),
+                        schedule.getDay(), schedule.getStartHour(), schedule.getEndHour(), true);
+        if (oSchedule.isPresent()) {
+            if (!forceSave) {
+                throw new IllegalArgumentException("Employee already has a schedule for this day/hours");
+            } else {
+                response = "Employee already has a schedule for this day/hours;";
+                oSchedule.get().setActive(false);
+                employeeScheduleRepository.save(oSchedule.get());
+            }
         }
-        employeeScheduleRepository
-                .findByEmployeeIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqual(employee.getId(),
-                        schedule.getDay(), schedule.getStartHour(), schedule.getEndHour())
-                .ifPresent(s -> {
-                    throw new IllegalArgumentException("Employee already has a schedule for this day/hours");
-                });
-        scheduleExceptionsRepository
-                .findByEmployeeIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqual(employee.getId(),
-                        schedule.getDay(), schedule.getStartHour(), schedule.getEndHour())
-                .ifPresent(s -> {
-                    throw new IllegalArgumentException("Employee has an exception for this day/hours");
-                });
-        return this.employeeScheduleRepository.save(schedule.toEntity(employee, establishment));
+        // Optional<ScheduleExceptions> oExceptions = scheduleExceptionsRepository
+        // .findByEmployeeIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndDateAfter(employee.getId(),
+        // schedule.getDay(), schedule.getStartHour(), schedule.getEndHour(), new
+        // Date());
+        // if (oExceptions.isPresent()) {
+        // if (!forceSave) {
+        // throw new IllegalArgumentException("Employee has an exception for this
+        // day/hours");
+        // } else {
+        // response += "Employee has an exception for this day/hours";
+        // oExceptions.get().setActive(false);
+        // scheduleExceptionsRepository.save(oExceptions.get());
+        // }
+        // }
+        this.employeeScheduleRepository.save(schedule.toEntity(employee, establishment));
+        return response.split(";");
+    }
+
+    public BasePageDTO<ScheduleDTO> getSchedules(ScheduleFilter filter, Pageable pageable) {
+        Page<EmployeeSchedule> schedules;
+        if (filter.getFrom() != null) {
+            if (filter.getTo() != null) {
+            }
+        }
+        schedules = employeeScheduleRepository.findAllByFilter(filter, pageable);
+        return new BasePageDTO<>(schedules.map(EmployeeSchedule::toDTO));
     }
 }

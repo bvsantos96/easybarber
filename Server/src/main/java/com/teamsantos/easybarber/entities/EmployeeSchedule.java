@@ -1,5 +1,7 @@
 package com.teamsantos.easybarber.entities;
 
+import com.teamsantos.easybarber.DTO.ScheduleDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -37,4 +39,8 @@ public class EmployeeSchedule {
     private String endHour;
     @Column
     private boolean active;
+
+    public ScheduleDTO toDTO() {
+        return new ScheduleDTO(id, employee.getId(), establishment.getId(), day, startHour, endHour);
+    }
 }
