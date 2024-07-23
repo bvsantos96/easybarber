@@ -7,7 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EstablishmentStaffRepository extends JpaRepository<EstablishmentStaff, Long> {
-
     @Query("""
             SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END
             FROM EstablishmentStaff es
@@ -19,6 +18,17 @@ public interface EstablishmentStaffRepository extends JpaRepository<Establishmen
             AND es.admin = true
             """)
     boolean isUserAdminOfEstablishment(Long userId, Long establishmentId);
+
+    @Query("""
+            SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END
+            FROM EstablishmentStaff es
+            WHERE
+                es.employee.id = :employeeId
+            AND es.establishment.id = :establishmentId
+            AND es.approved = true
+            AND es.deleted = false
+            """)
+    boolean isEmployeeOfEstablishment(Long employeeId, Long establishmentId);
 
     void deleteByEstablishmentId(Long id);
 
