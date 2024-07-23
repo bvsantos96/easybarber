@@ -2,6 +2,8 @@ package com.teamsantos.easybarber.entities;
 
 import java.util.Date;
 
+import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -33,4 +35,8 @@ public class ScheduleExceptions {
     private String startHour;
     @Column
     private String endHour;
+    @Column
+    private Boolean active;
+    @Column
+    private DAY_OF_WEEK day;
 }

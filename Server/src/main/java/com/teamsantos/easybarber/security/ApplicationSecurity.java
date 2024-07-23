@@ -63,7 +63,9 @@ public class ApplicationSecurity {
                                 "/establishment/{id}/employees",
                                 "/service/list",
                                 "/service/types",
-                                "/icons/**")
+                                "/icons/**",
+                                "/test/**",
+                                "/actuator/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .cors(Customizer.withDefaults())

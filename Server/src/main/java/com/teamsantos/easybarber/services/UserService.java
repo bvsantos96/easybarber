@@ -120,7 +120,7 @@ public class UserService {
     }
 
     public Employee getEmployee(Principal principal) {
-        return employeeRepository.findByUserId(getUserId(principal)).orElseThrow(UserNotFoundException::new);
+        return employeeRepository.findByMobileInformation(principal.getName()).orElseThrow(UserNotFoundException::new);
     }
 
     public Long getUserId(Principal principal) {
