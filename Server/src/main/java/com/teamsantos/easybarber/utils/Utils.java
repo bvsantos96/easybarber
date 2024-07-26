@@ -100,7 +100,6 @@ public class Utils {
     }
 
     public static DAY_OF_WEEK getTodayDayOfWeek() {
-        System.out.println(java.time.DayOfWeek.from(java.time.LocalDate.now()).name());
         return DAY_OF_WEEK.valueOf(java.time.DayOfWeek.from(java.time.LocalDate.now()).name());
     }
 }
