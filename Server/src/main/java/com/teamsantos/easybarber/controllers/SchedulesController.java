@@ -43,6 +43,22 @@ public class SchedulesController {
         }
     }
 
+    @PostMapping("/schedule/test3")
+    public ResponseEntity<String> test3() {
+        return ResponseEntity.ok("Test");
+    }
+
+    @PostMapping("/schedule/test2")
+    public ResponseEntity<String> test2(@RequestBody ScheduleDTO obj, Principal principal) {
+        return ResponseEntity.ok("Test");
+    }
+
+    @PostMapping("/schedule/test")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_EMPLOYEE_OBJECT)
+    public ResponseEntity<String> test(@RequestBody ScheduleDTO obj, Principal principal) {
+        return ResponseEntity.ok("Test");
+    }
+
     @GetMapping("/schedules")
     public ResponseEntity<BasePageDTO<ScheduleDTO>> getSchedules(@ModelAttribute ScheduleFilter filter,
             Pageable pageable) {
