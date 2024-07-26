@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,7 +44,6 @@ public class SchedulesController {
         }
     }
 
-
     @GetMapping("/schedules")
     public ResponseEntity<BasePageDTO<ScheduleDTO>> getSchedules(@ModelAttribute ScheduleFilter filter,
             Pageable pageable) {
@@ -51,6 +51,17 @@ public class SchedulesController {
             return ResponseEntity.ok(schedulesService.getSchedules(filter, pageable));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/schedule/{id}")
+    @PreAuthorize(PrePermissionEvaluator.SCHEDULE_OWNER)
+    public ResponseEntity<String> disable(@PathVariable Long id) {
+        try {
+            schedulesService.disable(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 }
