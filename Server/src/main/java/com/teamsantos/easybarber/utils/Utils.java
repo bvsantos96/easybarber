@@ -2,6 +2,8 @@ package com.teamsantos.easybarber.utils;
 
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.entities.Establishment;
+import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
+
 import org.json.JSONArray;
 import org.modelmapper.ModelMapper;
 import java.util.List;
@@ -88,5 +90,17 @@ public class Utils {
             jsonArray.put(item);
         }
         return jsonArray.toString();
+    }
+
+    public static String getTimeNow(String format) {
+        if(format != null && !format.isEmpty()) {
+            return java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern(format));
+        }
+        return java.time.LocalTime.now().toString();
+    }
+
+    public static DAY_OF_WEEK getTodayDayOfWeek() {
+        System.out.println(java.time.DayOfWeek.from(java.time.LocalDate.now()).name());
+        return DAY_OF_WEEK.valueOf(java.time.DayOfWeek.from(java.time.LocalDate.now()).name());
     }
 }
