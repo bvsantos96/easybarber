@@ -35,14 +35,19 @@ public class ScheduleFilter {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
+            boolean identifier = false;
             if (this.getEmployeeId() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("employee").get("id"), this.getEmployeeId()));
-            } else {
-                throw new IllegalArgumentException("Employee ID is required");
+                identifier = true;
             }
 
             if (this.getEstablishmentId() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("establishment").get("id"), this.getEstablishmentId()));
+                identifier = true;
+            }
+
+            if (!identifier) {
+                throw new IllegalArgumentException("Employee ID or Establishment ID is required");
             }
 
             if (this.getDayOfWeek() != null && !this.getDayOfWeek().isEmpty()) {
@@ -53,7 +58,7 @@ public class ScheduleFilter {
 
             if (this.getStartHour() != null) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("startHour"), this.getStartHour()));
-            } 
+            }
 
             if (this.getEndHour() != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("endHour"), this.getEndHour()));
