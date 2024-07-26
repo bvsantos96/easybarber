@@ -62,11 +62,7 @@ public class SchedulesService {
 
     public BasePageDTO<ScheduleDTO> getSchedules(ScheduleFilter filter, Pageable pageable) {
         Page<EmployeeSchedule> schedules;
-        if (filter.getFrom() != null) {
-            if (filter.getTo() != null) {
-            }
-        }
-        schedules = employeeScheduleRepository.findAllByFilter(filter, pageable);
+        schedules = employeeScheduleRepository.findAll(filter.getSpecification(), pageable);
         return new BasePageDTO<>(schedules.map(EmployeeSchedule::toDTO));
     }
 }
