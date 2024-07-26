@@ -1,19 +1,18 @@
 package com.teamsantos.easybarber.repositories;
 
-import com.teamsantos.easybarber.entities.Service;
-import com.teamsantos.easybarber.entities.ServiceType;
-
-import java.util.List;
-
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.teamsantos.easybarber.entities.Service;
+
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, Long> {
 
+    @Cacheable("service")
     @Query("""
             SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
             FROM Service s
