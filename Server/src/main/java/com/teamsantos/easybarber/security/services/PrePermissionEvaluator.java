@@ -1,9 +1,11 @@
 package com.teamsantos.easybarber.security.services;
 
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
+import com.teamsantos.easybarber.repositories.EmployeeScheduleRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.security.filters.EstablishmentSecurityExpressionRoot;
+import com.teamsantos.easybarber.security.filters.ScheduleSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.filters.ServiceSecurityExpressionRoot;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
@@ -16,7 +18,11 @@ import java.io.Serializable;
 public class PrePermissionEvaluator implements PermissionEvaluator {
     private final EstablishmentStaffRepository establishmentStaffRepository;
     private final ServiceRepository serviceRepository;
+    private final EmployeeRepository employeeRepository;
+    private final EmployeeScheduleRepository scheduleRepository;
 
+    public static final String _SCHEDULE_OWNER = "SCHEDULE_OWNER";
+    public static final String SCHEDULE_OWNER = "hasPermission(#id, '" + _SCHEDULE_OWNER + "')";
     public static final String _ESTABLISHMENT_EMPLOYEE = "ESTABLISHMENT_EMPLOYEE";
     public static final String ESTABLISHMENT_EMPLOYEE = "hasPermission(#establishmentId, '" + _ESTABLISHMENT_EMPLOYEE
             + "')";
@@ -31,15 +37,16 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
     public static final String SERVICE_OWNER = "hasPermission(#serviceId, '" + _SERVICE_OWNER + "')";
     public static final String IS_EMPLOYEE = "hasRole('EMPLOYEE')";
     public static final String IS_SYSTEM_ADMIN = "hasRole('SYSTEM_ADMIN')";
-    private final EmployeeRepository employeeRepository;
 
     @Autowired
     public PrePermissionEvaluator(EstablishmentStaffRepository establishmentStaffRepository,
             ServiceRepository serviceRepository,
-            EmployeeRepository employeeRepository) {
+            EmployeeRepository employeeRepository,
+            EmployeeScheduleRepository scheduleRepository) {
         this.establishmentStaffRepository = establishmentStaffRepository;
         this.serviceRepository = serviceRepository;
         this.employeeRepository = employeeRepository;
+        this.scheduleRepository = scheduleRepository;
     }
 
     @Override
@@ -63,6 +70,11 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
                 ServiceSecurityExpressionRoot root = new ServiceSecurityExpressionRoot(authentication,
                         serviceRepository);
                 yield root.hasServiceOwnerPermission((Long) targetDomainObject);
+            }
+            case _SCHEDULE_OWNER -> {
+                ScheduleSecurityExpressionRoot root = new ScheduleSecurityExpressionRoot(authentication,
+                        scheduleRepository);
+                yield root.hasScheduleOwnerPermission((Long) targetDomainObject);
             }
             default -> throw new UnsupportedOperationException(
                     "hasPermission is not supported for permission " + strPermission);
@@ -91,6 +103,12 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
                 ServiceSecurityExpressionRoot root = new ServiceSecurityExpressionRoot(authentication,
                         serviceRepository);
                 yield root.hasServiceOwnerPermission(Long.parseLong(targetType));
+            }
+
+            case _SCHEDULE_OWNER -> {
+                ScheduleSecurityExpressionRoot root = new ScheduleSecurityExpressionRoot(authentication,
+                        scheduleRepository);
+                yield root.hasScheduleOwnerPermission(Long.parseLong(targetType));
             }
             default ->
                 throw new UnsupportedOperationException("hasPermission is not supported for permission " + sPermission);

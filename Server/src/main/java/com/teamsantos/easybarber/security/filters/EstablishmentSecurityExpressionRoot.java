@@ -38,7 +38,6 @@ public class EstablishmentSecurityExpressionRoot extends SecurityExpressionRoot 
         Long employeeId = employeeRepository.findByMobileInformation(getAuthentication().getName())
                 .orElseThrow(UserNotFoundException::new)
                 .getId();
-        boolean isEmployee = establishmentStaffRepository.isEmployeeOfEstablishment(employeeId, establishmentId);
-        return isEmployee;
+        return establishmentStaffRepository.isEmployeeOfEstablishment(employeeId, establishmentId);
     }
 }

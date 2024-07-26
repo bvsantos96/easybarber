@@ -2,7 +2,6 @@ package com.teamsantos.easybarber.services;
 
 import java.util.Optional;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -61,8 +60,14 @@ public class SchedulesService {
     }
 
     public BasePageDTO<ScheduleDTO> getSchedules(ScheduleFilter filter, Pageable pageable) {
-        Page<EmployeeSchedule> schedules;
-        schedules = employeeScheduleRepository.findAll(filter.getSpecification(), pageable);
-        return new BasePageDTO<>(schedules.map(EmployeeSchedule::toDTO));
+        return new BasePageDTO<>(
+                employeeScheduleRepository.findAll(filter.getSpecification(), pageable).map(EmployeeSchedule::toDTO));
+    }
+
+    public void disable(Long id) {
+        EmployeeSchedule schedule = employeeScheduleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
+        schedule.setActive(false);
+        employeeScheduleRepository.save(schedule);
     }
 }
