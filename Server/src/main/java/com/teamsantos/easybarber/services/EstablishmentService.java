@@ -1,6 +1,23 @@
 package com.teamsantos.easybarber.services;
 
-import com.teamsantos.easybarber.DTO.*;
+import java.security.Principal;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+
+import org.locationtech.jts.io.ParseException;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
+import com.teamsantos.easybarber.DTO.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.Establishment;
@@ -9,26 +26,15 @@ import com.teamsantos.easybarber.entities.images.EstablishmentImage;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
-import com.teamsantos.easybarber.repositories.*;
+import com.teamsantos.easybarber.repositories.EmployeeRepository;
+import com.teamsantos.easybarber.repositories.EstablishmentRepository;
+import com.teamsantos.easybarber.repositories.EstablishmentServiceRepository;
+import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
+import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.repositories.base.ImageRepository;
 import com.teamsantos.easybarber.utils.GeometryUtils;
+
 import jakarta.transaction.Transactional;
-
-import org.locationtech.jts.geom.Point;
-import org.locationtech.jts.io.ParseException;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-
-import java.security.Principal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
 
 @Service
 public class EstablishmentService extends ServiceWithImages<Establishment, EstablishmentImage> {
@@ -237,4 +243,12 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         return employeeRepository.findEmployeesByEstablishmentId(establishmentId, onlyActive).stream()
                 .map(EmployeeDTO::new).toList();
     }
+
+	public boolean isAdmin(long establishmentId, long employeeId) {
+        return establishmentStaffRepository.isUserAdminOfEstablishment(employeeId, establishmentId);
+	}
+
+	public boolean isStaff(long establishmentId, long id) {
+        return establishmentStaffRepository.isEmployeeOfEstablishment(id, establishmentId);
+	}
 }

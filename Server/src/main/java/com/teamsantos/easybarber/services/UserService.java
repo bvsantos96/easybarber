@@ -123,6 +123,10 @@ public class UserService {
         return employeeRepository.findByMobileInformation(principal.getName()).orElseThrow(UserNotFoundException::new);
     }
 
+    public Employee getEmployee(Long id) {
+        return employeeRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    }
+
     public Long getUserId(Principal principal) {
         return userRepository.getIdByMobileInformation(principal.getName()).orElseThrow(UserNotFoundException::new);
     }
