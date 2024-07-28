@@ -39,7 +39,7 @@ public class Establishment extends EntityWithImages<Establishment, Establishment
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<EstablishmentService> services;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<ScheduleExceptions> exceptions;
+    private Set<ScheduleException> exceptions;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<EmployeeSchedule> schedules;
 

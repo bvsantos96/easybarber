@@ -6,6 +6,9 @@ import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 
 import org.json.JSONArray;
 import org.modelmapper.ModelMapper;
+
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.util.List;
 
 public class Utils {
@@ -99,7 +102,11 @@ public class Utils {
         return java.time.LocalTime.now().toString();
     }
 
+    public static DAY_OF_WEEK getDayOfWeek(LocalDate date) {
+        return DAY_OF_WEEK.valueOf(DayOfWeek.from(date).name());
+    }
+
     public static DAY_OF_WEEK getTodayDayOfWeek() {
-        return DAY_OF_WEEK.valueOf(java.time.DayOfWeek.from(java.time.LocalDate.now()).name());
+        return DAY_OF_WEEK.valueOf(DayOfWeek.from(LocalDate.now()).name());
     }
 }

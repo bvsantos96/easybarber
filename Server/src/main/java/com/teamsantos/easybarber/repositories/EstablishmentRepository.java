@@ -16,7 +16,8 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface EstablishmentRepository extends JpaRepository<Establishment, Long> {
+public interface EstablishmentRepository extends JpaRepository<Establishment, Long>, JpaSpecificationExecutor<EmployeeSchedule> {
+ {
     @NonNull
     @Cacheable("establishment")
     Optional<Establishment> findById(@NonNull Long id);

@@ -1,6 +1,6 @@
 package com.teamsantos.easybarber.entities;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 
@@ -19,18 +19,18 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-public class ScheduleExceptions {
+public class ScheduleException {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @ManyToOne
-    @JoinColumn(nullable = false, name = "employee_id", referencedColumnName = "id")
+    @JoinColumn(nullable = true, name = "employee_id", referencedColumnName = "id")
     private Employee employee;
     @ManyToOne
     @JoinColumn(nullable = true, name = "establishment_id", referencedColumnName = "id")
     private Establishment establishment;
     @Column
-    private Date date;
+    private LocalDate date;
     @Column
     private String startHour;
     @Column
