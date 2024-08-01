@@ -23,13 +23,16 @@ import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.EmployeeCreateDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.ImageDTO;
+import com.teamsantos.easybarber.DTO.SchedulesDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.images.EmployeeImage;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.EmployeeService;
+import com.teamsantos.easybarber.services.SchedulesService;
 import com.teamsantos.easybarber.services.ServiceService;
 import com.teamsantos.easybarber.services.UserService;
 
@@ -39,13 +42,16 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
     private final EmployeeService employeeService;
     private final UserService userService;
     private final ServiceService serviceService;
+    private final SchedulesService schedulesService;
 
     @Autowired
-    public EmployeeController(EmployeeService employeeService, UserService userService, ServiceService serviceService) {
+    public EmployeeController(EmployeeService employeeService, UserService userService, ServiceService serviceService,
+            SchedulesService schedulesService) {
         super(employeeService);
         this.employeeService = employeeService;
         this.userService = userService;
         this.serviceService = serviceService;
+        this.schedulesService = schedulesService;
     }
 
     @PostMapping
@@ -159,6 +165,20 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
                         .body(new BaseResponseDTO("User not allowed to update this entity"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/schedule")
+    @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
+    public ResponseEntity<BasePageDTO<SchedulesDTO>> getSchedules(@PathVariable(required = true) Boolean active,
+            Pageable pageable, Principal principal) {
+        try {
+            ScheduleFilter filter = new ScheduleFilter();
+            filter.setEmployeeId(userService.getEmployee(principal).getId());
+            filter.setActive(active);
+            return ResponseEntity.ok(schedulesService.getSchedules(filter, pageable));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }
     }
 }

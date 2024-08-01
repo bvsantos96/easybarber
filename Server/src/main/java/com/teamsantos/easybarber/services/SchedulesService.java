@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
@@ -91,18 +92,23 @@ public class SchedulesService {
     public String[] create(ScheduleDTO schedule, Employee principal, Boolean forceSave, Boolean replaceExisting) {
         String response = "";
         Employee employee = canChangeSchedule(schedule, principal);
-        Optional<EmployeeSchedule> oSchedule = employeeScheduleRepository
-                .findByEmployeeIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
+        if (employeeScheduleRepository
+                .hasByEmployeeIdAndDaysAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
                         schedule.getEmployeeId(),
-                        schedule.getDay(), schedule.getStartHour(), schedule.getEndHour(), true);
-        if (oSchedule.isPresent()) {
+                        schedule.getDays(), schedule.getStartHour(), schedule.getEndHour(), true)) {
             if (!forceSave) {
                 throw new IllegalArgumentException("Employee already has a schedule for this day/hours");
             } else {
                 response = "Employee already has a schedule for this day/hours;";
                 if (replaceExisting) {
-                    oSchedule.get().setActive(false);
-                    employeeScheduleRepository.save(oSchedule.get());
+                    Optional<List<EmployeeSchedule>> oSchedule = employeeScheduleRepository
+                            .findByEmployeeIdAndDaysAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
+                                    schedule.getEmployeeId(),
+                                    schedule.getDays(), schedule.getStartHour(), schedule.getEndHour(), true);
+                    for (EmployeeSchedule s : oSchedule.get()) {
+                        s.setActive(false);
+                        employeeScheduleRepository.save(s);
+                    }
                 }
             }
         }
@@ -120,12 +126,18 @@ public class SchedulesService {
         // scheduleExceptionsRepository.save(oExceptions.get());
         // }
         // }
-        this.employeeScheduleRepository.save(
-                schedule.toEntity(employee, establishmentRepository.findById(schedule.getEstablishmentId()).get()));
+        this.employeeScheduleRepository.saveAll(
+                schedule.toEntities(employee, establishmentRepository.findById(schedule.getEstablishmentId()).get()));
         return response.split(";");
+
     }
 
-    public BasePageDTO<SchedulesDTO> getSchedules(ScheduleFilter filter, Pageable pageable) {
+    public BaseListDTO<ScheduleDTO> getSchedulesMerged(ScheduleFilter filter) {
+        return new BaseListDTO<ScheduleDTO>(employeeScheduleRepository.findAll(filter.getSpecification()).stream()
+                .map(EmployeeSchedule::toDTO).collect(Collectors.toList()));
+    }
+
+    public BasePageDTO<SchedulesDTO> getSchedulesMerged(ScheduleFilter filter, Pageable pageable) {
         filter.parseDate(pageable);
         List<ScheduleException> exceptions = scheduleExceptionRepository
                 .findAll(filter.getExceptionSpecification());
