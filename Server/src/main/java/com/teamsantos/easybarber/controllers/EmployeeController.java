@@ -176,7 +176,7 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
             ScheduleFilter filter = new ScheduleFilter();
             filter.setEmployeeId(userService.getEmployee(principal).getId());
             filter.setActive(active);
-            return ResponseEntity.ok(schedulesService.getSchedules(filter, pageable));
+            return ResponseEntity.ok(schedulesService.getSchedulesMerged(filter, pageable));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }

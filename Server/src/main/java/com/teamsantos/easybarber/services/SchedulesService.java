@@ -7,10 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.teamsantos.easybarber.DTO.BaseListDTO;
@@ -173,7 +171,7 @@ public class SchedulesService {
     public List<Long> createException(ScheduleExceptionDTO exception, Employee principal) {
         Employee employee = canChangeSchedule(exception, principal);
         return scheduleExceptionRepository.saveAll(
-                exception.toEntities(employee, establishmentRepository.findById(exception.getEstablishmentId()).get()))
+                exception.toEntitiesExceptions(employee, establishmentRepository.findById(exception.getEstablishmentId()).get()))
                 .stream().map(ScheduleException::getId)
                 .collect(Collectors.toList());
     }
