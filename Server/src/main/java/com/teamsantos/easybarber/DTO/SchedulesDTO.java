@@ -34,7 +34,7 @@ public class SchedulesDTO {
         Iterator<ScheduleDTO> iterator = schedules.iterator();
         while (iterator.hasNext()) {
             ScheduleDTO existingSchedule = iterator.next();
-            if (existingSchedule.getDay() == newSchedule.getDay()) {
+            if (existingSchedule.getDays() == newSchedule.getDays()) {
                 LocalTime existingStart = LocalTime.parse(existingSchedule.getStartHour());
                 LocalTime existingEnd = LocalTime.parse(existingSchedule.getEndHour());
                 if (isTimeOverlap(existingStart, existingEnd, newStart, newEnd)) {
@@ -87,7 +87,7 @@ public class SchedulesDTO {
                         null,
                         schedule.getEmployeeId(),
                         schedule.getEstablishmentId(),
-                        schedule.getDay(),
+                        schedule.getDays(),
                         exceptionEnd.toString(),
                         scheduleEnd.toString());
                 schedules.add(newSchedule);
