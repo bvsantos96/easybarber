@@ -1,11 +1,15 @@
 package com.teamsantos.easybarber.repositories;
 
+import java.time.DayOfWeek;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.teamsantos.easybarber.entities.EmployeeSchedule;
@@ -18,9 +22,24 @@ public interface EmployeeScheduleRepository
     @Cacheable(value = "employeeSchedules", key = "#id")
     Optional<EmployeeSchedule> findById(Long id);
 
-    @Cacheable(value = "employeeSchedules", key = "#id + '-' + #day + '-' + #startHour + '-' + #endHour + '-' + #active")
     Optional<EmployeeSchedule> findByEmployeeIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
             Long id, DAY_OF_WEEK day, String startHour, String endHour, boolean active);
+
+    Optional<List<EmployeeSchedule>> findByEmployeeIdAndDaysAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
+            Long id, Set<DAY_OF_WEEK> day, String startHour, String endHour, boolean active);
+
+    @Query("SELECT COUNT(es) > 0 FROM EmployeeSchedule es " +
+            "WHERE es.employeeId = :id " +
+            "AND es.day IN :days " +
+            "AND es.startHour <= :startHour " +
+            "AND es.endHour >= :endHour " +
+            "AND es.active = :active")
+    boolean hasByEmployeeIdAndDaysAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
+            @Param("id") Long id,
+            @Param("days") Set<DAY_OF_WEEK> days,
+            @Param("startHour") String startHour,
+            @Param("endHour") String endHour,
+            @Param("active") boolean active);
 
     @Cacheable("employeeSchedules")
     @Query("""
