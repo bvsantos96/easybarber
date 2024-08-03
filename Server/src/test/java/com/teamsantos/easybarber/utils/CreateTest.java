@@ -48,6 +48,13 @@ public class CreateTest {
                 .content(item));
     }
 
+    public static void createForbidden(MockMvc mockMvc, String path, String jwt, String item) throws Exception {
+        ResultActions result = post(mockMvc, path, jwt, item);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .isForbidden());
+    }
+
     public static void create(MockMvc mockMvc, String path, String item) throws Exception {
         ResultActions result = post(mockMvc, path, item);
         result

@@ -71,7 +71,11 @@ public class ScheduleFilter {
     }
 
     public void parseDate(Pageable pageable) {
+        if (getFrom() == null) {
+            setFrom(LocalDate.now());
+        }
         setFrom(this.getFrom().plusDays(pageable.getOffset()));
+
         if (this.getTo() == null) {
             setTo(this.getFrom());
             set_to(this.getFrom());

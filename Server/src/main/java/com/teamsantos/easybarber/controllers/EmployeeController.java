@@ -170,9 +170,12 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
 
     @GetMapping("/schedule")
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
-    public ResponseEntity<BasePageDTO<SchedulesDTO>> getSchedules(@PathVariable(required = true) Boolean active,
+    public ResponseEntity<BasePageDTO<SchedulesDTO>> getSchedules(@PathVariable(required = false) Boolean active,
             Pageable pageable, Principal principal) {
         try {
+            if (active == null) {
+                active = true;
+            }
             ScheduleFilter filter = new ScheduleFilter();
             filter.setEmployeeId(userService.getEmployee(principal).getId());
             filter.setActive(active);

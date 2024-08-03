@@ -51,6 +51,19 @@ public class JSONToDTO {
         }
     }
 
+    public static <T> List<T> fromListDTO(JSONArray jsonArray, Class<T> clazz) {
+        try {
+            ArrayList<T> list = new ArrayList<T>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+                list.add(toDTO(jsonArray.getJSONObject(i), clazz));
+            }
+            return list;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public static <T> T toDTO(JSONObject jsonObject, Class<T> clazz) {
         try {
             Constructor<T> constructor = clazz.getDeclaredConstructor();
