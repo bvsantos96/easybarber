@@ -24,16 +24,16 @@ public interface EmployeeScheduleRepository
     Optional<EmployeeSchedule> findByEmployeeIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
             Long id, DAY_OF_WEEK day, String startHour, String endHour, boolean active);
 
-    Optional<List<EmployeeSchedule>> findByEmployeeIdAndDaysAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
-            Long id, Set<DAY_OF_WEEK> day, String startHour, String endHour, boolean active);
+    Optional<List<EmployeeSchedule>> findByEmployeeIdAndDayInAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
+            Long employeeId, Set<DAY_OF_WEEK> days, String startHour, String endHour, boolean active);
 
     @Query("SELECT COUNT(es) > 0 FROM EmployeeSchedule es " +
-            "WHERE es.employeeId = :id " +
+            "WHERE es.employee.id = :id " +
             "AND es.day IN :days " +
-            "AND es.startHour <= :startHour " +
-            "AND es.endHour >= :endHour " +
+            "AND es.startHour <= :endHour " +
+            "AND es.endHour >= :startHour " +
             "AND es.active = :active")
-    boolean hasByEmployeeIdAndDaysAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
+    boolean hasOverlappingSchedule(
             @Param("id") Long id,
             @Param("days") Set<DAY_OF_WEEK> days,
             @Param("startHour") String startHour,

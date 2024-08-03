@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,7 @@ public class SchedulesService {
     private final ScheduleExceptionsRepository scheduleExceptionRepository;
     private final UserService userService;
 
+    @Autowired
     public SchedulesService(EmployeeScheduleRepository employeeScheduleRepository,
             EstablishmentRepository establishmentRepository, EstablishmentService establishmentService,
             ScheduleExceptionsRepository scheduleExceptionRepository, UserService userService) {
@@ -91,7 +93,7 @@ public class SchedulesService {
         String response = "";
         Employee employee = canChangeSchedule(schedule, principal);
         if (employeeScheduleRepository
-                .hasByEmployeeIdAndDaysAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
+                .hasOverlappingSchedule(
                         schedule.getEmployeeId(),
                         schedule.getDays(), schedule.getStartHour(), schedule.getEndHour(), true)) {
             if (!forceSave) {
@@ -100,7 +102,7 @@ public class SchedulesService {
                 response = "Employee already has a schedule for this day/hours;";
                 if (replaceExisting) {
                     Optional<List<EmployeeSchedule>> oSchedule = employeeScheduleRepository
-                            .findByEmployeeIdAndDaysAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
+                            .findByEmployeeIdAndDayInAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
                                     schedule.getEmployeeId(),
                                     schedule.getDays(), schedule.getStartHour(), schedule.getEndHour(), true);
                     for (EmployeeSchedule s : oSchedule.get()) {
@@ -171,7 +173,8 @@ public class SchedulesService {
     public List<Long> createException(ScheduleExceptionDTO exception, Employee principal) {
         Employee employee = canChangeSchedule(exception, principal);
         return scheduleExceptionRepository.saveAll(
-                exception.toEntitiesExceptions(employee, establishmentRepository.findById(exception.getEstablishmentId()).get()))
+                exception.toEntitiesExceptions(employee,
+                        establishmentRepository.findById(exception.getEstablishmentId()).get()))
                 .stream().map(ScheduleException::getId)
                 .collect(Collectors.toList());
     }
