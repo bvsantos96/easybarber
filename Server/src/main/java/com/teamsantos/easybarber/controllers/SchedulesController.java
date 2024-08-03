@@ -3,6 +3,7 @@ package com.teamsantos.easybarber.controllers;
 import java.security.Principal;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -48,7 +49,7 @@ public class SchedulesController {
                 replaceExisting = true;
             }
             return ResponseEntity
-                    .ok(new BaseResponseDTO(String.join(";", schedulesService.create(obj,
+                    .status(HttpStatus.CREATED).body(new BaseResponseDTO(String.join(";", schedulesService.create(obj,
                             userService.getEmployee(principal), forceSave, replaceExisting))));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
@@ -81,7 +82,7 @@ public class SchedulesController {
     public ResponseEntity<BaseListDTO<Long>> createException(@RequestBody ScheduleExceptionDTO exception,
             Principal principal) {
         try {
-            return ResponseEntity.ok(new BaseListDTO<Long>(
+            return ResponseEntity.status(HttpStatus.CREATED).body(new BaseListDTO<Long>(
                     schedulesService.createException(exception, userService.getEmployee(principal))));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseListDTO<>(e.getMessage()));

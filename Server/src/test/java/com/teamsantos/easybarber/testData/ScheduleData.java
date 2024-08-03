@@ -13,6 +13,7 @@ import java.util.Set;
 public class ScheduleData {
 
     public static final List<ScheduleDTO> schedules;
+    public static final List<ScheduleDTO> schedulesErrors;
     public static final List<ScheduleExceptionDTO> scheduleExceptions;
 
     static {
@@ -21,8 +22,8 @@ public class ScheduleData {
                 add(
                         new ScheduleDTO(
                                 1L,
-                                2L,
-                                1L,
+                                EmployeeData.employees.get(0).getId(),
+                                EstablishmentData.establishments.get(0).getId(),
                                 Set.of(
                                         DAY_OF_WEEK.MONDAY,
                                         DAY_OF_WEEK.TUESDAY,
@@ -33,9 +34,9 @@ public class ScheduleData {
                                 "12:00"));
                 add(
                         new ScheduleDTO(
-                                1L,
                                 2L,
-                                2L,
+                                EmployeeData.employees.get(0).getId(),
+                                EstablishmentData.establishments.get(1).getId(),
                                 Set.of(
                                         DAY_OF_WEEK.MONDAY,
                                         DAY_OF_WEEK.TUESDAY,
@@ -46,9 +47,9 @@ public class ScheduleData {
                                 "17:00"));
                 add(
                         new ScheduleDTO(
-                                1L,
                                 3L,
-                                1L,
+                                EmployeeData.employees.get(1).getId(),
+                                EstablishmentData.establishments.get(1).getId(),
                                 Set.of(
                                         DAY_OF_WEEK.MONDAY,
                                         DAY_OF_WEEK.TUESDAY,
@@ -58,25 +59,40 @@ public class ScheduleData {
                                 "17:00"));
                 add(
                         new ScheduleDTO(
-                                1L,
-                                3L,
-                                1L,
+                                4L,
+                                EmployeeData.employees.get(1).getId(),
+                                EstablishmentData.establishments.get(1).getId(),
                                 Set.of(
-                                        DAY_OF_WEEK.MONDAY,
-                                        DAY_OF_WEEK.TUESDAY,
-                                        DAY_OF_WEEK.WEDNESDAY,
-                                        DAY_OF_WEEK.THURSDAY),
+                                        DAY_OF_WEEK.FRIDAY,
+                                        DAY_OF_WEEK.SATURDAY),
                                 "09:00",
                                 "20:00"));
             }
         };
         schedules.sort(Comparator.comparing(ScheduleDTO::getId));
 
+        schedulesErrors = new ArrayList<>() {
+            {
+                add(new ScheduleDTO(
+                        5L,
+                        EmployeeData.employees.get(1).getId(),
+                        EstablishmentData.establishments.get(0).getId(),
+                        Set.of(
+                                DAY_OF_WEEK.MONDAY,
+                                DAY_OF_WEEK.TUESDAY,
+                                DAY_OF_WEEK.WEDNESDAY,
+                                DAY_OF_WEEK.THURSDAY,
+                                DAY_OF_WEEK.FRIDAY),
+                        "08:00",
+                        "12:00"));
+            }
+        };
+
         scheduleExceptions = new ArrayList<>() {
             {
                 add(new ScheduleExceptionDTO(
                         1L,
-                        1L,
+                        EmployeeData.employees.get(0).getId(),
                         null,
                         Set.of(
                                 DAY_OF_WEEK.FRIDAY),
