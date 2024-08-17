@@ -15,6 +15,11 @@ public class BaseResponseDTO extends BaseDTO {
         this.responseMessage = responseMessage;
     }
 
+    public BaseResponseDTO(Long id, String responseMessage) {
+        super(id);
+        this.responseMessage = responseMessage;
+    }
+
     public BaseResponseDTO(Long id) {
         super(id);
     }

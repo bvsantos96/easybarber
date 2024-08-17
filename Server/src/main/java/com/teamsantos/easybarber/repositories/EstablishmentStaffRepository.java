@@ -14,13 +14,13 @@ public interface EstablishmentStaffRepository extends JpaRepository<Establishmen
             SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END
             FROM EstablishmentStaff es
             WHERE
-                es.employee.id = :userId
+                es.employee.id = :employeeId
             AND es.establishment.id = :establishmentId
             AND es.approved = true
             AND es.deleted = false
             AND es.admin = true
             """)
-    boolean isUserAdminOfEstablishment(Long userId, Long establishmentId);
+    boolean isAdminOfEstablishment(Long employeeId, Long establishmentId);
 
     @Query("""
             SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import jakarta.annotation.Nullable;
 import lombok.Getter;
@@ -46,7 +47,7 @@ public class BaseDTO {
     @Override
     public String toString() {
         try {
-            return new ObjectMapper().writeValueAsString(this);
+            return new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(this);
         } catch (Exception e) {
             e.printStackTrace();
             return "Error converting object to string.";

@@ -2,6 +2,7 @@ package com.teamsantos.easybarber.entities;
 
 import java.time.LocalDate;
 
+import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 
 import jakarta.persistence.Column;
@@ -39,4 +40,16 @@ public class ScheduleException {
     private Boolean active;
     @Column
     private DAY_OF_WEEK day;
+
+    public ScheduleExceptionDTO toDTO() {
+        return new ScheduleExceptionDTO(
+                id,
+                employee != null ? employee.getId() : null,
+                establishment != null ? establishment.getId() : null,
+                date,
+                startHour,
+                endHour,
+                active,
+                day);
+    }
 }

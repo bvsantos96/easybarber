@@ -3,11 +3,17 @@ package com.teamsantos.easybarber.utils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class JSONToDTO {
 
@@ -55,7 +61,11 @@ public class JSONToDTO {
         try {
             ArrayList<T> list = new ArrayList<T>();
             for (int i = 0; i < jsonArray.length(); i++) {
-                list.add(toDTO(jsonArray.getJSONObject(i), clazz));
+                try {
+                    list.add(toDTO(jsonArray.getJSONObject(i), clazz));
+                } catch (Exception e) {
+                    list.add((T) parseByType(jsonArray.getString(i), clazz));
+                }
             }
             return list;
         } catch (Exception e) {
@@ -76,8 +86,17 @@ public class JSONToDTO {
                     Field field = findFieldInHierarchy(clazz, key);
                     if (field != null) {
                         Object jsonValue = jsonObject.get(key);
-                        Object value = jsonValue.equals(JSONObject.NULL) ? null
-                                : parseByType(jsonValue, field.getType());
+                        Object value = null;
+                        if (field.getType() == List.class) {
+                            value = jsonValue.equals(JSONObject.NULL) ? null
+                                    : fromListDTO((JSONArray) jsonValue, findFieldTypeInHierarchy(clazz, key));
+                        } else if (field.getType() == Set.class) {
+                            value = jsonValue.equals(JSONObject.NULL) ? null
+                                    : new HashSet<>(fromListDTO((JSONArray) jsonValue, findFieldTypeInHierarchy(clazz, key)));
+                        } else {
+                            value = jsonValue.equals(JSONObject.NULL) ? null
+                                    : parseByType(jsonValue, field.getType());
+                        }
                         field.setAccessible(true);
                         field.set(instance, value);
                     }
@@ -103,6 +122,8 @@ public class JSONToDTO {
             return value.toString();
         } else if (fieldType == boolean.class || fieldType == Boolean.class) {
             return Boolean.parseBoolean(value.toString());
+        } else if (fieldType == DAY_OF_WEEK.class) {
+            return DAY_OF_WEEK.valueOf(value.toString());
         } else {
             return value;
         }
@@ -114,6 +135,35 @@ public class JSONToDTO {
             try {
                 Field field = currentClass.getDeclaredField(fieldName);
                 return field;
+            } catch (NoSuchFieldException e) {
+                currentClass = currentClass.getSuperclass();
+            }
+        }
+        return null;
+    }
+
+    private static Class<?> findFieldTypeInHierarchy(Class<?> clazz, String fieldName) {
+        Class<?> currentClass = clazz;
+        while (currentClass != null) {
+            try {
+                Field field = currentClass.getDeclaredField(fieldName);
+                Class<?> fieldType = field.getType();
+
+                if (List.class.isAssignableFrom(fieldType) || Set.class.isAssignableFrom(fieldType)) {
+                    Type genericType = field.getGenericType();
+                    if (genericType instanceof ParameterizedType) {
+                        ParameterizedType paramType = (ParameterizedType) genericType;
+                        Type[] typeArguments = paramType.getActualTypeArguments();
+                        if (typeArguments.length > 0) {
+                            if (typeArguments[0] instanceof Class) {
+                                return (Class<?>) typeArguments[0];
+                            }
+                        }
+                    }
+                    return Object.class; // Default to Object if we can't determine the specific type
+                }
+
+                return fieldType;
             } catch (NoSuchFieldException e) {
                 currentClass = currentClass.getSuperclass();
             }

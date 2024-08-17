@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.controllers;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -13,9 +14,11 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
+import com.teamsantos.easybarber.DTO.BaseResponseDTOs;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
@@ -24,6 +27,7 @@ import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.SchedulesService;
 import com.teamsantos.easybarber.services.UserService;
+import com.teamsantos.easybarber.utils.Pair;
 
 @Controller
 public class SchedulesController {
@@ -37,9 +41,9 @@ public class SchedulesController {
 
     @PostMapping("/schedule")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_EMPLOYEE_OBJECT)
-    public ResponseEntity<BaseResponseDTO> create(@RequestBody ScheduleDTO obj, Principal principal,
-            @PathVariable(required = false) Boolean forceSave,
-            @PathVariable(required = false) Boolean replaceExisting) {
+    public ResponseEntity<BaseResponseDTOs> create(@RequestBody ScheduleDTO obj, Principal principal,
+            @RequestParam(required = false) Boolean forceSave,
+            @RequestParam(required = false) Boolean replaceExisting) {
         try {
             if (forceSave == null) {
                 forceSave = true;
@@ -48,11 +52,13 @@ public class SchedulesController {
             if (replaceExisting == null) {
                 replaceExisting = true;
             }
+            Pair<List<Long>, String> result = schedulesService.create(obj, userService.getEmployee(principal),
+                    forceSave,
+                    replaceExisting);
             return ResponseEntity
-                    .status(HttpStatus.CREATED).body(new BaseResponseDTO(String.join(";", schedulesService.create(obj,
-                            userService.getEmployee(principal), forceSave, replaceExisting))));
+                    .status(HttpStatus.CREATED).body(new BaseResponseDTOs(result.getFirst(), result.getSecond()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
+            return ResponseEntity.badRequest().body(new BaseResponseDTOs(e.getMessage()));
         }
     }
 
@@ -60,7 +66,8 @@ public class SchedulesController {
     public ResponseEntity<BasePageDTO<SchedulesDTO>> getSchedules(@ModelAttribute ScheduleFilter filter,
             Pageable pageable) {
         try {
-            return ResponseEntity.ok(schedulesService.getSchedulesMerged(filter, pageable));
+            BasePageDTO<SchedulesDTO> schedules = schedulesService.getSchedulesMerged(filter, pageable);
+            return ResponseEntity.ok(schedules);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }

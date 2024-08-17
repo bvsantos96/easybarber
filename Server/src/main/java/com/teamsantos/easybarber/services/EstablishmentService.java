@@ -244,11 +244,11 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
                 .map(EmployeeDTO::new).toList();
     }
 
-	public boolean isAdmin(long establishmentId, long employeeId) {
-        return establishmentStaffRepository.isUserAdminOfEstablishment(employeeId, establishmentId);
-	}
+    public boolean isAdmin(long establishmentId, long employeeId) {
+        return establishmentStaffRepository.isAdminOfEstablishment(employeeId, establishmentId);
+    }
 
-	public boolean isStaff(long establishmentId, long id) {
-        return establishmentStaffRepository.isEmployeeOfEstablishment(id, establishmentId);
-	}
+    public boolean isStaff(long establishmentId, long employeeId) {
+        return establishmentStaffRepository.isEmployeeOfEstablishment(employeeId, establishmentId);
+    }
 }
