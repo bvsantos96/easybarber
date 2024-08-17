@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,9 +23,12 @@ import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.EmployeeSchedule;
 import com.teamsantos.easybarber.entities.ScheduleException;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
+import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.repositories.EmployeeScheduleRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentRepository;
 import com.teamsantos.easybarber.repositories.ScheduleExceptionsRepository;
+import com.teamsantos.easybarber.utils.PageDTO;
+import com.teamsantos.easybarber.utils.Pair;
 import com.teamsantos.easybarber.utils.Utils;
 
 @Service
@@ -34,16 +38,19 @@ public class SchedulesService {
     private final EstablishmentService establishmentService;
     private final ScheduleExceptionsRepository scheduleExceptionRepository;
     private final UserService userService;
+    private final ModelMapper modelMapper;
 
     @Autowired
     public SchedulesService(EmployeeScheduleRepository employeeScheduleRepository,
             EstablishmentRepository establishmentRepository, EstablishmentService establishmentService,
-            ScheduleExceptionsRepository scheduleExceptionRepository, UserService userService) {
+            ScheduleExceptionsRepository scheduleExceptionRepository, UserService userService,
+            ModelMapper modelMapper) {
         this.employeeScheduleRepository = employeeScheduleRepository;
         this.establishmentRepository = establishmentRepository;
         this.establishmentService = establishmentService;
         this.scheduleExceptionRepository = scheduleExceptionRepository;
         this.userService = userService;
+        this.modelMapper = modelMapper;
     }
 
     private Employee canChangeSchedule(ScheduleDTO exception, Employee principal) {
@@ -68,13 +75,7 @@ public class SchedulesService {
             }
         } else if (exception.getEmployeeId() != null) {
             employee = principal;
-            if (exception.getEmployeeId() == principal.getId()) {
-                if (isOwner == null) {
-                    isOwner = establishmentService.isAdmin(exception.getEstablishmentId(), principal.getId());
-                    isStaff = establishmentService.isStaff(exception.getEstablishmentId(), principal.getId());
-                }
-                authorized = isStaff;
-            }
+            authorized = exception.getEmployeeId() == principal.getId();
         } else {
             if (isOwner == null) {
                 isOwner = establishmentService.isAdmin(exception.getEstablishmentId(), principal.getId());
@@ -89,7 +90,8 @@ public class SchedulesService {
         return employee;
     }
 
-    public String[] create(ScheduleDTO schedule, Employee principal, Boolean forceSave, Boolean replaceExisting) {
+    public Pair<List<Long>, String> create(ScheduleDTO schedule, Employee principal, Boolean forceSave,
+            Boolean replaceExisting) {
         String response = "";
         Employee employee = canChangeSchedule(schedule, principal);
         if (employeeScheduleRepository
@@ -126,36 +128,65 @@ public class SchedulesService {
         // scheduleExceptionsRepository.save(oExceptions.get());
         // }
         // }
-        this.employeeScheduleRepository.saveAll(
+        List<EmployeeSchedule> schedules = this.employeeScheduleRepository.saveAll(
                 schedule.toEntities(employee, establishmentRepository.findById(schedule.getEstablishmentId()).get()));
-        return response.split(";");
-
+        return new Pair<List<Long>, String>(
+                schedules.stream().map(EmployeeSchedule::getId).collect(Collectors.toList()), response);
     }
 
-    public BaseListDTO<ScheduleDTO> getSchedulesMerged(ScheduleFilter filter) {
+    public BaseListDTO<ScheduleDTO> getSchedulesMerged(ScheduleFilter filter) throws Exception {
+        filter.parseDate();
         return new BaseListDTO<ScheduleDTO>(employeeScheduleRepository.findAll(filter.getSpecification()).stream()
                 .map(EmployeeSchedule::toDTO).collect(Collectors.toList()));
     }
 
-    public BasePageDTO<SchedulesDTO> getSchedulesMerged(ScheduleFilter filter, Pageable pageable) {
+    public BasePageDTO<SchedulesDTO> getSchedulesMerged(ScheduleFilter filter, Pageable pageable) throws Exception {
         filter.parseDate(pageable);
-        List<ScheduleException> exceptions = scheduleExceptionRepository
-                .findAll(filter.getExceptionSpecification());
+        Map<LocalDate, List<ScheduleException>> exceptionsMap = null;
+        if (filter.getFrom() != null) {
+            List<ScheduleException> exceptions = scheduleExceptionRepository
+                    .findAll(filter.getExceptionSpecification());
+            exceptionsMap = exceptions.stream()
+                    .collect(Collectors.groupingBy(ScheduleException::getDate));
+        }
         List<EmployeeSchedule> schedules = employeeScheduleRepository.findAll(filter.getSpecification());
-        Map<LocalDate, List<ScheduleException>> exceptionsMap = exceptions.stream()
-                .collect(Collectors.groupingBy(ScheduleException::getDate));
         Map<DAY_OF_WEEK, List<EmployeeSchedule>> schedulesMap = schedules.stream()
                 .collect(Collectors.groupingBy(EmployeeSchedule::getDay));
         List<SchedulesDTO> content = new ArrayList<>();
-        for (LocalDate _from = filter.getFrom(); _from.isBefore(filter.getTo()); _from = _from.plusDays(1)) {
-            SchedulesDTO dayDTO = new SchedulesDTO();
-            for (EmployeeSchedule schedule : schedulesMap.get(Utils.getDayOfWeek(_from))) {
-                dayDTO.addSchedule(schedule.toDTO());
+        if (filter.getFrom() != null) {
+            for (LocalDate _from = filter.getFrom(); _from.isBefore(filter.getTo()); _from = _from.plusDays(1)) {
+                SchedulesDTO dayDTO = new SchedulesDTO();
+                dayDTO.setDate(_from);
+                dayDTO.setEmployeeId(filter.getEmployeeId());
+                dayDTO.setEstablishmentId(filter.getEstablishmentId());
+                DAY_OF_WEEK day = Utils.getDayOfWeek(_from);
+                if (!schedulesMap.containsKey(day)) {
+                    continue;
+                }
+                for (EmployeeSchedule schedule : schedulesMap.get(Utils.getDayOfWeek(_from))) {
+                    dayDTO.addSchedule(schedule.toDTO());
+                }
+                if (exceptionsMap != null && exceptionsMap.containsKey(_from)) {
+                    for (ScheduleException exception : exceptionsMap.get(_from)) {
+                        dayDTO.applyException(exception);
+                    }
+                }
+                content.add(dayDTO);
             }
-            for (ScheduleException exception : exceptionsMap.get(_from)) {
-                dayDTO.applyException(exception);
+        } else {
+            for (DAY_OF_WEEK day : schedulesMap.keySet()) {
+                SchedulesDTO dayDTO = new SchedulesDTO();
+                dayDTO.setDayOfWeek(day);
+                dayDTO.setEmployeeId(filter.getEmployeeId());
+                dayDTO.setEstablishmentId(filter.getEstablishmentId());
+                if (!schedulesMap.containsKey(day)) {
+                    continue;
+                }
+                for (EmployeeSchedule schedule : schedulesMap.get(day)) {
+                    dayDTO.addSchedule(schedule.toDTO());
+                }
+                content.add(dayDTO);
             }
-            content.add(dayDTO);
         }
 
         return new BasePageDTO<SchedulesDTO>(new PageImpl<SchedulesDTO>(content, pageable, filter.numberOfDays()));
@@ -172,10 +203,31 @@ public class SchedulesService {
 
     public List<Long> createException(ScheduleExceptionDTO exception, Employee principal) {
         Employee employee = canChangeSchedule(exception, principal);
+        Establishment establishment = null;
+        if (exception.getEstablishmentId() != null) {
+            establishment = establishmentRepository.findById(exception.getEstablishmentId())
+                    .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
+        }
         return scheduleExceptionRepository.saveAll(
                 exception.toEntitiesExceptions(employee,
-                        establishmentRepository.findById(exception.getEstablishmentId()).get()))
+                        establishment))
                 .stream().map(ScheduleException::getId)
                 .collect(Collectors.toList());
+    }
+
+    public BasePageDTO<ScheduleExceptionDTO> getExceptions(ScheduleFilter filter, Pageable pageable) throws Exception {
+        filter.parseDate(pageable);
+        return new BasePageDTO<ScheduleExceptionDTO>(
+                PageDTO.toDTO(modelMapper,
+                        scheduleExceptionRepository.findAll(filter.getExceptionSpecification(), pageable),
+                        ScheduleExceptionDTO.class, pageable));
+    }
+
+    public BasePageDTO<ScheduleDTO> getSchedules(ScheduleFilter filter, Pageable pageable) throws Exception {
+        filter.parseDate(pageable);
+        return new BasePageDTO<ScheduleDTO>(
+                PageDTO.toDTO(modelMapper,
+                        employeeScheduleRepository.findAll(filter.getSpecification(), pageable),
+                        ScheduleDTO.class, pageable));
     }
 }

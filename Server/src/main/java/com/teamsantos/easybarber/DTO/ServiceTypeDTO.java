@@ -1,6 +1,5 @@
 package com.teamsantos.easybarber.DTO;
 
-import com.teamsantos.easybarber.entities.ServiceType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

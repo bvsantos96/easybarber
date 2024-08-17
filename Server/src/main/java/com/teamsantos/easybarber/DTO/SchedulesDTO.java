@@ -1,10 +1,12 @@
 package com.teamsantos.easybarber.DTO;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.ScheduleException;
 
 import lombok.AllArgsConstructor;
@@ -20,6 +22,8 @@ public class SchedulesDTO {
     private Long employeeId;
     private Long establishmentId;
     private List<ScheduleDTO> schedules;
+    private LocalDate date;
+    private DAY_OF_WEEK dayOfWeek;
 
     // TODO: Performance analysis
     public void addSchedule(ScheduleDTO newSchedule) {

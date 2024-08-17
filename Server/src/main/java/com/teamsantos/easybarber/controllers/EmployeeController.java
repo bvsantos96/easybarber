@@ -2,7 +2,6 @@ package com.teamsantos.easybarber.controllers;
 
 import java.security.Principal;
 import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -23,7 +22,7 @@ import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.EmployeeCreateDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.ImageDTO;
-import com.teamsantos.easybarber.DTO.SchedulesDTO;
+import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.entities.Employee;
@@ -168,9 +167,10 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
         }
     }
 
-    @GetMapping("/schedule")
+    @GetMapping("/schedule/exception")
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
-    public ResponseEntity<BasePageDTO<SchedulesDTO>> getSchedules(@PathVariable(required = false) Boolean active,
+    public ResponseEntity<BasePageDTO<ScheduleExceptionDTO>> getExceptions(
+            @RequestParam(required = false) Boolean active,
             Pageable pageable, Principal principal) {
         try {
             if (active == null) {
@@ -178,8 +178,10 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
             }
             ScheduleFilter filter = new ScheduleFilter();
             filter.setEmployeeId(userService.getEmployee(principal).getId());
-            filter.setActive(active);
-            return ResponseEntity.ok(schedulesService.getSchedulesMerged(filter, pageable));
+            if (active) {
+                filter.setActive(active);
+            }
+            return ResponseEntity.ok(schedulesService.getExceptions(filter, pageable));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }
