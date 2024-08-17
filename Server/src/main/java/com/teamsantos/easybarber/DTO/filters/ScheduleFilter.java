@@ -37,72 +37,65 @@ public class ScheduleFilter {
     private Boolean active;
     private boolean parsed = false;
 
-    private void _parseDate() {
+    public void parseDate(Pageable pageable) throws Exception {
         if (parsed) {
             return;
         }
-
-        if (from.isAfter(to)) {
-            LocalDate temp = to;
-            to = from;
-            from = temp;
-        }
-
-        if (getDayOfWeek() == null || getDayOfWeek().isEmpty()) {
-            Set<DAY_OF_WEEK> days = new HashSet<>();
-            int startDay = Utils.getDayOfWeek(getFrom()).ordinal();
-            int nDays = (int) Math.min(7, getTo().toEpochDay() - getFrom().toEpochDay());
-            DAY_OF_WEEK[] DAY_OF_WEEK = EmployeeSchedule.DAY_OF_WEEK.values();
-            for (int i = 1; i < nDays; i++) {
-                days.add(DAY_OF_WEEK[(startDay + i) % 7]);
-            }
-            setDayOfWeek(days);
-        }
-
-        if (getStartHour() == null) {
-            setStartHour(Utils.getTimeNow("HH:mm"));
-        }
-
-        if (getEndHour() == null) {
-            setEndHour(Utils.getTimeNow("HH:mm"));
-        }
-
         parsed = true;
-    }
-
-    public void parseDate(Pageable pageable) {
-        if (getFrom() == null) {
-            setFrom(LocalDate.now());
-        }
-        setFrom(this.getFrom().plusDays(pageable.getOffset()));
-
-        if (this.getTo() == null) {
-            setTo(this.getFrom());
-            set_to(this.getFrom());
-        } else {
-            LocalDate _to = from.plusDays(pageable.getPageSize());
-            set_to(this.getTo());
-            if (this.getTo().isAfter(_to)) {
-                setTo(_to);
+        if (getFrom() != null) {
+            if (getTo() != null && getTo().isBefore(getFrom())) {
+                LocalDate temp = getTo();
+                setTo(getFrom());
+                setFrom(temp);
             }
-
+            setFrom(getFrom().plusDays(pageable.getPageNumber() * pageable.getPageSize()));
         }
-        _parseDate();
+        parseDate();
     }
 
-    public void parseDate() {
+    public void parseDate() throws Exception {
+        if (parsed) {
+            return;
+        }
+        parsed = true;
         if (getFrom() == null) {
-            setFrom(LocalDate.now());
+            if (dayOfWeek == null || dayOfWeek.isEmpty()) {
+                throw new Exception("No date or day of week specified");
+            } else {
+                setFrom(LocalDate.now());
+                setTo(from.plusDays(getDayOfWeek().size()));
+            }
+        } else {
+            if (getTo() == null) {
+                if (getDayOfWeek() != null && !getDayOfWeek().isEmpty()) {
+                    setTo(from.plusDays(getDayOfWeek().size()));
+                } else {
+                    setTo(getFrom());
+                }
+            }
+            if (getDayOfWeek() != null && !getDayOfWeek().isEmpty()) {
+                if (getTo() != null && getTo().isBefore(getFrom())) {
+                    LocalDate temp = getTo();
+                    setTo(getFrom());
+                    setFrom(temp);
+                }
+                Set<DAY_OF_WEEK> days = new HashSet<>();
+                int startDay = Utils.getDayOfWeek(getFrom()).ordinal();
+                int nDays = (int) Math.min(7, getTo().toEpochDay() - getFrom().toEpochDay()) + 1;
+                DAY_OF_WEEK[] DAY_OF_WEEK = EmployeeSchedule.DAY_OF_WEEK.values();
+                days.add(DAY_OF_WEEK[startDay]);
+                for (int i = 1; i < nDays; i++) {
+                    days.add(DAY_OF_WEEK[(startDay + i) % 7]);
+                }
+                setDayOfWeek(days);
+            } else {
+                throw new Exception("No day of week specified");
+            }
         }
 
-        if (getTo() == null) {
-            setTo(LocalDate.now());
-        }
-        _parseDate();
     }
 
     public Specification<EmployeeSchedule> getSpecification() {
-        parseDate();
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -134,7 +127,6 @@ public class ScheduleFilter {
     }
 
     public Specification<ScheduleException> getExceptionSpecification() {
-        parseDate();
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
@@ -153,7 +145,9 @@ public class ScheduleFilter {
                 throw new IllegalArgumentException("Employee ID or Establishment ID is required");
             }
 
-            predicates.add(root.get("day").in(this.getDayOfWeek()));
+            if (this.getDayOfWeek() != null && !this.getDayOfWeek().isEmpty()) {
+                predicates.add(root.get("day").in(this.getDayOfWeek()));
+            }
 
             if (this.getFrom() != null) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("date"), this.getFrom()));
@@ -177,8 +171,11 @@ public class ScheduleFilter {
         };
     }
 
-    public long numberOfDays() {
+    public long numberOfDays() throws Exception {
         parseDate();
+        if (from == null || to == null) {
+            return getDayOfWeek().size();
+        }
         return ChronoUnit.DAYS.between(from, to) + 1;
     }
 }

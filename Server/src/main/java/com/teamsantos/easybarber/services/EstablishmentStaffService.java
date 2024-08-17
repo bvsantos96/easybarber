@@ -4,7 +4,6 @@ import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.ServiceType;
-import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.repositories.ServiceTypeRepository;
 import com.teamsantos.easybarber.utils.PageDTO;
@@ -18,21 +17,18 @@ import java.security.Principal;
 
 @Service
 public class EstablishmentStaffService {
-    private final EstablishmentStaffRepository establishmentStaffRepository;
     private final UserTypeService userTypeService;
     private final ServiceTypeRepository serviceTypeRepository;
     private final ServiceRepository serviceRepository;
     private final ModelMapper modelMapper;
 
     @Autowired
-    public EstablishmentStaffService(EstablishmentStaffRepository establishmentStaffRepository,
-            ServiceTypeRepository serviceTypeRepository,
+    public EstablishmentStaffService(ServiceTypeRepository serviceTypeRepository,
             UserTypeService userTypeService, ServiceRepository serviceRepository,
             ModelMapper modelMapper) {
         this.serviceRepository = serviceRepository;
         this.userTypeService = userTypeService;
         this.serviceTypeRepository = serviceTypeRepository;
-        this.establishmentStaffRepository = establishmentStaffRepository;
         this.modelMapper = modelMapper;
     }
 

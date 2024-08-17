@@ -2,12 +2,17 @@ package com.teamsantos.easybarber.controllers;
 
 import com.teamsantos.easybarber.DTO.*;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
+import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
+import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.images.EstablishmentImage;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.EstablishmentService;
+import com.teamsantos.easybarber.services.SchedulesService;
+import com.teamsantos.easybarber.utils.Utils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.PageRequest;
@@ -23,17 +28,20 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/establishment")
 public class EstablishmentController extends ImageController<Establishment, EstablishmentImage> {
 
+    private final SchedulesService schedulesService;
     private final EstablishmentService establishmentService;
 
     @Autowired
-    public EstablishmentController(EstablishmentService service) {
+    public EstablishmentController(EstablishmentService service, SchedulesService schedulesService) {
         super(service);
         this.establishmentService = service;
+        this.schedulesService = schedulesService;
     }
 
     @GetMapping("/{id}")
@@ -191,5 +199,29 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("establishmentId") Long establishmentId,
             @RequestBody List<ImageDTO> images, Principal principal) {
         return super._addImages(establishmentId, images);
+    }
+
+    @GetMapping("/{establishmentId}/schedule")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    public ResponseEntity<BasePageDTO<ScheduleDTO>> getSchedules(
+            @PathVariable("establishmentId") Long establishmentId,
+            @RequestParam(required = false) Boolean active,
+            Pageable pageable, Principal principal) {
+        try {
+            if (active == null) {
+                active = true;
+            }
+            ScheduleFilter filter = new ScheduleFilter();
+            filter.setEstablishmentId(establishmentId);
+            filter.setEndHour(Utils.getEndOfDayTime());
+            filter.setActive(active);
+            filter.setDayOfWeek(Set.of(DAY_OF_WEEK.values()));
+            if (active) {
+                filter.setActive(active);
+            }
+            return ResponseEntity.ok(schedulesService.getSchedules(filter, pageable));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
+        }
     }
 }

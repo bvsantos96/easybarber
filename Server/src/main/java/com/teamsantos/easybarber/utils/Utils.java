@@ -95,6 +95,10 @@ public class Utils {
         return jsonArray.toString();
     }
 
+    public static String getEndOfDayTime() {
+        return "23:59:59";
+    }
+
     public static String getTimeNow(String format) {
         if(format != null && !format.isEmpty()) {
             return java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern(format));

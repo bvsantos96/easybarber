@@ -31,7 +31,7 @@ public class EstablishmentSecurityExpressionRoot extends SecurityExpressionRoot 
         Long employeeId = employeeRepository.findByMobileInformation(getAuthentication().getName())
                 .orElseThrow(UserNotFoundException::new)
                 .getId();
-        return establishmentStaffRepository.isUserAdminOfEstablishment(employeeId, establishmentId);
+        return establishmentStaffRepository.isAdminOfEstablishment(employeeId, establishmentId);
     }
 
     public boolean hasEmployeePermission(Long establishmentId) {

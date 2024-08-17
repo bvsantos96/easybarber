@@ -8,20 +8,17 @@ import org.springframework.stereotype.Service;
 import com.teamsantos.easybarber.DTO.AppointmentDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.User;
-import com.teamsantos.easybarber.repositories.AppoinmentRepository;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.UserRepository;
 
 @Service
 public class AppointmentService {
-    private final AppoinmentRepository appoinmentRepository;
     private final UserRepository userRepository;
     private final EmployeeRepository employeeRepository;
 
     @Autowired
-    public AppointmentService(AppoinmentRepository appoinmentRepository, UserRepository userRepository,
+    public AppointmentService(UserRepository userRepository,
             EmployeeRepository employeeRepository) {
-        this.appoinmentRepository = appoinmentRepository;
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
     }
@@ -37,9 +34,5 @@ public class AppointmentService {
         if (!userOpt.isPresent() || !employeeOpt.isPresent()) {
             throw new IllegalArgumentException("User ID must not be null");// TODO: change exception
         }
-
-        User user = userOpt.get();
-        Employee employee = employeeOpt.get();
-
     }
 }
