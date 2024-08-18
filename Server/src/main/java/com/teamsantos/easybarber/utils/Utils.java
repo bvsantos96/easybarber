@@ -9,7 +9,10 @@ import org.modelmapper.ModelMapper;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Utils {
     public static String setFieldIfNotNullOrEmpty(String field1, String field2) {
@@ -100,7 +103,7 @@ public class Utils {
     }
 
     public static String getTimeNow(String format) {
-        if(format != null && !format.isEmpty()) {
+        if (format != null && !format.isEmpty()) {
             return java.time.LocalTime.now().format(java.time.format.DateTimeFormatter.ofPattern(format));
         }
         return java.time.LocalTime.now().toString();
@@ -110,7 +113,34 @@ public class Utils {
         return DAY_OF_WEEK.valueOf(DayOfWeek.from(date).name());
     }
 
+    public static Set<DAY_OF_WEEK> getDaysOfWeek(LocalDate startDate, LocalDate endDate) {
+        Set<DAY_OF_WEEK> daysOfWeek = new HashSet<>();
+        if (startDate == null || endDate == null || startDate.isAfter(endDate)) {
+            return daysOfWeek;
+        }
+        for (LocalDate date = startDate; date.isBefore(endDate); date = date.plusDays(1)) {
+            daysOfWeek.add(DAY_OF_WEEK.valueOf(DayOfWeek.from(date).name()));
+        }
+        return daysOfWeek;
+    }
+
     public static DAY_OF_WEEK getTodayDayOfWeek() {
         return DAY_OF_WEEK.valueOf(DayOfWeek.from(LocalDate.now()).name());
+    }
+
+    public static boolean beforeOrEqual(LocalDate date1, LocalDate date2) {
+        return date1.isBefore(date2) || date1.isEqual(date2);
+    }
+
+    public static boolean afterOrEqual(LocalDate date1, LocalDate date2) {
+        return date1.isAfter(date2) || date1.isEqual(date2);
+    }
+
+    public static boolean beforeOrEqual(LocalTime date1, LocalTime date2) {
+        return date1.isBefore(date2) || date1.equals(date2);
+    }
+
+    public static boolean afterOrEqual(LocalTime date1, LocalTime date2) {
+        return date1.isAfter(date2) || date1.equals(date2);
     }
 }

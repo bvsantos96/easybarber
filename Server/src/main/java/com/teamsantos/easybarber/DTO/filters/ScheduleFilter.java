@@ -37,6 +37,88 @@ public class ScheduleFilter {
     private Boolean active;
     private boolean parsed = false;
 
+    public String generateURL(String _url) {
+        boolean first = true;
+        StringBuilder url = new StringBuilder(_url);
+        if (employeeId != null) {
+            if (first) {
+                url.append("?");
+                first = false;
+            } else {
+                url.append("&");
+            }
+            url.append("employeeId=").append(employeeId);
+        }
+        if (establishmentId != null) {
+            if (first) {
+                url.append("?");
+                first = false;
+            } else {
+                url.append("&");
+            }
+            url.append("establishmentId=").append(establishmentId);
+        }
+        if (dayOfWeek != null && !dayOfWeek.isEmpty()) {
+            if (first) {
+                url.append("?");
+                first = false;
+            } else {
+                url.append("&");
+            }
+            url.append("dayOfWeek=");
+            for (DAY_OF_WEEK day : dayOfWeek) {
+                url.append(day.name()).append(",");
+            }
+            url.deleteCharAt(url.length() - 1);
+        }
+        if (from != null) {
+            if (first) {
+                url.append("?");
+                first = false;
+            } else {
+                url.append("&");
+            }
+            url.append("from=").append(from);
+        }
+        if (to != null) {
+            if (first) {
+                url.append("?");
+                first = false;
+            } else {
+                url.append("&");
+            }
+            url.append("to=").append(to);
+        }
+        if (startHour != null) {
+            if (first) {
+                url.append("?");
+                first = false;
+            } else {
+                url.append("&");
+            }
+            url.append("startHour=").append(startHour);
+        }
+        if (endHour != null) {
+            if (first) {
+                url.append("?");
+                first = false;
+            } else {
+                url.append("&");
+            }
+            url.append("endHour=").append(endHour);
+        }
+        if (active != null) {
+            if (first) {
+                url.append("?");
+                first = false;
+            } else {
+                url.append("&");
+            }
+            url.append("active=").append(active);
+        }
+        return url.toString();
+    }
+
     public void parseDate(Pageable pageable) throws Exception {
         if (parsed) {
             return;

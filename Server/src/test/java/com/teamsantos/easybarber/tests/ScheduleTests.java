@@ -1,9 +1,11 @@
 package com.teamsantos.easybarber.tests;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -17,9 +19,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.teamsantos.easybarber.DTO.BaseResponseDTOs;
+import com.teamsantos.easybarber.utils.Utils;
+import com.teamsantos.easybarber.DTO.BaseResponseDTO;
+import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.SchedulesDTO;
+import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.ScheduleData;
@@ -39,9 +44,9 @@ public class ScheduleTests {
 
     private List<Long> create(String path, String jwt, String item) throws Exception {
         ResultActions result = CreateTest.createOrFoundWithResult(mockMvc, path, jwt, item);
-        BaseResponseDTOs response = JSONToDTO.toDTO(
+        BaseResponseDTO response = JSONToDTO.toDTO(
                 new JSONObject(result.andReturn().getResponse().getContentAsString()),
-                BaseResponseDTOs.class);
+                BaseResponseDTO.class);
         return response.getIds();
     }
 
@@ -129,7 +134,7 @@ public class ScheduleTests {
             ScheduleData.scheduleExceptions.forEach(exception -> {
                 try {
                     String jwt = new EmployeeTests(mockMvc).loginById(exception.getEmployeeId(), false);
-                    create("/schedule/exception", jwt, exception.toString());
+                    exception.setIds(create("/schedule/exception", jwt, exception.toString()));
                 } catch (Exception e) {
                     e.printStackTrace();
                     org.junit.jupiter.api.Assertions.fail(e.getMessage());
@@ -159,6 +164,9 @@ public class ScheduleTests {
             List<ScheduleDTO> _schedules = getScheduleByEmployeeId(employeeId, schedules);
             for (int i = 0; i < _schedules.size(); i++) {
                 assert schedules.get(i).equals(_schedules.get(i));
+            }
+            for (ScheduleExceptionDTO exception : ScheduleData.scheduleExceptions) {
+                validateSchedulesWExceptions(exception.getEmployeeId(), exception.getDateFrom(), exception.getDateTo());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -207,19 +215,54 @@ public class ScheduleTests {
         }
     }
 
+    private void validateSchedulesWExceptions(long employeeId, LocalDate from, LocalDate to) throws Exception {
+        if (from == null || to == null) {
+            throw new IllegalArgumentException("Invalid date");
+        }
+
+        if (from.isAfter(to)) {
+            throw new IllegalArgumentException("From date needs to be before or equal to date");
+        }
+
+        List<LocalDate> dates = from.datesUntil(to).toList();
+        int maxIdx = dates.size() % 7;
+        for (int i = 0; i < maxIdx; i += 7) {
+            int toIdx = Math.min(dates.size() - 1, i + 6);
+            ScheduleFilter filter = new ScheduleFilter();
+            filter.setEmployeeId(employeeId);
+            filter.setFrom(dates.get(i));
+            filter.setTo(dates.get(toIdx));
+            filter.setDayOfWeek(Utils.getDaysOfWeek(dates.get(i), dates.get(toIdx)));
+            filter.setActive(true);
+            _validateSchedulesWRequest(filter, false, true);
+        }
+    }
+
     private void validateSchedulesWRequest(long employeeId, boolean includeDisabled) throws Exception {
+        ScheduleFilter filter = new ScheduleFilter();
+        filter.setEmployeeId(employeeId);
+        filter.setDayOfWeek(new HashSet<>(Arrays.asList(DAY_OF_WEEK.values())));
+        filter.setStartHour("00:01:00");
+        filter.setActive(true);
+        _validateSchedulesWRequest(filter, includeDisabled, false);
+    }
+
+    private void _validateSchedulesWRequest(ScheduleFilter filter, boolean includeDisabled,
+            boolean filterOutExceptions)
+            throws Exception {
         ResultActions result = CreateTest.get(mockMvc,
-                String.format(
-                        "/schedules?active=true&employeeId=%d&dayOfWeek=SUNDAY,MONDAY,TUESDAY,WEDNESDAY,THURSDAY,FRIDAY,SATURDAY&startHour=00:01:00",
-                        employeeId));
+                filter.generateURL("/schedules"));
         result.andExpect(MockMvcResultMatchers.status().isOk());
         List<SchedulesDTO> schedules = JSONToDTO.fromPageDTO(
                 new JSONObject(result.andReturn().getResponse().getContentAsString()), SchedulesDTO.class);
         assert schedules != null;
-        assert validateSchedules(schedules, employeeId, includeDisabled);
+        assert validateSchedules(schedules, filter.getEmployeeId(), includeDisabled, filterOutExceptions,
+                filter.getFrom(), filter.getTo());
     }
 
-    private boolean validateSchedules(List<SchedulesDTO> schedules, long employeeId, boolean includeDisabled) {
+    private boolean validateSchedules(List<SchedulesDTO> schedules, long employeeId,
+            boolean includeDisabled,
+            boolean filterOutExceptions, LocalDate from, LocalDate to) {
         Map<DAY_OF_WEEK, List<Pair<LocalTime, LocalTime>>> map = new HashMap<>();
         for (ScheduleDTO schedule : ScheduleData.schedules) {
             if (schedule.getEmployeeId() == employeeId) {
@@ -253,67 +296,79 @@ public class ScheduleTests {
                 }
             }
         }
+        if (filterOutExceptions) {
+            removeExceptionFromMap(
+                    ScheduleData.scheduleExceptions.stream()
+                            .filter(exception -> exception.getEmployeeId() == employeeId).collect(Collectors.toList()),
+                    employeeId, map, from, to);
+        }
 
         for (SchedulesDTO _schedules : schedules) {
-            for (ScheduleDTO schedule : _schedules.getSchedules()) {
-                if (schedule.getEmployeeId() != employeeId) {
-                    return false;
-                }
-                for (DAY_OF_WEEK day : schedule.getDays()) {
-                    if (!map.containsKey(day)) {
-                        return false;
-                    }
-                    List<Pair<LocalTime, LocalTime>> list = map.get(day);
-                    for (int i = 0; i < list.size(); i++) {
-                        LocalTime start = LocalTime.parse(schedule.getStartHour());
-                        LocalTime end = LocalTime.parse(schedule.getEndHour());
-                        Pair<LocalTime, LocalTime> pair = list.get(i);
-                        if (pair.getFirst().isAfter(start) || pair.getSecond().isBefore(end)) {
-                            continue;
-                        }
-                        if (pair.getFirst().isAfter(start) || pair.getFirst() == start) {
-                            if (pair.getSecond().isBefore(end) || pair.getSecond() == end) {
-                                list.remove(pair);
-                                i--;
-                            } else {
-                                pair.setFirst(end);
-                            }
-                        } else {
-                            if (pair.getSecond().isBefore(end)) {
-                                pair.setSecond(start);
-                            } else {
-                                list.add(new Pair<LocalTime, LocalTime>(end, pair.getSecond()));
-                                pair.setSecond(start);
-                            }
-                        }
-                    }
-                    if (list.size() == 0) {
-                        map.remove(day);
-                    }
-                }
+            try {
+                removeScheduleFromMap(_schedules.getSchedules(), employeeId, map);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
             }
         }
         return map.size() == 0;
     }
 
-    private int numberOfEmployeeSchedules(long employeeId) {
-        return numberOfEmployeeSchedules(employeeId, false);
+    private void removeExceptionFromMap(List<ScheduleExceptionDTO> exceptions, long employeeId,
+            Map<DAY_OF_WEEK, List<Pair<LocalTime, LocalTime>>> map, LocalDate from, LocalDate to) {
+        List<ScheduleDTO> schedules = new ArrayList<>();
+        for (ScheduleExceptionDTO exception : exceptions) {
+            schedules.addAll(exception.toDTOs(from, to));
+        }
+        removeScheduleFromMap(schedules, employeeId, map);
     }
 
-    private int numberOfEmployeeSchedules(long employeeId, boolean includeDisabled) {
-        int count = 0;
-        for (ScheduleDTO scheduleDTO : ScheduleData.schedules) {
-            if (scheduleDTO.getEmployeeId() == employeeId) {
-                count += scheduleDTO.getDays().size();
+    private void removeScheduleFromMap(List<ScheduleDTO> _schedules, long employeeId,
+            Map<DAY_OF_WEEK, List<Pair<LocalTime, LocalTime>>> map) {
+        for (ScheduleDTO schedule : _schedules) {
+            if (schedule.getEmployeeId() != employeeId) {
+                throw new IllegalArgumentException("Invalid employeeId");
             }
-        }
-        if (includeDisabled) {
-            for (ScheduleDTO scheduleDTO : ScheduleData.schedulesDisabled) {
-                if (scheduleDTO.getEmployeeId() == employeeId) {
-                    count += scheduleDTO.getDays().size();
+            for (DAY_OF_WEEK day : schedule.getDays()) {
+                if (!map.containsKey(day)) {
+                    throw new IllegalArgumentException("Invalid day");
+                }
+                List<Pair<LocalTime, LocalTime>> list = map.get(day);
+                for (int i = 0; i < list.size(); i++) {
+                    LocalTime start = LocalTime.parse(schedule.getStartHour());
+                    LocalTime end = LocalTime.parse(schedule.getEndHour());
+                    Pair<LocalTime, LocalTime> pair = list.get(i);
+                    if ((Utils.afterOrEqual(pair.getFirst(), start) && Utils.afterOrEqual(pair.getFirst(), end)
+                            || (Utils.beforeOrEqual(pair.getSecond(), end)
+                                    && Utils.beforeOrEqual(pair.getSecond(), start)))) {
+                        continue;
+                    }
+                    if (Utils.afterOrEqual(pair.getFirst(), start)) {
+                        if (!pair.getFirst().equals(start)) {
+                            list.add(new Pair<LocalTime, LocalTime>(start, pair.getFirst()));
+                        }
+                        if (Utils.beforeOrEqual(pair.getSecond(), end)) {
+                            list.remove(pair);
+                            i--;
+                        } else {
+                            pair.setFirst(end);
+                        }
+                    } else {
+                        if (pair.getSecond().isBefore(end)) {
+                            list.add(new Pair<LocalTime, LocalTime>(pair.getSecond(), end));
+                            pair.setSecond(start);
+                        } else {
+                            if (!pair.getSecond().equals(end)) {
+                                list.add(new Pair<LocalTime, LocalTime>(end, pair.getSecond()));
+                            }
+                            pair.setSecond(start);
+                        }
+                    }
+                }
+                if (list.size() == 0) {
+                    map.remove(day);
                 }
             }
         }
-        return count;
     }
 }

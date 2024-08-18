@@ -2,9 +2,11 @@ package com.teamsantos.easybarber.services;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
@@ -163,7 +166,11 @@ public class SchedulesService {
                 if (!schedulesMap.containsKey(day)) {
                     continue;
                 }
+                DAY_OF_WEEK _day = day;
                 for (EmployeeSchedule schedule : schedulesMap.get(Utils.getDayOfWeek(_from))) {
+                    if (schedule.getDay() != _day) {
+                        _day = null;
+                    }
                     dayDTO.addSchedule(schedule.toDTO());
                 }
                 if (exceptionsMap != null && exceptionsMap.containsKey(_from)) {
@@ -171,6 +178,7 @@ public class SchedulesService {
                         dayDTO.applyException(exception);
                     }
                 }
+                dayDTO.setDayOfWeek(_day);
                 content.add(dayDTO);
             }
         } else {
@@ -201,18 +209,20 @@ public class SchedulesService {
         employeeScheduleRepository.save(schedule);
     }
 
-    public List<Long> createException(ScheduleExceptionDTO exception, Employee principal) {
+    @Transactional
+    public Set<Long> createException(ScheduleExceptionDTO exception, Employee principal) {
         Employee employee = canChangeSchedule(exception, principal);
         Establishment establishment = null;
         if (exception.getEstablishmentId() != null) {
             establishment = establishmentRepository.findById(exception.getEstablishmentId())
                     .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
         }
-        return scheduleExceptionRepository.saveAll(
-                exception.toEntitiesExceptions(employee,
-                        establishment))
-                .stream().map(ScheduleException::getId)
-                .collect(Collectors.toList());
+        Set<ScheduleException> _exceptions = exception.toEntitiesExceptions(employee, establishment);
+        Set<Long> ids = new HashSet<>();
+        for (ScheduleException _exception : _exceptions) {
+            ids.add(scheduleExceptionRepository.save(_exception).getId());
+        }
+        return ids;
     }
 
     public BasePageDTO<ScheduleExceptionDTO> getExceptions(ScheduleFilter filter, Pageable pageable) throws Exception {
