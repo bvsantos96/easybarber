@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -26,6 +27,10 @@ public class EstablishmentService {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "service_id", referencedColumnName = "id")
     private Service service;
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Set<Appointment> appointment;
+
 
     @PrePersist
     public void prePersist() {

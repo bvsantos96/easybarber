@@ -209,16 +209,20 @@ public class ScheduleFilter {
     }
 
     public Specification<ScheduleException> getExceptionSpecification() {
+        return getExceptionSpecification(true, true);
+    }
+
+    public Specification<ScheduleException> getExceptionSpecification(boolean filterEmployee, boolean filterEstablishment) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
             boolean identifier = false;
-            if (this.getEmployeeId() != null) {
+            if (filterEmployee && this.getEmployeeId() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("employee").get("id"), this.getEmployeeId()));
                 identifier = true;
             }
 
-            if (this.getEstablishmentId() != null) {
+            if (filterEstablishment && this.getEstablishmentId() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("establishment").get("id"), this.getEstablishmentId()));
                 identifier = true;
             }
