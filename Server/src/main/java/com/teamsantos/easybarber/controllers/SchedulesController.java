@@ -2,6 +2,7 @@ package com.teamsantos.easybarber.controllers;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -16,9 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
-import com.teamsantos.easybarber.DTO.BaseResponseDTOs;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
@@ -41,7 +40,7 @@ public class SchedulesController {
 
     @PostMapping("/schedule")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_EMPLOYEE_OBJECT)
-    public ResponseEntity<BaseResponseDTOs> create(@RequestBody ScheduleDTO obj, Principal principal,
+    public ResponseEntity<BaseResponseDTO> create(@RequestBody ScheduleDTO obj, Principal principal,
             @RequestParam(required = false) Boolean forceSave,
             @RequestParam(required = false) Boolean replaceExisting) {
         try {
@@ -56,14 +55,14 @@ public class SchedulesController {
                     forceSave,
                     replaceExisting);
             return ResponseEntity
-                    .status(HttpStatus.CREATED).body(new BaseResponseDTOs(result.getFirst(), result.getSecond()));
+                    .status(HttpStatus.CREATED).body(new BaseResponseDTO(result.getFirst(), result.getSecond()));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new BaseResponseDTOs(e.getMessage()));
+            return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
         }
     }
 
     @GetMapping("/schedules")
-    public ResponseEntity<BasePageDTO<SchedulesDTO>> getSchedules(@ModelAttribute ScheduleFilter filter,
+    public ResponseEntity<BasePageDTO<SchedulesDTO>> listSchedules(@ModelAttribute ScheduleFilter filter,
             Pageable pageable) {
         try {
             BasePageDTO<SchedulesDTO> schedules = schedulesService.getSchedulesMerged(filter, pageable);
@@ -86,13 +85,13 @@ public class SchedulesController {
 
     @PostMapping("/schedule/exception")
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
-    public ResponseEntity<BaseListDTO<Long>> createException(@RequestBody ScheduleExceptionDTO exception,
+    public ResponseEntity<BaseResponseDTO> createException(@RequestBody ScheduleExceptionDTO exception,
             Principal principal) {
         try {
-            return ResponseEntity.status(HttpStatus.CREATED).body(new BaseListDTO<Long>(
-                    schedulesService.createException(exception, userService.getEmployee(principal))));
+            Set<Long> ids = schedulesService.createException(exception, userService.getEmployee(principal));
+            return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponseDTO(ids));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new BaseListDTO<>(e.getMessage()));
+            return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
         }
     }
 }

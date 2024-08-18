@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -11,6 +12,10 @@ public class BaseListDTO<T> extends BaseResponseDTO {
     private List<T> items;
 
     public BaseListDTO() {
+    }
+
+    public BaseListDTO(Set<T> items) {
+        this.items = List.copyOf(items);
     }
 
     public BaseListDTO(List<T> items) {
