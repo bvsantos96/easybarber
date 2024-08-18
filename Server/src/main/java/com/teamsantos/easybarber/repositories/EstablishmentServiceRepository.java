@@ -1,6 +1,9 @@
 package com.teamsantos.easybarber.repositories;
 
 import com.teamsantos.easybarber.entities.EstablishmentService;
+
+import java.util.Optional;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -11,4 +14,6 @@ public interface EstablishmentServiceRepository extends JpaRepository<Establishm
     void deleteByEstablishmentId(Long id);
 
     void deleteByServiceId(Long id);
+
+    Optional<EstablishmentService> findByEstablishmentIdAndServiceId(long establishmentId, long serviceId);
 }

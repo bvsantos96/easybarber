@@ -6,7 +6,8 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Objects;
 
 @Getter
@@ -17,16 +18,30 @@ public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "user_id", referencedColumnName = "id")
     private User user;
-    @ManyToOne
-    @JoinColumn
+    @Column
+    private String nonRegisteredUser;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "employee_id", referencedColumnName = "id")
     private Employee employee;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "establishment_id", referencedColumnName = "id")
+    private Establishment establishment;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false, name = "establishment_service_id", referencedColumnName = "id")
+    private EstablishmentService service;
     @Column
     private String description;
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date appointmentDateTime;
+    @Temporal(TemporalType.DATE)
+    private LocalDate date;
+    @Temporal(TemporalType.TIME)
+    private LocalTime time;
+    @Column
+    private Boolean active;
+    @Column
+    private Boolean confirmed;
 
     @Override
     public final boolean equals(Object o) {

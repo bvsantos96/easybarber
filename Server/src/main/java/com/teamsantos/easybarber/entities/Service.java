@@ -26,6 +26,8 @@ public class Service extends EntityWithImages<Service, ServiceImage> {
     private String name;
     @Column
     private String description;
+    @Column(nullable = false) 
+    private int duration;
     @ManyToOne(fetch = FetchType.LAZY)
     @PrimaryKeyJoinColumn(name = "service_type_id")
     private ServiceType serviceType;
@@ -63,6 +65,7 @@ public class Service extends EntityWithImages<Service, ServiceImage> {
     public void update(ServiceDTO serviceDTO) {
         this.name = Utils.setFieldIfNotNullOrEmpty(name, serviceDTO.getName());
         this.description = Utils.setFieldIfNotNullOrEmpty(description, serviceDTO.getDescription());
+        this.duration = Utils.setFieldIfNotNullOrEmpty(duration, serviceDTO.getDuration());
     }
 
     @Override

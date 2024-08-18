@@ -60,9 +60,12 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         this.userService = userService;
     }
 
-    public EstablishmentDTO getEstablishment(Long id) throws NotFoundException {
-        return repository.findById(id).map((element) -> element.convertToDto())
-                .orElseThrow(NotFoundException::new);
+    public Establishment getEstablishment(Long id) throws NotFoundException {
+        return repository.findById(id).orElseThrow(NotFoundException::new);
+    }
+
+    public EstablishmentDTO getEstablishmentDTO(Long id) throws NotFoundException {
+        return getEstablishment(id).convertToDto();
     }
 
     public List<EstablishmentDTO> listEstablishmentStaff(Long id, Pageable pageable) {
@@ -200,7 +203,7 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     }
 
     @Transactional
-    public void updateService(Long establishmentId, CreateEstablishmentServiceDTO serviceDTO) throws NotFoundException {
+    public void updateService(long establishmentId, CreateEstablishmentServiceDTO serviceDTO) throws NotFoundException {
         if (serviceDTO != null) {
             Establishment establishment = repository.findById(establishmentId).orElseThrow();
             com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceDTO.getServiceId())
@@ -228,15 +231,27 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     }
 
     @Transactional
-    public void removeService(Long id, Long serviceId) {
-        if (serviceId != null) {
-            Establishment establishment = repository.findById(id).orElseThrow();
-            establishment.getServices().removeIf((service) -> service.getId().equals(serviceId));
-            repository.save(establishment);
-        }
+    public void removeService(long id, Long serviceId) {
+        Establishment establishment = repository.findById(id).orElseThrow();
+        establishment.getServices().removeIf((service) -> service.getId().equals(serviceId));
+        repository.save(establishment);
     }
 
-    public List<EmployeeDTO> getEmployees(Long establishmentId, boolean onlyActive) throws NotFoundException {
+    public com.teamsantos.easybarber.entities.EstablishmentService getEstablishmentService(long serviceId)
+            throws NotFoundException {
+        return establishmentServiceRepository.findById(serviceId).orElseThrow(NotFoundException::new);
+    }
+
+    public com.teamsantos.easybarber.entities.EstablishmentService getEstablishmentService(long establishmentId,
+            long serviceId) throws NotFoundException {
+        com.teamsantos.easybarber.entities.EstablishmentService service = getEstablishmentService(serviceId);
+        if (service.getEstablishment().getId() != establishmentId) {
+            throw new NotFoundException();
+        }
+        return service;
+    }
+
+    public List<EmployeeDTO> getEmployees(long establishmentId, boolean onlyActive) throws NotFoundException {
         if (!repository.existsById(establishmentId)) {
             throw new NotFoundException();
         }

@@ -13,20 +13,24 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.teamsantos.easybarber.DTO.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.SchedulesDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
+import com.teamsantos.easybarber.entities.Appointment;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.EmployeeSchedule;
 import com.teamsantos.easybarber.entities.ScheduleException;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.Establishment;
+import com.teamsantos.easybarber.repositories.AppointmentRepository;
 import com.teamsantos.easybarber.repositories.EmployeeScheduleRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentRepository;
 import com.teamsantos.easybarber.repositories.ScheduleExceptionsRepository;
@@ -36,6 +40,7 @@ import com.teamsantos.easybarber.utils.Utils;
 
 @Service
 public class SchedulesService {
+    private final AppointmentRepository appointmentRepository;
     private final EmployeeScheduleRepository employeeScheduleRepository;
     private final EstablishmentRepository establishmentRepository;
     private final EstablishmentService establishmentService;
@@ -45,13 +50,17 @@ public class SchedulesService {
 
     @Autowired
     public SchedulesService(EmployeeScheduleRepository employeeScheduleRepository,
-            EstablishmentRepository establishmentRepository, EstablishmentService establishmentService,
-            ScheduleExceptionsRepository scheduleExceptionRepository, UserService userService,
+            AppointmentRepository appointmentRepository,
+            EstablishmentRepository establishmentRepository,
+            ScheduleExceptionsRepository scheduleExceptionRepository,
+            EstablishmentService establishmentService,
+            UserService userService,
             ModelMapper modelMapper) {
         this.employeeScheduleRepository = employeeScheduleRepository;
         this.establishmentRepository = establishmentRepository;
         this.establishmentService = establishmentService;
         this.scheduleExceptionRepository = scheduleExceptionRepository;
+        this.appointmentRepository = appointmentRepository;
         this.userService = userService;
         this.modelMapper = modelMapper;
     }
@@ -143,14 +152,23 @@ public class SchedulesService {
                 .map(EmployeeSchedule::toDTO).collect(Collectors.toList()));
     }
 
+    private Map<LocalDate, List<ScheduleException>> getExceptionMapByDate(
+            Specification<ScheduleException> specification) {
+        return scheduleExceptionRepository.findAll(specification).stream()
+                .collect(Collectors.groupingBy(ScheduleException::getDate));
+    }
+
     public BasePageDTO<SchedulesDTO> getSchedulesMerged(ScheduleFilter filter, Pageable pageable) throws Exception {
         filter.parseDate(pageable);
         Map<LocalDate, List<ScheduleException>> exceptionsMap = null;
         if (filter.getFrom() != null) {
-            List<ScheduleException> exceptions = scheduleExceptionRepository
-                    .findAll(filter.getExceptionSpecification());
-            exceptionsMap = exceptions.stream()
-                    .collect(Collectors.groupingBy(ScheduleException::getDate));
+            exceptionsMap = getExceptionMapByDate(filter.getExceptionSpecification(true, true));
+            if (filter.getEmployeeId() != null) {
+                exceptionsMap.putAll(getExceptionMapByDate(filter.getExceptionSpecification(true, false)));
+            }
+            if (filter.getEstablishmentId() != null) {
+                exceptionsMap.putAll(getExceptionMapByDate(filter.getExceptionSpecification(false, true)));
+            }
         }
         List<EmployeeSchedule> schedules = employeeScheduleRepository.findAll(filter.getSpecification());
         Map<DAY_OF_WEEK, List<EmployeeSchedule>> schedulesMap = schedules.stream()
@@ -239,5 +257,19 @@ public class SchedulesService {
                 PageDTO.toDTO(modelMapper,
                         employeeScheduleRepository.findAll(filter.getSpecification(), pageable),
                         ScheduleDTO.class, pageable));
+    }
+
+    public boolean isAppointmentDateTimeValid(AppointmentDTO appointmentDTO, int duration) {
+        boolean notValid = scheduleExceptionRepository.intercepts(appointmentDTO.getEmployeeId(),
+                appointmentDTO.getEstablishmentId(), appointmentDTO.getDate(), appointmentDTO.getTime(),
+                appointmentDTO.getTime().plusMinutes(duration));
+        notValid = scheduleExceptionRepository.intercepts(null, appointmentDTO.getEstablishmentId(),
+                appointmentDTO.getDate(), appointmentDTO.getTime(), appointmentDTO.getTime().plusMinutes(duration));
+        notValid = scheduleExceptionRepository.intercepts(appointmentDTO.getEmployeeId(), null,
+                appointmentDTO.getDate(),
+                appointmentDTO.getTime(), appointmentDTO.getTime().plusMinutes(duration));
+        notValid = appointmentRepository.intercepts(appointmentDTO.getEmployeeId(), appointmentDTO.getDate(),
+                appointmentDTO.getTime(), appointmentDTO.getTime().plusMinutes(duration));
+        return !notValid;
     }
 }

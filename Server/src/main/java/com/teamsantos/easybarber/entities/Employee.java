@@ -38,6 +38,9 @@ public class Employee extends EntityWithImages<Employee, EmployeeImage> {
     private Set<ScheduleException> exceptions;
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<EmployeeSchedule> schedules;
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Set<Appointment> appointment;
 
     @Override
     public Employee getEntity() {

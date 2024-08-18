@@ -42,6 +42,9 @@ public class Establishment extends EntityWithImages<Establishment, Establishment
     private Set<ScheduleException> exceptions;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<EmployeeSchedule> schedules;
+    @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    private Set<Appointment> appointment;
 
     @PrePersist
     public void prePersist() {
