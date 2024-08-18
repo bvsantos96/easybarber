@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.Setter;
 
+import com.teamsantos.easybarber.utils.Pair;
+
 @Getter
 @Setter
 public class BaseResponseDTO extends BaseDTO {
@@ -46,5 +48,9 @@ public class BaseResponseDTO extends BaseDTO {
     public BaseResponseDTO(Long id) {
         super(id);
         this.ids = List.of(id);
+    }
+
+    public BaseResponseDTO(Pair<Long, String> pair) {
+        this(pair.getFirst(), pair.getSecond());
     }
 }

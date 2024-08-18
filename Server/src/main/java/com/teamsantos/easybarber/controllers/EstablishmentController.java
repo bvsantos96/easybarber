@@ -48,7 +48,7 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     public ResponseEntity<EstablishmentDTO> getEstablishment(@PathVariable Long id) {
         EstablishmentDTO establishment = new EstablishmentDTO();
         try {
-            return ResponseEntity.ok(establishmentService.getEstablishment(id));
+            return ResponseEntity.ok(establishmentService.getEstablishmentDTO(id));
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(establishment);
         } catch (Exception e) {

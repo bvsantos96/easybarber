@@ -31,12 +31,12 @@ public class ServiceData {
             services = new ArrayList<>() {
                 {
                     add(new ServiceDTO(1L, EmployeeData.employees.get(0).getId(), serviceTypes.get(0).getId(),
-                            "Haircut", "Simple haircut", "https://youtube.com", 10.0));
+                            "Haircut", "Simple haircut", "https://youtube.com", 10.0, 30));
                     add(new ServiceDTO(2L, EmployeeData.employees.get(0).getId(), serviceTypes.get(1).getId(), "Beard",
-                            "Simple beard trim", "https://youtube.com", 5.0));
+                            "Simple beard trim", "https://youtube.com", 5.0, 15));
                     add(new ServiceDTO(3L, EmployeeData.employees.get(1).getId(), serviceTypes.get(2).getId(),
                             "Beard and haircut", "Simple haircut and beard trim",
-                            "https://youtube.com", 15.0));
+                            "https://youtube.com", 15.0, 45));
                 }
             };
             services.sort(Comparator.comparing(ServiceDTO::getId));
