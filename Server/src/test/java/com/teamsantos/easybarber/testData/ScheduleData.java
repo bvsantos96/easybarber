@@ -3,6 +3,7 @@ package com.teamsantos.easybarber.testData;
 import com.teamsantos.easybarber.DTO.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
+import com.teamsantos.easybarber.testDTOs.ScheduleExceptionTestDTO;
 import com.teamsantos.easybarber.testDTOs.ScheduleTestDTO;
 
 import java.time.LocalDate;
@@ -16,7 +17,7 @@ public class ScheduleData {
     public static final List<ScheduleDTO> schedules;
     public static final List<ScheduleTestDTO> schedulesDisabled;
     public static final List<ScheduleDTO> schedulesErrors;
-    public static final List<ScheduleExceptionDTO> scheduleExceptions;
+    public static final List<ScheduleExceptionTestDTO> scheduleExceptions;
 
     static {
         schedules = new ArrayList<>() {
@@ -105,12 +106,11 @@ public class ScheduleData {
 
         scheduleExceptions = new ArrayList<>() {
             {
-                add(new ScheduleExceptionDTO(
+                add(new ScheduleExceptionTestDTO(
                         1L,
                         EmployeeData.employees.get(0).getId(),
                         null,
-                        Set.of(
-                                DAY_OF_WEEK.FRIDAY),
+                        Set.of(DAY_OF_WEEK.FRIDAY),
                         "10:30",
                         "11:30",
                         LocalDate.parse("2024-09-01"),

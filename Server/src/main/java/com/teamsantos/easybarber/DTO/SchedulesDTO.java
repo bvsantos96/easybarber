@@ -72,20 +72,17 @@ public class SchedulesDTO {
             return;
         }
 
-        Iterator<ScheduleDTO> iterator = schedules.iterator();
-        while (iterator.hasNext()) {
-            ScheduleDTO schedule = iterator.next();
+        for (int i = 0; i < schedules.size(); i++) {
+            ScheduleDTO schedule = schedules.get(i);
             LocalTime scheduleStart = LocalTime.parse(schedule.getStartHour());
             LocalTime scheduleEnd = LocalTime.parse(schedule.getEndHour());
             LocalTime exceptionStart = LocalTime.parse(exception.getStartHour());
             LocalTime exceptionEnd = LocalTime.parse(exception.getEndHour());
 
-            // Case 1: Exception covers the entire schedule
             if (exceptionStart.compareTo(scheduleStart) <= 0 && exceptionEnd.compareTo(scheduleEnd) >= 0) {
-                iterator.remove();
-            }
-            // Case 2: Exception splits the schedule into two parts
-            else if (exceptionStart.isAfter(scheduleStart) && exceptionEnd.isBefore(scheduleEnd)) {
+                schedules.remove(i);
+                i--;
+            } else if (exceptionStart.isAfter(scheduleStart) && exceptionEnd.isBefore(scheduleEnd)) {
                 schedule.setEndHour(exceptionStart.toString());
                 ScheduleDTO newSchedule = new ScheduleDTO(
                         null,
@@ -95,14 +92,10 @@ public class SchedulesDTO {
                         exceptionEnd.toString(),
                         scheduleEnd.toString());
                 schedules.add(newSchedule);
-            }
-            // Case 3: Exception removes the start of the schedule
-            else if (exceptionStart.compareTo(scheduleStart) <= 0 && exceptionEnd.isAfter(scheduleStart)
+            } else if (exceptionStart.compareTo(scheduleStart) <= 0 && exceptionEnd.isAfter(scheduleStart)
                     && exceptionEnd.isBefore(scheduleEnd)) {
                 schedule.setStartHour(exceptionEnd.toString());
-            }
-            // Case 4: Exception removes the end of the schedule
-            else if (exceptionStart.isAfter(scheduleStart) && exceptionStart.isBefore(scheduleEnd)
+            } else if (exceptionStart.isAfter(scheduleStart) && exceptionStart.isBefore(scheduleEnd)
                     && exceptionEnd.compareTo(scheduleEnd) >= 0) {
                 schedule.setEndHour(exceptionStart.toString());
             }

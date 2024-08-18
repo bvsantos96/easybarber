@@ -1,5 +1,7 @@
 package com.teamsantos.easybarber.entities;
 
+import org.hibernate.proxy.HibernateProxy;
+
 import com.teamsantos.easybarber.DTO.ScheduleDTO;
 
 import jakarta.persistence.Column;
@@ -23,7 +25,7 @@ public class EmployeeSchedule {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     @JoinColumn(nullable = false, name = "employee_id", referencedColumnName = "id")
@@ -42,5 +44,12 @@ public class EmployeeSchedule {
 
     public ScheduleDTO toDTO() {
         return new ScheduleDTO(id, employee.getId(), establishment.getId(), day, startHour, endHour);
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
+                : getClass().hashCode();
     }
 }

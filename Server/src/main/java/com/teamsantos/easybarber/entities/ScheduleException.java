@@ -2,6 +2,8 @@ package com.teamsantos.easybarber.entities;
 
 import java.time.LocalDate;
 
+import org.hibernate.proxy.HibernateProxy;
+
 import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 
@@ -22,7 +24,7 @@ import lombok.ToString;
 @Entity
 public class ScheduleException {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne
     @JoinColumn(nullable = true, name = "employee_id", referencedColumnName = "id")
@@ -51,5 +53,12 @@ public class ScheduleException {
                 endHour,
                 active,
                 day);
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy
+                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
+                : getClass().hashCode();
     }
 }
