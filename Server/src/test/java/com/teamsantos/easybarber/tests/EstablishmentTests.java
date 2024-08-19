@@ -118,15 +118,19 @@ public class EstablishmentTests {
             ResultActions result = CreateTest.post(mockMvc, "/establishment/1/service", jwt, service.toString());
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
         } catch (Exception e) {
-            e.printStackTrace();
+          e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
     }
 
     @Test
     public void listEmployees() {
+        listEmployees(true, true);
+    }
+
+    public void listEmployees(boolean initAuth, boolean initEmployee) {
         try {
-            testEmployees(true, true);
+            testEmployees(initAuth, initEmployee);
             ResultActions result = CreateTest.get(mockMvc, "/establishment/1/employees");
             result.andExpect(MockMvcResultMatchers.status().isOk());
             JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
@@ -161,8 +165,12 @@ public class EstablishmentTests {
 
     @Test
     public void listEstablishmentServices() {
+        listEstablishmentServices(true, true);
+    }
+
+    public void listEstablishmentServices(boolean initAuth, boolean initEmployee) {
         try {
-            testService(true, true);
+            testService(initAuth, initEmployee);
             ResultActions result = CreateTest.get(mockMvc, "/establishment/1/services");
             result.andExpect(MockMvcResultMatchers.status().isOk());
             JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
@@ -178,8 +186,12 @@ public class EstablishmentTests {
 
     @Test
     public void listClosestEstablishments() {
+        listClosestEstablishments(true, true);
+    }
+
+    public void listClosestEstablishments(boolean initAuth, boolean initEmployee) {
         try {
-            testService(true, true);
+            testService(initAuth, initEmployee);
             float latitude = 38.671870f,
                     longitude = -9.165940f;
             ResultActions result = CreateTest.get(mockMvc,

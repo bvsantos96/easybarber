@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.DTO;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -20,20 +21,20 @@ public class ScheduleDTO extends BaseDTO {
     private Long employeeId;
     private Long establishmentId;
     private Set<DAY_OF_WEEK> days;
-    private String startHour;
-    private String endHour;
+    private LocalTime startHour;
+    private LocalTime endHour;
 
     public ScheduleDTO() {
         super();
     }
 
-    public ScheduleDTO(Long id, Long employeeId, Long establishmentId, DAY_OF_WEEK day, String startHour,
-            String endHour) {
+    public ScheduleDTO(Long id, Long employeeId, Long establishmentId, DAY_OF_WEEK day, LocalTime startHour,
+            LocalTime endHour) {
         this(id, employeeId, establishmentId, Set.of(day), startHour, endHour);
     }
 
-    public ScheduleDTO(Long id, Long employeeId, Long establishmentId, Set<DAY_OF_WEEK> day, String startHour,
-            String endHour) {
+    public ScheduleDTO(Long id, Long employeeId, Long establishmentId, Set<DAY_OF_WEEK> day, LocalTime startHour,
+            LocalTime endHour) {
         super(id);
         this.employeeId = employeeId;
         this.establishmentId = establishmentId;

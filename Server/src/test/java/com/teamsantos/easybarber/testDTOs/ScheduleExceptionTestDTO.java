@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.testDTOs;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -18,8 +19,8 @@ public class ScheduleExceptionTestDTO extends ScheduleExceptionDTO {
         super();
     }
 
-    public ScheduleExceptionTestDTO(Long id, Long employeeId, Long establishmentId, Set<DAY_OF_WEEK> days, String startHour,
-            String endHour, LocalDate dateFrom, LocalDate dateTo, Boolean active) {
+    public ScheduleExceptionTestDTO(Long id, Long employeeId, Long establishmentId, Set<DAY_OF_WEEK> days, LocalTime startHour,
+            LocalTime endHour, LocalDate dateFrom, LocalDate dateTo, Boolean active) {
         super(id, employeeId, establishmentId, days, startHour, endHour, dateFrom,dateTo , active);
     }
 

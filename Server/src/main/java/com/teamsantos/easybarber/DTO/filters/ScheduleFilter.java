@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.DTO.filters;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -32,8 +33,8 @@ public class ScheduleFilter {
     private LocalDate from;
     private LocalDate to;
     private LocalDate _to;
-    private String startHour;
-    private String endHour;
+    private LocalTime startHour;
+    private LocalTime endHour;
     private Boolean active;
     private boolean parsed = false;
 

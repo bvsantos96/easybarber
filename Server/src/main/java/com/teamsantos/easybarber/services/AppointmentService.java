@@ -5,11 +5,15 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.teamsantos.easybarber.utils.Utils;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.repositories.AppointmentRepository;
 import com.teamsantos.easybarber.DTO.AppointmentDTO;
+import com.teamsantos.easybarber.DTO.BasePageDTO;
+import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.utils.Pair;
@@ -31,7 +35,7 @@ public class AppointmentService {
     }
 
     public Pair<Long, String> create(AppointmentDTO appointmentDTO, Principal principal) {
-        Pair<Long, String> result = new Pair<>(null, null);
+        Pair<Long, String> result = new Pair<>(null, "");
         try {
             // TODO: Is an establishment required? Or can employees be independent?
             if (appointmentDTO.getEstablishmentId() == null) {
@@ -81,10 +85,16 @@ public class AppointmentService {
             if (!scheduleService.isAppointmentDateTimeValid(appointmentDTO, service.getService().getDuration())) {
                 throw new IllegalArgumentException("Appointment date must be within the employee's schedule");
             }
-            appointmentRepository.save(appointmentDTO.toEntity(user, employee, establishment, service));
+            result.setFirst(appointmentRepository.save(appointmentDTO.toEntity(user, employee, establishment, service))
+                    .getId());
         } catch (Exception e) {
             result.setSecond(e.getMessage());
         }
         return result;
+    }
+
+    public BasePageDTO<AppointmentDTO> listAppointment(AppointmentFilter filter, Pageable pageable) {
+        return new BasePageDTO<>(appointmentRepository.findAll(filter.getSpecification(), pageable)
+                .map((element) -> Utils.getModelMapper().map(element, AppointmentDTO.class)));
     }
 }

@@ -56,12 +56,12 @@ public class ScheduleTests {
 
     @Test
     public void createSchedules() {
-        createSchedules(true);
+        createSchedules(true, true);
     }
 
-    public void createSchedules(boolean init) {
+    public void createSchedules(boolean initAuth, boolean initEmployee) {
         try {
-            new EstablishmentTests(mockMvc).testEmployees(init, init);
+            new EstablishmentTests(mockMvc).testEmployees(initAuth, initEmployee);
             ScheduleData.schedules.forEach(schedule -> {
                 try {
                     String jwt = new EmployeeTests(mockMvc).loginById(schedule.getEmployeeId(), false);
@@ -89,12 +89,12 @@ public class ScheduleTests {
 
     @Test
     public void listSchedules() {
-        listSchedules(true);
+        listSchedules(true, true);
     }
 
-    public void listSchedules(boolean init) {
+    public void listSchedules(boolean initAuth, boolean initEmployee) {
         try {
-            createSchedules(true);
+            createSchedules(initAuth, initEmployee);
             long employeeId = ScheduleData.schedules.get(0).getEmployeeId();
             String jwt = new EmployeeTests(mockMvc).login(false);
             validateSchedulesWRequest(employeeId, false);
@@ -125,11 +125,11 @@ public class ScheduleTests {
 
     @Test
     public void createExceptions() {
-        createExceptions(true);
+        createExceptions(true, true);
     }
 
-    private void createExceptions(boolean init) {
-        listSchedules(init);
+    public void createExceptions(boolean initAuth, boolean initEmployee) {
+        listSchedules(initAuth, initEmployee);
         try {
             ScheduleData.scheduleExceptions.forEach(exception -> {
                 try {
@@ -148,12 +148,12 @@ public class ScheduleTests {
 
     @Test
     public void listExceptions() {
-        listExceptions(true);
+        listExceptions(true, true);
     }
 
-    public void listExceptions(boolean init) {
+    public void listExceptions(boolean initAuth, boolean initEmployee) {
         try {
-            createExceptions(true);
+            createExceptions(initAuth, initEmployee);
             long employeeId = EmployeeData.employees.get(0).getId();
             String jwt = new EmployeeTests(mockMvc).login(false);
             ResultActions result = CreateTest.get(mockMvc, "/employee/schedule/exception", jwt);
@@ -176,11 +176,11 @@ public class ScheduleTests {
 
     @Test
     public void disable() {
-        disable(true);
+        disable(true, true);
     }
 
-    public void disable(boolean init) {
-        createSchedules(init);
+    public void disable(boolean initAuth, boolean initEmployee) {
+        createSchedules(initAuth, initEmployee);
         try {
             if (ScheduleData.schedulesDisabled.isEmpty()) {
                 org.junit.jupiter.api.Assertions.fail("ScheduleData.schedulesDisabled.isEmpty()");
@@ -242,7 +242,7 @@ public class ScheduleTests {
         ScheduleFilter filter = new ScheduleFilter();
         filter.setEmployeeId(employeeId);
         filter.setDayOfWeek(new HashSet<>(Arrays.asList(DAY_OF_WEEK.values())));
-        filter.setStartHour("00:01:00");
+        filter.setStartHour(LocalTime.parse("00:01"));
         filter.setActive(true);
         _validateSchedulesWRequest(filter, includeDisabled, false);
     }
@@ -268,13 +268,13 @@ public class ScheduleTests {
             if (schedule.getEmployeeId() == employeeId) {
                 for (DAY_OF_WEEK day : schedule.getDays()) {
                     if (map.containsKey(day)) {
-                        map.get(day).add(new Pair<LocalTime, LocalTime>(LocalTime.parse(schedule.getStartHour()),
-                                LocalTime.parse(schedule.getEndHour())));
+                        map.get(day).add(new Pair<LocalTime, LocalTime>(schedule.getStartHour(),
+                                schedule.getEndHour()));
                     } else {
                         map.put(day,
                                 new ArrayList<>(Arrays
-                                        .asList(new Pair<LocalTime, LocalTime>(LocalTime.parse(schedule.getStartHour()),
-                                                LocalTime.parse(schedule.getEndHour())))));
+                                        .asList(new Pair<LocalTime, LocalTime>(schedule.getStartHour(),
+                                                schedule.getEndHour()))));
                     }
                 }
             }
@@ -284,13 +284,13 @@ public class ScheduleTests {
                 if (schedule.getEmployeeId() == employeeId) {
                     for (DAY_OF_WEEK day : schedule.getDays()) {
                         if (map.containsKey(day)) {
-                            map.get(day).add(new Pair<LocalTime, LocalTime>(LocalTime.parse(schedule.getStartHour()),
-                                    LocalTime.parse(schedule.getEndHour())));
+                            map.get(day).add(new Pair<LocalTime, LocalTime>(schedule.getStartHour(),
+                                    schedule.getEndHour()));
                         } else {
                             map.put(day,
                                     new ArrayList<>(Arrays.asList(
-                                            new Pair<LocalTime, LocalTime>(LocalTime.parse(schedule.getStartHour()),
-                                                    LocalTime.parse(schedule.getEndHour())))));
+                                            new Pair<LocalTime, LocalTime>(schedule.getStartHour(),
+                                                    schedule.getEndHour()))));
                         }
                     }
                 }
@@ -335,8 +335,8 @@ public class ScheduleTests {
                 }
                 List<Pair<LocalTime, LocalTime>> list = map.get(day);
                 for (int i = 0; i < list.size(); i++) {
-                    LocalTime start = LocalTime.parse(schedule.getStartHour());
-                    LocalTime end = LocalTime.parse(schedule.getEndHour());
+                    LocalTime start = schedule.getStartHour();
+                    LocalTime end = schedule.getEndHour();
                     Pair<LocalTime, LocalTime> pair = list.get(i);
                     if ((Utils.afterOrEqual(pair.getFirst(), start) && Utils.afterOrEqual(pair.getFirst(), end)
                             || (Utils.beforeOrEqual(pair.getSecond(), end)

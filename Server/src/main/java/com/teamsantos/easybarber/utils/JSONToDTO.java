@@ -9,6 +9,8 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -92,7 +94,8 @@ public class JSONToDTO {
                                     : fromListDTO((JSONArray) jsonValue, findFieldTypeInHierarchy(clazz, key));
                         } else if (field.getType() == Set.class) {
                             value = jsonValue.equals(JSONObject.NULL) ? null
-                                    : new HashSet<>(fromListDTO((JSONArray) jsonValue, findFieldTypeInHierarchy(clazz, key)));
+                                    : new HashSet<>(
+                                            fromListDTO((JSONArray) jsonValue, findFieldTypeInHierarchy(clazz, key)));
                         } else {
                             value = jsonValue.equals(JSONObject.NULL) ? null
                                     : parseByType(jsonValue, field.getType());
@@ -124,6 +127,10 @@ public class JSONToDTO {
             return Boolean.parseBoolean(value.toString());
         } else if (fieldType == DAY_OF_WEEK.class) {
             return DAY_OF_WEEK.valueOf(value.toString());
+        } else if (fieldType == LocalTime.class) {
+            return LocalTime.parse(value.toString());
+        } else if (fieldType == LocalDate.class) {
+            return LocalDate.parse(value.toString());
         } else {
             return value;
         }

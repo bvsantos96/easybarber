@@ -19,9 +19,7 @@ public interface AppointmentRepository
                     from Appointment s
                     where (s.employee.id = :employeeId or :employeeId is null)
                     and (s.date = :date)
-                    and ((s.startHour <= :time and s.endHour > :time)
-                        or (s.startHour < :endTime and s.endHour >= :endTime)
-                        or (s.startHour <= :time and s.endHour <= :endTime))
+                    and ((:time is null or s.time >= :time) and (:endTime is null or s.time <= :endTime))
             """)
     boolean intercepts(Long employeeId, LocalDate date, LocalTime time, LocalTime endTime);
 }

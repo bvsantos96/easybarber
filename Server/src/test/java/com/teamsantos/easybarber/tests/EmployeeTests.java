@@ -34,7 +34,7 @@ public class EmployeeTests {
     public String login(boolean init) throws Exception {
         if (init)
             createEmployees();
-        return new AuthTests(mockMvc).login(EmployeeData.employees.get(0).toString());
+        return new AuthTests(mockMvc).login(EmployeeData.employees.get(0).toString(), false);
     }
 
     public String loginById(Long id, boolean init) throws Exception {
@@ -42,13 +42,13 @@ public class EmployeeTests {
             createEmployees();
         return new AuthTests(mockMvc)
                 .login(EmployeeData.employees.stream().filter(e -> Objects.equals(e.getId(), id)).findFirst()
-                        .orElseThrow(UserNotFoundException::new).toString());
+                        .orElseThrow(UserNotFoundException::new).toString(), false);
     }
 
     public String login(int index, boolean init) throws Exception {
         if (init)
             createEmployees();
-        return new AuthTests(mockMvc).login(EmployeeData.employees.get(index).toString());
+        return new AuthTests(mockMvc).login(EmployeeData.employees.get(index).toString(), false);
     }
 
     public String login() throws Exception {
