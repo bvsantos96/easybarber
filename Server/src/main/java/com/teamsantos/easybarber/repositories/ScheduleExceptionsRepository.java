@@ -24,6 +24,7 @@ public interface ScheduleExceptionsRepository
                     select count(s) > 0
                     from ScheduleException s
                     where (s.employee.id = :employeeId or :employeeId is null)
+                    and s.active = true
                     and (s.establishment.id = :establishmentId or :establishmentId is null)
                     and (s.date = :date)
                     and ((s.startHour <= :time and s.endHour > :time)
