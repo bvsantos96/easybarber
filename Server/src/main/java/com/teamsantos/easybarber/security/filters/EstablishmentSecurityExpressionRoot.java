@@ -1,10 +1,11 @@
 package com.teamsantos.easybarber.security.filters;
 
+import org.springframework.security.access.expression.SecurityExpressionRoot;
+import org.springframework.security.core.Authentication;
+
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
-import org.springframework.security.access.expression.SecurityExpressionRoot;
-import org.springframework.security.core.Authentication;
 
 public class EstablishmentSecurityExpressionRoot extends SecurityExpressionRoot {
     private final EmployeeRepository employeeRepository;

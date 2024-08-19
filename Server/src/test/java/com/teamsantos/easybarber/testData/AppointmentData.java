@@ -54,9 +54,21 @@ public class AppointmentData {
                                         .getEmployeeId(),
                                 EstablishmentData.establishmentServices.get(1).getEstablishmentId(),
                                 EstablishmentData.establishmentServices.get(1).getServiceId(),
-                                "First appointment",
+                                "Second appointment",
                                 "Pai",
                                 LocalDate.parse("2124-08-17"),
+                                LocalTime.parse("10:00")));
+                add(
+                        new AppointmentDTO(
+                                3L,
+                                null,
+                                getServiceFromEstablishmentService(EstablishmentData.establishmentServices.get(1))
+                                        .getEmployeeId(),
+                                EstablishmentData.establishmentServices.get(1).getEstablishmentId(),
+                                EstablishmentData.establishmentServices.get(1).getServiceId(),
+                                "Second appointment",
+                                "Mae",
+                                LocalDate.parse("2124-08-16"),
                                 LocalTime.parse("10:00")));
             };
         };

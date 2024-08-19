@@ -20,10 +20,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AppointmentDTO extends BaseDTO {
     private Long userId;
-    private Long employeeId;
-    private Long establishmentId;
-    private Long serviceId;
-    private String description;
     // TODO: apagar dps de explicar
     // To let barbers schedule appointments for non-registered users
     // p.e. pessoas mais velhas que nao usam a internet
@@ -32,6 +28,10 @@ public class AppointmentDTO extends BaseDTO {
     // ou criar uma exception para cada um desses casos e saber o que cada exception
     // significa (que pessoa representa)
     private String nonRegisteredUser;
+    private Long employeeId;
+    private Long establishmentId;
+    private Long serviceId;
+    private String description;
     private LocalDate date;
     private LocalTime time;
 
@@ -50,7 +50,8 @@ public class AppointmentDTO extends BaseDTO {
         return appointment;
     }
 
-    public AppointmentDTO(Long id, Long userId, Long employeeId, Long establishmentId, Long serviceId, String description,
+    public AppointmentDTO(Long id, Long userId, Long employeeId, Long establishmentId, Long serviceId,
+            String description,
             String nonRegisteredUser, LocalDate date, LocalTime time) {
         super(id);
         this.userId = userId;

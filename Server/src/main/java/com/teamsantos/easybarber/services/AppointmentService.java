@@ -14,6 +14,7 @@ import com.teamsantos.easybarber.repositories.AppointmentRepository;
 import com.teamsantos.easybarber.DTO.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
+import com.teamsantos.easybarber.entities.Appointment;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.utils.Pair;
@@ -96,5 +97,26 @@ public class AppointmentService {
     public BasePageDTO<AppointmentDTO> listAppointment(AppointmentFilter filter, Pageable pageable) {
         return new BasePageDTO<>(appointmentRepository.findAll(filter.getSpecification(), pageable)
                 .map((element) -> Utils.getModelMapper().map(element, AppointmentDTO.class)));
+    }
+
+    public void cancel(long id) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+        if (appointment.getDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("You cannot cancel an appointment that has already happened");
+        }
+        appointment.setActive(false);
+        appointmentRepository.save(appointment);
+    }
+
+    public void confirm(long id, Principal principal) {
+        long employeeId = userService.getEmployee(principal).getId();
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+        if (appointment.getEmployee().getId() != employeeId) {
+            throw new IllegalArgumentException("You do not have permission to confirm this appointment");
+        }
+        appointment.setConfirmed(true);
+        appointmentRepository.save(appointment);
     }
 }

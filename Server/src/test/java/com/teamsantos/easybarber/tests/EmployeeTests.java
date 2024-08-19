@@ -299,4 +299,12 @@ public class EmployeeTests {
         return null;
     }
 
+    public static long getDifferentEmployee(long id) {
+        for (UserCreateDTO employee : EmployeeData.employees) {
+            if (!employee.getId().equals(id)) {
+                return employee.getId();
+            }
+        }
+        return 0;
+    }
 }

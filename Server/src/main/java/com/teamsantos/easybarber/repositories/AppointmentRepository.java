@@ -21,5 +21,21 @@ public interface AppointmentRepository
                     and (s.date = :date)
                     and ((:time is null or s.time >= :time) and (:endTime is null or s.time <= :endTime))
             """)
-    boolean intercepts(Long employeeId, LocalDate date, LocalTime time, LocalTime endTime);
+    boolean intercepts(long employeeId, LocalDate date, LocalTime time, LocalTime endTime);
+
+    @Query("""
+                    select count(s) > 0
+                    from Appointment s
+                    where s.id = :id
+                    and s.employee.id = :employeeId
+            """)
+    boolean existsByIdAndEmployeeId(long id, long employeeId);
+
+    @Query("""
+                    select count(s) > 0
+                    from Appointment s
+                    where s.id = :id
+                    and s.user.id = :userId
+            """)
+    boolean existsByIdAndUserId(long id, long userId);
 }
