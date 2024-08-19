@@ -38,9 +38,9 @@ public class Appointment {
     private LocalDate date;
     @Temporal(TemporalType.TIME)
     private LocalTime time;
-    @Column
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private Boolean active;
-    @Column
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean confirmed;
 
     @Override

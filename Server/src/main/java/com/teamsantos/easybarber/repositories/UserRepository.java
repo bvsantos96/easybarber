@@ -33,7 +33,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u.id FROM User u WHERE u.mobileInformation = :mobileInformation ORDER BY u.id LIMIT 1")
     @Cacheable(value = "userIdByMobileInformation", key = "#mobileInformation")
-    Optional<Long> getIdByMobileInformation(String mobileInformation);
+    Long getIdByMobileInformation(String mobileInformation);
 
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.id = :userId AND u.userTypeId = :userTypeId")
     boolean existsByIdAndUserTypeId(Long userId, Long userTypeId);

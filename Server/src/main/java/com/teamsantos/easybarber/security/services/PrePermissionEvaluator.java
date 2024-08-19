@@ -1,13 +1,17 @@
 package com.teamsantos.easybarber.security.services;
 
+import com.teamsantos.easybarber.repositories.AppointmentRepository;
+import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EmployeeScheduleRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.ServiceRepository;
+import com.teamsantos.easybarber.security.filters.AppointmentSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.filters.EstablishmentSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.filters.ScheduleSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.filters.ServiceSecurityExpressionRoot;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -20,6 +24,8 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
     private final ServiceRepository serviceRepository;
     private final EmployeeRepository employeeRepository;
     private final EmployeeScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
+    private final AppointmentRepository appointmentRepository;
 
     public static final String _SCHEDULE_OWNER = "SCHEDULE_OWNER";
     public static final String SCHEDULE_OWNER = "hasPermission(#id, '" + _SCHEDULE_OWNER + "')";
@@ -37,19 +43,27 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
     public static final String SERVICE_OWNER = "hasPermission(#serviceId, '" + _SERVICE_OWNER + "')";
     public static final String IS_EMPLOYEE = "hasRole('EMPLOYEE')";
     public static final String IS_SYSTEM_ADMIN = "hasRole('SYSTEM_ADMIN')";
+    public static final String _HAS_APPOINTMENT_CHANGE_PERMISSION = "HAS_APPOINTMENT_CHANGE_PERMISSION";
+    public static final String HAS_APPOINTMENT_CHANGE_PERMISSION = "hasPermission(#id, '"
+            + _HAS_APPOINTMENT_CHANGE_PERMISSION + "')";
 
     @Autowired
     public PrePermissionEvaluator(EstablishmentStaffRepository establishmentStaffRepository,
             ServiceRepository serviceRepository,
             EmployeeRepository employeeRepository,
-            EmployeeScheduleRepository scheduleRepository) {
+            EmployeeScheduleRepository scheduleRepository,
+            UserRepository userRepository,
+            AppointmentRepository appointmentRepository) {
         this.establishmentStaffRepository = establishmentStaffRepository;
         this.serviceRepository = serviceRepository;
         this.employeeRepository = employeeRepository;
         this.scheduleRepository = scheduleRepository;
+        this.userRepository = userRepository;
+        this.appointmentRepository = appointmentRepository;
     }
 
     @Override
+    @Cacheable(value = "permissions", key = "#authentication.name + #targetDomainObject + #permission")
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         if ((authentication == null) || (targetDomainObject == null) || !(permission instanceof String)) {
             return false;
@@ -76,12 +90,18 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
                         scheduleRepository);
                 yield root.hasScheduleOwnerPermission((Long) targetDomainObject);
             }
+            case _HAS_APPOINTMENT_CHANGE_PERMISSION -> {
+                AppointmentSecurityExpressionRoot root = new AppointmentSecurityExpressionRoot(authentication,
+                        appointmentRepository, userRepository, employeeRepository);
+                yield root.hasAppointmentChangePermission((Long) targetDomainObject);
+            }
             default -> throw new UnsupportedOperationException(
                     "hasPermission is not supported for permission " + strPermission);
         };
     }
 
     @Override
+    @Cacheable(value = "permissions", key = "#authentication.name + #targetId + #targetType + #permission")
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType,
             Object permission) {
         if ((authentication == null) || (targetId == null) || !(permission instanceof String)) {
@@ -109,6 +129,12 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
                 ScheduleSecurityExpressionRoot root = new ScheduleSecurityExpressionRoot(authentication,
                         scheduleRepository);
                 yield root.hasScheduleOwnerPermission(Long.parseLong(targetType));
+            }
+
+            case _HAS_APPOINTMENT_CHANGE_PERMISSION -> {
+                AppointmentSecurityExpressionRoot root = new AppointmentSecurityExpressionRoot(authentication,
+                        appointmentRepository, userRepository, employeeRepository);
+                yield root.hasAppointmentChangePermission(Long.parseLong(targetType));
             }
             default ->
                 throw new UnsupportedOperationException("hasPermission is not supported for permission " + sPermission);

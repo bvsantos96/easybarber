@@ -128,7 +128,10 @@ public class UserService {
     }
 
     public Long getUserId(Principal principal) {
-        return userRepository.getIdByMobileInformation(principal.getName()).orElseThrow(UserNotFoundException::new);
+        Long id = userRepository.getIdByMobileInformation(principal.getName());
+        if (id == null)
+            throw new UserNotFoundException();
+        return id;
     }
 
     public boolean userChangePermissions(Principal principal, String mobileInformation) {
