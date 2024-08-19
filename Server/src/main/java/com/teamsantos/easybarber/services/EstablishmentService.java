@@ -161,7 +161,6 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         return ((EstablishmentRepository) repository).findServicesByEstablishmentId(id, pageable);
     }
 
-    @Transactional
     public void addService(Long id, CreateEstablishmentServiceDTO serviceDTO)
             throws NotFoundException, AlreadyExistsException {
         if (id == null) {
@@ -197,8 +196,6 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
             serviceEntity.setEstablishment(establishment);
             serviceEntity.setService(service);
             establishmentServiceRepository.save(serviceEntity);
-            establishment.getServices()
-                    .add(serviceEntity);
         }
     }
 

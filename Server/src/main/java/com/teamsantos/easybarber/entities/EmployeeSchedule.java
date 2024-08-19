@@ -1,5 +1,7 @@
 package com.teamsantos.easybarber.entities;
 
+import java.time.LocalTime;
+
 import org.hibernate.proxy.HibernateProxy;
 
 import com.teamsantos.easybarber.DTO.ScheduleDTO;
@@ -36,9 +38,9 @@ public class EmployeeSchedule {
     @Column
     private DAY_OF_WEEK day;
     @Column
-    private String startHour;
+    private LocalTime startHour;
     @Column
-    private String endHour;
+    private LocalTime endHour;
     @Column
     private boolean active;
 

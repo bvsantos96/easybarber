@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.entities;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import org.hibernate.proxy.HibernateProxy;
 
@@ -35,9 +36,9 @@ public class ScheduleException {
     @Column
     private LocalDate date;
     @Column
-    private String startHour;
+    private LocalTime startHour;
     @Column
-    private String endHour;
+    private LocalTime endHour;
     @Column
     private Boolean active;
     @Column

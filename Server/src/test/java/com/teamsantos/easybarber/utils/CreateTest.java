@@ -62,6 +62,13 @@ public class CreateTest {
                         .isForbidden());
     }
 
+    public static void createBadRequest(MockMvc mockMvc, String path, String jwt, String item) throws Exception {
+        ResultActions result = post(mockMvc, path, jwt, item);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .isBadRequest());
+    }
+
     public static void create(MockMvc mockMvc, String path, String item) throws Exception {
         ResultActions result = post(mockMvc, path, item);
         result
@@ -88,6 +95,15 @@ public class CreateTest {
         result
                 .andExpect(MockMvcResultMatchers.status()
                         .is(AnyOfStatusMatcher.createdOrFound()));
+    }
+
+    public static ResultActions createOrFoundWithResult(MockMvc mockMvc, String path, String item)
+            throws Exception {
+        ResultActions result = post(mockMvc, path, item);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .is(AnyOfStatusMatcher.createdOrFound()));
+        return result;
     }
 
     public static ResultActions createOrFoundWithResult(MockMvc mockMvc, String path, String jwt, String item)
