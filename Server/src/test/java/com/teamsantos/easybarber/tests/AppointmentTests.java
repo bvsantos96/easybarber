@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.teamsantos.easybarber.testData.UsersData;
 import com.teamsantos.easybarber.DTO.AppointmentDTO;
@@ -176,6 +177,71 @@ public class AppointmentTests {
             validateAppointmentList(appointmentsMap, "employeeId");
             appointmentsMap = getAppointmentsByEstablishment();
             validateAppointmentList(appointmentsMap, "establishmentId");
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void cancelAppointment() {
+        cancelAppointment(true);
+    }
+
+    public void cancelAppointment(boolean init) {
+        try {
+            EmployeeTests employeeTests = new EmployeeTests(mockMvc);
+            AuthTests authTests = new AuthTests(mockMvc);
+            createAppointment(init, init);
+            for (int i = 0; i < AppointmentData.appointments.size(); i++) {
+                AppointmentDTO appointment = AppointmentData.appointments.get(i);
+                String jwt = "";
+                if (i % 2 == 0) {
+                    if (appointment.getUserId() == null) {
+                        jwt = employeeTests.loginById(appointment.getEmployeeId(), false);
+                    } else {
+                        jwt = authTests.loginById(appointment.getUserId(), false);
+                    }
+                    String url = String.format("/appointment/%d/cancel", appointment.getId());
+                    CreateTest.putSuccessWJWT(mockMvc, url, jwt);
+                } else {
+                    jwt = employeeTests.loginById(
+                            EmployeeTests.getDifferentEmployee(appointment.getEmployeeId()),
+                            false);
+                    String url = String.format("/appointment/%d/cancel", appointment.getId());
+                    CreateTest.putForbiddenWJWT(mockMvc, url, jwt);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+    }
+
+    @Test
+    public void confirmAppointment() {
+        confirmAppointment(true);
+    }
+
+    public void confirmAppointment(boolean init) {
+        try {
+            EmployeeTests employeeTests = new EmployeeTests(mockMvc);
+            createAppointment(init, init);
+            String jwt;
+            for (int i = 0; i < AppointmentData.appointments.size(); i++) {
+                AppointmentDTO appointment = AppointmentData.appointments.get(i);
+                if (i % 2 == 0) {
+                    jwt = employeeTests.loginById(appointment.getEmployeeId(), false);
+                    String url = String.format("/appointment/%d/confirm", appointment.getId());
+                    CreateTest.putSuccessWJWT(mockMvc, url, jwt);
+                } else {
+                    jwt = employeeTests.loginById(
+                            EmployeeTests.getDifferentEmployee(appointment.getEmployeeId()),
+                            false);
+                    String url = String.format("/appointment/%d/confirm", appointment.getId());
+                    CreateTest.putBadRequestWJWT(mockMvc, url, jwt);
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());

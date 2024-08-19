@@ -22,11 +22,65 @@ public class CreateTest {
                 .content(item));
     }
 
+    public static ResultActions putWJWT(MockMvc mockMvc, String path, String jwt) throws Exception {
+        return mockMvc.perform(MockMvcRequestBuilders
+                .put(path)
+                .header("Authorization", "Bearer " + jwt));
+    }
+
     public static ResultActions put(MockMvc mockMvc, String path, String item) throws Exception {
         return mockMvc.perform(MockMvcRequestBuilders
                 .put(path)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(item));
+    }
+
+    public static ResultActions putBadRequestWJWT(MockMvc mockMvc, String path, String jwt) throws Exception {
+        ResultActions result = putWJWT(mockMvc, path, jwt);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .isBadRequest());
+        return result;
+    }
+
+    public static ResultActions putBadRequest(MockMvc mockMvc, String path, String jwt, String item) throws Exception {
+        ResultActions result = put(mockMvc, path, jwt, item);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .isBadRequest());
+        return result;
+    }
+
+    public static ResultActions putForbiddenWJWT(MockMvc mockMvc, String path, String jwt) throws Exception {
+        ResultActions result = putWJWT(mockMvc, path, jwt);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .isForbidden());
+        return result;
+    }
+
+    public static ResultActions putForbidden(MockMvc mockMvc, String path, String jwt, String item) throws Exception {
+        ResultActions result = put(mockMvc, path, jwt, item);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .isForbidden());
+        return result;
+    }
+
+    public static ResultActions putSuccessWJWT(MockMvc mockMvc, String path, String jwt) throws Exception {
+        ResultActions result = putWJWT(mockMvc, path, jwt);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .isOk());
+        return result;
+    }
+
+    public static ResultActions putSuccess(MockMvc mockMvc, String path, String jwt, String item) throws Exception {
+        ResultActions result = put(mockMvc, path, jwt, item);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .isOk());
+        return result;
     }
 
     public static ResultActions post(MockMvc mockMvc, String path, String jwt, String item) throws Exception {

@@ -20,15 +20,19 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     boolean existsByUserId(Long userId);
 
-    @Cacheable("employee")
+    @Cacheable("employee_userId")
     Optional<Employee> findByUserId(Long userId);
 
     @Query("SELECT sf.establishment FROM EstablishmentStaff sf WHERE sf.employee.id = :userId AND sf.approved = true AND sf.deleted = false")
     Page<Establishment> findOwnedEstablishmentsById(Long userId, Pageable pageable);
 
-    @Cacheable("employee") 
+    @Cacheable("employee_mobileInformation")
     @Query("SELECT e FROM Employee e WHERE e.user.mobileInformation = :mobileInformation")
     Optional<Employee> findByMobileInformation(String mobileInformation);
+
+    @Cacheable("employee_id")
+    @Query("SELECT e.id FROM Employee e WHERE e.user.mobileInformation = :mobileInformation")
+    Long getIdByMobileInformation(String mobileInformation);
 
     @Query("""
                 SELECT e.employee, e.employee.user
