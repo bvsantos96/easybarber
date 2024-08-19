@@ -18,6 +18,8 @@ public interface AppointmentRepository
                     select count(s) > 0
                     from Appointment s
                     where (s.employee.id = :employeeId or :employeeId is null)
+                    and s.confirmed = true
+                    and (s.active = true)
                     and (s.date = :date)
                     and ((:time is null or s.time >= :time) and (:endTime is null or s.time <= :endTime))
             """)
