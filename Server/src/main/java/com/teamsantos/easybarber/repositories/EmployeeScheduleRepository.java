@@ -68,6 +68,7 @@ public interface EmployeeScheduleRepository
                 SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
                 FROM EmployeeSchedule s
                 WHERE s.employee.id = :employeeId
+                AND s.active = true
                 AND s.establishment.id = :establishmentId
                 AND s.day = :dayOfWeek
                 AND s.startHour <= :time
