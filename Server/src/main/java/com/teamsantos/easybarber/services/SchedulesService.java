@@ -263,13 +263,30 @@ public class SchedulesService {
         boolean notValid = scheduleExceptionRepository.intercepts(appointmentDTO.getEmployeeId(),
                 appointmentDTO.getEstablishmentId(), appointmentDTO.getDate(), appointmentDTO.getTime(),
                 appointmentDTO.getTime().plusMinutes(duration));
+        if (notValid) {
+            return false;
+        }
         notValid = scheduleExceptionRepository.intercepts(null, appointmentDTO.getEstablishmentId(),
                 appointmentDTO.getDate(), appointmentDTO.getTime(), appointmentDTO.getTime().plusMinutes(duration));
+        if (notValid) {
+            return false;
+        }
         notValid = scheduleExceptionRepository.intercepts(appointmentDTO.getEmployeeId(), null,
                 appointmentDTO.getDate(),
                 appointmentDTO.getTime(), appointmentDTO.getTime().plusMinutes(duration));
+        if (notValid) {
+            return false;
+        }
         notValid = appointmentRepository.intercepts(appointmentDTO.getEmployeeId(), appointmentDTO.getDate(),
                 appointmentDTO.getTime(), appointmentDTO.getTime().plusMinutes(duration));
+        if (notValid) {
+            return false;
+        }
+        notValid = !employeeScheduleRepository
+                .existsByEmployeeIdAndEstablishmentIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
+                        appointmentDTO.getEmployeeId(), appointmentDTO.getEstablishmentId(),
+                        Utils.getDayOfWeek(appointmentDTO.getDate()), appointmentDTO.getTime(),
+                        appointmentDTO.getTime().plusMinutes(duration));
         return !notValid;
     }
 }

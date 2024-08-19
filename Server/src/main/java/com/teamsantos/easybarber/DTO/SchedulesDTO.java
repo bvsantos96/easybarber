@@ -31,22 +31,22 @@ public class SchedulesDTO {
             schedules = new ArrayList<>();
         }
 
-        LocalTime newStart = LocalTime.parse(newSchedule.getStartHour());
-        LocalTime newEnd = LocalTime.parse(newSchedule.getEndHour());
+        LocalTime newStart = newSchedule.getStartHour();
+        LocalTime newEnd = newSchedule.getEndHour();
         boolean merged = false;
 
         Iterator<ScheduleDTO> iterator = schedules.iterator();
         while (iterator.hasNext()) {
             ScheduleDTO existingSchedule = iterator.next();
             if (existingSchedule.getDays() == newSchedule.getDays()) {
-                LocalTime existingStart = LocalTime.parse(existingSchedule.getStartHour());
-                LocalTime existingEnd = LocalTime.parse(existingSchedule.getEndHour());
+                LocalTime existingStart = existingSchedule.getStartHour();
+                LocalTime existingEnd = existingSchedule.getEndHour();
                 if (isTimeOverlap(existingStart, existingEnd, newStart, newEnd)) {
                     LocalTime mergedStart = existingStart.isBefore(newStart) ? existingStart : newStart;
                     LocalTime mergedEnd = existingEnd.isAfter(newEnd) ? existingEnd : newEnd;
 
-                    newSchedule.setStartHour(mergedStart.toString());
-                    newSchedule.setEndHour(mergedEnd.toString());
+                    newSchedule.setStartHour(mergedStart);
+                    newSchedule.setEndHour(mergedEnd);
 
                     iterator.remove();
                     merged = true;
@@ -74,30 +74,30 @@ public class SchedulesDTO {
 
         for (int i = 0; i < schedules.size(); i++) {
             ScheduleDTO schedule = schedules.get(i);
-            LocalTime scheduleStart = LocalTime.parse(schedule.getStartHour());
-            LocalTime scheduleEnd = LocalTime.parse(schedule.getEndHour());
-            LocalTime exceptionStart = LocalTime.parse(exception.getStartHour());
-            LocalTime exceptionEnd = LocalTime.parse(exception.getEndHour());
+            LocalTime scheduleStart = schedule.getStartHour();
+            LocalTime scheduleEnd = schedule.getEndHour();
+            LocalTime exceptionStart = exception.getStartHour();
+            LocalTime exceptionEnd = exception.getEndHour();
 
             if (exceptionStart.compareTo(scheduleStart) <= 0 && exceptionEnd.compareTo(scheduleEnd) >= 0) {
                 schedules.remove(i);
                 i--;
             } else if (exceptionStart.isAfter(scheduleStart) && exceptionEnd.isBefore(scheduleEnd)) {
-                schedule.setEndHour(exceptionStart.toString());
+                schedule.setEndHour(exceptionStart);
                 ScheduleDTO newSchedule = new ScheduleDTO(
                         null,
                         schedule.getEmployeeId(),
                         schedule.getEstablishmentId(),
                         schedule.getDays(),
-                        exceptionEnd.toString(),
-                        scheduleEnd.toString());
+                        exceptionEnd,
+                        scheduleEnd);
                 schedules.add(newSchedule);
             } else if (exceptionStart.compareTo(scheduleStart) <= 0 && exceptionEnd.isAfter(scheduleStart)
                     && exceptionEnd.isBefore(scheduleEnd)) {
-                schedule.setStartHour(exceptionEnd.toString());
+                schedule.setStartHour(exceptionEnd);
             } else if (exceptionStart.isAfter(scheduleStart) && exceptionStart.isBefore(scheduleEnd)
                     && exceptionEnd.compareTo(scheduleEnd) >= 0) {
-                schedule.setEndHour(exceptionStart.toString());
+                schedule.setEndHour(exceptionStart);
             }
         }
     }

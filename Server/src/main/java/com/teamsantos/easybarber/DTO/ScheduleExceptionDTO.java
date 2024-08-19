@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.DTO;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -28,16 +29,16 @@ public class ScheduleExceptionDTO extends ScheduleDTO {
         super();
     }
 
-    public ScheduleExceptionDTO(Long id, Long employeeId, Long establishmentId, Set<DAY_OF_WEEK> days, String startHour,
-            String endHour, LocalDate dateFrom, LocalDate dateTo, Boolean active) {
+    public ScheduleExceptionDTO(Long id, Long employeeId, Long establishmentId, Set<DAY_OF_WEEK> days, LocalTime startHour,
+            LocalTime endHour, LocalDate dateFrom, LocalDate dateTo, Boolean active) {
         super(id, employeeId, establishmentId, days, startHour, endHour);
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
         this.active = active;
     }
 
-    public ScheduleExceptionDTO(Long id, Long employeeId, Long establishmentId, LocalDate date, String startHour,
-            String endHour, Boolean active, DAY_OF_WEEK day) {
+    public ScheduleExceptionDTO(Long id, Long employeeId, Long establishmentId, LocalDate date, LocalTime startHour,
+            LocalTime endHour, Boolean active, DAY_OF_WEEK day) {
         super(id, employeeId, establishmentId, Set.of(day), startHour, endHour);
         this.dateFrom = date;
         this.dateTo = date;

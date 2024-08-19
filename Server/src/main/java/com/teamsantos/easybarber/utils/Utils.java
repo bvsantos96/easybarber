@@ -98,8 +98,8 @@ public class Utils {
         return jsonArray.toString();
     }
 
-    public static String getEndOfDayTime() {
-        return "23:59:59";
+    public static LocalTime getEndOfDayTime() {
+        return LocalTime.parse("23:59:59");
     }
 
     public static String getTimeNow(String format) {

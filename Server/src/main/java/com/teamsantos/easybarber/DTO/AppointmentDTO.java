@@ -9,10 +9,16 @@ import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.EstablishmentService;
 import com.teamsantos.easybarber.entities.User;
 
-import lombok.Data;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-public class AppointmentDTO {
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+public class AppointmentDTO extends BaseDTO {
     private Long userId;
     private Long employeeId;
     private Long establishmentId;
@@ -29,7 +35,8 @@ public class AppointmentDTO {
     private LocalDate date;
     private LocalTime time;
 
-    public Appointment toEntity(User user, Employee employee, Establishment establishment, EstablishmentService service) {
+    public Appointment toEntity(User user, Employee employee, Establishment establishment,
+            EstablishmentService service) {
         Appointment appointment = new Appointment();
         appointment.setUser(user);
         appointment.setEmployee(employee);
@@ -41,6 +48,18 @@ public class AppointmentDTO {
         appointment.setActive(true);
         appointment.setConfirmed(false);
         return appointment;
+    }
 
+    public AppointmentDTO(Long id, Long userId, Long employeeId, Long establishmentId, Long serviceId, String description,
+            String nonRegisteredUser, LocalDate date, LocalTime time) {
+        super(id);
+        this.userId = userId;
+        this.employeeId = employeeId;
+        this.establishmentId = establishmentId;
+        this.serviceId = serviceId;
+        this.description = description;
+        this.nonRegisteredUser = nonRegisteredUser;
+        this.date = date;
+        this.time = time;
     }
 }

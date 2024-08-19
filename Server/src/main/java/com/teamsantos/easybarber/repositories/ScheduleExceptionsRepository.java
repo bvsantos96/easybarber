@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 public interface ScheduleExceptionsRepository
         extends JpaRepository<ScheduleException, Long>, JpaSpecificationExecutor<ScheduleException> {
     Optional<ScheduleException> findByEmployeeIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndDateAfter(
-            Long id, DAY_OF_WEEK day, String startHour, String endHour, LocalDate date);
+            Long id, DAY_OF_WEEK day, LocalTime startHour, LocalTime endHour, LocalDate date);
 
     // <= not needed in the (s.startHour <= :time and s.endHour <= :endTime)) just
     // in there because its not wrong as well

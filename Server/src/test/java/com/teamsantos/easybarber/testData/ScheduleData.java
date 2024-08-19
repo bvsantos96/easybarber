@@ -1,12 +1,12 @@
 package com.teamsantos.easybarber.testData;
 
 import com.teamsantos.easybarber.DTO.ScheduleDTO;
-import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.testDTOs.ScheduleExceptionTestDTO;
 import com.teamsantos.easybarber.testDTOs.ScheduleTestDTO;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -33,8 +33,8 @@ public class ScheduleData {
                                         DAY_OF_WEEK.WEDNESDAY,
                                         DAY_OF_WEEK.THURSDAY,
                                         DAY_OF_WEEK.FRIDAY),
-                                "08:00",
-                                "12:00"));
+                                LocalTime.parse("08:00"),
+                                LocalTime.parse("12:00")));
                 add(
                         new ScheduleDTO(
                                 2L,
@@ -46,8 +46,8 @@ public class ScheduleData {
                                         DAY_OF_WEEK.WEDNESDAY,
                                         DAY_OF_WEEK.THURSDAY,
                                         DAY_OF_WEEK.FRIDAY),
-                                "13:00",
-                                "17:00"));
+                                LocalTime.parse("13:00"),
+                                LocalTime.parse("17:00")));
                 add(
                         new ScheduleDTO(
                                 3L,
@@ -58,8 +58,8 @@ public class ScheduleData {
                                         DAY_OF_WEEK.TUESDAY,
                                         DAY_OF_WEEK.WEDNESDAY,
                                         DAY_OF_WEEK.THURSDAY),
-                                "08:00",
-                                "17:00"));
+                                LocalTime.parse("08:00"),
+                                LocalTime.parse("17:00")));
                 add(
                         new ScheduleDTO(
                                 4L,
@@ -68,8 +68,8 @@ public class ScheduleData {
                                 Set.of(
                                         DAY_OF_WEEK.FRIDAY,
                                         DAY_OF_WEEK.SATURDAY),
-                                "09:00",
-                                "20:00"));
+                                LocalTime.parse("09:00"),
+                                LocalTime.parse("20:00")));
             }
         };
         schedules.sort(Comparator.comparing(ScheduleDTO::getId));
@@ -82,8 +82,8 @@ public class ScheduleData {
                                 EmployeeData.employees.get(1).getId(),
                                 EstablishmentData.establishments.get(1).getId(),
                                 Set.of(DAY_OF_WEEK.FRIDAY, DAY_OF_WEEK.SATURDAY),
-                                "21:00",
-                                "23:00"));
+                                LocalTime.parse("21:00"),
+                                LocalTime.parse("23:00")));
             };
         };
 
@@ -99,8 +99,8 @@ public class ScheduleData {
                                 DAY_OF_WEEK.WEDNESDAY,
                                 DAY_OF_WEEK.THURSDAY,
                                 DAY_OF_WEEK.FRIDAY),
-                        "08:00",
-                        "12:00"));
+                        LocalTime.parse("08:00"),
+                        LocalTime.parse("12:00")));
             }
         };
 
@@ -111,10 +111,10 @@ public class ScheduleData {
                         EmployeeData.employees.get(0).getId(),
                         null,
                         Set.of(DAY_OF_WEEK.FRIDAY),
-                        "10:30",
-                        "11:30",
-                        LocalDate.parse("2024-09-01"),
-                        LocalDate.parse("2024-09-30"),
+                        LocalTime.parse("10:30"),
+                        LocalTime.parse("11:30"),
+                        LocalDate.parse("2124-09-01"),
+                        LocalDate.parse("2124-09-30"),
                         true));
             }
         };

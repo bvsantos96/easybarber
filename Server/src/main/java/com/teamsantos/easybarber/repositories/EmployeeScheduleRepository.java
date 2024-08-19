@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.repositories;
 
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -22,10 +23,10 @@ public interface EmployeeScheduleRepository
     Optional<EmployeeSchedule> findById(Long id);
 
     Optional<EmployeeSchedule> findByEmployeeIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
-            Long id, DAY_OF_WEEK day, String startHour, String endHour, boolean active);
+            Long id, DAY_OF_WEEK day, LocalTime startHour, LocalTime endHour, boolean active);
 
     Optional<List<EmployeeSchedule>> findByEmployeeIdAndDayInAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
-            Long employeeId, Set<DAY_OF_WEEK> days, String startHour, String endHour, boolean active);
+            Long employeeId, Set<DAY_OF_WEEK> days, LocalTime startHour, LocalTime endHour, boolean active);
 
     @Query("SELECT COUNT(es) > 0 FROM EmployeeSchedule es " +
             "WHERE es.employee.id = :id " +
@@ -36,8 +37,8 @@ public interface EmployeeScheduleRepository
     boolean hasOverlappingSchedule(
             @Param("id") Long id,
             @Param("days") Set<DAY_OF_WEEK> days,
-            @Param("startHour") String startHour,
-            @Param("endHour") String endHour,
+            @Param("startHour") LocalTime startHour,
+            @Param("endHour") LocalTime endHour,
             @Param("active") boolean active);
 
     @Cacheable("employeeSchedules")
@@ -62,4 +63,16 @@ public interface EmployeeScheduleRepository
                 AND staff.admin = true
             """)
     boolean checkIfEmployeeIsEstablishmentOwner(Long scheduleId, String mobileInformation);
+
+    @Query("""
+                SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
+                FROM EmployeeSchedule s
+                WHERE s.employee.id = :employeeId
+                AND s.establishment.id = :establishmentId
+                AND s.day = :dayOfWeek
+                AND s.startHour <= :time
+                AND s.endHour >= :endTime
+            """)
+    boolean existsByEmployeeIdAndEstablishmentIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
+            Long employeeId, Long establishmentId, DAY_OF_WEEK dayOfWeek, LocalTime time, LocalTime endTime);
 }
