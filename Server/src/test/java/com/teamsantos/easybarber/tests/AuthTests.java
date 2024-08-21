@@ -10,6 +10,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.teamsantos.easybarber.utils.JSONToDTO;
+import com.teamsantos.easybarber.utils.TestsState;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.testData.UsersData;
@@ -70,6 +71,10 @@ public class AuthTests {
 
     @Test
     public void test() {
+        if(TestsState.ran("test")) {
+            return;
+        }
+        TestsState.mark("test");
         try {
             UsersData.usersDTO.get(0).setId(create("/register", UsersData.usersDTO.get(0).toString()));
             UsersData.usersDTO.get(1).setId(create("/register", UsersData.usersDTO.get(1).toString()));

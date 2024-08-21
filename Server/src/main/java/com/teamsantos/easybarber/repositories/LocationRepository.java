@@ -15,6 +15,8 @@ import com.teamsantos.easybarber.entities.User;
 public interface LocationRepository extends JpaRepository<Location, Long> {
     Page<Location> findLocationByUser(User user, Pageable pageable);
 
+    Page<Location> findLocationByUserId(Long userId, Pageable pageable);
+
     @Modifying
     @Query("DELETE FROM Location l WHERE l.latitude = :latitude AND l.longitude = :longitude AND l.user = :user")
     int deleteIfExist(@Param("latitude") double latitude, @Param("longitude") double longitude,

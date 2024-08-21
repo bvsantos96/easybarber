@@ -35,12 +35,16 @@ public class Establishment extends EntityWithImages<Establishment, Establishment
     @Column(nullable = false, columnDefinition = "SMALLINT DEFAULT 0")
     private Long sumVotes;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Set<EstablishmentStaff> staff;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Set<EstablishmentService> services;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Set<ScheduleException> exceptions;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Set<EmployeeSchedule> schedules;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude

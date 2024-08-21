@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.services;
 
+import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.images.EmployeeImage;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
@@ -7,6 +8,7 @@ import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.repositories.images.EmployeeImageRepository;
+import com.teamsantos.easybarber.utils.Utils;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +39,7 @@ public class EmployeeService extends ServiceWithImages<Employee, EmployeeImage> 
 
     @Transactional
     public void deleteEmployee(Principal principal) {
-        deleteEmployee(userService.getEmployee(principal));
+        deleteEmployee(userService.getEmployeeEntity(principal));
     }
 
     @Transactional
@@ -50,12 +52,19 @@ public class EmployeeService extends ServiceWithImages<Employee, EmployeeImage> 
     }
 
     @Cacheable(value = "employeeByMobileInformation", key = "#mobileInformation")
-    public Employee getEmployee(String mobileInformation) {
-        return employeeRepository.findByMobileInformation(mobileInformation)
-                .orElseThrow(UserNotFoundException::new);
+    public EmployeeDTO getEmployee(String mobileInformation) {
+        return Utils.getModelMapper().map(employeeRepository.findByMobileInformation(mobileInformation)
+                .orElseThrow(UserNotFoundException::new), EmployeeDTO.class);
     }
 
-	public Long getEmployeeIdByMobileInformation(String mobileInformation) {
+    @Cacheable(value = "employeeById", key = "#id")
+    public EmployeeDTO getEmployee(long id) {
+        return Utils.getModelMapper().map(employeeRepository.findById(id)
+                .orElseThrow(UserNotFoundException::new), EmployeeDTO.class);
+    }
+
+    @Cacheable(value = "employeeIdByMobileInformation", key = "#mobileInformation")
+    public Long getEmployeeIdByMobileInformation(String mobileInformation) {
         return getEmployee(mobileInformation).getId();
-	}
+    }
 }

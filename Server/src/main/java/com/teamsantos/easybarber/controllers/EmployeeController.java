@@ -2,6 +2,8 @@ package com.teamsantos.easybarber.controllers;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -22,10 +24,12 @@ import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.EmployeeCreateDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.ImageDTO;
+import com.teamsantos.easybarber.DTO.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.entities.Employee;
+import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.images.EmployeeImage;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
@@ -34,6 +38,7 @@ import com.teamsantos.easybarber.services.EmployeeService;
 import com.teamsantos.easybarber.services.SchedulesService;
 import com.teamsantos.easybarber.services.ServiceService;
 import com.teamsantos.easybarber.services.UserService;
+import com.teamsantos.easybarber.utils.Utils;
 
 @Controller
 @RequestMapping("/employee")
@@ -177,7 +182,7 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
                 active = true;
             }
             ScheduleFilter filter = new ScheduleFilter();
-            filter.setEmployeeId(userService.getEmployee(principal).getId());
+            filter.setEmployeeId(employeeService.getEmployee(principal).getId());
             if (active) {
                 filter.setActive(active);
             }

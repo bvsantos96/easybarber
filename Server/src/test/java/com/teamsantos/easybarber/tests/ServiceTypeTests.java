@@ -4,6 +4,8 @@ import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.testData.ServiceData;
 import com.teamsantos.easybarber.utils.CreateTest;
 import com.teamsantos.easybarber.utils.JSONToDTO;
+import com.teamsantos.easybarber.utils.TestsState;
+
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +39,10 @@ public class ServiceTypeTests {
     }
 
     public void createServiceTypes(boolean init) {
+        if (TestsState.ran("createServiceTypes")) {
+            return;
+        }
+        TestsState.mark("createServiceTypes");
         try {
             String jwt = new EmployeeTests(mockMvc).login(init);
             ServiceData.serviceTypes.forEach(serviceType -> {

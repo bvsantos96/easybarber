@@ -1,11 +1,13 @@
 package com.teamsantos.easybarber.repositories;
 
-import com.teamsantos.easybarber.entities.EstablishmentStaff;
+import java.util.Set;
 
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import com.teamsantos.easybarber.entities.EstablishmentStaff;
 
 @Repository
 public interface EstablishmentStaffRepository extends JpaRepository<EstablishmentStaff, Long> {
@@ -36,4 +38,6 @@ public interface EstablishmentStaffRepository extends JpaRepository<Establishmen
     void deleteByEstablishmentId(Long id);
 
     void deleteByEmployeeId(Long id);
+
+    Set<EstablishmentStaff> findByEstablishmentId(Long id);
 }

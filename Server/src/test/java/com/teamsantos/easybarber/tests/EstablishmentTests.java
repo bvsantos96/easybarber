@@ -6,6 +6,8 @@ import com.teamsantos.easybarber.testData.EstablishmentData;
 import com.teamsantos.easybarber.testData.ServiceData;
 import com.teamsantos.easybarber.utils.CreateTest;
 import com.teamsantos.easybarber.utils.JSONToDTO;
+import com.teamsantos.easybarber.utils.TestsState;
+
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,10 @@ public class EstablishmentTests {
     }
 
     public void createEstablishments(boolean initAuth, boolean initEmployee) {
+        if (TestsState.ran("createEstablishments")) {
+            return;
+        }
+        TestsState.mark("createEstablishments");
         try {
             String jwt;
             jwt = new AuthTests(mockMvc).login(initAuth);
@@ -66,6 +72,10 @@ public class EstablishmentTests {
     }
 
     public void testEmployees(boolean initAuth, boolean initEmployee) {
+        if (TestsState.ran("testEmployees")) {
+            return;
+        }
+        TestsState.mark("testEmployees");
         try {
             createEstablishments(initAuth, initEmployee);
 
@@ -100,6 +110,10 @@ public class EstablishmentTests {
     }
 
     public void testService(boolean initAuth, boolean initEmployee) {
+        if (TestsState.ran("testService")) {
+            return;
+        }
+        TestsState.mark("testService");
         try {
             testEmployees(initAuth, initEmployee);
             EmployeeTests employeeTests = new EmployeeTests(mockMvc);
@@ -118,7 +132,7 @@ public class EstablishmentTests {
             ResultActions result = CreateTest.post(mockMvc, "/establishment/1/service", jwt, service.toString());
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
         } catch (Exception e) {
-          e.printStackTrace();
+            e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
     }
@@ -254,6 +268,10 @@ public class EstablishmentTests {
     }
 
     public void addImages(boolean initAuth, boolean initEmployee) {
+        if (TestsState.ran("addImages")) {
+            return;
+        }
+        TestsState.mark("addImages");
         try {
             createEstablishments(initAuth, initEmployee);
             for (Long establishmentId : EstablishmentData.establishments.stream().map(BaseEstablishmentDTO::getId)
@@ -274,6 +292,10 @@ public class EstablishmentTests {
     }
 
     public void deleteImages(boolean initAuth, boolean initEmployee) {
+        if (TestsState.ran("deleteImages")) {
+            return;
+        }
+        TestsState.mark("deleteImages");
         try {
             addImages(initAuth, initEmployee);
             for (Long establishmentId : EstablishmentData.establishments.stream().map(BaseEstablishmentDTO::getId)
@@ -297,7 +319,8 @@ public class EstablishmentTests {
         ImageUtils imageUtils = new ImageUtils(mockMvc, String.format("/establishment/%d", establishmentId));
         imageUtils.saveImages(images, jwt);
         List<ImageDTO> _images = imageUtils.getImages(jwt);
+        if (!_images.equals(images))
+            System.out.println();
         assert _images.equals(images);
-
     }
 }

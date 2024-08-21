@@ -4,6 +4,8 @@ import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
 import com.teamsantos.easybarber.entities.base.Image;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,4 +26,7 @@ public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Ima
 
     @Query("SELECT new com.teamsantos.easybarber.DTO.ImageDTO(i.id, i.data) FROM #{#entityName} i WHERE i.entity.id = :entityId")
     Page<ImageDTO> findByEntityId(Long entityId, Pageable pageable);
+
+    @Query("SELECT new com.teamsantos.easybarber.DTO.ImageDTO(i.id, i.data) FROM #{#entityName} i WHERE i.entity.id = :entityId")
+    List<ImageDTO> findAllByEntityId(Long entityId);
 }

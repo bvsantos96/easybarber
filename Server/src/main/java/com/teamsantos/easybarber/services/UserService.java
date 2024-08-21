@@ -1,6 +1,18 @@
 package com.teamsantos.easybarber.services;
 
+import java.security.Principal;
+import java.util.Optional;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.teamsantos.easybarber.DTO.EmployeeCreateDTO;
+import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
@@ -14,18 +26,10 @@ import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.security.utils.PasswordEncoding;
 import com.teamsantos.easybarber.utils.PageDTO;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.security.Principal;
-import java.util.Optional;
 
 @Service
 public class UserService {
+    private final EmployeeService employeeService;
     private final UserRepository userRepository;
     private final EmployeeRepository employeeRepository;
     private final EstablishmentRepository establishmentRepository;
@@ -33,9 +37,11 @@ public class UserService {
     private final JwtUtils jwtUtils;
 
     @Autowired
-    public UserService(UserRepository userRepository, EmployeeRepository employeeRepository,
+    public UserService(EmployeeService employeeService, UserRepository userRepository,
+            EmployeeRepository employeeRepository,
             EstablishmentRepository establishmentRepository, ModelMapper modelMapper,
             JwtUtils jwtUtils) {
+        this.employeeService = employeeService;
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
         this.establishmentRepository = establishmentRepository;
@@ -108,25 +114,46 @@ public class UserService {
     }
 
     public void updateUser(UserCreateDTO userCreateDTO, Principal principal) {
-        User oldUser = getUser(principal);
+        User oldUser = getUserEntity(principal);
         oldUser.updateNonNullValues(userCreateDTO);
         userRepository.save(oldUser);
     }
 
-    public User getUser(Principal principal) {
+    @Cacheable(value = "getUserByPrincipal", key = "#principal")
+    public UserDTO getUser(Principal principal) {
+        return modelMapper.map(getUserEntity(principal), UserDTO.class);
+    }
+
+    public User getUserEntity(Principal principal) {
         return userRepository.findByMobileInformation(principal.getName())
                 .map((element) -> modelMapper.map(element, User.class))
                 .orElseThrow(UserNotFoundException::new);
     }
 
-    public Employee getEmployee(Principal principal) {
+    @Cacheable(value = "getEmployeeByPrincipal", key = "#principal")
+    public EmployeeDTO getEmployee(Principal principal) {
+        return employeeService.getEmployee(principal.getName());
+    }
+
+    @Cacheable(value = "getEmployeeById", key = "#id")
+    public EmployeeDTO getEmployee(Long id) {
+        return employeeService.getEmployee(id);
+    }
+
+    public Employee getEmployeeEntity(Principal principal) {
         return employeeRepository.findByMobileInformation(principal.getName()).orElseThrow(UserNotFoundException::new);
     }
 
-    public Employee getEmployee(Long id) {
+    public Employee getEmployeeEntity(Long id) {
         return employeeRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
+    @Cacheable(value = "getUserByIdByMobileInformation", key = "#mobileInformation")
+    public Long getUserId(String mobileInformation) {
+        return userRepository.getIdByMobileInformation(mobileInformation);
+    }
+
+    @Cacheable(value = "getUserIdByPrincipal", key = "#principal")
     public Long getUserId(Principal principal) {
         Long id = userRepository.getIdByMobileInformation(principal.getName());
         if (id == null)
