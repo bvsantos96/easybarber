@@ -31,6 +31,7 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
 
     private void setEntityById(Long entityId) throws NotFoundException {
         entity = repository.findById(entityId).orElseThrow(NotFoundException::new);
+        entity.setImages(imageRepository.findAllByEntityId(entityId));
     }
 
     @Transactional

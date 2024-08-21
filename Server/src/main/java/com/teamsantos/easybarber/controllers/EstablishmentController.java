@@ -105,6 +105,9 @@ public class EstablishmentController extends ImageController<Establishment, Esta
             @PathVariable Long employeeId) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
+            if(establishmentId == 2L) {
+                System.out.println();
+            }
             establishmentService.addEmployee(establishmentId, employeeId);
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
         } catch (UserAlreadyExistsException e) {

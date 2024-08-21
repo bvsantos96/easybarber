@@ -39,6 +39,6 @@ public class ImageDTO extends BaseDTO {
             return false;
         }
         ImageDTO other = (ImageDTO) obj;
-        return data.equals(other.data);
+        return data.equals(other.getData());
     }
 }

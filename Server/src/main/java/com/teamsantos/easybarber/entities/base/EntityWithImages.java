@@ -8,6 +8,7 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import java.util.Set;
 @MappedSuperclass
 public abstract class EntityWithImages<T extends EntityWithImages<T, E>, E extends Image<T, E>> {
     @OneToMany(mappedBy = "entity", fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Set<E> images = new HashSet<>();
 
     @PrePersist

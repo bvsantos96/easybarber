@@ -5,6 +5,8 @@ import com.teamsantos.easybarber.DTO.UsersDTO;
 import com.teamsantos.easybarber.testData.UsersData;
 import com.teamsantos.easybarber.utils.CreateTest;
 import com.teamsantos.easybarber.utils.JSONToDTO;
+import com.teamsantos.easybarber.utils.TestsState;
+
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,10 @@ public class UserTests {
     }
 
     public void test(boolean init) {
+        if (TestsState.ran("test")) {
+            return;
+        }
+        TestsState.mark("test");
         try {
             ResultActions result = CreateTest.put(mockMvc, "/user", new AuthTests(mockMvc).login(init),
                     UsersData.usersUpdateDTO.get(0).toString());

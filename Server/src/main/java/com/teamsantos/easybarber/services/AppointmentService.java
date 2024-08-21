@@ -54,7 +54,7 @@ public class AppointmentService {
                     && appointmentDTO.getTime().isBefore(LocalTime.now())) {
                 throw new IllegalArgumentException("Appointment time must be in the future");
             }
-            User user = userService.getUser(principal);
+            User user = userService.getUserEntity(principal);
             Establishment establishment = establishmentService.getEstablishment(appointmentDTO.getEstablishmentId());
             if (appointmentDTO.getEmployeeId() == null) {
                 throw new IllegalArgumentException("An appointment must be associated with an employee");
@@ -64,7 +64,7 @@ public class AppointmentService {
                     throw new IllegalArgumentException("Employee is not associated with the establishment");
                 }
             }
-            Employee employee = userService.getEmployee(appointmentDTO.getEmployeeId());
+            Employee employee = userService.getEmployeeEntity(appointmentDTO.getEmployeeId());
             if (appointmentDTO.getUserId() == null) {
                 if (appointmentDTO.getNonRegisteredUser() == null) {
                     throw new IllegalArgumentException("An appointment must be associated with a user");

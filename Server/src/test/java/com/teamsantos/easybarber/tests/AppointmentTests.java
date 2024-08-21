@@ -12,14 +12,14 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.teamsantos.easybarber.testData.UsersData;
 import com.teamsantos.easybarber.DTO.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.testData.AppointmentData;
+import com.teamsantos.easybarber.testData.UsersData;
 import com.teamsantos.easybarber.utils.CreateTest;
 import com.teamsantos.easybarber.utils.JSONToDTO;
+import com.teamsantos.easybarber.utils.TestsState;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -49,6 +49,10 @@ public class AppointmentTests {
     }
 
     private void createAppointment(boolean initAuth, boolean initEmployee) {
+        if (TestsState.ran("createAppointment")) {
+            return;
+        }
+        TestsState.mark("createAppointment");
         try {
             new ScheduleTests(mockMvc).createExceptions(initAuth, initEmployee);
             new EstablishmentTests(mockMvc).testService(false, false);
@@ -189,6 +193,10 @@ public class AppointmentTests {
     }
 
     public void cancelAppointment(boolean init) {
+        if (TestsState.ran("cancelAppointment")) {
+            return;
+        }
+        TestsState.mark("cancelAppointment");
         try {
             EmployeeTests employeeTests = new EmployeeTests(mockMvc);
             AuthTests authTests = new AuthTests(mockMvc);
@@ -224,6 +232,10 @@ public class AppointmentTests {
     }
 
     public void confirmAppointment(boolean init) {
+        if(TestsState.ran("confirmAppointment")) {
+            return;
+        }
+        TestsState.mark("confirmAppointment");
         try {
             EmployeeTests employeeTests = new EmployeeTests(mockMvc);
             createAppointment(init, init);
