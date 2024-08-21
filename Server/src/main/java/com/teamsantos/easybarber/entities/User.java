@@ -46,11 +46,13 @@ public class User {
     @Column
     private LocalDateTime tokenExpiration;
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Employee employee;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     private Set<Appointment> appointment;
     @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
     private Set<Location> location;
 
     private int hashCodeWithNullCheck(String item) {

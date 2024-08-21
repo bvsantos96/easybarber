@@ -73,8 +73,7 @@ public class UserController {
     public ResponseEntity<BasePageDTO<LocationDTO>> getUserLocations(Principal principal, Pageable pageable) {
         BasePageDTO<LocationDTO> locations = new BasePageDTO<>();
         try {
-            User user = userService.getUser(principal);
-            locations.setItems(locationService.getUserLocations(user, pageable));
+            locations.setItems(locationService.getUserLocations(userService.getUserId(principal), pageable));
             return ResponseEntity.ok(locations);
         } catch (Exception e) {
             locations.setResponseMessage(e.getMessage());
@@ -85,7 +84,7 @@ public class UserController {
     @PostMapping("/location")
     public ResponseEntity<Long> addUserLocation(@RequestBody LocationDTO locationDTO, Principal principal) {
         try {
-            User user = userService.getUser(principal);
+            User user = userService.getUserEntity(principal);
             return ResponseEntity.ok(locationService.addLocation(locationDTO, user));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(-1L);

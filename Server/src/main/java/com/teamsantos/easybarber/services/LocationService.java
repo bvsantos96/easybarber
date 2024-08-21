@@ -21,8 +21,8 @@ public class LocationService {
         this.locationRepository = locationRepository;
     }
 
-    public Page<LocationDTO> getUserLocations(User user, Pageable pageable) {
-        return locationRepository.findLocationByUser(user, pageable).map(location -> {
+    public Page<LocationDTO> getUserLocations(Long userId, Pageable pageable) {
+        return locationRepository.findLocationByUserId(userId, pageable).map(location -> {
             LocationDTO locationDTO = new LocationDTO();
             locationDTO.setId(location.getId());
             locationDTO.setLatitude(location.getLatitude());

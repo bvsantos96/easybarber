@@ -44,6 +44,10 @@ public class UserDTO extends BaseResponseDTO {
         return this;
     }
 
+    public String getMobileInformation() {
+        return this.countryMobile + this.mobile;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null)
@@ -64,5 +68,4 @@ public class UserDTO extends BaseResponseDTO {
             return false;
         }
     }
-
 }

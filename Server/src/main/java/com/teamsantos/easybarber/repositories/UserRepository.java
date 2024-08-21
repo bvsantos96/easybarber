@@ -15,7 +15,6 @@ import com.teamsantos.easybarber.entities.User;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
-    @Cacheable(value = "userByMobileInformation", key = "#mobileInformation")
     Optional<User> findByMobileInformation(String mobileInformation);
 
     @Cacheable(value = "userByMobileInformationAuth", key = "#mobileInformation")

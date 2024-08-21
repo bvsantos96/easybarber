@@ -75,7 +75,7 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
 
     @Transactional
     public void create(BaseEstablishmentDTO establishmentDTO, Principal principal) {
-        create(establishmentDTO, userService.getEmployee(principal));
+        create(establishmentDTO, userService.getEmployeeEntity(principal));
     }
 
     @Transactional
@@ -123,6 +123,7 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
             throws NotFoundException, UnsupportedOperationException, UserAlreadyExistsException {
         Establishment establishment = repository.findById(establishmentId)
                 .orElseThrow(NotFoundException::new);
+        establishment.setStaff(establishmentStaffRepository.findByEstablishmentId(establishmentId));
         if (employeeRepository.existsById(employeeId)) {
             if (establishment.getStaff() == null)
                 establishment.setStaff(new HashSet<>());

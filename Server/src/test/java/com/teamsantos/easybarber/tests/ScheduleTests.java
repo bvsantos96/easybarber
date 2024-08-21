@@ -31,6 +31,7 @@ import com.teamsantos.easybarber.testData.ScheduleData;
 import com.teamsantos.easybarber.utils.CreateTest;
 import com.teamsantos.easybarber.utils.JSONToDTO;
 import com.teamsantos.easybarber.utils.Pair;
+import com.teamsantos.easybarber.utils.TestsState;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -60,6 +61,10 @@ public class ScheduleTests {
     }
 
     public void createSchedules(boolean initAuth, boolean initEmployee) {
+        if (TestsState.ran("createSchedules")) {
+            return;
+        }
+        TestsState.mark("createSchedules");
         try {
             new EstablishmentTests(mockMvc).testEmployees(initAuth, initEmployee);
             ScheduleData.schedules.forEach(schedule -> {
@@ -129,6 +134,10 @@ public class ScheduleTests {
     }
 
     public void createExceptions(boolean initAuth, boolean initEmployee) {
+        if (TestsState.ran("createExceptions")) {
+            return;
+        }
+        TestsState.mark("createExceptions");
         listSchedules(initAuth, initEmployee);
         try {
             ScheduleData.scheduleExceptions.forEach(exception -> {
@@ -180,6 +189,10 @@ public class ScheduleTests {
     }
 
     public void disable(boolean initAuth, boolean initEmployee) {
+        if (TestsState.ran("disable")) {
+            return;
+        }
+        TestsState.mark("disable");
         createSchedules(initAuth, initEmployee);
         try {
             if (ScheduleData.schedulesDisabled.isEmpty()) {
@@ -227,7 +240,7 @@ public class ScheduleTests {
         List<LocalDate> dates = from.datesUntil(to).toList();
         int maxIdx = dates.size() % 7;
         for (int i = 0; i < maxIdx; i += 7) {
-            int toIdx = Math.min(dates.size() - 1, i + 6);
+            int toIdx = Math.min(dates.size() - 1, i + 7);
             ScheduleFilter filter = new ScheduleFilter();
             filter.setEmployeeId(employeeId);
             filter.setFrom(dates.get(i));
