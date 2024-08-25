@@ -19,7 +19,6 @@ import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 public interface EmployeeScheduleRepository
         extends JpaRepository<EmployeeSchedule, Long>, JpaSpecificationExecutor<EmployeeSchedule> {
     @Override
-    @Cacheable(value = "employeeSchedules", key = "#id")
     Optional<EmployeeSchedule> findById(Long id);
 
     Optional<EmployeeSchedule> findByEmployeeIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
@@ -41,7 +40,6 @@ public interface EmployeeScheduleRepository
             @Param("endHour") LocalTime endHour,
             @Param("active") boolean active);
 
-    @Cacheable("employeeSchedules")
     @Query("""
                 SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
                 FROM EmployeeSchedule s
@@ -51,7 +49,6 @@ public interface EmployeeScheduleRepository
             """)
     boolean checkIfEmployeeIsScheduleOwner(Long scheduleId, String mobileInformation);
 
-    @Cacheable("employeeSchedulesEstablishmentOwner")
     @Query("""
                 SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
                 FROM EmployeeSchedule s
