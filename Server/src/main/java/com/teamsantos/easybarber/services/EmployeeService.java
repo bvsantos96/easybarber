@@ -51,19 +51,16 @@ public class EmployeeService extends ServiceWithImages<Employee, EmployeeImage> 
         // TODO: Mark appointments as deleted and send notification to clients
     }
 
-    @Cacheable(value = "employeeByMobileInformation", key = "#mobileInformation")
     public EmployeeDTO getEmployee(String mobileInformation) {
         return Utils.getModelMapper().map(employeeRepository.findByMobileInformation(mobileInformation)
                 .orElseThrow(UserNotFoundException::new), EmployeeDTO.class);
     }
 
-    @Cacheable(value = "employeeById", key = "#id")
     public EmployeeDTO getEmployee(long id) {
         return Utils.getModelMapper().map(employeeRepository.findById(id)
                 .orElseThrow(UserNotFoundException::new), EmployeeDTO.class);
     }
 
-    @Cacheable(value = "employeeIdByMobileInformation", key = "#mobileInformation")
     public Long getEmployeeIdByMobileInformation(String mobileInformation) {
         return getEmployee(mobileInformation).getId();
     }

@@ -63,7 +63,6 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
     }
 
     @Override
-    @Cacheable(value = "permissions", key = "#authentication.name + #targetDomainObject + #permission")
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         if ((authentication == null) || (targetDomainObject == null) || !(permission instanceof String)) {
             return false;
@@ -101,7 +100,6 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
     }
 
     @Override
-    @Cacheable(value = "permissions", key = "#authentication.name + #targetId + #targetType + #permission")
     public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType,
             Object permission) {
         if ((authentication == null) || (targetId == null) || !(permission instanceof String)) {

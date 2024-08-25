@@ -12,7 +12,6 @@ import com.teamsantos.easybarber.entities.Service;
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, Long> {
 
-    @Cacheable("service")
     @Query("""
             SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
             FROM Service s

@@ -11,7 +11,6 @@ import com.teamsantos.easybarber.entities.EstablishmentStaff;
 
 @Repository
 public interface EstablishmentStaffRepository extends JpaRepository<EstablishmentStaff, Long> {
-    @Cacheable("establishmentStaff")
     @Query("""
             SELECT CASE WHEN COUNT(*) > 0 THEN true ELSE false END
             FROM EstablishmentStaff es
