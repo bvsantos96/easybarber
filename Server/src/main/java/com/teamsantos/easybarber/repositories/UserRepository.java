@@ -17,7 +17,6 @@ import com.teamsantos.easybarber.entities.User;
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByMobileInformation(String mobileInformation);
 
-    @Cacheable(value = "userByMobileInformationAuth", key = "#mobileInformation")
     @Query("""
             SELECT new com.teamsantos.easybarber.entities.AuthUser(
                 u.id,
@@ -31,7 +30,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<AuthUser> findByMobileInformationAuth(@Param("mobileInformation") String mobileInformation);
 
     @Query("SELECT u.id FROM User u WHERE u.mobileInformation = :mobileInformation ORDER BY u.id LIMIT 1")
-    @Cacheable(value = "userIdByMobileInformation", key = "#mobileInformation")
     Long getIdByMobileInformation(String mobileInformation);
 
     @Query("SELECT CASE WHEN COUNT(u) > 0 THEN true ELSE false END FROM User u WHERE u.id = :userId AND u.userTypeId = :userTypeId")

@@ -119,7 +119,6 @@ public class UserService {
         userRepository.save(oldUser);
     }
 
-    @Cacheable(value = "getUserByPrincipal", key = "#principal")
     public UserDTO getUser(Principal principal) {
         return modelMapper.map(getUserEntity(principal), UserDTO.class);
     }
@@ -130,12 +129,10 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
     }
 
-    @Cacheable(value = "getEmployeeByPrincipal", key = "#principal")
     public EmployeeDTO getEmployee(Principal principal) {
         return employeeService.getEmployee(principal.getName());
     }
 
-    @Cacheable(value = "getEmployeeById", key = "#id")
     public EmployeeDTO getEmployee(Long id) {
         return employeeService.getEmployee(id);
     }
@@ -148,12 +145,10 @@ public class UserService {
         return employeeRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
-    @Cacheable(value = "getUserByIdByMobileInformation", key = "#mobileInformation")
     public Long getUserId(String mobileInformation) {
         return userRepository.getIdByMobileInformation(mobileInformation);
     }
 
-    @Cacheable(value = "getUserIdByPrincipal", key = "#principal")
     public Long getUserId(Principal principal) {
         Long id = userRepository.getIdByMobileInformation(principal.getName());
         if (id == null)
