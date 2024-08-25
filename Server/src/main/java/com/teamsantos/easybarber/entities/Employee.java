@@ -1,15 +1,26 @@
 package com.teamsantos.easybarber.entities;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.annotations.BatchSize;
+
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
 import com.teamsantos.easybarber.entities.images.EmployeeImage;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -30,16 +41,25 @@ public class Employee extends EntityWithImages<Employee, EmployeeImage> {
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_mobileInformation", referencedColumnName = "mobileInformation")
     private User user;
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @BatchSize(size = 10)
     private List<Service> services;
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @BatchSize(size = 10)
     private Set<EstablishmentStaff> establishments;
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @BatchSize(size = 10)
     private Set<ScheduleException> exceptions;
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @BatchSize(size = 10)
     private Set<EmployeeSchedule> schedules;
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @BatchSize(size = 10)
     private Set<Appointment> appointment;
 
     @Override

@@ -3,10 +3,21 @@ package com.teamsantos.easybarber.entities;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
 import com.teamsantos.easybarber.entities.images.EstablishmentImage;
-import jakarta.persistence.*;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.proxy.HibernateProxy;
 import org.locationtech.jts.geom.Point;
 
@@ -36,18 +47,23 @@ public class Establishment extends EntityWithImages<Establishment, Establishment
     private Long sumVotes;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @BatchSize(size = 10)
     private Set<EstablishmentStaff> staff;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @BatchSize(size = 10)
     private Set<EstablishmentService> services;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @BatchSize(size = 10)
     private Set<ScheduleException> exceptions;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @BatchSize(size = 10)
     private Set<EmployeeSchedule> schedules;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @BatchSize(size = 10)
     private Set<Appointment> appointment;
 
     @PrePersist

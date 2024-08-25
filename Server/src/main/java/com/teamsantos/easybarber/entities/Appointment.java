@@ -1,14 +1,24 @@
 package com.teamsantos.easybarber.entities;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.proxy.HibernateProxy;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Objects;
+
+import org.hibernate.proxy.HibernateProxy;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 
 @Getter
 @Setter
@@ -23,13 +33,13 @@ public class Appointment {
     private User user;
     @Column
     private String nonRegisteredUser;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "employee_id", referencedColumnName = "id")
     private Employee employee;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "establishment_id", referencedColumnName = "id")
     private Establishment establishment;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "establishment_service_id", referencedColumnName = "id")
     private EstablishmentService service;
     @Column
