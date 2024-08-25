@@ -1,5 +1,12 @@
 package com.teamsantos.easybarber.entities.base;
 
+import java.lang.reflect.ParameterizedType;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.hibernate.annotations.BatchSize;
+
 import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.utils.Utils;
 
@@ -10,16 +17,12 @@ import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.lang.reflect.ParameterizedType;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 @Getter
 @MappedSuperclass
 public abstract class EntityWithImages<T extends EntityWithImages<T, E>, E extends Image<T, E>> {
     @OneToMany(mappedBy = "entity", fetch = FetchType.LAZY)
     @ToString.Exclude
+    @BatchSize(size = 10)
     private Set<E> images = new HashSet<>();
 
     @PrePersist

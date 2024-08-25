@@ -1,6 +1,15 @@
 package com.teamsantos.easybarber.entities;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Table;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Id;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -9,7 +18,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table
+@Table(indexes = @Index(columnList = "user_id"))
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
