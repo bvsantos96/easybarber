@@ -1,13 +1,22 @@
 package com.teamsantos.easybarber.entities;
 
-import jakarta.persistence.*;
+import java.util.List;
+import java.util.Objects;
+
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.proxy.HibernateProxy;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.proxy.HibernateProxy;
-
-import java.util.List;
-import java.util.Objects;
 
 @Getter
 @Setter
@@ -24,6 +33,7 @@ public class ServiceType {
     @Column
     private String imageURL;
     @OneToMany(mappedBy = "serviceType", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @BatchSize(size = 10)
     private List<Service> service;
 
     @Override

@@ -1,23 +1,37 @@
 package com.teamsantos.easybarber.entities;
 
+import java.util.Objects;
+import java.util.Set;
+
+import org.hibernate.proxy.HibernateProxy;
+
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
 import com.teamsantos.easybarber.entities.images.ServiceImage;
 import com.teamsantos.easybarber.utils.Utils;
-import jakarta.persistence.*;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.PrimaryKeyJoinColumn;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.hibernate.proxy.HibernateProxy;
-
-import java.util.Objects;
-import java.util.Set;
 
 @Getter
 @Setter
 @ToString
 @Entity
-@Table(indexes = { @Index(columnList = "service_type_id") })
+@Table(indexes = { @Index(columnList = "service_type_id"), @Index(columnList = "employee_id") })
 public class Service extends EntityWithImages<Service, ServiceImage> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,9 +40,9 @@ public class Service extends EntityWithImages<Service, ServiceImage> {
     private String name;
     @Column
     private String description;
-    @Column(nullable = false) 
+    @Column(nullable = false)
     private int duration;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @PrimaryKeyJoinColumn(name = "service_type_id")
     private ServiceType serviceType;
     @ManyToOne(fetch = FetchType.LAZY)

@@ -3,6 +3,8 @@ package com.teamsantos.easybarber.entities;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import org.hibernate.annotations.BatchSize;
+
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 
 import jakarta.persistence.CascadeType;
@@ -50,9 +52,11 @@ public class User {
     private Employee employee;
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @BatchSize(size = 10)
     private Set<Appointment> appointment;
-    @OneToMany(mappedBy = "id", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
+    @BatchSize(size = 10)
     private Set<Location> location;
 
     private int hashCodeWithNullCheck(String item) {
