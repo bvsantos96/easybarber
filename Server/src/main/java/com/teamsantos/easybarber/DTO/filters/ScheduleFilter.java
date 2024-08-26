@@ -213,7 +213,8 @@ public class ScheduleFilter {
         return getExceptionSpecification(true, true);
     }
 
-    public Specification<ScheduleException> getExceptionSpecification(boolean filterEmployee, boolean filterEstablishment) {
+    public Specification<ScheduleException> getExceptionSpecification(boolean filterEmployee,
+            boolean filterEstablishment) {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 

@@ -1,18 +1,18 @@
 package com.teamsantos.easybarber.utils;
 
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import com.teamsantos.easybarber.entities.Establishment;
-import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
-
-import org.json.JSONArray;
-import org.modelmapper.ModelMapper;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.json.JSONArray;
+import org.modelmapper.ModelMapper;
+
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
+import com.teamsantos.easybarber.entities.Establishment;
 
 public class Utils {
     public static String setFieldIfNotNullOrEmpty(String field1, String field2) {
