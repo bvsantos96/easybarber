@@ -1,7 +1,6 @@
 package com.teamsantos.easybarber.repositories;
 
 import java.time.LocalTime;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -23,15 +22,17 @@ public interface EmployeeScheduleRepository
     Optional<EmployeeSchedule> findByEmployeeIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
             Long id, DAY_OF_WEEK day, LocalTime startHour, LocalTime endHour, boolean active);
 
-    Optional<List<EmployeeSchedule>> findByEmployeeIdAndDayInAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
-            Long employeeId, Set<DAY_OF_WEEK> days, LocalTime startHour, LocalTime endHour, boolean active);
-
-    @Query("SELECT COUNT(es) > 0 FROM EmployeeSchedule es " +
-            "WHERE es.employee.id = :id " +
-            "AND es.day IN :days " +
-            "AND es.startHour <= :endHour " +
-            "AND es.endHour >= :startHour " +
-            "AND es.active = :active")
+    @Query("""
+            SELECT EXISTS(
+                SELECT 1
+                FROM EmployeeSchedule es
+                WHERE es.employee.id = :id
+                AND es.day = :day
+                AND es.startHour <= :time
+                AND es.endHour >= :endTime
+                AND es.active = true
+            LIMIT 1)
+            """)
     boolean hasOverlappingSchedule(
             @Param("id") Long id,
             @Param("days") Set<DAY_OF_WEEK> days,
@@ -40,16 +41,19 @@ public interface EmployeeScheduleRepository
             @Param("active") boolean active);
 
     @Query("""
-                SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
-                FROM EmployeeSchedule s
-                JOIN s.employee e
-                WHERE s.id = :scheduleId
-                AND e.user.mobileInformation = :mobileInformation
-            """)
+            SELECT EXISTS(
+            SELECT 1
+                    FROM EmployeeSchedule s
+                    JOIN s.employee e
+                    WHERE s.id = :scheduleId
+                    AND e.user.mobileInformation = :mobileInformation
+            LIMIT 1)
+                """)
     boolean checkIfEmployeeIsScheduleOwner(Long scheduleId, String mobileInformation);
 
     @Query("""
-                SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
+            SELECT EXISTS(
+                SELECT 1
                 FROM EmployeeSchedule s
                 JOIN s.establishment e
                 JOIN e.staff staff
@@ -57,11 +61,13 @@ public interface EmployeeScheduleRepository
                 WHERE s.id = :scheduleId
                 AND emp.user.mobileInformation = :mobileInformation
                 AND staff.admin = true
+                LIMIT 1)
             """)
     boolean checkIfEmployeeIsEstablishmentOwner(Long scheduleId, String mobileInformation);
 
     @Query("""
-                SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END
+            SELECT EXISTS(
+                SELECT 1
                 FROM EmployeeSchedule s
                 WHERE s.employee.id = :employeeId
                 AND s.active = true
@@ -69,6 +75,7 @@ public interface EmployeeScheduleRepository
                 AND s.day = :dayOfWeek
                 AND s.startHour <= :time
                 AND s.endHour >= :endTime
+                LIMIT 1)
             """)
     boolean existsByEmployeeIdAndEstablishmentIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
             Long employeeId, Long establishmentId, DAY_OF_WEEK dayOfWeek, LocalTime time, LocalTime endTime);
