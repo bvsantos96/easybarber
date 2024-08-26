@@ -21,15 +21,17 @@ public interface ScheduleExceptionsRepository
     // <= not needed in the (s.startHour <= :time and s.endHour <= :endTime)) just
     // in there because its not wrong as well
     @Query("""
-                    select count(s) > 0
-                    from ScheduleException s
-                    where (s.employee.id = :employeeId or :employeeId is null)
-                    and s.active = true
-                    and (s.establishment.id = :establishmentId or :establishmentId is null)
-                    and (s.date = :date)
-                    and ((s.startHour <= :time and s.endHour > :time)
-                        or (s.startHour < :endTime and s.endHour >= :endTime)
-                        or (s.startHour <= :time and s.endHour <= :endTime))
+            SELECT EXISTS(
+                SELECT 1
+                from ScheduleException s
+                where (s.employee.id = :employeeId or :employeeId is null)
+                and s.active = true
+                and (s.establishment.id = :establishmentId or :establishmentId is null)
+                and (s.date = :date)
+                and ((s.startHour <= :time and s.endHour > :time)
+                    or (s.startHour < :endTime and s.endHour >= :endTime)
+                    or (s.startHour <= :time and s.endHour <= :endTime))
+            LIMIT 1)
             """)
     boolean intercepts(Long employeeId, Long establishmentId, LocalDate date, LocalTime time, LocalTime endTime);
 }
