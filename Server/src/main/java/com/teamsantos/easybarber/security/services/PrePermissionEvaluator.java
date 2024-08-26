@@ -17,6 +17,8 @@ import com.teamsantos.easybarber.security.filters.AppointmentSecurityExpressionR
 import com.teamsantos.easybarber.security.filters.EstablishmentSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.filters.ScheduleSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.filters.ServiceSecurityExpressionRoot;
+import com.teamsantos.easybarber.security.utils.UserContext;
+import com.teamsantos.easybarber.services.UserTypeService.UserTypes;
 
 @Service
 public class PrePermissionEvaluator implements PermissionEvaluator {
@@ -41,8 +43,8 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
     public static final String SERVICE_OWNER_OBJECT_SERVICE_ID = "hasPermission(#service.getServiceId(), '"
             + _SERVICE_OWNER + "')";
     public static final String SERVICE_OWNER = "hasPermission(#serviceId, '" + _SERVICE_OWNER + "')";
-    public static final String IS_EMPLOYEE = "hasRole('EMPLOYEE')";
-    public static final String IS_SYSTEM_ADMIN = "hasRole('SYSTEM_ADMIN')";
+    public static final String IS_EMPLOYEE = "hasPermission('EMPLOYEE')";
+    public static final String IS_SYSTEM_ADMIN = "hasPermission('SYSTEM_ADMIN')";
     public static final String _HAS_APPOINTMENT_CHANGE_PERMISSION = "HAS_APPOINTMENT_CHANGE_PERMISSION";
     public static final String HAS_APPOINTMENT_CHANGE_PERMISSION = "hasPermission(#id, '"
             + _HAS_APPOINTMENT_CHANGE_PERMISSION + "')";
@@ -69,6 +71,12 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
         }
         String strPermission = ((String) permission).toUpperCase();
         return switch (strPermission) {
+            case IS_EMPLOYEE -> {
+                yield UserContext.getCurrentUser().hasPermission(UserTypes.EMPLOYEE);
+            }
+            case IS_SYSTEM_ADMIN -> {
+                yield UserContext.getCurrentUser().hasPermission(UserTypes.ADMIN);
+            }
             case _ESTABLISHMENT_EMPLOYEE -> {
                 EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
                         employeeRepository, establishmentStaffRepository);
@@ -107,6 +115,12 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
         }
         String sPermission = ((String) permission).toUpperCase();
         return switch (sPermission) {
+            case IS_EMPLOYEE -> {
+                yield UserContext.getCurrentUser().hasPermission(UserTypes.EMPLOYEE);
+            }
+            case IS_SYSTEM_ADMIN -> {
+                yield UserContext.getCurrentUser().hasPermission(UserTypes.ADMIN);
+            }
             case _ESTABLISHMENT_EMPLOYEE -> {
                 EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
                         employeeRepository, establishmentStaffRepository);
