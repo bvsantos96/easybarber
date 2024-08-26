@@ -6,6 +6,7 @@ import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
@@ -44,18 +45,21 @@ public class JwtUtils {
         }
     }
 
-    public String extractMobileNumber(String token) {
-        return Jwts.parser()
+    public UserPrincipal parseToken(String token) {
+        Claims claims = Jwts.parser()
                 .verifyWith(getSecretKey())
                 .build()
                 .parseSignedClaims(token)
-                .getPayload()
-                .getSubject();
+                .getPayload();
+        String[] split = claims.getSubject().split(";");
+        return new UserPrincipal(Long.parseLong(split[0]), split.length > 1 ? Long.parseLong(split[1]) : null,
+                (boolean[]) claims.getOrDefault("roles", new boolean[0]));
     }
 
-    public String generateToken(String mobileNumber) {
+    public String generateToken(long idUser, Long idEmployee, boolean[] roles) {
         return Jwts.builder()
-                .subject(mobileNumber)
+                .subject(String.format("%d;%d", idUser, idEmployee == null ? -1 : idEmployee))
+                .claim("roles", roles)
                 .expiration(new Date(System.currentTimeMillis() + getExpirationTime()))
                 .signWith(getSecretKey())
                 .compact();

@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -19,9 +18,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
-import com.teamsantos.easybarber.security.filters.JwtAuthenticationFilter;
+import com.teamsantos.easybarber.security.filters.UserContextFilter;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
-import com.teamsantos.easybarber.security.services.UserDetailsServiceImpl;
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.security.utils.PasswordEncoding;
 
@@ -29,14 +27,12 @@ import com.teamsantos.easybarber.security.utils.PasswordEncoding;
 @EnableWebSecurity
 @EnableMethodSecurity
 public class ApplicationSecurity {
-    private final UserDetailsServiceImpl userDetailsService;
     private final PrePermissionEvaluator prePermissionEvaluator;
     private final JwtUtils jwtUtils;
 
     @Autowired
-    public ApplicationSecurity(UserDetailsServiceImpl userDetailsService, JwtUtils jwtUtils,
+    public ApplicationSecurity(JwtUtils jwtUtils,
             PrePermissionEvaluator establishmentPermissionEvaluator) {
-        this.userDetailsService = userDetailsService;
         this.jwtUtils = jwtUtils;
         this.prePermissionEvaluator = establishmentPermissionEvaluator;
     }
@@ -98,18 +94,13 @@ public class ApplicationSecurity {
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(userDetailsService, jwtUtils);
+    public UserContextFilter jwtAuthenticationFilter() {
+        return new UserContextFilter(jwtUtils);
     }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoding.getPasswordEncoder();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        return userDetailsService;
     }
 
     @Bean

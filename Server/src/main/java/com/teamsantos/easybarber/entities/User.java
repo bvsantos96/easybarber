@@ -31,8 +31,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
-    private Long userTypeId;
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+    @BatchSize(size = 10)
+    private Set<UserType> userTypeId;
     @Column
     private String email;
     @Column(nullable = false)

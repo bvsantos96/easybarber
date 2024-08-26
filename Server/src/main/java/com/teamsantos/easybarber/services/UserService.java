@@ -15,6 +15,7 @@ import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
+import com.teamsantos.easybarber.DTO.UserSignInDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
@@ -52,16 +53,16 @@ public class UserService {
         return PageDTO.toDTO(modelMapper, userRepository.findAll(pageable), UserDTO.class, pageable);
     }
 
+    @Transactional(readOnly = true)
     public String loginUser(UserCreateDTO userCreateDTO) {
-        Optional<User> user = userRepository.findByMobileInformation(userCreateDTO.getMobileInformation());
-        if (user.isPresent())
-            if (PasswordEncoding.getPasswordEncoder().matches(userCreateDTO.getPassword(), user.get().getPassword())) {
-                return jwtUtils.generateToken(user.get().getMobileInformation());
-            } else {
-                throw new IllegalArgumentException("Password is incorrect");
-            }
-        else {
-            throw new IllegalArgumentException("User was not found");
+        UserSignInDTO user = userRepository
+                .findUserSignInByMobileInformation(userCreateDTO.getMobileInformation())
+                .orElseThrow(UserNotFoundException::new);
+        if (PasswordEncoding.getPasswordEncoder().matches(userCreateDTO.getPassword(), user.getPassword())) {
+            return jwtUtils.generateToken(user.getId(), user.getEmployeeId(),
+                    UserTypeService.getRoles(user.getUserTypeIds()));
+        } else {
+            throw new IllegalArgumentException("Password is incorrect");
         }
     }
 
