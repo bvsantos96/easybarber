@@ -1,8 +1,5 @@
 package com.teamsantos.easybarber.repositories;
 
-import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
-import com.teamsantos.easybarber.entities.ScheduleException;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Optional;
@@ -11,6 +8,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
+import com.teamsantos.easybarber.entities.ScheduleException;
 
 @Repository
 public interface ScheduleExceptionsRepository

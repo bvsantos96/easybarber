@@ -8,16 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.teamsantos.easybarber.utils.Utils;
-import com.teamsantos.easybarber.entities.Establishment;
-import com.teamsantos.easybarber.repositories.AppointmentRepository;
 import com.teamsantos.easybarber.DTO.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.entities.Appointment;
 import com.teamsantos.easybarber.entities.Employee;
+import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.User;
+import com.teamsantos.easybarber.repositories.AppointmentRepository;
 import com.teamsantos.easybarber.utils.Pair;
+import com.teamsantos.easybarber.utils.Utils;
 
 @Service
 public class AppointmentService {

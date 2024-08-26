@@ -1,10 +1,5 @@
 package com.teamsantos.easybarber.security;
 
-import com.teamsantos.easybarber.security.filters.JwtAuthenticationFilter;
-import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
-import com.teamsantos.easybarber.security.services.UserDetailsServiceImpl;
-import com.teamsantos.easybarber.security.utils.JwtUtils;
-import com.teamsantos.easybarber.security.utils.PasswordEncoding;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +18,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import com.teamsantos.easybarber.security.filters.JwtAuthenticationFilter;
+import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
+import com.teamsantos.easybarber.security.services.UserDetailsServiceImpl;
+import com.teamsantos.easybarber.security.utils.JwtUtils;
+import com.teamsantos.easybarber.security.utils.PasswordEncoding;
 
 @Configuration
 @EnableWebSecurity

@@ -1,10 +1,11 @@
 package com.teamsantos.easybarber.DTO;
 
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.data.domain.Page;
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

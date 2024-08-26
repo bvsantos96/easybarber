@@ -232,7 +232,7 @@ public class AppointmentTests {
     }
 
     public void confirmAppointment(boolean init) {
-        if(TestsState.ran("confirmAppointment")) {
+        if (TestsState.ran("confirmAppointment")) {
             return;
         }
         TestsState.mark("confirmAppointment");

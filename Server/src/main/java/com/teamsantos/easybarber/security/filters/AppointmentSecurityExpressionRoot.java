@@ -4,8 +4,8 @@ import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.core.Authentication;
 
 import com.teamsantos.easybarber.repositories.AppointmentRepository;
-import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
+import com.teamsantos.easybarber.repositories.UserRepository;
 
 public class AppointmentSecurityExpressionRoot extends SecurityExpressionRoot {
     private final EmployeeRepository employeeRepository;

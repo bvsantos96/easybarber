@@ -1,10 +1,5 @@
 package com.teamsantos.easybarber.utils;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -16,6 +11,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 
 public class JSONToDTO {
 

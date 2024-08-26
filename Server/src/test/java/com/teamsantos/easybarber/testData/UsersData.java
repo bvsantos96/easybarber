@@ -1,11 +1,11 @@
 package com.teamsantos.easybarber.testData;
 
-import com.teamsantos.easybarber.DTO.UserCreateDTO;
-import com.teamsantos.easybarber.DTO.UserDTO;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+
+import com.teamsantos.easybarber.DTO.UserCreateDTO;
+import com.teamsantos.easybarber.DTO.UserDTO;
 
 public class UsersData {
     public static final List<UserCreateDTO> usersDTO;

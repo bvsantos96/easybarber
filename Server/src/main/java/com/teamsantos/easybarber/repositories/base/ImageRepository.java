@@ -1,9 +1,5 @@
 package com.teamsantos.easybarber.repositories.base;
 
-import com.teamsantos.easybarber.DTO.ImageDTO;
-import com.teamsantos.easybarber.entities.base.EntityWithImages;
-import com.teamsantos.easybarber.entities.base.Image;
-
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -13,6 +9,10 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.Param;
+
+import com.teamsantos.easybarber.DTO.ImageDTO;
+import com.teamsantos.easybarber.entities.base.EntityWithImages;
+import com.teamsantos.easybarber.entities.base.Image;
 
 @NoRepositoryBean
 public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Image<T, E>>

@@ -1,12 +1,14 @@
 package com.teamsantos.easybarber.DTO;
 
-import com.teamsantos.easybarber.entities.Employee;
-import com.teamsantos.easybarber.entities.Service;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.List;
+
 import org.locationtech.jts.geom.Point;
 
-import java.util.List;
+import com.teamsantos.easybarber.entities.Employee;
+import com.teamsantos.easybarber.entities.Service;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter

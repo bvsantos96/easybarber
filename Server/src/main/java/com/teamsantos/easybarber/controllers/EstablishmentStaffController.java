@@ -1,9 +1,7 @@
 package com.teamsantos.easybarber.controllers;
 
-import com.teamsantos.easybarber.DTO.BasePageDTO;
-import com.teamsantos.easybarber.DTO.UserCreateDTO;
-import com.teamsantos.easybarber.DTO.UserDTO;
-import com.teamsantos.easybarber.services.UserService;
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -14,7 +12,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.security.Principal;
+import com.teamsantos.easybarber.DTO.BasePageDTO;
+import com.teamsantos.easybarber.DTO.UserCreateDTO;
+import com.teamsantos.easybarber.DTO.UserDTO;
+import com.teamsantos.easybarber.services.UserService;
 
 @Controller
 @RequestMapping("/establishmentstaff")

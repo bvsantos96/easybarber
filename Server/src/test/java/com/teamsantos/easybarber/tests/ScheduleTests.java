@@ -19,10 +19,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.teamsantos.easybarber.utils.Utils;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
-import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.ScheduleDTO;
+import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.SchedulesDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
@@ -32,6 +31,7 @@ import com.teamsantos.easybarber.utils.CreateTest;
 import com.teamsantos.easybarber.utils.JSONToDTO;
 import com.teamsantos.easybarber.utils.Pair;
 import com.teamsantos.easybarber.utils.TestsState;
+import com.teamsantos.easybarber.utils.Utils;
 
 @SpringBootTest
 @AutoConfigureMockMvc

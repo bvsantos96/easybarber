@@ -1,11 +1,13 @@
 package com.teamsantos.easybarber.security.utils;
 
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import java.util.Date;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
+
+import org.springframework.beans.factory.annotation.Value;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
 
 public class JwtUtils {
     @Value("${jwt.secretKey}")

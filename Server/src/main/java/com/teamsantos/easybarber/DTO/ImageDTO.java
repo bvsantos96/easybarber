@@ -1,9 +1,9 @@
 package com.teamsantos.easybarber.DTO;
 
-import lombok.NoArgsConstructor;
 import org.json.JSONObject;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter

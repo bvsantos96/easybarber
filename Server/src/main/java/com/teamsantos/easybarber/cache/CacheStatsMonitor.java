@@ -14,8 +14,8 @@ public class CacheStatsMonitor {
     public void printCacheStats() {
         Cache cache = cacheManager.getCache("employee");
         if (cache != null && cache.getNativeCache() instanceof com.github.benmanes.caffeine.cache.Cache) {
-            com.github.benmanes.caffeine.cache.Cache<Object, Object> caffeineCache = 
-                (com.github.benmanes.caffeine.cache.Cache<Object, Object>) cache.getNativeCache();
+            com.github.benmanes.caffeine.cache.Cache<Object, Object> caffeineCache = (com.github.benmanes.caffeine.cache.Cache<Object, Object>) cache
+                    .getNativeCache();
             System.out.println("Cache Stats: " + caffeineCache.stats());
         }
     }
