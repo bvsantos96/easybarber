@@ -9,12 +9,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.teamsantos.easybarber.utils.JSONToDTO;
-import com.teamsantos.easybarber.utils.TestsState;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.testData.UsersData;
 import com.teamsantos.easybarber.utils.CreateTest;
+import com.teamsantos.easybarber.utils.JSONToDTO;
+import com.teamsantos.easybarber.utils.TestsState;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -71,7 +71,7 @@ public class AuthTests {
 
     @Test
     public void test() {
-        if(TestsState.ran("test")) {
+        if (TestsState.ran("test")) {
             return;
         }
         TestsState.mark("test");

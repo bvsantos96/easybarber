@@ -1,9 +1,10 @@
 package com.teamsantos.easybarber.DTO;
 
+import org.locationtech.jts.geom.Point;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
-import org.locationtech.jts.geom.Point;
 
 @Getter
 @Setter

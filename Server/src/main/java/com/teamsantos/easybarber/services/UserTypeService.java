@@ -1,5 +1,13 @@
 package com.teamsantos.easybarber.services;
 
+import java.security.Principal;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Service;
+
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.entities.UserType;
@@ -7,13 +15,6 @@ import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.repositories.UserTypeRepository;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Service;
-
-import java.security.Principal;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class UserTypeService implements ApplicationListener<ApplicationReadyEvent> {

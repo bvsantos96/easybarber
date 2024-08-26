@@ -1,5 +1,13 @@
 package com.teamsantos.easybarber.entities;
 
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
+
+import org.hibernate.annotations.BatchSize;
+import org.hibernate.proxy.HibernateProxy;
+import org.locationtech.jts.geom.Point;
+
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
 import com.teamsantos.easybarber.entities.images.EstablishmentImage;
@@ -16,14 +24,6 @@ import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-
-import org.hibernate.annotations.BatchSize;
-import org.hibernate.proxy.HibernateProxy;
-import org.locationtech.jts.geom.Point;
-
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
 
 @Getter
 @Setter

@@ -1,16 +1,16 @@
 package com.teamsantos.easybarber.testData;
 
-import com.teamsantos.easybarber.DTO.ScheduleDTO;
-import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
-import com.teamsantos.easybarber.testDTOs.ScheduleExceptionTestDTO;
-import com.teamsantos.easybarber.testDTOs.ScheduleTestDTO;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+
+import com.teamsantos.easybarber.DTO.ScheduleDTO;
+import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
+import com.teamsantos.easybarber.testDTOs.ScheduleExceptionTestDTO;
+import com.teamsantos.easybarber.testDTOs.ScheduleTestDTO;
 
 public class ScheduleData {
 

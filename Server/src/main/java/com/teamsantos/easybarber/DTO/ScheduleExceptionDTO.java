@@ -7,11 +7,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.teamsantos.easybarber.utils.Utils;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.ScheduleException;
+import com.teamsantos.easybarber.utils.Utils;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,7 +29,8 @@ public class ScheduleExceptionDTO extends ScheduleDTO {
         super();
     }
 
-    public ScheduleExceptionDTO(Long id, Long employeeId, Long establishmentId, Set<DAY_OF_WEEK> days, LocalTime startHour,
+    public ScheduleExceptionDTO(Long id, Long employeeId, Long establishmentId, Set<DAY_OF_WEEK> days,
+            LocalTime startHour,
             LocalTime endHour, LocalDate dateFrom, LocalDate dateTo, Boolean active) {
         super(id, employeeId, establishmentId, days, startHour, endHour);
         this.dateFrom = dateFrom;

@@ -1,16 +1,17 @@
 package com.teamsantos.easybarber.DTO;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.teamsantos.easybarber.utils.GeometryUtils;
-import com.teamsantos.easybarber.utils.Utils;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.List;
 
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.teamsantos.easybarber.utils.GeometryUtils;
+import com.teamsantos.easybarber.utils.Utils;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter

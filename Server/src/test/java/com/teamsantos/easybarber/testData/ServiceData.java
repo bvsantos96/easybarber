@@ -1,13 +1,13 @@
 package com.teamsantos.easybarber.testData;
 
-import com.teamsantos.easybarber.DTO.ImageDTO;
-import com.teamsantos.easybarber.DTO.ServiceDTO;
-import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+
+import com.teamsantos.easybarber.DTO.ImageDTO;
+import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
 
 public class ServiceData {
     public static final List<ServiceTypeDTO> serviceTypes;

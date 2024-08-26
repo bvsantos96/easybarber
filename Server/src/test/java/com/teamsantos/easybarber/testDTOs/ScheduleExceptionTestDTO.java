@@ -19,9 +19,10 @@ public class ScheduleExceptionTestDTO extends ScheduleExceptionDTO {
         super();
     }
 
-    public ScheduleExceptionTestDTO(Long id, Long employeeId, Long establishmentId, Set<DAY_OF_WEEK> days, LocalTime startHour,
+    public ScheduleExceptionTestDTO(Long id, Long employeeId, Long establishmentId, Set<DAY_OF_WEEK> days,
+            LocalTime startHour,
             LocalTime endHour, LocalDate dateFrom, LocalDate dateTo, Boolean active) {
-        super(id, employeeId, establishmentId, days, startHour, endHour, dateFrom,dateTo , active);
+        super(id, employeeId, establishmentId, days, startHour, endHour, dateFrom, dateTo, active);
     }
 
     public void setIds(List<Long> ids) {

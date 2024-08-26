@@ -1,13 +1,14 @@
 package com.teamsantos.easybarber.DTO;
 
+import java.util.Objects;
+
 import com.teamsantos.easybarber.utils.JSONToDTO;
+
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
-import java.util.Objects;
 
 @Getter
 @Setter
