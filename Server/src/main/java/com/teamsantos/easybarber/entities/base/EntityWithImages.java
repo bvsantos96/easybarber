@@ -2,12 +2,10 @@ package com.teamsantos.easybarber.entities.base;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 
-import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.utils.Utils;
 
 import jakarta.persistence.FetchType;
@@ -68,15 +66,6 @@ public abstract class EntityWithImages<T extends EntityWithImages<T, E>, E exten
         for (final E image : images)
             image.setEntity(getEntity());
         this.images = images;
-    }
-
-    public void setImages(List<ImageDTO> images) {
-        if (images == null)
-            return;
-        if (this.images == null)
-            this.images = new HashSet<>();
-        for (final ImageDTO image : images)
-            addImage(image);
     }
 
     public abstract T getEntity();
