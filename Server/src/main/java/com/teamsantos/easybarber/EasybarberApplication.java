@@ -4,11 +4,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.utils.Utils;
 
 @SpringBootApplication
+@EnableAsync
 public class EasybarberApplication {
     @Bean
     public ModelMapper modelMapper() {

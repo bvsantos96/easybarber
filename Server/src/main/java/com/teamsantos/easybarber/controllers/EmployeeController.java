@@ -31,6 +31,7 @@ import com.teamsantos.easybarber.entities.images.EmployeeImage;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
+import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.services.EmployeeService;
 import com.teamsantos.easybarber.services.SchedulesService;
 import com.teamsantos.easybarber.services.ServiceService;
@@ -172,13 +173,13 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
     public ResponseEntity<BasePageDTO<ScheduleExceptionDTO>> getExceptions(
             @RequestParam(required = false) Boolean active,
-            Pageable pageable, Principal principal) {
+            Pageable pageable) {
         try {
             if (active == null) {
                 active = true;
             }
             ScheduleFilter filter = new ScheduleFilter();
-            filter.setEmployeeId(employeeService.getEmployee(principal).getId());
+            filter.setEmployeeId(UserContext.getCurrentUser().getEmployeeId());
             if (active) {
                 filter.setActive(active);
             }

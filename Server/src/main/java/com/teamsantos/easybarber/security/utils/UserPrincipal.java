@@ -8,13 +8,13 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserPrincipal {
-    private long userId;
+    private long id;
     private Long employeeId;
     private boolean[] roles;
     private Object[] permissions;
 
     public UserPrincipal(long userId, Long employeeId, boolean[] roles) {
-        this.userId = userId;
+        this.id = userId;
         this.employeeId = employeeId;
         this.roles = new boolean[UserTypeService.UserTypes.values().length];
         if (roles != null) {
