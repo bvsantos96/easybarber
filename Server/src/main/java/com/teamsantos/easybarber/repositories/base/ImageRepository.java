@@ -29,4 +29,27 @@ public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Ima
 
     @Query("SELECT new com.teamsantos.easybarber.DTO.ImageDTO(i.id, i.data) FROM #{#entityName} i WHERE i.entity.id = :entityId")
     List<ImageDTO> findAllByEntityId(Long entityId);
+
+    @Query("""
+                SELECT i.id
+                FROM #{#entityName} i
+                WHERE i.entity.id = :entityId
+                AND i.isMain = :b
+                LIMIT 1
+            """)
+    Long getIdByEntityIdAndIsMain(Long entityId, boolean b);
+
+    @Modifying
+    @Query("UPDATE #{#entityName} i SET i.isMain = false WHERE i.entity.id = :id AND i.isMain = true")
+    void removeMainFlag(Long entityId);
+
+    @Query("""
+                SELECT EXISTS (
+                    SELECT 1
+                    FROM #{#entityName} i
+                    WHERE i.entity.id = :entityId
+                    AND i.isMain = true
+                LIMIT 1)
+            """)
+    boolean existsMain(Long entityId);
 }

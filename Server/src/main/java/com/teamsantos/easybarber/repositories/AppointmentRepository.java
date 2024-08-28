@@ -26,4 +26,24 @@ public interface AppointmentRepository
                 LIMIT 1)
             """)
     boolean intercepts(long employeeId, LocalDate date, LocalTime time, LocalTime endTime);
+
+    @Query("""
+            SELECT EXISTS(
+                SELECT 1
+                from Appointment s
+                where s.employee.id = :employeeId
+                and s.id != :appointmentId
+                LIMIT 1)
+            """)
+    boolean existsByIdAndEmployeeId(long appointmentId, long employeeId);
+
+    @Query("""
+            SELECT EXISTS(
+                SELECT 1
+                from Appointment s
+                where s.user.id = :userId
+                and s.id != :appointmentId
+                LIMIT 1)
+            """)
+    boolean existsByIdAndUserId(long appointmentId, long userId);
 }

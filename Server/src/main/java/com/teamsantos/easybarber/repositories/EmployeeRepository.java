@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
@@ -20,4 +21,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Page<Establishment> findOwnedEstablishmentsById(Long userId, Pageable pageable);
 
     void deleteByUserId(Long id);
+
+    @Modifying
+    @Query("UPDATE Employee e SET e.deleted = true WHERE e.id = :id")
+    void markAsDeleted(Long id);
 }

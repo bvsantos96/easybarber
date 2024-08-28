@@ -1,5 +1,7 @@
 package com.teamsantos.easybarber.security.utils;
 
+import com.teamsantos.easybarber.exceptions.UserNotFoundException;
+
 public class UserContext {
     private static final ThreadLocal<UserPrincipal> CONTEXT = new ThreadLocal<>();
 
@@ -12,6 +14,14 @@ public class UserContext {
 
     public static UserPrincipal getCurrentUser() {
         return CONTEXT.get();
+    }
+
+    public static long getEmployeeId() throws UserNotFoundException {
+        UserPrincipal user = CONTEXT.get();
+        if (user == null || user.getEmployeeId() == null) {
+            throw new UserNotFoundException();
+        }
+        return user.getEmployeeId();
     }
 
     public static void clear() {

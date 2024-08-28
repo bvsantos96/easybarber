@@ -11,10 +11,16 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ImageDTO extends BaseDTO {
     private String data;
+    private Boolean main;
 
-    public ImageDTO(Long id, String data) {
+    public ImageDTO(Long id, String data, Boolean isMain) {
         super(id);
         this.data = data;
+        this.main = isMain;
+    }
+
+    public ImageDTO(Long id, String data) {
+        this(id, data, null);
     }
 
     public ImageDTO(String data) {
