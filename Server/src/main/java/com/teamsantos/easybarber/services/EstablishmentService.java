@@ -1,6 +1,5 @@
 package com.teamsantos.easybarber.services;
 
-import java.security.Principal;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -12,29 +11,36 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.DTO.ServiceFullDTO;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
+import com.teamsantos.easybarber.DTO.filters.EstablishmentServiceFilter;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.EstablishmentStaff;
 import com.teamsantos.easybarber.entities.images.EstablishmentImage;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
+import com.teamsantos.easybarber.exceptions.GenericNotFoundException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
-import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentRepository;
-import com.teamsantos.easybarber.repositories.EstablishmentServiceRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
-import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.repositories.base.ImageRepository;
+import com.teamsantos.easybarber.repositories.establishmentServices.EstablishmentServiceRepository;
+import com.teamsantos.easybarber.repositories.services.ServiceRepository;
+import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.utils.GeometryUtils;
+import com.teamsantos.easybarber.utils.Pair;
+import com.teamsantos.easybarber.utils.Utils;
 
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityManager;
 
 @Service
 public class EstablishmentService extends ServiceWithImages<Establishment, EstablishmentImage> {
@@ -43,51 +49,57 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     private final ServiceRepository serviceRepository;
     private final EstablishmentServiceRepository establishmentServiceRepository;
     private final EstablishmentStaffRepository establishmentStaffRepository;
-    private final UserService userService;
+    private final EstablishmentRepository establishmentRepository;
 
     @Autowired
-    public EstablishmentService(ModelMapper modelMapper, EstablishmentRepository repository,
+    public EstablishmentService(EstablishmentRepository repository,
             EmployeeRepository employeeRepository, ServiceRepository serviceRepository,
             ImageRepository<Establishment, EstablishmentImage> imageRepository,
             EstablishmentStaffRepository establishmentStaffRepository,
-            EstablishmentServiceRepository establishmentServiceRepository, UserService userService) {
-        super(repository, imageRepository, modelMapper);
+            EstablishmentServiceRepository establishmentServiceRepository,
+            ModelMapper modelMapper, EntityManager entityManager) {
+        super(repository, imageRepository, modelMapper, entityManager);
+        this.establishmentRepository = repository;
         this.modelMapper = modelMapper;
         this.establishmentServiceRepository = establishmentServiceRepository;
         this.employeeRepository = employeeRepository;
         this.serviceRepository = serviceRepository;
         this.establishmentStaffRepository = establishmentStaffRepository;
-        this.userService = userService;
     }
 
-    public Establishment getEstablishment(Long id) throws NotFoundException {
+    @Transactional(readOnly = true)
+    private Establishment getEstablishment(Long id) throws NotFoundException {
         return repository.findById(id).orElseThrow(NotFoundException::new);
     }
 
+    @Transactional(readOnly = true)
     public EstablishmentDTO getEstablishmentDTO(Long id) throws NotFoundException {
         return getEstablishment(id).convertToDto();
     }
 
+    @Transactional(readOnly = true)
     public List<EstablishmentDTO> listEstablishmentStaff(Long id, Pageable pageable) {
         return employeeRepository.findOwnedEstablishmentsById(id, pageable).stream()
                 .map((element) -> modelMapper.map(element, EstablishmentDTO.class)).toList();
     }
 
-    @Transactional
-    public void create(BaseEstablishmentDTO establishmentDTO, Principal principal) {
-        create(establishmentDTO, userService.getEmployeeEntity(principal));
+    public void create(BaseEstablishmentDTO establishmentDTO) throws Exception {
+        create(establishmentDTO, UserContext.getEmployeeId());
     }
 
     @Transactional
-    public void create(BaseEstablishmentDTO establishmentDTO, Employee owner) {
+    private void create(BaseEstablishmentDTO establishmentDTO, long employeeId) throws Exception {
         try {
             Establishment establishment = modelMapper.map(establishmentDTO, Establishment.class);
             if (establishment != null) {
-                if (((EstablishmentRepository) repository).existsByName(establishment.getName()))
+                if (establishmentRepository.existsByName(establishment.getName()))
                     throw new AlreadyExistsException("Establishment name already exists");
                 establishment = repository.save(establishment);
                 establishmentDTO.setId(establishment.getId());
-                EstablishmentStaff establishmentOwned = new EstablishmentStaff(true, true, false, owner, establishment);
+                Employee owner = employeeRepository.findById(UserContext.getEmployeeId())
+                        .orElseThrow(() -> new GenericNotFoundException("Employee"));
+                EstablishmentStaff establishmentOwned = new EstablishmentStaff(true, true, false,
+                        owner, establishment);
                 if (owner.getEstablishments() == null)
                     owner.setEstablishments(new HashSet<>());
                 owner.getEstablishments().add(establishmentOwned);
@@ -101,29 +113,24 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(long id) {
         establishmentServiceRepository.deleteByEstablishmentId(id);
         imageRepository.deleteByEntityId(id);
         establishmentStaffRepository.deleteByEstablishmentId(id);
         repository.deleteById(id);
     }
 
-    public List<BaseEstablishmentDTO> findAllBase(Pageable pageable) {
-        return ((EstablishmentRepository) repository).findAllBase(pageable).getContent();
+    @Transactional
+    public void addEmployee(long establishmentId)
+            throws NotFoundException, UnsupportedOperationException, UserAlreadyExistsException {
+        addEmployee(establishmentId, UserContext.getEmployeeId());
     }
 
     @Transactional
-    public void addEmployee(Long establishmentId, Principal principal)
+    public void addEmployee(long establishmentId, long employeeId)
             throws NotFoundException, UnsupportedOperationException, UserAlreadyExistsException {
-        addEmployee(establishmentId, userService.getEmployee(principal).getId());
-    }
-
-    @Transactional
-    public void addEmployee(Long establishmentId, Long employeeId)
-            throws NotFoundException, UnsupportedOperationException, UserAlreadyExistsException {
-        Establishment establishment = repository.findById(establishmentId)
+        Establishment establishment = establishmentRepository.findByIdWithStaff(establishmentId)
                 .orElseThrow(NotFoundException::new);
-        establishment.setStaff(establishmentStaffRepository.findByEstablishmentId(establishmentId));
         if (employeeRepository.existsById(employeeId)) {
             if (establishment.getStaff() == null)
                 establishment.setStaff(new HashSet<>());
@@ -131,7 +138,7 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
                 throw new UserAlreadyExistsException("User is already an employee");
             establishment.getStaff()
                     .add(new EstablishmentStaff(false, true, false,
-                            employeeRepository.findById(employeeId).orElseThrow(UserNotFoundException::new),
+                            entityManager.getReference(Employee.class, employeeId),
                             establishment));
             repository.save(establishment);
             // TODO: note that the we might want to start an employee approval process here,
@@ -141,25 +148,30 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         }
     }
 
+    @Transactional(readOnly = true)
     public Page<EstablishmentDTO> list(EstablishmentFilter filter, Pageable pageable)
             throws ParseException {
         if (filter.getLatitude() != null && filter.getLongitude() != null) {
             filter.setLocation(GeometryUtils.parseLocation(filter.getLatitude(), filter.getLongitude()));
-            return ((EstablishmentRepository) repository).findClosestEstablishments(
+            return establishmentRepository.findClosestEstablishments(
                     filter.getLocation(),
                     filter.getServiceType(),
                     filter.getPartialName(),
                     filter.getRating(),
                     pageable);
         }
-        return ((EstablishmentRepository) repository).list(
+        return establishmentRepository.list(
                 filter.getServiceType(),
                 filter.getRating(),
                 pageable);
     }
 
-    public Page<ServiceDTO> listServices(Long id, Pageable pageable) {
-        return ((EstablishmentRepository) repository).findServicesByEstablishmentId(id, pageable);
+    @Transactional(readOnly = true)
+    public Page<ServiceDTO> listServices(long id, Pageable pageable) {
+        EstablishmentServiceFilter filter = new EstablishmentServiceFilter();
+        filter.setEstablishmentId(id);
+        filter.setIncludeEstablishmentImage(false);
+        return establishmentServiceRepository.findAllServiceDTO(filter, pageable);
     }
 
     public void addService(Long id, CreateEstablishmentServiceDTO serviceDTO)
@@ -180,9 +192,10 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     }
 
     @Transactional
-    public void addService(Long id, Long serviceId, double price) throws NotFoundException, AlreadyExistsException {
+    public void addService(long id, Long serviceId, double price) throws NotFoundException, AlreadyExistsException {
         if (serviceId != null) {
-            Establishment establishment = repository.findById(id).orElseThrow(NotFoundException::new);
+            Establishment establishment = establishmentRepository.findByIdWithStaff(id)
+                    .orElseThrow(NotFoundException::new);
             com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceId)
                     .orElseThrow(NotFoundException::new);
             if (establishment.getStaff().stream()
@@ -203,7 +216,7 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     @Transactional
     public void updateService(long establishmentId, CreateEstablishmentServiceDTO serviceDTO) throws NotFoundException {
         if (serviceDTO != null) {
-            Establishment establishment = repository.findById(establishmentId).orElseThrow();
+            Establishment establishment = establishmentRepository.findByIdWithStaff(establishmentId).orElseThrow();
             com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceDTO.getServiceId())
                     .orElseThrow(NotFoundException::new);
             if (establishment.getStaff().stream().noneMatch((staff) -> staff.getEmployee().getUser()
@@ -229,39 +242,50 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     }
 
     @Transactional
-    public void removeService(long id, Long serviceId) {
+    public void removeService(long id, long serviceId) {
         Establishment establishment = repository.findById(id).orElseThrow();
         establishment.getServices().removeIf((service) -> service.getId().equals(serviceId));
         repository.save(establishment);
     }
 
-    public com.teamsantos.easybarber.entities.EstablishmentService getEstablishmentService(long serviceId)
-            throws NotFoundException {
-        return establishmentServiceRepository.findById(serviceId).orElseThrow(NotFoundException::new);
+    @Transactional(readOnly = true)
+    public ServiceFullDTO getService(long establishmentId, long serviceId) {
+        return establishmentServiceRepository.findByEstablishmentIdAndServiceId(establishmentId, serviceId);
     }
 
-    public com.teamsantos.easybarber.entities.EstablishmentService getEstablishmentService(long establishmentId,
-            long serviceId) throws NotFoundException {
-        com.teamsantos.easybarber.entities.EstablishmentService service = getEstablishmentService(serviceId);
-        if (service.getEstablishment().getId() != establishmentId) {
-            throw new NotFoundException();
-        }
-        return service;
+    @Transactional(readOnly = true)
+    public EstablishmentServiceDTO getService(long id) throws GenericNotFoundException {
+        return Utils.getModelMapper().map(establishmentServiceRepository.findById(id)
+                .orElseThrow(() -> new GenericNotFoundException("Establishment service")),
+                EstablishmentServiceDTO.class);
     }
 
+    @Transactional(readOnly = true)
     public List<EmployeeDTO> getEmployees(long establishmentId, boolean onlyActive) throws NotFoundException {
         if (!repository.existsById(establishmentId)) {
             throw new NotFoundException();
         }
-        return employeeRepository.findEmployeesByEstablishmentId(establishmentId, onlyActive).stream()
-                .map(EmployeeDTO::new).toList();
+        return establishmentStaffRepository.findEmployeeByEstablishmentIdAndActiveFilter(establishmentId, onlyActive);
     }
 
+    @Transactional(readOnly = true)
     public boolean isAdmin(long establishmentId, long employeeId) {
         return establishmentStaffRepository.isAdminOfEstablishment(employeeId, establishmentId);
     }
 
+    @Transactional(readOnly = true)
     public boolean isStaff(long establishmentId, long employeeId) {
         return establishmentStaffRepository.isEmployeeOfEstablishment(employeeId, establishmentId);
+    }
+
+    @Transactional(readOnly = true)
+    public Pair<Long, Integer> getDurationOfService(long establishmentId, long serviceId)
+            throws GenericNotFoundException {
+        Pair<Long, Integer> establishmentService = establishmentServiceRepository.getIdAndDuration(establishmentId,
+                serviceId);
+        if (establishmentService == null) {
+            throw new GenericNotFoundException("Establishment service");
+        }
+        return establishmentService;
     }
 }

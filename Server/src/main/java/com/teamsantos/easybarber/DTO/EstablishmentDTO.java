@@ -1,6 +1,10 @@
 package com.teamsantos.easybarber.DTO;
 
+import java.util.Set;
+
 import org.locationtech.jts.geom.Point;
+
+import com.teamsantos.easybarber.entities.images.EstablishmentImage;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,8 +26,9 @@ public class EstablishmentDTO extends BaseEstablishmentDTO {
         super(id, name, description, address, location);
     }
 
-    public EstablishmentDTO(Long id, String name, String description, String address, Point location, Object distance) {
-        super(id, name, description, address, location);
+    public EstablishmentDTO(Long id, String name, String description, String address, Point location, Object distance,
+            Set<EstablishmentImage> images) {
+        super(id, name, description, address, location, images);
         try {
             if (distance instanceof Double) {
                 Double _distance = (Double) distance;
@@ -34,16 +39,16 @@ public class EstablishmentDTO extends BaseEstablishmentDTO {
         }
     }
 
-    public EstablishmentDTO(Long id, String name, String description, String address, Point location, Long nVotes,
-            Long sumVotes) {
-        super(id, name, description, address, location);
+    public EstablishmentDTO(Long id, String name, String description, String address, Point location, Object distance,
+            Long nVotes, Long sumVotes, Set<EstablishmentImage> images) {
+        this(id, name, description, address, location, distance, images);
         this.nVotes = nVotes;
         this.sumVotes = sumVotes;
     }
 
-    public EstablishmentDTO(Long id, String name, String description, String address, Point location, Object distance,
-            Long nVotes, Long sumVotes) {
-        this(id, name, description, address, location, distance);
+    public EstablishmentDTO(Long id, String name, String description, String address, Point location, Long nVotes,
+            Long sumVotes, Set<EstablishmentImage> images) {
+        super(id, name, description, address, location, images);
         this.nVotes = nVotes;
         this.sumVotes = sumVotes;
     }
