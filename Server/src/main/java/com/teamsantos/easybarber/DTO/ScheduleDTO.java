@@ -10,6 +10,7 @@ import com.teamsantos.easybarber.entities.EmployeeSchedule;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.Establishment;
 
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,10 +44,10 @@ public class ScheduleDTO extends BaseDTO {
         this.endHour = endHour;
     }
 
-    public EmployeeSchedule toEntity(Employee employee, Establishment establishment) {
+    public EmployeeSchedule toEntity(EntityManager entityManager) {
         EmployeeSchedule schedule = new EmployeeSchedule();
-        schedule.setEmployee(employee);
-        schedule.setEstablishment(establishment);
+        schedule.setEmployee(entityManager.getReference(Employee.class, employeeId));
+        schedule.setEstablishment(entityManager.getReference(Establishment.class, establishmentId));
         if (days.size() > 1) {
             throw new IllegalArgumentException("Only one day of week is allowed");
         }
@@ -57,12 +58,12 @@ public class ScheduleDTO extends BaseDTO {
         return schedule;
     }
 
-    public List<EmployeeSchedule> toEntities(Employee employee, Establishment establishment) {
+    public List<EmployeeSchedule> toEntities(EntityManager entityManager) {
         List<EmployeeSchedule> schedules = new ArrayList<EmployeeSchedule>();
         for (DAY_OF_WEEK day : this.days) {
             EmployeeSchedule schedule = new EmployeeSchedule();
-            schedule.setEmployee(employee);
-            schedule.setEstablishment(establishment);
+            schedule.setEmployee(entityManager.getReference(Employee.class, employeeId));
+            schedule.setEstablishment(entityManager.getReference(Establishment.class, establishmentId));
             schedule.setDay(day);
             schedule.setStartHour(startHour);
             schedule.setEndHour(endHour);

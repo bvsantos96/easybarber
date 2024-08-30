@@ -1,41 +1,45 @@
 package com.teamsantos.easybarber.services;
 
-import java.security.Principal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.entities.Appointment;
-import com.teamsantos.easybarber.entities.Employee;
-import com.teamsantos.easybarber.entities.Establishment;
-import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.repositories.AppointmentRepository;
+import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.utils.Pair;
 import com.teamsantos.easybarber.utils.Utils;
 
+import jakarta.persistence.EntityManager;
+
 @Service
 public class AppointmentService {
-    private final UserService userService;
+    private final EmployeeService employeeService;
     private final EstablishmentService establishmentService;
     private final AppointmentRepository appointmentRepository;
     private final SchedulesService scheduleService;
+    private final EntityManager entityManager;
 
     @Autowired
-    public AppointmentService(UserService userService, EstablishmentService establishmentService,
-            AppointmentRepository appointmentRepository, SchedulesService scheduleService) {
-        this.userService = userService;
+    public AppointmentService(EmployeeService employeeService,
+            EstablishmentService establishmentService,
+            AppointmentRepository appointmentRepository, SchedulesService scheduleService,
+            EntityManager entityManager) {
+        this.employeeService = employeeService;
         this.establishmentService = establishmentService;
         this.appointmentRepository = appointmentRepository;
         this.scheduleService = scheduleService;
+        this.entityManager = entityManager;
     }
 
-    public Pair<Long, String> create(AppointmentDTO appointmentDTO, Principal principal) {
+    public Pair<Long, String> create(AppointmentDTO appointmentDTO) {
         Pair<Long, String> result = new Pair<>(null, "");
         try {
             // TODO: Is an establishment required? Or can employees be independent?
@@ -54,8 +58,6 @@ public class AppointmentService {
                     && appointmentDTO.getTime().isBefore(LocalTime.now())) {
                 throw new IllegalArgumentException("Appointment time must be in the future");
             }
-            User user = userService.getUserEntity(principal);
-            Establishment establishment = establishmentService.getEstablishment(appointmentDTO.getEstablishmentId());
             if (appointmentDTO.getEmployeeId() == null) {
                 throw new IllegalArgumentException("An appointment must be associated with an employee");
             } else {
@@ -64,29 +66,31 @@ public class AppointmentService {
                     throw new IllegalArgumentException("Employee is not associated with the establishment");
                 }
             }
-            Employee employee = userService.getEmployeeEntity(appointmentDTO.getEmployeeId());
             if (appointmentDTO.getUserId() == null) {
                 if (appointmentDTO.getNonRegisteredUser() == null) {
                     throw new IllegalArgumentException("An appointment must be associated with a user");
                 } else {
-                    if (user.getId() == employee.getUser().getId()) {
-                        appointmentDTO.setUserId(user.getId());
+                    if (employeeService.getUserId(appointmentDTO.getEmployeeId()) == UserContext.getUserId()) {
+                        appointmentDTO.setUserId(UserContext.getUserId());
                     }
                 }
             }
-            if (user.getId() != appointmentDTO.getUserId()) {
+            if (UserContext.getUserId() != appointmentDTO.getUserId()) {
                 throw new IllegalArgumentException(
                         "You do not have permission to create an appointment for another user");
             }
             if (appointmentDTO.getServiceId() == null) {
                 throw new IllegalArgumentException("An appointment must be associated with a service");
             }
-            com.teamsantos.easybarber.entities.EstablishmentService service = establishmentService
-                    .getEstablishmentService(appointmentDTO.getEstablishmentId(), appointmentDTO.getServiceId());
-            if (!scheduleService.isAppointmentDateTimeValid(appointmentDTO, service.getService().getDuration())) {
+
+            Pair<Long, Integer> _establishmentService = establishmentService.getDurationOfService(
+                    appointmentDTO.getEstablishmentId(),
+                    appointmentDTO.getServiceId());
+            if (!scheduleService.isAppointmentDateTimeValid(appointmentDTO, _establishmentService.getSecond())) {
                 throw new IllegalArgumentException("Appointment date must be within the employee's schedule");
             }
-            result.setFirst(appointmentRepository.save(appointmentDTO.toEntity(user, employee, establishment, service))
+            appointmentDTO.setServiceId(_establishmentService.getFirst());
+            result.setFirst(appointmentRepository.save(appointmentDTO.toEntity(entityManager))
                     .getId());
         } catch (Exception e) {
             result.setSecond(e.getMessage());
@@ -94,6 +98,7 @@ public class AppointmentService {
         return result;
     }
 
+    @Transactional(readOnly = true)
     public BasePageDTO<AppointmentDTO> listAppointment(AppointmentFilter filter, Pageable pageable) {
         return new BasePageDTO<>(appointmentRepository.findAll(filter.getSpecification(), pageable)
                 .map((element) -> Utils.getModelMapper().map(element, AppointmentDTO.class)));
@@ -109,11 +114,10 @@ public class AppointmentService {
         appointmentRepository.save(appointment);
     }
 
-    public void confirm(long id, Principal principal) {
-        long employeeId = userService.getEmployee(principal).getId();
+    public void confirm(long id) {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
-        if (appointment.getEmployee().getId() != employeeId) {
+        if (appointment.getEmployee().getId() != UserContext.getEmployeeId()) {
             throw new IllegalArgumentException("You do not have permission to confirm this appointment");
         }
         appointment.setConfirmed(true);

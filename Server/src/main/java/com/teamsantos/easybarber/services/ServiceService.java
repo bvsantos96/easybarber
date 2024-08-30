@@ -11,19 +11,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.CreateServiceDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceBaseDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
-import com.teamsantos.easybarber.DTO.ServiceWithEmployeeDTO;
+import com.teamsantos.easybarber.DTO.ServiceWithImagesDTO;
+import com.teamsantos.easybarber.DTO.filters.EstablishmentServiceFilter;
 import com.teamsantos.easybarber.DTO.filters.ServiceFilter;
+import com.teamsantos.easybarber.DTO.filters.ServiceWithEmployeeFilter;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.ServiceType;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.GenericNotFoundException;
-import com.teamsantos.easybarber.repositories.EstablishmentServiceRepository;
-import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.repositories.ServiceTypeRepository;
+import com.teamsantos.easybarber.repositories.establishmentServices.EstablishmentServiceRepository;
 import com.teamsantos.easybarber.repositories.images.ServiceImageRepository;
+import com.teamsantos.easybarber.repositories.services.ServiceRepository;
 import com.teamsantos.easybarber.security.utils.UserContext;
 
 import jakarta.persistence.EntityManager;
@@ -31,31 +34,28 @@ import jakarta.persistence.EntityManager;
 @Service
 public class ServiceService extends
         ServiceWithImages<com.teamsantos.easybarber.entities.Service, com.teamsantos.easybarber.entities.images.ServiceImage> {
-
     private final ServiceRepository serviceRepository;
     private final ServiceTypeRepository serviceTypeRepository;
     private final EstablishmentServiceRepository establishmentServiceRepository;
-    private final UserTypeService userTypeService;
     private final ModelMapper modelMapper;
     private final EntityManager entityManager;
 
     @Autowired
     public ServiceService(ServiceRepository repository,
-            ServiceTypeRepository serviceTypeRepository,
-            UserTypeService userTypeService,
             EstablishmentServiceRepository establishmentServiceRepository,
+            ServiceTypeRepository serviceTypeRepository,
             ServiceImageRepository imageRepository,
             ModelMapper modelMapper,
             EntityManager entityManager) {
-        super(repository, imageRepository, modelMapper);
+        super(repository, imageRepository, modelMapper, entityManager);
         this.serviceRepository = repository;
         this.establishmentServiceRepository = establishmentServiceRepository;
         this.serviceTypeRepository = serviceTypeRepository;
-        this.userTypeService = userTypeService;
         this.modelMapper = modelMapper;
         this.entityManager = entityManager;
     }
 
+    @Transactional
     public void createService(CreateServiceDTO serviceDTO) throws GenericNotFoundException {
         long employeeId = UserContext.getEmployeeId();
         if (serviceTypeRepository.existsById(serviceDTO.getServiceTypeId())) {
@@ -72,6 +72,7 @@ public class ServiceService extends
         serviceRepository.save(service);
     }
 
+    @Transactional
     public void updateService(ServiceDTO serviceDTO) throws GenericNotFoundException {
         com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceDTO.getId())
                 .orElseThrow();
@@ -93,43 +94,35 @@ public class ServiceService extends
         serviceRepository.deleteById(id);
     }
 
+    @Transactional
     public void createType(ServiceTypeDTO serviceDTO) {
         if (serviceDTO != null) {
             serviceTypeRepository.save(modelMapper.map(serviceDTO, ServiceType.class));
         }
     }
 
+    @Transactional
     public void updateType(ServiceTypeDTO serviceDTO) throws NotFoundException {
         serviceTypeRepository.save(modelMapper.map(serviceDTO, ServiceType.class));
     }
 
     @Transactional(readOnly = true)
-    public Page<ServiceBaseDTO> listServices(ServiceFilter filter, Pageable pageable) {
-        filter.parseName();
-        if (filter.isIncludeServiceImage()) {
-            return serviceRepository.findAllBaseWImage(filter, pageable);
-        }
-        return serviceRepository.findAllBase(filter, pageable);
+    public Page<EstablishmentServiceDTO> listEstablishmentServices(EstablishmentServiceFilter filter,
+            Pageable pageable) {
+        return establishmentServiceRepository.findAll(filter, pageable)
+                .map(e -> modelMapper.map(e, EstablishmentServiceDTO.class));
     }
 
     @Transactional(readOnly = true)
-    public Page<ServiceWithEmployeeDTO> listServicesWithEmployee(ServiceFilter filter, Pageable pageable) {
-        filter.parseName();
-        if (filter.isIncludeServiceImage()) {
-            if (filter.isIncludeEmployeeImage()) {
-                return serviceRepository.findAllWImagesAndEmployeeWImages(filter, pageable)
-                        .map(e -> modelMapper.map(e, ServiceWithEmployeeDTO.class));
-            }
-            return serviceRepository.findAllBaseWImageAndEmployee(filter, pageable)
-                    .map(e -> modelMapper.map(e, ServiceWithEmployeeDTO.class));
-        } else {
-            if (filter.isIncludeEmployeeImage()) {
-                return serviceRepository.findAllBaseAndEmployeeWImages(filter, pageable)
-                        .map(e -> modelMapper.map(e, ServiceWithEmployeeDTO.class));
-            }
-            return serviceRepository.findAllBaseAndEmployee(filter, pageable)
-                    .map(e -> modelMapper.map(e, ServiceWithEmployeeDTO.class));
-        }
+    public Page<ServiceBaseDTO> listServices(ServiceFilter filter, Pageable pageable) {
+        return serviceRepository.findAllBase(filter, pageable)
+                .map(e -> modelMapper.map(e, ServiceBaseDTO.class));
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ServiceWithImagesDTO> listServicesWithEmployee(ServiceWithEmployeeFilter filter, Pageable pageable) {
+        return serviceRepository.findAllWEmployee(filter, pageable)
+                .map(e -> modelMapper.map(e, ServiceWithImagesDTO.class));
     }
 
     @Transactional(readOnly = true)

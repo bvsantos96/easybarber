@@ -16,6 +16,14 @@ public class UserContext {
         return CONTEXT.get();
     }
 
+    public static long getUserId() throws UserNotFoundException {
+        UserPrincipal user = CONTEXT.get();
+        if (user == null || user.getId() == null) {
+            throw new UserNotFoundException();
+        }
+        return user.getId();
+    }
+
     public static long getEmployeeId() throws UserNotFoundException {
         UserPrincipal user = CONTEXT.get();
         if (user == null || user.getEmployeeId() == null) {

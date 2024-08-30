@@ -1,9 +1,12 @@
 package com.teamsantos.easybarber.repositories;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.entities.EstablishmentStaff;
 
 @Repository
@@ -21,7 +24,7 @@ public interface EstablishmentStaffRepository extends JpaRepository<Establishmen
                 LIMIT 1
             )
             """)
-    boolean isAdminOfEstablishment(Long employeeId, Long establishmentId);
+    boolean isAdminOfEstablishment(long employeeId, long establishmentId);
 
     @Query("""
             SELECT EXISTS (
@@ -35,9 +38,19 @@ public interface EstablishmentStaffRepository extends JpaRepository<Establishmen
                 LIMIT 1
             )
             """)
-    boolean isEmployeeOfEstablishment(Long employeeId, Long establishmentId);
+    boolean isEmployeeOfEstablishment(long employeeId, long establishmentId);
 
-    void deleteByEstablishmentId(Long id);
+    void deleteByEstablishmentId(long id);
 
-    void deleteByEmployeeId(Long id);
+    void deleteByEmployeeId(long id);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.EmployeeDTO(
+                es.employee
+            ) FROM EstablishmentStaff es
+            WHERE
+                es.establishment.id = :establishmentId
+            AND (NOT :onlyActive OR es.active = :onlyActive)
+            """)
+    List<EmployeeDTO> findEmployeeByEstablishmentIdAndActiveFilter(long establishmentId, boolean onlyActive);
 }

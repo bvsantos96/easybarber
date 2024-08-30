@@ -27,44 +27,43 @@ import com.teamsantos.easybarber.DTO.SchedulesDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.entities.EmployeeSchedule;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
-import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.ScheduleException;
 import com.teamsantos.easybarber.repositories.AppointmentRepository;
 import com.teamsantos.easybarber.repositories.EmployeeScheduleRepository;
-import com.teamsantos.easybarber.repositories.EstablishmentRepository;
 import com.teamsantos.easybarber.repositories.ScheduleExceptionsRepository;
 import com.teamsantos.easybarber.utils.PageDTO;
 import com.teamsantos.easybarber.utils.Pair;
 import com.teamsantos.easybarber.utils.Utils;
 
+import jakarta.persistence.EntityManager;
+
 @Service
 public class SchedulesService {
+    private final EmployeeService employeeService;
     private final AppointmentRepository appointmentRepository;
     private final EmployeeScheduleRepository employeeScheduleRepository;
-    private final EstablishmentRepository establishmentRepository;
     private final EstablishmentService establishmentService;
     private final ScheduleExceptionsRepository scheduleExceptionRepository;
-    private final UserService userService;
     private final ModelMapper modelMapper;
+    private final EntityManager entityManager;
 
     @Autowired
     public SchedulesService(EmployeeScheduleRepository employeeScheduleRepository,
             AppointmentRepository appointmentRepository,
-            EstablishmentRepository establishmentRepository,
             ScheduleExceptionsRepository scheduleExceptionRepository,
             EstablishmentService establishmentService,
-            UserService userService,
-            ModelMapper modelMapper) {
+            EmployeeService employeeService,
+            ModelMapper modelMapper, EntityManager entityManager) {
         this.employeeScheduleRepository = employeeScheduleRepository;
-        this.establishmentRepository = establishmentRepository;
         this.establishmentService = establishmentService;
         this.scheduleExceptionRepository = scheduleExceptionRepository;
         this.appointmentRepository = appointmentRepository;
-        this.userService = userService;
+        this.employeeService = employeeService;
         this.modelMapper = modelMapper;
+        this.entityManager = entityManager;
     }
 
-    private EmployeeDTO canChangeSchedule(ScheduleDTO exception, EmployeeDTO principal) {
+    private EmployeeDTO canChangeSchedule(ScheduleDTO exception, EmployeeDTO currentEmployee) {
         boolean authorized = false;
         Boolean isOwner = null;
         Boolean isStaff = null;
@@ -73,23 +72,23 @@ public class SchedulesService {
             throw new IllegalArgumentException("Employee or Establishment must be informed");
         }
         if (exception.getEmployeeId() != null && exception.getEstablishmentId() != null) {
-            isOwner = establishmentService.isAdmin(exception.getEstablishmentId(), principal.getId());
-            isStaff = establishmentService.isStaff(exception.getEstablishmentId(), principal.getId());
-            if (exception.getEmployeeId() == principal.getId()) {
+            isOwner = establishmentService.isAdmin(exception.getEstablishmentId(), currentEmployee.getId());
+            isStaff = establishmentService.isStaff(exception.getEstablishmentId(), currentEmployee.getId());
+            if (exception.getEmployeeId() == currentEmployee.getId()) {
                 if (isStaff) {
-                    employee = userService.getEmployee(exception.getEmployeeId());
+                    employee = employeeService.getEmployee(exception.getEmployeeId());
                     authorized = true;
                 }
             } else {
-                employee = userService.getEmployee(exception.getEmployeeId());
+                employee = employeeService.getEmployee(exception.getEmployeeId());
                 authorized = isOwner && isStaff;
             }
         } else if (exception.getEmployeeId() != null) {
-            employee = principal;
-            authorized = exception.getEmployeeId() == principal.getId();
+            employee = currentEmployee;
+            authorized = exception.getEmployeeId() == currentEmployee.getId();
         } else {
             if (isOwner == null) {
-                isOwner = establishmentService.isAdmin(exception.getEstablishmentId(), principal.getId());
+                isOwner = establishmentService.isAdmin(exception.getEstablishmentId(), currentEmployee.getId());
             }
             authorized = isOwner;
         }
@@ -101,13 +100,13 @@ public class SchedulesService {
         return employee;
     }
 
-    public Pair<List<Long>, String> create(ScheduleDTO schedule, EmployeeDTO principal, Boolean forceSave,
+    public Pair<List<Long>, String> create(ScheduleDTO schedule, EmployeeDTO employeeDTO, Boolean forceSave,
             Boolean replaceExisting) {
         String response = "";
-        EmployeeDTO employee = canChangeSchedule(schedule, principal);
+        EmployeeDTO employee = canChangeSchedule(schedule, employeeDTO);
         if (employeeScheduleRepository
                 .hasOverlappingSchedule(
-                        schedule.getEmployeeId(),
+                        employee.getId(),
                         schedule.getDays(), schedule.getStartHour(), schedule.getEndHour(), true)) {
             if (!forceSave) {
                 throw new IllegalArgumentException("Employee already has a schedule for this day/hours");
@@ -116,7 +115,7 @@ public class SchedulesService {
                 if (replaceExisting) {
                     Optional<List<EmployeeSchedule>> oSchedule = employeeScheduleRepository
                             .findByEmployeeIdAndDayInAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
-                                    schedule.getEmployeeId(),
+                                    employee.getId(),
                                     schedule.getDays(), schedule.getStartHour(), schedule.getEndHour(), true);
                     for (EmployeeSchedule s : oSchedule.get()) {
                         s.setActive(false);
@@ -140,24 +139,26 @@ public class SchedulesService {
         // }
         // }
         List<EmployeeSchedule> schedules = this.employeeScheduleRepository.saveAll(
-                schedule.toEntities(userService.getEmployeeEntity(employee.getId()),
-                        establishmentRepository.findById(schedule.getEstablishmentId()).get()));
+                schedule.toEntities(entityManager));
         return new Pair<List<Long>, String>(
                 schedules.stream().map(EmployeeSchedule::getId).collect(Collectors.toList()), response);
     }
 
+    @Transactional(readOnly = true)
     public BaseListDTO<ScheduleDTO> getSchedulesMerged(ScheduleFilter filter) throws Exception {
         filter.parseDate();
         return new BaseListDTO<ScheduleDTO>(employeeScheduleRepository.findAll(filter.getSpecification()).stream()
                 .map(EmployeeSchedule::toDTO).collect(Collectors.toList()));
     }
 
+    @Transactional(readOnly = true)
     private Map<LocalDate, List<ScheduleException>> getExceptionMapByDate(
             Specification<ScheduleException> specification) {
         return scheduleExceptionRepository.findAll(specification).stream()
                 .collect(Collectors.groupingBy(ScheduleException::getDate));
     }
 
+    @Transactional(readOnly = true)
     public BasePageDTO<SchedulesDTO> getSchedulesMerged(ScheduleFilter filter, Pageable pageable) throws Exception {
         filter.parseDate(pageable);
         Map<LocalDate, List<ScheduleException>> exceptionsMap = null;
@@ -218,26 +219,22 @@ public class SchedulesService {
         return new BasePageDTO<SchedulesDTO>(new PageImpl<SchedulesDTO>(content, pageable, filter.numberOfDays()));
     }
 
-    public void disable(Long id, EmployeeDTO principal) {
+    @Transactional
+    public void disable(long id, EmployeeDTO currentEmployee) {
         EmployeeSchedule schedule = employeeScheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
         ScheduleDTO dto = schedule.toDTO();
-        canChangeSchedule(dto, principal);
+        canChangeSchedule(dto, currentEmployee);
         schedule.setActive(false);
         employeeScheduleRepository.save(schedule);
     }
 
     @Transactional
-    public Set<Long> createException(ScheduleExceptionDTO exception, EmployeeDTO principal) {
-        EmployeeDTO employee = canChangeSchedule(exception, principal);
-        Establishment establishment = null;
-        if (exception.getEstablishmentId() != null) {
-            establishment = establishmentRepository.findById(exception.getEstablishmentId())
-                    .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
-        }
-        Set<ScheduleException> _exceptions = exception.toEntitiesExceptions(
-                userService.getEmployeeEntity(employee.getId()),
-                establishment);
+    public Set<Long> createException(ScheduleExceptionDTO exception, EmployeeDTO currentEmployee) {
+        EmployeeDTO employee = canChangeSchedule(exception, currentEmployee);
+        Set<ScheduleException> _exceptions = exception.toEntitiesExceptions(entityManager,
+                employee.getId(),
+                exception.getEstablishmentId());
         Set<Long> ids = new HashSet<>();
         for (ScheduleException _exception : _exceptions) {
             ids.add(scheduleExceptionRepository.save(_exception).getId());
@@ -245,6 +242,7 @@ public class SchedulesService {
         return ids;
     }
 
+    @Transactional(readOnly = true)
     public BasePageDTO<ScheduleExceptionDTO> getExceptions(ScheduleFilter filter, Pageable pageable) throws Exception {
         filter.parseDate(pageable);
         return new BasePageDTO<ScheduleExceptionDTO>(
@@ -253,6 +251,7 @@ public class SchedulesService {
                         ScheduleExceptionDTO.class, pageable));
     }
 
+    @Transactional(readOnly = true)
     public BasePageDTO<ScheduleDTO> getSchedules(ScheduleFilter filter, Pageable pageable) throws Exception {
         filter.parseDate(pageable);
         return new BasePageDTO<ScheduleDTO>(
@@ -261,6 +260,7 @@ public class SchedulesService {
                         ScheduleDTO.class, pageable));
     }
 
+    @Transactional(readOnly = true)
     public boolean isAppointmentDateTimeValid(AppointmentDTO appointmentDTO, int duration) {
         boolean notValid = scheduleExceptionRepository.intercepts(appointmentDTO.getEmployeeId(),
                 appointmentDTO.getEstablishmentId(), appointmentDTO.getDate(), appointmentDTO.getTime(),

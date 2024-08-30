@@ -11,10 +11,12 @@ import com.teamsantos.easybarber.entities.images.EmployeeImage;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
-import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.repositories.images.EmployeeImageRepository;
+import com.teamsantos.easybarber.repositories.services.ServiceRepository;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.utils.Utils;
+
+import jakarta.persistence.EntityManager;
 
 @Service
 public class EmployeeService extends ServiceWithImages<Employee, EmployeeImage> {
@@ -27,8 +29,8 @@ public class EmployeeService extends ServiceWithImages<Employee, EmployeeImage> 
             EstablishmentStaffRepository establishmentStaffRepository, ServiceRepository serviceRepository,
             EmployeeImageRepository imageRepository,
             EmployeeRepository employeeRepository,
-            ModelMapper modelMapper) {
-        super(repository, imageRepository, modelMapper);
+            ModelMapper modelMapper, EntityManager entityManager) {
+        super(repository, imageRepository, modelMapper, entityManager);
         this.establishmentStaffRepository = establishmentStaffRepository;
         this.serviceRepository = serviceRepository;
         this.employeeRepository = employeeRepository;
@@ -46,8 +48,18 @@ public class EmployeeService extends ServiceWithImages<Employee, EmployeeImage> 
         // TODO: Mark appointments as deleted and send notification to clients
     }
 
+    @Transactional(readOnly = true)
     public EmployeeDTO getEmployee(long id) {
         return Utils.getModelMapper().map(employeeRepository.findById(id)
                 .orElseThrow(UserNotFoundException::new), EmployeeDTO.class);
+    }
+
+    @Transactional(readOnly = true)
+    public long getUserId(long employeeId) {
+        Long userId = employeeRepository.findUserIdById(employeeId);
+        if (userId == null) {
+            throw new UserNotFoundException();
+        }
+        return userId;
     }
 }

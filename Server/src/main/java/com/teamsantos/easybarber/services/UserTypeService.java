@@ -46,4 +46,12 @@ public class UserTypeService implements ApplicationListener<ApplicationReadyEven
         }
         return result;
     }
+
+    public static long getUserType(String type) {
+        return userTypes.get(type.toUpperCase());
+    }
+
+    public static long getUserType(UserTypes type) {
+        return userTypes.get(type.toString().toUpperCase());
+    }
 }

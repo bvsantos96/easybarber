@@ -4,13 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.LocationDTO;
 import com.teamsantos.easybarber.entities.Location;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.repositories.LocationRepository;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class LocationService {
@@ -21,6 +20,7 @@ public class LocationService {
         this.locationRepository = locationRepository;
     }
 
+    @Transactional(readOnly = true)
     public Page<LocationDTO> getUserLocations(Long userId, Pageable pageable) {
         return locationRepository.findLocationByUserId(userId, pageable).map(location -> {
             LocationDTO locationDTO = new LocationDTO();

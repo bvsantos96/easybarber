@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.repositories;
 
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -21,6 +22,9 @@ public interface EmployeeScheduleRepository
 
     Optional<EmployeeSchedule> findByEmployeeIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
             Long id, DAY_OF_WEEK day, LocalTime startHour, LocalTime endHour, boolean active);
+
+    Optional<List<EmployeeSchedule>> findByEmployeeIdAndDayInAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
+            Long employeeId, Set<DAY_OF_WEEK> days, LocalTime startHour, LocalTime endHour, boolean active);
 
     @Query("""
             SELECT EXISTS(

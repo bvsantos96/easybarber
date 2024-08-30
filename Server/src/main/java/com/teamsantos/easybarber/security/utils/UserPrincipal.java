@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserPrincipal {
-    private long id;
+    private Long id;
     private Long employeeId;
     private boolean[] roles;
     private Object[] permissions;

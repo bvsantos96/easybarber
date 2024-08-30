@@ -1,6 +1,9 @@
 package com.teamsantos.easybarber.DTO;
 
 import java.util.Objects;
+import java.util.Set;
+
+import com.teamsantos.easybarber.entities.images.ServiceImage;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,20 +16,22 @@ public class ServiceBaseDTO extends BaseDTO {
     private String name;
     private String description;
     private int duration;
-    private long serviceTypeId;
+    private ServiceTypeDTO serviceType;
+    private Set<ServiceImage> images;
     private String image;
 
-    public ServiceBaseDTO(Long id, String name, String description, int duration, long serviceTypeId) {
+    public ServiceBaseDTO(Long id, String name, String description, int duration, String image, Long serviceTypeId,
+            String serviceTypeName, String serviceTypeDescription, String serviceTypeImage) {
         super(id);
-        this.name = name;
-        this.description = description;
+        this.name = parseServiceString(name, serviceTypeName);
+        this.description = parseServiceString(description, serviceTypeDescription);
         this.duration = duration;
-        this.serviceTypeId = serviceTypeId;
+        this.image = parseServiceString(image, serviceTypeImage);
+        this.serviceType = new ServiceTypeDTO(serviceTypeId, serviceTypeName, serviceTypeDescription, serviceTypeImage);
     }
 
-    public ServiceBaseDTO(Long id, String name, String description, int duration, long serviceTypeId, String image) {
-        this(id, name, description, duration, serviceTypeId);
-        this.image = image;
+    private String parseServiceString(String name, String fallback) {
+        return name == null || name.length() == 0 ? fallback : name;
     }
 
     @Override
@@ -38,7 +43,7 @@ public class ServiceBaseDTO extends BaseDTO {
                 && name.equals(service.getName())
                 && description.equals(service.getDescription())
                 && Objects.equals(duration, service.getDuration())
-                && serviceTypeId == service.getServiceTypeId()
+                && serviceType.equals(service.getServiceType())
                 && Objects.equals(image, service.getImage());
     }
 }

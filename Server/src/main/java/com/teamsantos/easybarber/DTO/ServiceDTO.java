@@ -30,8 +30,8 @@ public class ServiceDTO extends BaseDTO {
         this.duration = service.getDuration();
     }
 
-    public ServiceDTO(Long id, Long employeeId, Long serviceTypeId, String name, String description,
-            double price, int duration) {
+    public ServiceDTO(Long id, Long employeeId, Long serviceTypeId,
+            String name, String description, double price, int duration) {
         super(id);
         this.employeeId = employeeId;
         this.serviceTypeId = serviceTypeId;

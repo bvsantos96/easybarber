@@ -13,6 +13,7 @@ import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.ScheduleException;
 import com.teamsantos.easybarber.utils.Utils;
 
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,7 +47,8 @@ public class ScheduleExceptionDTO extends ScheduleDTO {
         this.active = active;
     }
 
-    public Set<ScheduleException> toEntitiesExceptions(Employee employee, Establishment establishment) {
+    public Set<ScheduleException> toEntitiesExceptions(EntityManager entityManager, Long employeeId,
+            Long establishmentId) {
         Set<ScheduleException> schedules = new HashSet<ScheduleException>();
         for (; dateFrom.isBefore(dateTo) || dateFrom.isEqual(dateTo); dateFrom = dateFrom.plusDays(1)) {
             DAY_OF_WEEK day = Utils.getDayOfWeek(dateFrom);
@@ -56,11 +58,11 @@ public class ScheduleExceptionDTO extends ScheduleDTO {
                 }
             }
             ScheduleException schedule = new ScheduleException();
-            if (employee != null) {
-                schedule.setEmployee(employee);
+            if (employeeId != null) {
+                schedule.setEmployee(entityManager.getReference(Employee.class, employeeId));
             }
-            if (establishment != null) {
-                schedule.setEstablishment(establishment);
+            if (establishmentId != null) {
+                schedule.setEstablishment(entityManager.getReference(Establishment.class, establishmentId));
             }
             schedule.setDate(dateFrom);
             schedule.setStartHour(getStartHour());

@@ -1,46 +1,47 @@
 package com.teamsantos.easybarber.services;
 
-import java.security.Principal;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.ServiceType;
-import com.teamsantos.easybarber.repositories.ServiceRepository;
 import com.teamsantos.easybarber.repositories.ServiceTypeRepository;
-import com.teamsantos.easybarber.utils.PageDTO;
+import com.teamsantos.easybarber.repositories.services.ServiceRepository;
+import com.teamsantos.easybarber.security.utils.UserContext;
+
+import jakarta.persistence.EntityManager;
 
 @Service
 public class EstablishmentStaffService {
-    private final UserTypeService userTypeService;
     private final ServiceTypeRepository serviceTypeRepository;
     private final ServiceRepository serviceRepository;
     private final ModelMapper modelMapper;
+    private final EntityManager entityManager;
 
     @Autowired
     public EstablishmentStaffService(ServiceTypeRepository serviceTypeRepository,
-            UserTypeService userTypeService, ServiceRepository serviceRepository,
-            ModelMapper modelMapper) {
+            ServiceRepository serviceRepository,
+            ModelMapper modelMapper, EntityManager entityManager) {
         this.serviceRepository = serviceRepository;
-        this.userTypeService = userTypeService;
         this.serviceTypeRepository = serviceTypeRepository;
         this.modelMapper = modelMapper;
+        this.entityManager = entityManager;
     }
 
-    public void createService(ServiceDTO serviceDTO, Principal principal) {
+    @Transactional
+    public void createService(ServiceDTO serviceDTO) {
         com.teamsantos.easybarber.entities.Service service = modelMapper.map(serviceDTO,
                 com.teamsantos.easybarber.entities.Service.class);
-        service.setEmployee(userTypeService.getEmployee(principal));
-        service.setServiceType(serviceTypeRepository.findById(serviceDTO.getServiceTypeId()).orElseThrow());
+        service.setEmployee(entityManager.getReference(Employee.class, UserContext.getEmployeeId()));
+        service.setServiceType(entityManager.getReference(ServiceType.class, service.getServiceType()));
         serviceRepository.save(service);
     }
 
+    @Transactional
     public void updateService(ServiceDTO serviceDTO) {
         com.teamsantos.easybarber.entities.Service service = modelMapper.map(serviceDTO,
                 com.teamsantos.easybarber.entities.Service.class);
@@ -48,20 +49,13 @@ public class EstablishmentStaffService {
         serviceRepository.save(service);
     }
 
+    @Transactional
     public void createType(ServiceTypeDTO serviceDTO) {
         serviceTypeRepository.save(modelMapper.map(serviceDTO, ServiceType.class));
     }
 
+    @Transactional
     public void updateType(ServiceTypeDTO serviceDTO) {
         serviceTypeRepository.save(modelMapper.map(serviceDTO, ServiceType.class));
-    }
-
-    public Page<ServiceDTO> getServices(Principal principal, Pageable pageable) {
-        Employee employee = userTypeService.getEmployee(principal);
-        return getServices(employee.getId(), pageable);
-    }
-
-    public Page<ServiceDTO> getServices(Long id, Pageable pageable) {
-        return PageDTO.toDTO(modelMapper, serviceRepository.findByEmployeeId(id, pageable), ServiceDTO.class, pageable);
     }
 }
