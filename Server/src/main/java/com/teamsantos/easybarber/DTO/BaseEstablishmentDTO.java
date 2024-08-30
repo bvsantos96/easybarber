@@ -1,11 +1,12 @@
 package com.teamsantos.easybarber.DTO;
 
-import java.util.List;
+import java.util.Set;
 
 import org.locationtech.jts.geom.Point;
 import org.locationtech.jts.io.ParseException;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.teamsantos.easybarber.entities.images.EstablishmentImage;
 import com.teamsantos.easybarber.utils.GeometryUtils;
 import com.teamsantos.easybarber.utils.Utils;
 
@@ -22,7 +23,7 @@ public class BaseEstablishmentDTO extends BaseResponseDTO {
     private String address;
     private Double latitude;
     private Double longitude;
-    private List<ImageDTO> images;
+    private Set<EstablishmentImage> images;
 
     // Note the serialization of Point class is not implemented by default, to send
     // this in the JSON we would need to implement a custom serializer.
@@ -45,6 +46,16 @@ public class BaseEstablishmentDTO extends BaseResponseDTO {
         setId(id);
         this.name = name;
         this.description = description;
+    }
+
+    public BaseEstablishmentDTO(final Long id, final String name, final String description, final String address,
+            final Point location, Set<EstablishmentImage> images) {
+        setId(id);
+        this.name = name;
+        this.description = description;
+        this.address = address;
+        this.images = images;
+        setLocation(location);
     }
 
     public BaseEstablishmentDTO(final Long id, final String name, final String description, final String address,

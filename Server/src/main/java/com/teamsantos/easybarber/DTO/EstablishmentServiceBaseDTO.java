@@ -5,21 +5,21 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class EstablishmentServiceDTO extends ServiceWithImagesDTO {
-    private NameIdImageDTO establishment;
+public class EstablishmentServiceBaseDTO extends ServiceWithImagesDTO {
+    private long establishmentId;
     private Double price;
     private Boolean active;
     private Long serviceId;
 
-    public EstablishmentServiceDTO(Long id, Long serviceId, String name, String description, Integer duration,
-            String image,
+    public EstablishmentServiceBaseDTO(Long id,
+            Long serviceId, String name, String description, Integer duration, String image,
             Long serviceTypeId, String serviceTypeName, String serviceTypeDescription, String serviceTypeImageURL,
             Long employeeId, String employeeName, String employeeImage,
-            Long establishmentId, String establishmentName, String establishmentImage,
+            Long establishmentId,
             Double price, Boolean active) {
         super(id, name, description, duration, image, serviceTypeId, serviceTypeName, serviceTypeDescription,
                 serviceTypeImageURL, employeeId, employeeName, employeeImage);
-        this.establishment = new NameIdImageDTO(establishmentId, establishmentName, establishmentImage);
+        this.establishmentId = establishmentId;
         this.price = price;
         this.active = active;
         this.serviceId = serviceId;

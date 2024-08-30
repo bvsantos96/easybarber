@@ -9,6 +9,7 @@ import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.EstablishmentService;
 import com.teamsantos.easybarber.entities.User;
 
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -35,32 +36,17 @@ public class AppointmentDTO extends BaseDTO {
     private LocalDate date;
     private LocalTime time;
 
-    public Appointment toEntity(User user, Employee employee, Establishment establishment,
-            EstablishmentService service) {
+    public Appointment toEntity(EntityManager entityManager) {
         Appointment appointment = new Appointment();
-        appointment.setUser(user);
-        appointment.setEmployee(employee);
-        appointment.setEstablishment(establishment);
-        appointment.setService(service);
+        appointment.setUser(entityManager.getReference(User.class, userId));
+        appointment.setEmployee(entityManager.getReference(Employee.class, employeeId));
+        appointment.setEstablishment(entityManager.getReference(Establishment.class, establishmentId));
+        appointment.setService(entityManager.getReference(EstablishmentService.class, serviceId));
         appointment.setDescription(description);
         appointment.setDate(date);
         appointment.setTime(time);
         appointment.setActive(true);
         appointment.setConfirmed(false);
         return appointment;
-    }
-
-    public AppointmentDTO(Long id, Long userId, Long employeeId, Long establishmentId, Long serviceId,
-            String description,
-            String nonRegisteredUser, LocalDate date, LocalTime time) {
-        super(id);
-        this.userId = userId;
-        this.employeeId = employeeId;
-        this.establishmentId = establishmentId;
-        this.serviceId = serviceId;
-        this.description = description;
-        this.nonRegisteredUser = nonRegisteredUser;
-        this.date = date;
-        this.time = time;
     }
 }

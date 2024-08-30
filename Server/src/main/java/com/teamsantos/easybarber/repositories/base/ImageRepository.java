@@ -18,17 +18,17 @@ import com.teamsantos.easybarber.entities.base.Image;
 public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Image<T, E>>
         extends JpaRepository<E, Long> {
     @Query("SELECT i.id FROM #{#entityName} i WHERE i.entity.id = :entityId AND i.data = :data")
-    Long getIdByEntityIdAndData(Long entityId, String data);
+    Long getIdByEntityIdAndData(long entityId, String data);
 
     @Modifying
     @Query("DELETE FROM #{#entityName} i WHERE i.entity.id = :id")
-    void deleteByEntityId(@Param("id") Long id);
+    void deleteByEntityId(@Param("id") long id);
 
     @Query("SELECT new com.teamsantos.easybarber.DTO.ImageDTO(i.id, i.data) FROM #{#entityName} i WHERE i.entity.id = :entityId")
-    Page<ImageDTO> findByEntityId(Long entityId, Pageable pageable);
+    Page<ImageDTO> findByEntityId(long entityId, Pageable pageable);
 
     @Query("SELECT new com.teamsantos.easybarber.DTO.ImageDTO(i.id, i.data) FROM #{#entityName} i WHERE i.entity.id = :entityId")
-    List<ImageDTO> findAllByEntityId(Long entityId);
+    List<ImageDTO> findAllByEntityId(long entityId);
 
     @Query("""
                 SELECT i.id
@@ -37,11 +37,11 @@ public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Ima
                 AND i.isMain = :b
                 LIMIT 1
             """)
-    Long getIdByEntityIdAndIsMain(Long entityId, boolean b);
+    Long getIdByEntityIdAndIsMain(long entityId, boolean b);
 
     @Modifying
     @Query("UPDATE #{#entityName} i SET i.isMain = false WHERE i.entity.id = :id AND i.isMain = true")
-    void removeMainFlag(Long entityId);
+    void removeMainFlag(long entityId);
 
     @Query("""
                 SELECT EXISTS (
@@ -51,5 +51,5 @@ public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Ima
                     AND i.isMain = true
                 LIMIT 1)
             """)
-    boolean existsMain(Long entityId);
+    boolean existsMain(long entityId);
 }

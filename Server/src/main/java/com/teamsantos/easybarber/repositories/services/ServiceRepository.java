@@ -9,12 +9,12 @@ import org.springframework.stereotype.Repository;
 
 import com.teamsantos.easybarber.DTO.ServiceBaseDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
-import com.teamsantos.easybarber.DTO.ServiceWithEmployeeDTO;
+import com.teamsantos.easybarber.DTO.ServiceWithImagesDTO;
 import com.teamsantos.easybarber.DTO.filters.ServiceFilter;
 import com.teamsantos.easybarber.entities.Service;
 
 @Repository
-public interface ServiceRepository extends JpaRepository<Service, Long>, ServiceRepositoryCustom {
+public interface ServiceRepository extends JpaRepository<Service, Long>, CustomServiceRepository {
 
     @Query("""
             SELECT EXISTS (
@@ -50,73 +50,7 @@ public interface ServiceRepository extends JpaRepository<Service, Long>, Service
             """)
     Page<ServiceDTO> findAllByEmployeeId(Pageable pageable);
 
-    @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.ServiceBaseDTO(s.id, s.name, s.description, s.duration, s.serviceType.id)
-            FROM Service s
-            WHERE (:filter.employeeId IS NULL OR s.employee.id = :filter.employeeId)
-            AND (:filter.serviceTypeId IS NULL OR s.serviceType.id = :filter.serviceTypeId)
-            AND (:filter.name IS NULL OR lower(s.name) LIKE :filter.name)
-            AND (:filter.duration IS NULL OR s.duration = :filter.duration)
-            """)
     Page<ServiceBaseDTO> findAllBase(@Param("filter") ServiceFilter filter, Pageable pageable);
 
-    @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.ServiceBaseDTO(s.id, s.name, s.description, s.duration, s.serviceType.id, i.data)
-            FROM Service s
-            JOIN (SELECT i.id, i.data, i.entity.id as serviceId
-                FROM ServiceImage i
-                WHERE i.isMain = true LIMIT 1) i
-            WHERE (:filter.employeeId IS NULL OR s.employee.id = :filter.employeeId)
-            AND (:filter.serviceTypeId IS NULL OR s.serviceType.id = :filter.serviceTypeId)
-            AND (:filter.name IS NULL OR lower(s.name) LIKE :filter.name)
-            """)
-    Page<ServiceBaseDTO> findAllBaseWImage(ServiceFilter filter, Pageable pageable);
-
-    @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.ServiceWithEmployeeDTO(s.id, s.name, s.description, s.duration, s.serviceType.id, i.data, s.employee.id, s.employee.user.name, ei.data)
-            FROM Service s
-            JOIN (SELECT i.id, i.data, i.entity.id as serviceId
-                FROM ServiceImage i
-                WHERE i.isMain = true LIMIT 1) i
-            JOIN (SELECT i.id, i.data, i.entity.id as serviceId
-                FROM EmployeeImage i
-                WHERE i.isMain = true LIMIT 1) i
-            WHERE (:filter.employeeId IS NULL OR s.employee.id = :filter.employeeId)
-            AND (:filter.serviceTypeId IS NULL OR s.serviceType.id = :filter.serviceTypeId)
-            AND (:filter.name IS NULL OR lower(s.name) LIKE :filter.name)
-            """)
-    Page<ServiceWithEmployeeDTO> findAllWImagesAndEmployeeWImages(ServiceFilter filter, Pageable pageable);
-
-    @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.ServiceWithEmployeeDTO(s.id, s.name, s.description, s.duration, s.serviceType.id, i.data, s.employee.id, s.employee.user.name)
-            FROM Service s
-            JOIN (SELECT i.id, i.data, i.entity.id as serviceId
-                FROM ServiceImage i
-                WHERE i.isMain = true LIMIT 1) i
-            WHERE (:filter.employeeId IS NULL OR s.employee.id = :filter.employeeId)
-            AND (:filter.serviceTypeId IS NULL OR s.serviceType.id = :filter.serviceTypeId)
-            AND (:filter.name IS NULL OR lower(s.name) LIKE :filter.name)
-            """)
-    Page<ServiceWithEmployeeDTO> findAllBaseWImageAndEmployee(ServiceFilter filter, Pageable pageable);
-
-    @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.ServiceWithEmployeeDTO(s.id, s.name, s.description, s.duration, s.serviceType.id, i.data, s.employee.id, s.employee.user.name)
-            FROM Service s
-            JOIN (SELECT i.id, i.data, i.entity.id as serviceId
-                FROM EmployeeImage i
-                WHERE i.isMain = true LIMIT 1) i
-            WHERE (:filter.employeeId IS NULL OR s.employee.id = :filter.employeeId)
-            AND (:filter.serviceTypeId IS NULL OR s.serviceType.id = :filter.serviceTypeId)
-            AND (:filter.name IS NULL OR lower(s.name) LIKE :filter.name)
-            """)
-    Page<ServiceWithEmployeeDTO> findAllBaseAndEmployeeWImages(ServiceFilter filter, Pageable pageable);
-
-    @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.ServiceWithEmployeeDTO(s.id, s.name, s.description, s.duration, s.serviceType.id, i.data, s.employee.id, s.employee.user.name, ei.data)
-            FROM Service s
-            WHERE (:filter.employeeId IS NULL OR s.employee.id = :filter.employeeId)
-            AND (:filter.serviceTypeId IS NULL OR s.serviceType.id = :filter.serviceTypeId)
-            AND (:filter.name IS NULL OR lower(s.name) LIKE :filter.name)
-            """)
-    Page<ServiceWithEmployeeDTO> findAllBaseAndEmployee(ServiceFilter filter, Pageable pageable);
+    Page<ServiceWithImagesDTO> findAllWEmployee(@Param("filter") ServiceFilter filter, Pageable pageable);
 }

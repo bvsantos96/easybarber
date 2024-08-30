@@ -25,4 +25,16 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     @Modifying
     @Query("UPDATE Employee e SET e.deleted = true WHERE e.id = :id")
     void markAsDeleted(Long id);
+
+    @Query("""
+                SELECT e.user.id FROM Employee e WHERE e.id = :employeeId
+            """)
+    Long findUserIdById(long employeeId);
+
+    @Query("""
+            SELECT EXISTS (
+            SELECT 1 FROM Employee e WHERE e.user.id = :userId
+            LIMIT 1)
+            """)
+    boolean existsByUserId(long userId);
 }

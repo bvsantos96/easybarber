@@ -143,4 +143,11 @@ public class Utils {
     public static boolean afterOrEqual(LocalTime date1, LocalTime date2) {
         return date1.isAfter(date2) || date1.equals(date2);
     }
+
+    public static String formatStringToLIKE(String value) {
+        if (value != null) {
+            return String.format("%%%s%%", value.trim());
+        }
+        return value;
+    }
 }

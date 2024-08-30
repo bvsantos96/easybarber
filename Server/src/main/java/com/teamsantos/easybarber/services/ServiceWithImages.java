@@ -9,6 +9,7 @@ import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
@@ -18,7 +19,6 @@ import com.teamsantos.easybarber.repositories.base.ImageRepository;
 import com.teamsantos.easybarber.utils.Utils;
 
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 
 public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image<T, E>> {
     protected JpaRepository<T, Long> repository;
@@ -79,6 +79,7 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
         }
     }
 
+    @Transactional(readOnly = true)
     public Page<ImageDTO> getImages(Long entityId, Pageable pageable) throws NotFoundException {
         return imageRepository.findByEntityId(entityId, pageable);
     }

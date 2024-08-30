@@ -2,6 +2,8 @@ package com.teamsantos.easybarber.repositories;
 
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -25,6 +27,15 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("""
                 SELECT EXISTS (
+                SELECT 1
+                FROM User u
+                WHERE u.mobileInformation = :mobileInforamtion
+                LIMIT 1)
+            """)
+    boolean existsByMobileInformation(String mobileInforamtion);
+
+    @Query("""
+                SELECT EXISTS (
                     SELECT 1
                     FROM User u
                     WHERE
@@ -36,4 +47,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByIdAndUserTypeId(Long userId, Long userTypeId);
 
     Optional<UserSignInDTO> findUserSignInByMobileInformation(String mobileInformation);
+
+    Page<User> findByUserTypeId(long userTypeId, Pageable pageable);
 }
