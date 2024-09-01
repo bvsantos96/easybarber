@@ -1,6 +1,5 @@
 package com.teamsantos.easybarber.controllers;
 
-import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 
@@ -24,23 +23,21 @@ import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.SchedulesDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
+import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.services.SchedulesService;
-import com.teamsantos.easybarber.services.UserService;
 import com.teamsantos.easybarber.utils.Pair;
 
 @Controller
 public class SchedulesController {
-    private final UserService userService;
     private final SchedulesService schedulesService;
 
-    public SchedulesController(SchedulesService schedulesService, UserService userService) {
+    public SchedulesController(SchedulesService schedulesService) {
         this.schedulesService = schedulesService;
-        this.userService = userService;
     }
 
     @PostMapping("/schedule")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_EMPLOYEE_OBJECT)
-    public ResponseEntity<BaseResponseDTO> create(@RequestBody ScheduleDTO obj, Principal principal,
+    public ResponseEntity<BaseResponseDTO> create(@RequestBody ScheduleDTO obj,
             @RequestParam(required = false) Boolean forceSave,
             @RequestParam(required = false) Boolean replaceExisting) {
         try {
@@ -51,7 +48,7 @@ public class SchedulesController {
             if (replaceExisting == null) {
                 replaceExisting = true;
             }
-            Pair<List<Long>, String> result = schedulesService.create(obj, userService.getEmployee(principal),
+            Pair<List<Long>, String> result = schedulesService.create(obj, UserContext.getEmployeeId(),
                     forceSave,
                     replaceExisting);
             return ResponseEntity
@@ -74,9 +71,9 @@ public class SchedulesController {
 
     @DeleteMapping("/schedule/{id}")
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
-    public ResponseEntity<BaseResponseDTO> disable(@PathVariable Long id, Principal principal) {
+    public ResponseEntity<BaseResponseDTO> disable(@PathVariable Long id) {
         try {
-            schedulesService.disable(id, userService.getEmployee(principal));
+            schedulesService.disable(id, UserContext.getEmployeeId());
             return ResponseEntity.ok().build();
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
@@ -85,10 +82,9 @@ public class SchedulesController {
 
     @PostMapping("/schedule/exception")
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
-    public ResponseEntity<BaseResponseDTO> createException(@RequestBody ScheduleExceptionDTO exception,
-            Principal principal) {
+    public ResponseEntity<BaseResponseDTO> createException(@RequestBody ScheduleExceptionDTO exception) {
         try {
-            Set<Long> ids = schedulesService.createException(exception, userService.getEmployee(principal));
+            Set<Long> ids = schedulesService.createException(exception, UserContext.getEmployeeId());
             return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponseDTO(ids));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));

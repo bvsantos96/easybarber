@@ -1,7 +1,5 @@
 package com.teamsantos.easybarber.controllers;
 
-import java.security.Principal;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -32,10 +30,10 @@ public class AppointmentController {
     }
 
     @PostMapping("/appointment")
-    public ResponseEntity<BaseResponseDTO> create(@RequestBody AppointmentDTO appointment, Principal principal) {
+    public ResponseEntity<BaseResponseDTO> create(@RequestBody AppointmentDTO appointment) {
         try {
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new BaseResponseDTO(appointmentService.create(appointment, principal)));
+                    .body(new BaseResponseDTO(appointmentService.create(appointment)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
         }
@@ -65,9 +63,9 @@ public class AppointmentController {
 
     @PutMapping("/appointment/{id}/confirm")
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
-    public ResponseEntity<BaseResponseDTO> confirm(@PathVariable long id, Principal principal) {
+    public ResponseEntity<BaseResponseDTO> confirm(@PathVariable long id) {
         try {
-            appointmentService.confirm(id, principal);
+            appointmentService.confirm(id);
             return ResponseEntity.status(HttpStatus.OK).body(new BaseResponseDTO("Appointment canceled"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));

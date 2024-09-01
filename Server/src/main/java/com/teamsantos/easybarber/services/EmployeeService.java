@@ -2,10 +2,13 @@ package com.teamsantos.easybarber.services;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.images.EmployeeImage;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
@@ -26,7 +29,8 @@ public class EmployeeService extends ServiceWithImages<Employee, EmployeeImage> 
 
     @Autowired
     public EmployeeService(EmployeeRepository repository,
-            EstablishmentStaffRepository establishmentStaffRepository, ServiceRepository serviceRepository,
+            EstablishmentStaffRepository establishmentStaffRepository,
+            ServiceRepository serviceRepository,
             EmployeeImageRepository imageRepository,
             EmployeeRepository employeeRepository,
             ModelMapper modelMapper, EntityManager entityManager) {

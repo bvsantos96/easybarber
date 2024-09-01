@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.EmployeeCreateDTO;
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
 import com.teamsantos.easybarber.DTO.UserSignInDTO;
@@ -21,7 +20,6 @@ import com.teamsantos.easybarber.entities.UserType;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
-import com.teamsantos.easybarber.repositories.EstablishmentRepository;
 import com.teamsantos.easybarber.repositories.UserRepository;
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.security.utils.PasswordEncoding;
@@ -34,7 +32,6 @@ import jakarta.persistence.EntityManager;
 public class UserService {
     private final UserRepository userRepository;
     private final EmployeeRepository employeeRepository;
-    private final EstablishmentRepository establishmentRepository;
     private final ModelMapper modelMapper;
     private final JwtUtils jwtUtils;
     private final EntityManager entityManager;
@@ -42,11 +39,9 @@ public class UserService {
     @Autowired
     public UserService(UserRepository userRepository,
             EmployeeRepository employeeRepository,
-            EstablishmentRepository establishmentRepository,
             ModelMapper modelMapper, JwtUtils jwtUtils, EntityManager entityManager) {
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
-        this.establishmentRepository = establishmentRepository;
         this.modelMapper = modelMapper;
         this.jwtUtils = jwtUtils;
         this.entityManager = entityManager;
@@ -133,15 +128,9 @@ public class UserService {
         return principal.getName().equals(mobileInformation);
     }
 
-    @Transactional
-    public Page<EstablishmentDTO> getEstablishments(boolean admin, Pageable pageable) {
-        return getEstablishments(UserContext.getUserId(), admin, pageable);
-    }
-
-    @Transactional
-    public Page<EstablishmentDTO> getEstablishments(Long id, boolean admin, Pageable pageable) {
-        return PageDTO.toDTO(modelMapper, establishmentRepository.findEstablishmentsByEmployeeId(id, admin, pageable),
-                EstablishmentDTO.class, pageable);
+    @Transactional(readOnly = true)
+    public boolean existsUserByMobileInformation(String mobileInformation) {
+        return userRepository.existsByMobileInformation(mobileInformation);
     }
 
     @Transactional

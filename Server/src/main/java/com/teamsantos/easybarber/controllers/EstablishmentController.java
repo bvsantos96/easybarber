@@ -1,16 +1,11 @@
 package com.teamsantos.easybarber.controllers;
 
-import java.security.Principal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -76,10 +71,10 @@ public class EstablishmentController extends ImageController<Establishment, Esta
 
     @PostMapping
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
-    public ResponseEntity<BaseEstablishmentDTO> createEstablishment(@RequestBody BaseEstablishmentDTO establishmentDTO,
-            Principal principal) {
+    public ResponseEntity<BaseEstablishmentDTO> createEstablishment(
+            @RequestBody BaseEstablishmentDTO establishmentDTO) {
         try {
-            establishmentService.create(establishmentDTO, principal);
+            establishmentService.create(establishmentDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body(establishmentDTO);
         } catch (AlreadyExistsException e) {
             establishmentDTO.setResponseMessage(e.getMessage());
@@ -96,23 +91,10 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     public ResponseEntity<BasePageDTO<EstablishmentDTO>> listEstablishments(
             @ModelAttribute EstablishmentFilter filter,
             Pageable pageable) {
-        BasePageDTO<EstablishmentDTO> listDTO = new BasePageDTO<>();
         try {
-            listDTO.setItems(establishmentService.list(filter, pageable));
-            for (EstablishmentDTO establishment : listDTO.getItems()) {
-                Optional<ImageDTO> image = establishmentService
-                        .getImages(establishment.getId(), PageRequest.of(0, 1, Sort.by("id").ascending())).stream()
-                        .findFirst();
-                if (image.isPresent()) {
-                    ArrayList<ImageDTO> images = new ArrayList<>();
-                    images.add(image.get());
-                    establishment.setImages(images);
-                }
-            }
-            return ResponseEntity.ok(listDTO);
+            return ResponseEntity.ok(new BasePageDTO<>(establishmentService.list(filter, pageable)));
         } catch (Exception e) {
-            listDTO.setResponseMessage(e.getMessage());
-            return ResponseEntity.badRequest().body(listDTO);
+            return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }
     }
 
@@ -122,9 +104,6 @@ public class EstablishmentController extends ImageController<Establishment, Esta
             @PathVariable Long employeeId) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            if (establishmentId == 2L) {
-                System.out.println();
-            }
             establishmentService.addEmployee(establishmentId, employeeId);
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
         } catch (UserAlreadyExistsException e) {
@@ -216,17 +195,16 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     @Override
     @PostMapping(path = "/{establishmentId}/images", consumes = "application/json")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
-    public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("establishmentId") Long establishmentId,
-            @RequestBody List<ImageDTO> images, Principal principal) {
+    public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("establishmentId") long establishmentId,
+            @RequestBody List<ImageDTO> images) {
         return super._addImages(establishmentId, images);
     }
 
     @GetMapping("/{establishmentId}/schedule")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
-    public ResponseEntity<BasePageDTO<ScheduleDTO>> getSchedules(
-            @PathVariable("establishmentId") Long establishmentId,
+    public ResponseEntity<BasePageDTO<ScheduleDTO>> getSchedules(@PathVariable("establishmentId") long establishmentId,
             @RequestParam(required = false) Boolean active,
-            Pageable pageable, Principal principal) {
+            Pageable pageable) {
         try {
             if (active == null) {
                 active = true;

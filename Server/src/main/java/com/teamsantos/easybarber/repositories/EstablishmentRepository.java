@@ -66,4 +66,11 @@ public interface EstablishmentRepository
 
     @Query("SELECT es.establishment FROM EstablishmentStaff es WHERE es.employee.id = :employeeId AND (:admin = false OR es.admin = true)")
     Page<Establishment> findEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable);
+
+    @Query("""
+                SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, e.nVotes, e.sumVotes, e.images)
+                FROM Establishment e
+                WHERE e.id = :id
+            """)
+    Optional<EstablishmentDTO> findByIdDTO(long id);
 }

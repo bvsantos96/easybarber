@@ -11,13 +11,17 @@ import com.teamsantos.easybarber.entities.Location;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.repositories.LocationRepository;
 
+import jakarta.persistence.EntityManager;
+
 @Service
 public class LocationService {
     private final LocationRepository locationRepository;
+    private final EntityManager entityManager;
 
     @Autowired
-    public LocationService(LocationRepository locationRepository) {
+    public LocationService(LocationRepository locationRepository, EntityManager entityManager) {
         this.locationRepository = locationRepository;
+        this.entityManager = entityManager;
     }
 
     @Transactional(readOnly = true)
@@ -37,9 +41,9 @@ public class LocationService {
     }
 
     @Transactional
-    public Long addLocation(LocationDTO locationDTO, User user) {
-        locationRepository.deleteIfExist(locationDTO.getLatitude(), locationDTO.getLongitude(), user);
-        locationRepository.unSelectAll(user);
+    public Long addLocation(LocationDTO locationDTO, long userId) {
+        locationRepository.deleteIfExist(locationDTO.getLatitude(), locationDTO.getLongitude(), userId);
+        locationRepository.unSelectAll(userId);
         Location location = new Location();
         location.setSelected(true);
         location.setLatitude(locationDTO.getLatitude());
@@ -48,7 +52,7 @@ public class LocationService {
         location.setCountry(locationDTO.getCountry());
         location.setCity(locationDTO.getCity() == null ? "" : locationDTO.getCity());
         location.setName(locationDTO.getName());
-        location.setUser(user);
+        location.setUser(entityManager.getReference(User.class, userId));
         return locationRepository.save(location).getId();
     }
 }
