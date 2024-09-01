@@ -1,6 +1,5 @@
 package com.teamsantos.easybarber.controllers;
 
-import java.security.Principal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +20,9 @@ import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.ImageDTO;
-import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.DTO.ServiceBaseDTO;
 import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
+import com.teamsantos.easybarber.DTO.filters.ServiceFilter;
 import com.teamsantos.easybarber.entities.Service;
 import com.teamsantos.easybarber.entities.images.ServiceImage;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
@@ -44,9 +44,8 @@ public class ServiceController extends ImageController<Service, ServiceImage> {
     // This will probably be used by the application as a filter, so we should
     // think about it
     @PostMapping
-    @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
-    public ResponseEntity<BaseResponseDTO> createServiceType(@RequestBody ServiceTypeDTO serviceDTO,
-            Principal principal) {
+    @PreAuthorize(PrePermissionEvaluator.IS_SYSTEM_ADMIN)
+    public ResponseEntity<BaseResponseDTO> createServiceType(@RequestBody ServiceTypeDTO serviceDTO) {
         BaseResponseDTO response = new BaseResponseDTO();
         try {
             serviceService.createType(serviceDTO);
@@ -85,12 +84,14 @@ public class ServiceController extends ImageController<Service, ServiceImage> {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<BasePageDTO<ServiceDTO>> list(
+    public ResponseEntity<BasePageDTO<ServiceBaseDTO>> list(
             @RequestParam(name = "serviceType", required = false) Long serviceType,
             Pageable pageable) {
-        BasePageDTO<ServiceDTO> response = new BasePageDTO<>();
+        BasePageDTO<ServiceBaseDTO> response = new BasePageDTO<>();
         try {
-            response.setItems(serviceService.list(serviceType, pageable));
+            ServiceFilter filter = new ServiceFilter();
+            filter.setServiceTypeId(serviceType);
+            response.setItems(serviceService.listServices(filter, pageable));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.setResponseMessage(e.getMessage());
@@ -101,8 +102,8 @@ public class ServiceController extends ImageController<Service, ServiceImage> {
     @Override
     @PostMapping("/{serviceId}/images")
     @PreAuthorize(PrePermissionEvaluator.SERVICE_OWNER)
-    public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("serviceId") Long serviceId,
-            @RequestBody List<ImageDTO> images, Principal principal) {
+    public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("serviceId") long serviceId,
+            @RequestBody List<ImageDTO> images) {
         try {
             return _addImages(serviceId, images);
         } catch (Exception e) {

@@ -18,11 +18,11 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
     Page<Location> findLocationByUserId(Long userId, Pageable pageable);
 
     @Modifying
-    @Query("DELETE FROM Location l WHERE l.latitude = :latitude AND l.longitude = :longitude AND l.user = :user")
+    @Query("DELETE FROM Location l WHERE l.latitude = :latitude AND l.longitude = :longitude AND l.user.id = :userId")
     int deleteIfExist(@Param("latitude") double latitude, @Param("longitude") double longitude,
-            @Param("user") User user);
+            @Param("user") long userId);
 
     @Modifying
-    @Query("UPDATE Location l SET l.selected = false WHERE l.user = :user AND l.selected = true")
-    int unSelectAll(User user);
+    @Query("UPDATE Location l SET l.selected = false WHERE l.user.id = :userId AND l.selected = true")
+    int unSelectAll(long userId);
 }

@@ -20,7 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.teamsantos.easybarber.DTO.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
-import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.SchedulesDTO;
@@ -39,7 +38,6 @@ import jakarta.persistence.EntityManager;
 
 @Service
 public class SchedulesService {
-    private final EmployeeService employeeService;
     private final AppointmentRepository appointmentRepository;
     private final EmployeeScheduleRepository employeeScheduleRepository;
     private final EstablishmentService establishmentService;
@@ -52,43 +50,41 @@ public class SchedulesService {
             AppointmentRepository appointmentRepository,
             ScheduleExceptionsRepository scheduleExceptionRepository,
             EstablishmentService establishmentService,
-            EmployeeService employeeService,
             ModelMapper modelMapper, EntityManager entityManager) {
         this.employeeScheduleRepository = employeeScheduleRepository;
         this.establishmentService = establishmentService;
         this.scheduleExceptionRepository = scheduleExceptionRepository;
         this.appointmentRepository = appointmentRepository;
-        this.employeeService = employeeService;
         this.modelMapper = modelMapper;
         this.entityManager = entityManager;
     }
 
-    private EmployeeDTO canChangeSchedule(ScheduleDTO exception, EmployeeDTO currentEmployee) {
+    private long canChangeSchedule(ScheduleDTO exception, long employeeId) {
         boolean authorized = false;
         Boolean isOwner = null;
         Boolean isStaff = null;
-        EmployeeDTO employee = null;
+        Long employee = null;
         if (exception.getEmployeeId() == null && exception.getEstablishmentId() == null) {
             throw new IllegalArgumentException("Employee or Establishment must be informed");
         }
         if (exception.getEmployeeId() != null && exception.getEstablishmentId() != null) {
-            isOwner = establishmentService.isAdmin(exception.getEstablishmentId(), currentEmployee.getId());
-            isStaff = establishmentService.isStaff(exception.getEstablishmentId(), currentEmployee.getId());
-            if (exception.getEmployeeId() == currentEmployee.getId()) {
+            isOwner = establishmentService.isAdmin(exception.getEstablishmentId(), employeeId);
+            isStaff = establishmentService.isStaff(exception.getEstablishmentId(), employeeId);
+            if (exception.getEmployeeId() == employeeId) {
                 if (isStaff) {
-                    employee = employeeService.getEmployee(exception.getEmployeeId());
+                    employee = exception.getEmployeeId();
                     authorized = true;
                 }
             } else {
-                employee = employeeService.getEmployee(exception.getEmployeeId());
+                employee = exception.getEmployeeId();
                 authorized = isOwner && isStaff;
             }
         } else if (exception.getEmployeeId() != null) {
-            employee = currentEmployee;
-            authorized = exception.getEmployeeId() == currentEmployee.getId();
+            employee = employeeId;
+            authorized = exception.getEmployeeId() == employeeId;
         } else {
             if (isOwner == null) {
-                isOwner = establishmentService.isAdmin(exception.getEstablishmentId(), currentEmployee.getId());
+                isOwner = establishmentService.isAdmin(exception.getEstablishmentId(), employeeId);
             }
             authorized = isOwner;
         }
@@ -100,13 +96,13 @@ public class SchedulesService {
         return employee;
     }
 
-    public Pair<List<Long>, String> create(ScheduleDTO schedule, EmployeeDTO employeeDTO, Boolean forceSave,
+    public Pair<List<Long>, String> create(ScheduleDTO schedule, long employeeId, Boolean forceSave,
             Boolean replaceExisting) {
         String response = "";
-        EmployeeDTO employee = canChangeSchedule(schedule, employeeDTO);
+        long employee = canChangeSchedule(schedule, employeeId);
         if (employeeScheduleRepository
                 .hasOverlappingSchedule(
-                        employee.getId(),
+                        employee,
                         schedule.getDays(), schedule.getStartHour(), schedule.getEndHour(), true)) {
             if (!forceSave) {
                 throw new IllegalArgumentException("Employee already has a schedule for this day/hours");
@@ -115,7 +111,7 @@ public class SchedulesService {
                 if (replaceExisting) {
                     Optional<List<EmployeeSchedule>> oSchedule = employeeScheduleRepository
                             .findByEmployeeIdAndDayInAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
-                                    employee.getId(),
+                                    employee,
                                     schedule.getDays(), schedule.getStartHour(), schedule.getEndHour(), true);
                     for (EmployeeSchedule s : oSchedule.get()) {
                         s.setActive(false);
@@ -220,20 +216,20 @@ public class SchedulesService {
     }
 
     @Transactional
-    public void disable(long id, EmployeeDTO currentEmployee) {
+    public void disable(long id, long currentEmployeeId) {
         EmployeeSchedule schedule = employeeScheduleRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
         ScheduleDTO dto = schedule.toDTO();
-        canChangeSchedule(dto, currentEmployee);
+        canChangeSchedule(dto, currentEmployeeId);
         schedule.setActive(false);
         employeeScheduleRepository.save(schedule);
     }
 
     @Transactional
-    public Set<Long> createException(ScheduleExceptionDTO exception, EmployeeDTO currentEmployee) {
-        EmployeeDTO employee = canChangeSchedule(exception, currentEmployee);
+    public Set<Long> createException(ScheduleExceptionDTO exception, long currentEmployeeId) {
+        long employee = canChangeSchedule(exception, currentEmployeeId);
         Set<ScheduleException> _exceptions = exception.toEntitiesExceptions(entityManager,
-                employee.getId(),
+                employee,
                 exception.getEstablishmentId());
         Set<Long> ids = new HashSet<>();
         for (ScheduleException _exception : _exceptions) {

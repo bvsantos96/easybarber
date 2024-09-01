@@ -37,6 +37,7 @@ import com.teamsantos.easybarber.repositories.establishmentServices.Establishmen
 import com.teamsantos.easybarber.repositories.services.ServiceRepository;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.utils.GeometryUtils;
+import com.teamsantos.easybarber.utils.PageDTO;
 import com.teamsantos.easybarber.utils.Pair;
 import com.teamsantos.easybarber.utils.Utils;
 
@@ -74,7 +75,7 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
 
     @Transactional(readOnly = true)
     public EstablishmentDTO getEstablishmentDTO(Long id) throws NotFoundException {
-        return getEstablishment(id).convertToDto();
+        return establishmentRepository.findByIdDTO(id).orElseThrow(NotFoundException::new);
     }
 
     @Transactional(readOnly = true)
@@ -287,5 +288,12 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
             throw new GenericNotFoundException("Establishment service");
         }
         return establishmentService;
+    }
+
+    @Transactional
+    public Page<EstablishmentDTO> getEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable) {
+        return PageDTO.toDTO(modelMapper,
+                establishmentRepository.findEstablishmentsByEmployeeId(employeeId, admin, pageable),
+                EstablishmentDTO.class, pageable);
     }
 }
