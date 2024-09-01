@@ -127,7 +127,7 @@ public class ServiceService extends
 
     @Transactional(readOnly = true)
     public List<ServiceTypeDTO> listTypes() {
-        return serviceTypeRepository.list().stream().map(e -> modelMapper.map(e, ServiceTypeDTO.class))
+        return serviceTypeRepository.findAll().stream().map(e -> modelMapper.map(e, ServiceTypeDTO.class))
                 .toList();
     }
 }

@@ -1,6 +1,5 @@
 package com.teamsantos.easybarber.controllers;
 
-import java.security.Principal;
 import java.util.List;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -25,8 +24,7 @@ public abstract class ImageController<T extends EntityWithImages<T, E>, E extend
         this.service = service;
     }
 
-    public abstract ResponseEntity<BaseResponseDTO> addImages(Long entityId, List<ImageDTO> images,
-            Principal principal);
+    public abstract ResponseEntity<BaseResponseDTO> addImages(long entityId, List<ImageDTO> images);
 
     @Transactional
     public ResponseEntity<BaseResponseDTO> _addImages(Long entityId,
@@ -39,10 +37,6 @@ public abstract class ImageController<T extends EntityWithImages<T, E>, E extend
             }
             service.saveImages(entityId, images);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (NotFoundException e) {
-            System.err.println(e.getMessage());
-            response.setResponseMessage("Establishment not found");
-            return ResponseEntity.badRequest().body(response);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             response.setResponseMessage(e.getMessage());

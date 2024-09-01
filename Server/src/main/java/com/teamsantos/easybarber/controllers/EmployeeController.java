@@ -20,12 +20,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
+import com.teamsantos.easybarber.DTO.CreateServiceDTO;
 import com.teamsantos.easybarber.DTO.EmployeeCreateDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
+import com.teamsantos.easybarber.DTO.ServiceBaseDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
+import com.teamsantos.easybarber.DTO.filters.ServiceFilter;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.images.EmployeeImage;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
@@ -33,6 +36,7 @@ import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.services.EmployeeService;
+import com.teamsantos.easybarber.services.EstablishmentService;
 import com.teamsantos.easybarber.services.SchedulesService;
 import com.teamsantos.easybarber.services.ServiceService;
 import com.teamsantos.easybarber.services.UserService;
@@ -44,14 +48,16 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
     private final UserService userService;
     private final ServiceService serviceService;
     private final SchedulesService schedulesService;
+    private final EstablishmentService establishmentService;
 
     @Autowired
     public EmployeeController(EmployeeService employeeService, UserService userService, ServiceService serviceService,
-            SchedulesService schedulesService) {
+            SchedulesService schedulesService, EstablishmentService establishmentService) {
         super(employeeService);
         this.employeeService = employeeService;
         this.userService = userService;
         this.serviceService = serviceService;
+        this.establishmentService = establishmentService;
         this.schedulesService = schedulesService;
     }
 
@@ -79,9 +85,9 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
     }
 
     @DeleteMapping
-    public ResponseEntity<BaseResponseDTO> deleteEmployee(Principal principal) {
+    public ResponseEntity<BaseResponseDTO> deleteEmployee() {
         try {
-            employeeService.deleteEmployee(principal);
+            employeeService.deleteEmployee();
             return ResponseEntity.ok(new BaseResponseDTO("Employee deleted successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
@@ -90,9 +96,9 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
 
     @PostMapping("/service")
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
-    public ResponseEntity<BaseResponseDTO> createService(@RequestBody ServiceDTO service, Principal principal) {
+    public ResponseEntity<BaseResponseDTO> createService(@RequestBody CreateServiceDTO service) {
         try {
-            serviceService.createService(service, principal);
+            serviceService.createService(service);
             return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponseDTO("Service created successfully"));
         } catch (AlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.FOUND).body(new BaseResponseDTO(e.getMessage()));
@@ -113,29 +119,34 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
     }
 
     @GetMapping("/services")
-    public ResponseEntity<BasePageDTO<ServiceDTO>> getServices(Principal principal, Pageable pageable) {
+    public ResponseEntity<BasePageDTO<ServiceBaseDTO>> getServices(Pageable pageable) {
         try {
-            return ResponseEntity.ok(new BasePageDTO<>(serviceService.getServices(principal, pageable)));
+            ServiceFilter filter = new ServiceFilter();
+            filter.setEmployeeId(UserContext.getEmployeeId());
+            return ResponseEntity.ok(new BasePageDTO<>(serviceService.listServices(filter, pageable)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }
     }
 
     @GetMapping("/{id}/services")
-    public ResponseEntity<BasePageDTO<ServiceDTO>> getServices(@PathVariable("id") Long id, Pageable pageable) {
+    public ResponseEntity<BasePageDTO<ServiceBaseDTO>> getServices(@PathVariable("id") Long id, Pageable pageable) {
         try {
-            return ResponseEntity.ok(new BasePageDTO<>(serviceService.getServices(id, pageable)));
+            ServiceFilter filter = new ServiceFilter();
+            filter.setEmployeeId(id);
+            return ResponseEntity.ok(new BasePageDTO<>(serviceService.listServices(filter, pageable)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }
     }
 
     @GetMapping("/establishments")
-    public ResponseEntity<BasePageDTO<EstablishmentDTO>> getEstablishments(Principal principal,
+    public ResponseEntity<BasePageDTO<EstablishmentDTO>> getEstablishments(
             @RequestParam(defaultValue = "false") boolean owned, Pageable pageable) {
         try {
             return ResponseEntity
-                    .ok(new BasePageDTO<>(userService.getEstablishments(principal, owned, pageable)));
+                    .ok(new BasePageDTO<>(establishmentService
+                            .getEstablishmentsByEmployeeId(UserContext.getEmployeeId(), owned, pageable)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }
@@ -146,7 +157,8 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
             @RequestParam(defaultValue = "false") boolean owned, Pageable pageable) {
         try {
             return ResponseEntity
-                    .ok(new BasePageDTO<>(userService.getEstablishments(id, owned, pageable)));
+                    .ok(new BasePageDTO<>(establishmentService
+                            .getEstablishmentsByEmployeeId(id, owned, pageable)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }
@@ -158,8 +170,7 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
     public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("entityId") Long entityId,
             @RequestBody List<ImageDTO> images, Principal principal) {
         try {
-            if (principal != null && userService.userChangePermissions(principal,
-                    userService.getUser(principal).getMobileInformation()))
+            if (principal != null && userService.existsUserByMobileInformation(principal.getName()))
                 return _addImages(entityId, images);
             else
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)

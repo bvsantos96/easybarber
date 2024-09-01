@@ -1,7 +1,5 @@
 package com.teamsantos.easybarber.controllers;
 
-import java.security.Principal;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +16,7 @@ import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.LocationDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
-import com.teamsantos.easybarber.entities.User;
+import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.services.LocationService;
 import com.teamsantos.easybarber.services.UserService;
 
@@ -59,9 +57,9 @@ public class UserController {
     }
 
     @PutMapping("/user")
-    public ResponseEntity<String> updateUser(@RequestBody UserCreateDTO userDTO, Principal principal) {
+    public ResponseEntity<String> updateUser(@RequestBody UserCreateDTO userDTO) {
         try {
-            userService.updateUser(userDTO, principal);
+            userService.updateUser(userDTO);
             return ResponseEntity.ok("User updated successfully.");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -70,10 +68,10 @@ public class UserController {
     }
 
     @GetMapping("/locations")
-    public ResponseEntity<BasePageDTO<LocationDTO>> getUserLocations(Principal principal, Pageable pageable) {
+    public ResponseEntity<BasePageDTO<LocationDTO>> getUserLocations(Pageable pageable) {
         BasePageDTO<LocationDTO> locations = new BasePageDTO<>();
         try {
-            locations.setItems(locationService.getUserLocations(userService.getUserId(principal), pageable));
+            locations.setItems(locationService.getUserLocations(UserContext.getUserId(), pageable));
             return ResponseEntity.ok(locations);
         } catch (Exception e) {
             locations.setResponseMessage(e.getMessage());
@@ -82,10 +80,9 @@ public class UserController {
     }
 
     @PostMapping("/location")
-    public ResponseEntity<Long> addUserLocation(@RequestBody LocationDTO locationDTO, Principal principal) {
+    public ResponseEntity<Long> addUserLocation(@RequestBody LocationDTO locationDTO) {
         try {
-            User user = userService.getUserEntity(principal);
-            return ResponseEntity.ok(locationService.addLocation(locationDTO, user));
+            return ResponseEntity.ok(locationService.addLocation(locationDTO, UserContext.getUserId()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(-1L);
         }
