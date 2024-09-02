@@ -9,8 +9,7 @@ import com.teamsantos.easybarber.security.utils.UserContext;
 public class AppointmentSecurityExpressionRoot extends SecurityExpressionRoot {
     private final AppointmentRepository appointmentRepository;
 
-    public AppointmentSecurityExpressionRoot(Authentication authentication,
-            AppointmentRepository appointmentRepository) {
+    public AppointmentSecurityExpressionRoot(Authentication authentication, AppointmentRepository appointmentRepository) {
         super(authentication);
         this.appointmentRepository = appointmentRepository;
     }

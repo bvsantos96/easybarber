@@ -15,16 +15,16 @@ import com.teamsantos.easybarber.entities.Establishment;
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
-    Optional<Employee> findByUserId(Long userId);
+    Optional<Employee> findByUserId(long userId);
 
     @Query("SELECT sf.establishment FROM EstablishmentStaff sf WHERE sf.employee.id = :userId AND sf.approved = true AND sf.deleted = false")
-    Page<Establishment> findOwnedEstablishmentsById(Long userId, Pageable pageable);
+    Page<Establishment> findOwnedEstablishmentsById(long userId, Pageable pageable);
 
-    void deleteByUserId(Long id);
+    void deleteByUserId(long id);
 
     @Modifying
-    @Query("UPDATE Employee e SET e.deleted = true WHERE e.id = :id")
-    void markAsDeleted(Long id);
+    @Query("UPDATE Employee e SET e.enabled = false WHERE e.id = :id")
+    void markAsDeleted(long id);
 
     @Query("""
                 SELECT e.user.id FROM Employee e WHERE e.id = :employeeId
@@ -33,8 +33,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     @Query("""
             SELECT EXISTS (
-            SELECT 1 FROM Employee e WHERE e.user.id = :userId
-            LIMIT 1)
+                SELECT 1 FROM Employee e WHERE e.user.id = :userId
+            )
             """)
     boolean existsByUserId(long userId);
 }

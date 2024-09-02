@@ -23,7 +23,7 @@ public interface AppointmentRepository
                 and (s.active = true)
                 and (s.date = :date)
                 and ((:time is null or s.time >= :time) and (:endTime is null or s.time <= :endTime))
-                LIMIT 1)
+                )
             """)
     boolean intercepts(long employeeId, LocalDate date, LocalTime time, LocalTime endTime);
 
@@ -33,7 +33,7 @@ public interface AppointmentRepository
                 from Appointment s
                 where s.employee.id = :employeeId
                 and s.id != :appointmentId
-                LIMIT 1)
+                )
             """)
     boolean existsByIdAndEmployeeId(long appointmentId, long employeeId);
 
@@ -43,7 +43,7 @@ public interface AppointmentRepository
                 from Appointment s
                 where s.user.id = :userId
                 and s.id != :appointmentId
-                LIMIT 1)
+                )
             """)
     boolean existsByIdAndUserId(long appointmentId, long userId);
 }

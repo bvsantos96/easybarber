@@ -31,7 +31,7 @@ public interface ScheduleExceptionsRepository
                 and ((s.startHour <= :time and s.endHour > :time)
                     or (s.startHour < :endTime and s.endHour >= :endTime)
                     or (s.startHour <= :time and s.endHour <= :endTime))
-            LIMIT 1)
+            )
             """)
     boolean intercepts(Long employeeId, Long establishmentId, LocalDate date, LocalTime time, LocalTime endTime);
 }
