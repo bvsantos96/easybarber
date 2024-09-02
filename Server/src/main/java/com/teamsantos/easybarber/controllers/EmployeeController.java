@@ -167,14 +167,14 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
     @Override
     @PostMapping("/{entityId}/images")
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
-    public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("entityId") Long entityId,
-            @RequestBody List<ImageDTO> images, Principal principal) {
+    public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("entityId") long entityId,
+            @RequestBody List<ImageDTO> images) {
         try {
-            if (principal != null && userService.existsUserByMobileInformation(principal.getName()))
-                return _addImages(entityId, images);
-            else
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body(new BaseResponseDTO("User not allowed to update this entity"));
+            if (UserContext.getEmployeeId() != entityId) {
+                return ResponseEntity.badRequest()
+                        .body(new BaseResponseDTO("You are not allowed to add images to this employee"));
+            }
+            return _addImages(entityId, images);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
         }

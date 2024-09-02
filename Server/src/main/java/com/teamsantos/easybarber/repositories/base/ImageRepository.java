@@ -30,17 +30,17 @@ public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Ima
     @Query("SELECT new com.teamsantos.easybarber.DTO.ImageDTO(i.id, i.data) FROM #{#entityName} i WHERE i.entity.id = :entityId")
     List<ImageDTO> findAllByEntityId(long entityId);
 
-    @Query("""
-                SELECT i.id
-                FROM #{#entityName} i
-                WHERE i.entity.id = :entityId
-                AND i.isMain = :b
-                LIMIT 1
-            """)
-    Long getIdByEntityIdAndIsMain(long entityId, boolean b);
+    @Query(value = """
+            SELECT i.id
+            FROM #{#entityName} i
+            WHERE i.entity_id = :entityId
+            AND i.is_main = :isMain
+            LIMIT 1
+            """, nativeQuery = true)
+    Long getIdByEntityIdAndIsMain(long entityId, boolean isMain);
 
     @Modifying
-    @Query("UPDATE #{#entityName} i SET i.isMain = false WHERE i.entity.id = :id AND i.isMain = true")
+    @Query("UPDATE #{#entityName} i SET i.isMain = false WHERE i.entity.id = :entityId AND i.isMain = true")
     void removeMainFlag(long entityId);
 
     @Query("""
@@ -49,7 +49,7 @@ public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Ima
                     FROM #{#entityName} i
                     WHERE i.entity.id = :entityId
                     AND i.isMain = true
-                LIMIT 1)
+                )
             """)
     boolean existsMain(long entityId);
 }

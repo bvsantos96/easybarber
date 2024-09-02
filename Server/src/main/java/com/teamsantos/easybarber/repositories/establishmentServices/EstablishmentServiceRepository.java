@@ -21,14 +21,14 @@ public interface EstablishmentServiceRepository
             FROM EstablishmentService es
             WHERE
                 es.establishment.id = :establishmentId
-            AND es.service.id = :serviceI
+            AND es.service.id = :serviceId
             """)
     Integer getDurationOfService(long establishmentId, long serviceId);
 
     @Query("""
             SELECT new com.teamsantos.easybarber.utils.Pair(es.id, es.service.duration)
-            WHERE
             FROM EstablishmentService es
+            WHERE
                 es.establishment.id = :establishmentId
                 AND es.service.id = :serviceId
             """)
@@ -41,17 +41,17 @@ public interface EstablishmentServiceRepository
                 WHERE
                     es.establishment.id = :establishmentId
                 AND es.service.id = :serviceId
-            LIMIT 1)
+            )
             """)
     boolean existsByServiceIdAndEstablishmentId(long serviceId, long establishmentId);
 
     @Query("""
                 SELECT com.teamsantos.easybarber.DTO.ServiceFullDTO(
-                    es.id, es.service.name, es.service.description, es.service.duration, es.price, es.service.images,
+                    es.id, es.service.name, es.service.description, es.service.duration, es.price, i,
                     es.service.serviceType.id, es.service.serviceType.name, es.service.serviceType, es.service.serviceType.imageURL,
-                    es.service.employee.id, es.service.employee.name
+                    es.service.employee.id, es.service.employee.user.name
                 ) FROM EstablishmentService es
-                JOIN FETCH es.services.images
+                LEFT JOIN es.service.images i
                 WHERE
                     es.establishment.id = :establishmentId
                 AND es.service.id = :serviceId

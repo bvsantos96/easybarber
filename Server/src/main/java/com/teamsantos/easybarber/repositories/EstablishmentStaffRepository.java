@@ -16,12 +16,11 @@ public interface EstablishmentStaffRepository extends JpaRepository<Establishmen
                 SELECT 1
                 FROM EstablishmentStaff es
                 WHERE
-                    es.employee_id = :employeeId
-                AND es.establishment_id = :establishmentId
+                    es.employee.id = :employeeId
+                AND es.establishment.id = :establishmentId
                 AND es.approved = true
                 AND es.deleted = false
                 AND es.admin = true
-                LIMIT 1
             )
             """)
     boolean isAdminOfEstablishment(long employeeId, long establishmentId);
@@ -31,11 +30,11 @@ public interface EstablishmentStaffRepository extends JpaRepository<Establishmen
                 SELECT 1
                 FROM EstablishmentStaff es
                 WHERE
-                    es.employee_id = :employeeId
-                AND es.establishment_id = :establishmentId
+                    es.employee.id = :employeeId
+                AND es.establishment.id = :establishmentId
                 AND es.approved = true
                 AND es.deleted = false
-                LIMIT 1
+
             )
             """)
     boolean isEmployeeOfEstablishment(long employeeId, long establishmentId);
@@ -50,7 +49,7 @@ public interface EstablishmentStaffRepository extends JpaRepository<Establishmen
             ) FROM EstablishmentStaff es
             WHERE
                 es.establishment.id = :establishmentId
-            AND (NOT :onlyActive OR es.active = :onlyActive)
+            AND (:onlyActive = false OR es.deleted = false AND es.approved = true)
             """)
     List<EmployeeDTO> findEmployeeByEstablishmentIdAndActiveFilter(long establishmentId, boolean onlyActive);
 }

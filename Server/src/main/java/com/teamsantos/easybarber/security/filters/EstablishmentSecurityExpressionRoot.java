@@ -3,18 +3,15 @@ package com.teamsantos.easybarber.security.filters;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.core.Authentication;
 
-import com.teamsantos.easybarber.exceptions.UserNotFoundException;
-import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
+import com.teamsantos.easybarber.security.utils.UserContext;
 
 public class EstablishmentSecurityExpressionRoot extends SecurityExpressionRoot {
-    private final EmployeeRepository employeeRepository;
     private final EstablishmentStaffRepository establishmentStaffRepository;
 
-    public EstablishmentSecurityExpressionRoot(Authentication authentication, EmployeeRepository employeeRepository,
+    public EstablishmentSecurityExpressionRoot(Authentication authentication,
             EstablishmentStaffRepository establishmentStaffRepository) {
         super(authentication);
-        this.employeeRepository = employeeRepository;
         this.establishmentStaffRepository = establishmentStaffRepository;
     }
 
@@ -29,16 +26,10 @@ public class EstablishmentSecurityExpressionRoot extends SecurityExpressionRoot 
      *         establishment
      */
     public boolean hasAdminPermission(Long establishmentId) {
-        Long employeeId = employeeRepository.findByMobileInformation(getAuthentication().getName())
-                .orElseThrow(UserNotFoundException::new)
-                .getId();
-        return establishmentStaffRepository.isAdminOfEstablishment(employeeId, establishmentId);
+        return establishmentStaffRepository.isAdminOfEstablishment(UserContext.getEmployeeId(), establishmentId);
     }
 
     public boolean hasEmployeePermission(Long establishmentId) {
-        Long employeeId = employeeRepository.findByMobileInformation(getAuthentication().getName())
-                .orElseThrow(UserNotFoundException::new)
-                .getId();
-        return establishmentStaffRepository.isEmployeeOfEstablishment(employeeId, establishmentId);
+        return establishmentStaffRepository.isEmployeeOfEstablishment(UserContext.getEmployeeId(), establishmentId);
     }
 }

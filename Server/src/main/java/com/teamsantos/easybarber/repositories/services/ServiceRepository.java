@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import com.teamsantos.easybarber.DTO.ServiceBaseDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
-import com.teamsantos.easybarber.DTO.ServiceWithImagesDTO;
 import com.teamsantos.easybarber.DTO.filters.ServiceFilter;
 import com.teamsantos.easybarber.entities.Service;
 
@@ -24,19 +23,19 @@ public interface ServiceRepository extends JpaRepository<Service, Long>, CustomS
                 JOIN e.user u
                 WHERE s.id = :serviceId
                 AND u.mobileInformation = :mobileInformation
-                LIMIT 1)
+                )
             """)
     boolean checkIfEmployeeIsServiceOwner(Long serviceId, String mobileInformation);
 
     @Query("""
             SELECT EXISTS (
                 SELECT 1
-                Service s
+                FROM Service s
                 WHERE s.employee.id = :employeeId
                 AND s.serviceType.id = :serviceTypeId
-                AND lower(s.name) = lowers(:name)
+                AND lower(s.name) = lower(:name)
                 AND s.description = :description
-                LIMIT 1)
+                )
             """)
     boolean existsByEmployeeIdServiceTypeIdNameAndDescription(long employeeId, long serviceTypeId, String name,
             String description);
@@ -51,6 +50,4 @@ public interface ServiceRepository extends JpaRepository<Service, Long>, CustomS
     Page<ServiceDTO> findAllByEmployeeId(Pageable pageable);
 
     Page<ServiceBaseDTO> findAllBase(@Param("filter") ServiceFilter filter, Pageable pageable);
-
-    Page<ServiceWithImagesDTO> findAllWEmployee(@Param("filter") ServiceFilter filter, Pageable pageable);
 }
