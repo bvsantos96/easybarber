@@ -31,11 +31,11 @@ public interface EmployeeScheduleRepository
                 SELECT 1
                 FROM EmployeeSchedule es
                 WHERE es.employee.id = :id
-                AND es.day = :day
-                AND es.startHour <= :time
-                AND es.endHour >= :endTime
-                AND es.active = true
-            LIMIT 1)
+                AND es.day IN :days
+                AND es.startHour <= :startHour
+                AND es.endHour >= :endHour
+                AND es.active = :active
+            )
             """)
     boolean hasOverlappingSchedule(
             @Param("id") Long id,
@@ -51,7 +51,7 @@ public interface EmployeeScheduleRepository
                     JOIN s.employee e
                     WHERE s.id = :scheduleId
                     AND e.user.mobileInformation = :mobileInformation
-            LIMIT 1)
+            )
                 """)
     boolean checkIfEmployeeIsScheduleOwner(Long scheduleId, String mobileInformation);
 
@@ -65,7 +65,7 @@ public interface EmployeeScheduleRepository
                 WHERE s.id = :scheduleId
                 AND emp.user.mobileInformation = :mobileInformation
                 AND staff.admin = true
-                LIMIT 1)
+                )
             """)
     boolean checkIfEmployeeIsEstablishmentOwner(Long scheduleId, String mobileInformation);
 
@@ -79,7 +79,7 @@ public interface EmployeeScheduleRepository
                 AND s.day = :dayOfWeek
                 AND s.startHour <= :time
                 AND s.endHour >= :endTime
-                LIMIT 1)
+                )
             """)
     boolean existsByEmployeeIdAndEstablishmentIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
             Long employeeId, Long establishmentId, DAY_OF_WEEK dayOfWeek, LocalTime time, LocalTime endTime);

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
@@ -26,7 +27,7 @@ public interface EstablishmentRepository
                 SELECT 1
                 from Establishment e
                 where e.name = :name
-                LIMIT 1)
+                )
             """)
     boolean existsByName(String name);
 
@@ -36,16 +37,14 @@ public interface EstablishmentRepository
     Optional<Establishment> findByIdWithStaff(long establishmentId);
 
     @Query("""
-            SELECT DISTINCT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id,
+            SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id,
             e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location,
-            :location) AS distance, e.nVotes, e.sumVotes)
+            :location) AS distance, e.nVotes, e.sumVotes, i)
             FROM Establishment e
-            JOIN FETCH e.images
-            INNER JOIN EstablishmentService es ON :serviceType IS NULL OR es.service.id =
-            :serviceType
+            LEFT JOIN e.images i
+            INNER JOIN EstablishmentService es ON :serviceType IS NULL OR es.service.id = :serviceType
             WHERE es.establishment.id = e.id
-            AND (:partialName IS NULL OR lower(e.name) LIKE concat('%',
-            lower(:partialName), '%'))
+            AND (:partialName IS NULL OR lower(e.name) LIKE concat('%', lower(:partialName), '%'))
             AND (:rating IS NULL OR (e.nVotes > 0 AND e.sumVotes / e.nVotes >= :rating))
             ORDER BY ST_Distance_Sphere(e.location, :location) ASC
             """)
@@ -53,16 +52,16 @@ public interface EstablishmentRepository
             Double rating, Pageable pageable);
 
     @Query("""
-            SELECT DISTINCT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id,
-            e.name, e.description, e.address, e.location, e.nVotes, e.sumVotes, e.images)
+            SELECT DISTINCT new com.teamsantos.easybarber.DTO.EstablishmentDTO(
+                e.id, e.name, e.description, e.address, e.location, e.nVotes, e.sumVotes, i)
             FROM Establishment e
-            JOIN FETCH e.images
-            INNER JOIN EstablishmentService es ON :serviceType IS NULL OR es.service.id =
-            :serviceType
-            WHERE es.establishment.id = e.id AND :rating IS NULL OR (e.nVotes > 0 AND
-            e.sumVotes / e.nVotes >= :rating)
+            LEFT JOIN e.images i
+            INNER JOIN EstablishmentService es ON es.establishment.id = e.id
+            WHERE (:serviceType IS NULL OR es.service.id = :serviceType)
+            AND (:rating IS NULL OR (e.nVotes > 0 AND e.sumVotes / e.nVotes >= :rating))
             """)
-    Page<EstablishmentDTO> list(Long serviceType, Double rating, Pageable pageable);
+    Page<EstablishmentDTO> list(@Param("serviceType") Long serviceType, @Param("rating") Double rating,
+            Pageable pageable);
 
     @Query("SELECT es.establishment FROM EstablishmentStaff es WHERE es.employee.id = :employeeId AND (:admin = false OR es.admin = true)")
     Page<Establishment> findEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable);

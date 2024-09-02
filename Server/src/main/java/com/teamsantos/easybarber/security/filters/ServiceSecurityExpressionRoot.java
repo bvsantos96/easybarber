@@ -1,9 +1,8 @@
 package com.teamsantos.easybarber.security.filters;
 
+import com.teamsantos.easybarber.repositories.services.ServiceRepository;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.core.Authentication;
-
-import com.teamsantos.easybarber.repositories.ServiceRepository;
 
 public class ServiceSecurityExpressionRoot extends SecurityExpressionRoot {
     private final ServiceRepository serviceRepository;

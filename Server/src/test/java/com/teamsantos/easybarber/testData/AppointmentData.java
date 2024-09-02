@@ -36,19 +36,17 @@ public class AppointmentData {
             {
                 add(
                         new AppointmentDTO(
-                                1L,
                                 UsersData.usersDTO.get(0).getId(),
                                 getServiceFromEstablishmentService(EstablishmentData.establishmentServices.get(0))
                                         .getEmployeeId(),
                                 EstablishmentData.establishmentServices.get(0).getEstablishmentId(),
                                 EstablishmentData.establishmentServices.get(0).getServiceId(),
                                 "First appointment",
-                                null,
+                                new String(),
                                 LocalDate.parse("2124-08-18"),
                                 LocalTime.parse("10:00")));
                 add(
                         new AppointmentDTO(
-                                2L,
                                 null,
                                 getServiceFromEstablishmentService(EstablishmentData.establishmentServices.get(1))
                                         .getEmployeeId(),
@@ -60,7 +58,6 @@ public class AppointmentData {
                                 LocalTime.parse("10:00")));
                 add(
                         new AppointmentDTO(
-                                3L,
                                 null,
                                 getServiceFromEstablishmentService(EstablishmentData.establishmentServices.get(1))
                                         .getEmployeeId(),
@@ -77,7 +74,6 @@ public class AppointmentData {
             {
                 add(
                         new AppointmentDTO(
-                                null,
                                 UsersData.usersDTO.get(0).getId(),
                                 ScheduleData.scheduleExceptions.get(0).getEmployeeId(),
                                 getEstablishmentServiceOfEmployee(

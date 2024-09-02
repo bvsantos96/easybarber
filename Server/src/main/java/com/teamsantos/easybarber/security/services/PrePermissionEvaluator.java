@@ -11,8 +11,7 @@ import com.teamsantos.easybarber.repositories.AppointmentRepository;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EmployeeScheduleRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
-import com.teamsantos.easybarber.repositories.ServiceRepository;
-import com.teamsantos.easybarber.repositories.UserRepository;
+import com.teamsantos.easybarber.repositories.services.ServiceRepository;
 import com.teamsantos.easybarber.security.filters.AppointmentSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.filters.EstablishmentSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.filters.ScheduleSecurityExpressionRoot;
@@ -26,7 +25,6 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
     private final ServiceRepository serviceRepository;
     private final EmployeeRepository employeeRepository;
     private final EmployeeScheduleRepository scheduleRepository;
-    private final UserRepository userRepository;
     private final AppointmentRepository appointmentRepository;
 
     public static final String _SCHEDULE_OWNER = "SCHEDULE_OWNER";
@@ -54,13 +52,11 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
             ServiceRepository serviceRepository,
             EmployeeRepository employeeRepository,
             EmployeeScheduleRepository scheduleRepository,
-            UserRepository userRepository,
             AppointmentRepository appointmentRepository) {
         this.establishmentStaffRepository = establishmentStaffRepository;
         this.serviceRepository = serviceRepository;
         this.employeeRepository = employeeRepository;
         this.scheduleRepository = scheduleRepository;
-        this.userRepository = userRepository;
         this.appointmentRepository = appointmentRepository;
     }
 
@@ -79,12 +75,12 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
             }
             case _ESTABLISHMENT_EMPLOYEE -> {
                 EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
-                        employeeRepository, establishmentStaffRepository);
+                        establishmentStaffRepository);
                 yield root.hasEmployeePermission((Long) targetDomainObject);
             }
             case _ESTABLISHMENT_ADMIN -> {
                 EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
-                        employeeRepository, establishmentStaffRepository);
+                        establishmentStaffRepository);
                 yield root.hasAdminPermission((Long) targetDomainObject);
             }
             case _SERVICE_OWNER -> {
@@ -99,7 +95,7 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
             }
             case _HAS_APPOINTMENT_CHANGE_PERMISSION -> {
                 AppointmentSecurityExpressionRoot root = new AppointmentSecurityExpressionRoot(authentication,
-                        appointmentRepository, userRepository, employeeRepository);
+                        appointmentRepository);
                 yield root.hasAppointmentChangePermission((Long) targetDomainObject);
             }
             default -> throw new UnsupportedOperationException(
@@ -123,12 +119,12 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
             }
             case _ESTABLISHMENT_EMPLOYEE -> {
                 EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
-                        employeeRepository, establishmentStaffRepository);
+                        establishmentStaffRepository);
                 yield root.hasEmployeePermission(Long.parseLong(targetType));
             }
             case _ESTABLISHMENT_ADMIN -> {
                 EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
-                        employeeRepository, establishmentStaffRepository);
+                        establishmentStaffRepository);
                 yield root.hasAdminPermission(Long.parseLong(targetType));
             }
             case _SERVICE_OWNER -> {
@@ -145,7 +141,7 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
 
             case _HAS_APPOINTMENT_CHANGE_PERMISSION -> {
                 AppointmentSecurityExpressionRoot root = new AppointmentSecurityExpressionRoot(authentication,
-                        appointmentRepository, userRepository, employeeRepository);
+                        appointmentRepository);
                 yield root.hasAppointmentChangePermission(Long.parseLong(targetType));
             }
             default ->
