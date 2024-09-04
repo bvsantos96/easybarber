@@ -61,10 +61,10 @@ public class ScheduleTests {
     }
 
     public void createSchedules(boolean initAuth, boolean initEmployee) {
-        if (TestsState.ran("createSchedules")) {
+        if (TestsState.ran(TestsState.SCHEDULE_CREATE_SCHEDULES)) {
             return;
         }
-        TestsState.mark("createSchedules");
+        TestsState.mark(TestsState.SCHEDULE_CREATE_SCHEDULES);
         try {
             new EstablishmentTests(mockMvc).testEmployees(initAuth, initEmployee);
             ScheduleData.schedules.forEach(schedule -> {
@@ -134,10 +134,10 @@ public class ScheduleTests {
     }
 
     public void createExceptions(boolean initAuth, boolean initEmployee) {
-        if (TestsState.ran("createExceptions")) {
+        if (TestsState.ran(TestsState.SCHEDULE_CREATE_EXCEPTIONS)) {
             return;
         }
-        TestsState.mark("createExceptions");
+        TestsState.mark(TestsState.SCHEDULE_CREATE_EXCEPTIONS);
         listSchedules(initAuth, initEmployee);
         try {
             ScheduleData.scheduleExceptions.forEach(exception -> {
@@ -189,10 +189,10 @@ public class ScheduleTests {
     }
 
     public void disable(boolean initAuth, boolean initEmployee) {
-        if (TestsState.ran("disable")) {
+        if (TestsState.ran(TestsState.SCHEDULE_DISABLE)) {
             return;
         }
-        TestsState.mark("disable");
+        TestsState.mark(TestsState.SCHEDULE_DISABLE);
         createSchedules(initAuth, initEmployee);
         try {
             if (ScheduleData.schedulesDisabled.isEmpty()) {
