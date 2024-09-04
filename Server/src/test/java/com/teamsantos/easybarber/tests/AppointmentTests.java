@@ -49,10 +49,10 @@ public class AppointmentTests {
     }
 
     private void createAppointment(boolean initAuth, boolean initEmployee) {
-        if (TestsState.ran("createAppointment")) {
+        if (TestsState.ran(TestsState.APPOINTMENT_CREATE_APPOINTMENT)) {
             return;
         }
-        TestsState.mark("createAppointment");
+        TestsState.mark(TestsState.APPOINTMENT_CREATE_APPOINTMENT);
         try {
             new ScheduleTests(mockMvc).createExceptions(initAuth, initEmployee);
             new EstablishmentTests(mockMvc).testService(false, false);
@@ -193,10 +193,10 @@ public class AppointmentTests {
     }
 
     public void cancelAppointment(boolean init) {
-        if (TestsState.ran("cancelAppointment")) {
+        if (TestsState.ran(TestsState.APPOINTMENT_CANCEL_APPOINTMENT)) {
             return;
         }
-        TestsState.mark("cancelAppointment");
+        TestsState.mark(TestsState.APPOINTMENT_CANCEL_APPOINTMENT);
         try {
             EmployeeTests employeeTests = new EmployeeTests(mockMvc);
             AuthTests authTests = new AuthTests(mockMvc);
@@ -232,10 +232,10 @@ public class AppointmentTests {
     }
 
     public void confirmAppointment(boolean init) {
-        if (TestsState.ran("confirmAppointment")) {
+        if (TestsState.ran(TestsState.APPOINTMENT_CONFIRM_APPOINTMENT)) {
             return;
         }
-        TestsState.mark("confirmAppointment");
+        TestsState.mark(TestsState.APPOINTMENT_CONFIRM_APPOINTMENT);
         try {
             EmployeeTests employeeTests = new EmployeeTests(mockMvc);
             createAppointment(init, init);

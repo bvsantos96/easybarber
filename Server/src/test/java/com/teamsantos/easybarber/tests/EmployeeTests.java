@@ -76,10 +76,10 @@ public class EmployeeTests {
 
     @Test
     public void createEmployees() {
-        if (TestsState.ran("createEmployees")) {
+        if (TestsState.ran(TestsState.EMPLOYEE_CREATE_EMPLOYEES)) {
             return;
         }
-        TestsState.mark("createEmployees");
+        TestsState.mark(TestsState.EMPLOYEE_CREATE_EMPLOYEES);
         try {
             create("/employee", EmployeeData.employees.get(0).toString());
             create("/register", EmployeeData.employees.get(1).toString());
@@ -92,10 +92,10 @@ public class EmployeeTests {
 
     @Test
     public void testDelete() {
-        if (TestsState.ran("testDelete")) {
+        if (TestsState.ran(TestsState.EMPLOYEE_TEST_DELETE)) {
             return;
         }
-        TestsState.mark("testDelete");
+        TestsState.mark(TestsState.EMPLOYEE_TEST_DELETE);
         // TODO: Need to implement this test after defining and implementing the all
         // processo of deleting a employee
         // - Mark employee as deleted
@@ -113,10 +113,10 @@ public class EmployeeTests {
     }
 
     public void createServices(boolean init) {
-        if (TestsState.ran("createServices")) {
+        if (TestsState.ran(TestsState.EMPLOYEE_CREATE_SERVICES)) {
             return;
         }
-        TestsState.mark("createServices");
+        TestsState.mark(TestsState.EMPLOYEE_CREATE_SERVICES);
         try {
             new ServiceTypeTests(mockMvc).createServiceTypes(init);
             String jwt = login(false);
@@ -132,10 +132,10 @@ public class EmployeeTests {
 
     @Test
     public void updateService() {
-        if (TestsState.ran("updateService")) {
+        if (TestsState.ran(TestsState.EMPLOYEE_UPDATE_SERVICE)) {
             return;
         }
-        TestsState.mark("updateService");
+        TestsState.mark(TestsState.EMPLOYEE_UPDATE_SERVICE);
         try {
             createServices(true);
             String jwt = login(false);
@@ -236,10 +236,10 @@ public class EmployeeTests {
     }
 
     public void deleteImages(boolean initAuth, boolean initEmployee) {
-        if (TestsState.ran("deleteImages")) {
+        if (TestsState.ran(TestsState.EMPLOYEE_DELETE_IMAGES)) {
             return;
         }
-        TestsState.mark("deleteImages");
+        TestsState.mark(TestsState.EMPLOYEE_DELETE_IMAGES);
         try {
             addImages(initAuth, initEmployee);
             for (Long employeeId : EmployeeData.employees.stream().map(UserCreateDTO::getId).toList()) {
@@ -272,10 +272,10 @@ public class EmployeeTests {
     }
 
     public void addServiceImages(boolean initAuth, boolean initEmployee) {
-        if (TestsState.ran("addServiceImages")) {
+        if (TestsState.ran(TestsState.EMPLOYEE_ADD_SERVICE_IMAGES)) {
             return;
         }
-        TestsState.mark("addServiceImages");
+        TestsState.mark(TestsState.EMPLOYEE_ADD_SERVICE_IMAGES);
         try {
             new EmployeeTests(mockMvc).createServices(initEmployee);
             for (Long serviceId : ServiceData.services.stream().map(ServiceDTO::getId).toList()) {
@@ -295,10 +295,10 @@ public class EmployeeTests {
     }
 
     public void deleteServiceImages(boolean initAuth, boolean initEmployee) {
-        if (TestsState.ran("deleteServiceImages")) {
+        if (TestsState.ran(TestsState.EMPLOYEE_DELETE_SERVICE_IMAGES)) {
             return;
         }
-        TestsState.mark("deleteServiceImages");
+        TestsState.mark(TestsState.EMPLOYEE_DELETE_SERVICE_IMAGES);
         try {
             addServiceImages(initAuth, initEmployee);
             for (Long serviceId : ServiceData.services.stream().map(ServiceDTO::getId).toList()) {

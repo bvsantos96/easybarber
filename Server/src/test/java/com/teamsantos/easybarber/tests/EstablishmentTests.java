@@ -50,10 +50,10 @@ public class EstablishmentTests {
     }
 
     public void createEstablishments(boolean initAuth, boolean initEmployee) {
-        if (TestsState.ran("createEstablishments")) {
+        if (TestsState.ran(TestsState.ESTABLISHMENT_CREATE_ESTABLISHMENTS)) {
             return;
         }
-        TestsState.mark("createEstablishments");
+        TestsState.mark(TestsState.ESTABLISHMENT_CREATE_ESTABLISHMENTS);
         try {
             String jwt;
             jwt = new AuthTests(mockMvc).login(initAuth);
@@ -81,10 +81,10 @@ public class EstablishmentTests {
     }
 
     public void testEmployees(boolean initAuth, boolean initEmployee) {
-        if (TestsState.ran("testEmployees")) {
+        if (TestsState.ran(TestsState.ESTABLISHMENT_TEST_EMPLOYEES)) {
             return;
         }
-        TestsState.mark("testEmployees");
+        TestsState.mark(TestsState.ESTABLISHMENT_TEST_EMPLOYEES);
         try {
             createEstablishments(initAuth, initEmployee);
 
@@ -119,10 +119,10 @@ public class EstablishmentTests {
     }
 
     public void testService(boolean initAuth, boolean initEmployee) {
-        if (TestsState.ran("testService")) {
+        if (TestsState.ran(ESTABLISHMENT_TEST_SERVICE)) {
             return;
         }
-        TestsState.mark("testService");
+        TestsState.mark(ESTABLISHMENT_TEST_SERVICE);
         try {
             testEmployees(initAuth, initEmployee);
             EmployeeTests employeeTests = new EmployeeTests(mockMvc);
@@ -277,10 +277,10 @@ public class EstablishmentTests {
     }
 
     public void addImages(boolean initAuth, boolean initEmployee) {
-        if (TestsState.ran("addImages")) {
+        if (TestsState.ran(TestsState.ESTABLISHMENT_ADD_IMAGES)) {
             return;
         }
-        TestsState.mark("addImages");
+        TestsState.mark(TestsState.ESTABLISHMENT_ADD_IMAGES);
         try {
             createEstablishments(initAuth, initEmployee);
             for (Long establishmentId : EstablishmentData.establishments.stream().map(BaseEstablishmentDTO::getId)
@@ -301,10 +301,10 @@ public class EstablishmentTests {
     }
 
     public void deleteImages(boolean initAuth, boolean initEmployee) {
-        if (TestsState.ran("deleteImages")) {
+        if (TestsState.ran(TestsState.ESTABLISHMENT_DELETE_IMAGES)) {
             return;
         }
-        TestsState.mark("deleteImages");
+        TestsState.mark(TestsState.ESTABLISHMENT_DELETE_IMAGES);
         try {
             addImages(initAuth, initEmployee);
             for (Long establishmentId : EstablishmentData.establishments.stream().map(BaseEstablishmentDTO::getId)
