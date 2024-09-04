@@ -32,10 +32,10 @@ public class UserTests {
     }
 
     public void test(boolean init) {
-        if (TestsState.ran("test")) {
+        if (TestsState.ran(TestsState.USER_TEST)) {
             return;
         }
-        TestsState.mark("test");
+        TestsState.mark(TestsState.USER_TEST);
         try {
             ResultActions result = CreateTest.put(mockMvc, "/user", new AuthTests(mockMvc).login(init),
                     UsersData.usersUpdateDTO.get(0).toString());

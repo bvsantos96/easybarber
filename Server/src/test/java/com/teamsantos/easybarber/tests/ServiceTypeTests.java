@@ -39,10 +39,10 @@ public class ServiceTypeTests {
     }
 
     public void createServiceTypes(boolean init) {
-        if (TestsState.ran("createServiceTypes")) {
+        if (TestsState.ran(TestsState.SERVICE_TYPES_CREATE_SERVICE_TYPES)) {
             return;
         }
-        TestsState.mark("createServiceTypes");
+        TestsState.mark(TestsState.SERVICE_TYPES_CREATE_SERVICE_TYPES);
         try {
             String jwt = new EmployeeTests(mockMvc).login(init);
             ServiceData.serviceTypes.forEach(serviceType -> {

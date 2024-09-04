@@ -71,10 +71,10 @@ public class AuthTests {
 
     @Test
     public void test() {
-        if (TestsState.ran("test")) {
+        if (TestsState.ran(TestsState.AUTH_TEST)) {
             return;
         }
-        TestsState.mark("test");
+        TestsState.mark(TestsState.AUTH_TEST);
         try {
             UsersData.usersDTO.get(0).setId(create("/register", UsersData.usersDTO.get(0).toString()));
             UsersData.usersDTO.get(1).setId(create("/register", UsersData.usersDTO.get(1).toString()));
