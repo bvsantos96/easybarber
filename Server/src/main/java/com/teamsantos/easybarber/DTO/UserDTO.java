@@ -1,7 +1,10 @@
 package com.teamsantos.easybarber.DTO;
 
 import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.teamsantos.easybarber.entities.UserType;
 import com.teamsantos.easybarber.utils.JSONToDTO;
 
 import jakarta.annotation.Nullable;
@@ -20,7 +23,7 @@ public class UserDTO extends BaseResponseDTO {
     @Nullable
     private String name;
     @Nullable
-    private Long userTypeId;
+    private Set<Long> userTypes;
 
     public UserDTO(Long id, String mobileCode, String mobileNumber, String name) {
         super(id);
@@ -34,8 +37,8 @@ public class UserDTO extends BaseResponseDTO {
         return this;
     }
 
-    public UserDTO initUserType(Long userTypeId) {
-        this.userTypeId = userTypeId;
+    public UserDTO initUserType(long userTypeId) {
+        this.userTypes = Set.of(userTypeId);
         return this;
     }
 
@@ -56,17 +59,25 @@ public class UserDTO extends BaseResponseDTO {
         if (obj == this)
             return true;
         try {
-            Long _userTypeId = JSONToDTO.getLong(obj, "userTypeId");
             String _name = JSONToDTO.getString(obj, "name");
+            Set<Long> _userTypeId = JSONToDTO.getSetLong(obj, "userTypeId");
             return this.mobile.equals(Objects.requireNonNull(JSONToDTO.getString(obj, "mobile")))
                     && this.countryMobile
                             .equals(Objects.requireNonNull(JSONToDTO.getString(obj, "countryMobile")))
                     && (this.name == null || _name == null || this.name.equals(_name))
-                    && (this.userTypeId == null || _userTypeId == null
-                            || this.userTypeId.equals(_userTypeId));
+                    && (this.userTypes == null || _userTypeId == null
+                            || this.userTypes.equals(_userTypeId));
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public void setServiceTypeIDFromHash(Set<UserType> userTypes) {
+        try {
+            this.userTypes = userTypes.stream().map(UserType::getId).collect(Collectors.toSet());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

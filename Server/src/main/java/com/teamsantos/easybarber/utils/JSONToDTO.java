@@ -39,6 +39,16 @@ public class JSONToDTO {
         }
     }
 
+    public static Set<Long> getSetLong(Object obj, String fieldName) {
+        try {
+            Field field = obj.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return (Set<Long>) field.get(obj);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            return null;
+        }
+    }
+
     public static <T> List<T> fromPageDTO(JSONObject jsonObject, Class<T> clazz) {
         try {
             ArrayList<T> list = new ArrayList<T>();

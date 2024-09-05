@@ -6,13 +6,18 @@ import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.json.JSONArray;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.DTO.UserDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.Establishment;
+import com.teamsantos.easybarber.entities.User;
+import com.teamsantos.easybarber.entities.UserType;
 
 public class Utils {
     public static String setFieldIfNotNullOrEmpty(String field1, String field2) {
@@ -73,6 +78,16 @@ public class Utils {
         // Type mapping for Establishment to EstablishmentDTO
         modelMapper.typeMap(Establishment.class, EstablishmentDTO.class)
                 .addMappings(mapper -> mapper.map(src -> src.getLocation(), EstablishmentDTO::setLocation));
+        modelMapper.addMappings(new PropertyMap<User, UserDTO>() {
+            @Override
+            protected void configure() {
+                using(ctx -> ((Set<UserType>) ctx.getSource())
+                        .stream()
+                        .map(UserType::getId)
+                        .collect(Collectors.toSet()))
+                        .map(source.getUserTypes(), destination.getUserTypes());
+            }
+        });
         _modelMapper = modelMapper;
         return modelMapper;
     }
