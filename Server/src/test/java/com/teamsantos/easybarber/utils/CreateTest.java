@@ -15,11 +15,16 @@ public class CreateTest {
     }
 
     public static ResultActions put(MockMvc mockMvc, String path, String jwt, String item) throws Exception {
-        return mockMvc.perform(MockMvcRequestBuilders
-                .put(path)
-                .header("Authorization", "Bearer " + jwt)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(item));
+        try {
+           return mockMvc.perform(MockMvcRequestBuilders
+                    .put(path)
+                    .header("Authorization", "Bearer " + jwt)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(item));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     public static ResultActions putWJWT(MockMvc mockMvc, String path, String jwt) throws Exception {

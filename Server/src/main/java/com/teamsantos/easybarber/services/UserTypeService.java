@@ -19,16 +19,19 @@ public class UserTypeService implements ApplicationListener<ApplicationReadyEven
         this.userTypeRepository = userTypeRepository;
     }
 
-    // NONE = 0, CLIENT = 1, EMPLOYEE = 2, ADMIN = 3
+    // LOCKED = 1, SYSTEM_ADMIN = 2, CLIENT = 3, EMPLOYEE = 4
     public enum UserTypes {
-        LOCKED, CLIENT, EMPLOYEE, ADMIN
+        LOCKED, SYSTEM_ADMIN, CLIENT, EMPLOYEE
     }
 
     private static Map<String, Long> userTypes;
+    private static Map<Long, String> userTypesById;
 
     public void init() {
         userTypes = userTypeRepository.findAll().stream()
                 .collect(Collectors.toMap(usertype -> usertype.getUserType().toUpperCase(), UserType::getId));
+        userTypesById = userTypeRepository.findAll().stream()
+                .collect(Collectors.toMap(UserType::getId, UserType::getUserType));
     }
 
     @Override
@@ -53,5 +56,9 @@ public class UserTypeService implements ApplicationListener<ApplicationReadyEven
 
     public static long getUserType(UserTypes type) {
         return userTypes.get(type.toString().toUpperCase());
+    }
+
+    public static Set<String> getUserRoles(Set<Long> userTypeIds) {
+        return userTypeIds.stream().map(id -> userTypesById.get(id)).collect(Collectors.toSet());
     }
 }

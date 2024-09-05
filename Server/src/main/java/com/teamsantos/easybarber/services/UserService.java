@@ -25,6 +25,7 @@ import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.security.utils.PasswordEncoding;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.utils.PageDTO;
+import com.teamsantos.easybarber.utils.Utils;
 
 import jakarta.persistence.EntityManager;
 
@@ -39,10 +40,10 @@ public class UserService {
     @Autowired
     public UserService(UserRepository userRepository,
             EmployeeRepository employeeRepository,
-            ModelMapper modelMapper, JwtUtils jwtUtils, EntityManager entityManager) {
+            JwtUtils jwtUtils, EntityManager entityManager) {
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
-        this.modelMapper = modelMapper;
+        this.modelMapper = Utils.getModelMapper();
         this.jwtUtils = jwtUtils;
         this.entityManager = entityManager;
     }
@@ -59,7 +60,7 @@ public class UserService {
                 .orElseThrow(UserNotFoundException::new);
         if (PasswordEncoding.getPasswordEncoder().matches(userCreateDTO.getPassword(), user.getPassword())) {
             return jwtUtils.generateToken(user.getId(), user.getEmployeeId(),
-                    UserTypeService.getRoles(user.getUserTypeIds()));
+                    UserTypeService.getUserRoles(user.getUserTypeIds()));
         } else {
             throw new IllegalArgumentException("Password is incorrect");
         }
@@ -93,7 +94,7 @@ public class UserService {
             } catch (Exception e) {
                 throw new UserAlreadyExistsException();
             }
-            user.setUserTypeId(Collections.singleton(entityManager.getReference(UserType.class, UserTypeService
+            user.setUserTypes(Collections.singleton(entityManager.getReference(UserType.class, UserTypeService
                     .getUserType(isEmployee ? UserTypeService.UserTypes.EMPLOYEE : UserTypeService.UserTypes.CLIENT))));
             user = userRepository.save(user);
             if (isEmployee)

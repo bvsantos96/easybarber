@@ -37,7 +37,8 @@ public class UserTests {
         }
         TestsState.mark(TestsState.USER_TEST);
         try {
-            ResultActions result = CreateTest.put(mockMvc, "/user", new AuthTests(mockMvc).login(init),
+            String jwt = new AuthTests(mockMvc).login(init);
+            ResultActions result = CreateTest.put(mockMvc, "/user", jwt,
                     UsersData.usersUpdateDTO.get(0).toString());
             result
                     .andExpect(MockMvcResultMatchers.status().isOk());

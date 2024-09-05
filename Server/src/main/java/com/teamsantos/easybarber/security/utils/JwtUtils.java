@@ -1,6 +1,8 @@
 package com.teamsantos.easybarber.security.utils;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 import javax.crypto.SecretKey;
 
@@ -35,30 +37,35 @@ public class JwtUtils {
         return SECRET_KEY;
     }
 
-    public boolean validateToken(String token) {
+    public Claims validateToken(String token) {
         try {
-            Jwts.parser().verifyWith(getSecretKey()).build().parseSignedClaims(token);
-            return true;
+            return Jwts.parser().verifyWith(getSecretKey()).build().parseSignedClaims(token).getPayload();
         } catch (Exception e) {
             System.out.println("Invalid token: " + e.getMessage());
-            return false;
+            return null;
         }
     }
 
-    public UserPrincipal parseToken(String token) {
-        Claims claims = Jwts.parser()
-                .verifyWith(getSecretKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+    public UserPrincipal parseToken(Claims claims) {
         String[] split = claims.getSubject().split(";");
-        return new UserPrincipal(Long.parseLong(split[0]), split.length > 1 ? Long.parseLong(split[1]) : null,
-                (boolean[]) claims.getOrDefault("roles", new boolean[0]));
+        try {
+            if (claims.containsKey("roles"))
+                return new UserPrincipal(Long.parseLong(split[0]), split.length > 1 ? Long.parseLong(split[1]) : null,
+                        (List<String>) claims.get("roles", List.class));
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+            throw new IllegalArgumentException("Token does not contain roles");
+        }
+        return null;
     }
 
-    public String generateToken(long idUser, Long idEmployee, boolean[] roles) {
+    public String generateToken(long idUser, Long idEmployee, Set<String> roles) {
+        String subject = idEmployee != null
+                ? String.format("%d;%d", idUser, idEmployee)
+                : String.format("%d", idUser);
+
         return Jwts.builder()
-                .subject(String.format("%d;%d", idUser, idEmployee == null ? -1 : idEmployee))
+                .subject(subject)
                 .claim("roles", roles)
                 .expiration(new Date(System.currentTimeMillis() + getExpirationTime()))
                 .signWith(getSecretKey())

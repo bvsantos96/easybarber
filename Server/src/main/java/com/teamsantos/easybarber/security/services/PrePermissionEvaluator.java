@@ -8,7 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.teamsantos.easybarber.repositories.AppointmentRepository;
-import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EmployeeScheduleRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.services.ServiceRepository;
@@ -16,46 +15,38 @@ import com.teamsantos.easybarber.security.filters.AppointmentSecurityExpressionR
 import com.teamsantos.easybarber.security.filters.EstablishmentSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.filters.ScheduleSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.filters.ServiceSecurityExpressionRoot;
-import com.teamsantos.easybarber.security.utils.UserContext;
-import com.teamsantos.easybarber.services.UserTypeService.UserTypes;
 
 @Service
 public class PrePermissionEvaluator implements PermissionEvaluator {
     private final EstablishmentStaffRepository establishmentStaffRepository;
     private final ServiceRepository serviceRepository;
-    private final EmployeeRepository employeeRepository;
     private final EmployeeScheduleRepository scheduleRepository;
     private final AppointmentRepository appointmentRepository;
+
+    public static final String IS_EMPLOYEE = "hasRole('EMPLOYEE')";
+    public static final String IS_SYSTEM_ADMIN = "hasRole('SYSTEM_ADMIN')";
 
     public static final String _SCHEDULE_OWNER = "SCHEDULE_OWNER";
     public static final String SCHEDULE_OWNER = "hasPermission(#id, '" + _SCHEDULE_OWNER + "')";
     public static final String _ESTABLISHMENT_EMPLOYEE = "ESTABLISHMENT_EMPLOYEE";
-    public static final String ESTABLISHMENT_EMPLOYEE = "hasPermission(#establishmentId, '" + _ESTABLISHMENT_EMPLOYEE
-            + "')";
-    public static final String ESTABLISHMENT_EMPLOYEE_OBJECT = "hasPermission(#obj.getEstablishmentId(), '"
-            + _ESTABLISHMENT_EMPLOYEE + "')";
+    public static final String ESTABLISHMENT_EMPLOYEE = "hasPermission(#establishmentId, '" + _ESTABLISHMENT_EMPLOYEE + "')";
+    public static final String ESTABLISHMENT_EMPLOYEE_OBJECT = "hasPermission(#obj.getEstablishmentId(), '" + _ESTABLISHMENT_EMPLOYEE + "')";
     public static final String _ESTABLISHMENT_ADMIN = "ESTABLISHMENT_ADMIN";
     public static final String ESTABLISHMENT_ADMIN = "hasPermission(#establishmentId, '" + _ESTABLISHMENT_ADMIN + "')";
     public static final String _SERVICE_OWNER = "SERVICE_OWNER";
     public static final String SERVICE_OWNER_OBJECT = "hasPermission(#service.getId(), '" + _SERVICE_OWNER + "')";
-    public static final String SERVICE_OWNER_OBJECT_SERVICE_ID = "hasPermission(#service.getServiceId(), '"
-            + _SERVICE_OWNER + "')";
+    public static final String SERVICE_OWNER_OBJECT_SERVICE_ID = "hasPermission(#service.getServiceId(), '" + _SERVICE_OWNER + "')";
     public static final String SERVICE_OWNER = "hasPermission(#serviceId, '" + _SERVICE_OWNER + "')";
-    public static final String IS_EMPLOYEE = "hasPermission('EMPLOYEE')";
-    public static final String IS_SYSTEM_ADMIN = "hasPermission('SYSTEM_ADMIN')";
     public static final String _HAS_APPOINTMENT_CHANGE_PERMISSION = "HAS_APPOINTMENT_CHANGE_PERMISSION";
-    public static final String HAS_APPOINTMENT_CHANGE_PERMISSION = "hasPermission(#id, '"
-            + _HAS_APPOINTMENT_CHANGE_PERMISSION + "')";
+    public static final String HAS_APPOINTMENT_CHANGE_PERMISSION = "hasPermission(#id, '" + _HAS_APPOINTMENT_CHANGE_PERMISSION + "')";
 
     @Autowired
     public PrePermissionEvaluator(EstablishmentStaffRepository establishmentStaffRepository,
             ServiceRepository serviceRepository,
-            EmployeeRepository employeeRepository,
             EmployeeScheduleRepository scheduleRepository,
             AppointmentRepository appointmentRepository) {
         this.establishmentStaffRepository = establishmentStaffRepository;
         this.serviceRepository = serviceRepository;
-        this.employeeRepository = employeeRepository;
         this.scheduleRepository = scheduleRepository;
         this.appointmentRepository = appointmentRepository;
     }
@@ -67,12 +58,6 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
         }
         String strPermission = ((String) permission).toUpperCase();
         return switch (strPermission) {
-            case IS_EMPLOYEE -> {
-                yield UserContext.getCurrentUser().hasPermission(UserTypes.EMPLOYEE);
-            }
-            case IS_SYSTEM_ADMIN -> {
-                yield UserContext.getCurrentUser().hasPermission(UserTypes.ADMIN);
-            }
             case _ESTABLISHMENT_EMPLOYEE -> {
                 EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
                         establishmentStaffRepository);
@@ -111,12 +96,6 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
         }
         String sPermission = ((String) permission).toUpperCase();
         return switch (sPermission) {
-            case IS_EMPLOYEE -> {
-                yield UserContext.getCurrentUser().hasPermission(UserTypes.EMPLOYEE);
-            }
-            case IS_SYSTEM_ADMIN -> {
-                yield UserContext.getCurrentUser().hasPermission(UserTypes.ADMIN);
-            }
             case _ESTABLISHMENT_EMPLOYEE -> {
                 EstablishmentSecurityExpressionRoot root = new EstablishmentSecurityExpressionRoot(authentication,
                         establishmentStaffRepository);
