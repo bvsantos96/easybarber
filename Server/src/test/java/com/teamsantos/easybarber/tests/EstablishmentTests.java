@@ -119,10 +119,10 @@ public class EstablishmentTests {
     }
 
     public void testService(boolean initAuth, boolean initEmployee) {
-        if (TestsState.ran(ESTABLISHMENT_TEST_SERVICE)) {
+        if (TestsState.ran(TestsState.ESTABLISHMENT_TEST_SERVICE)) {
             return;
         }
-        TestsState.mark(ESTABLISHMENT_TEST_SERVICE);
+        TestsState.mark(TestsState.ESTABLISHMENT_TEST_SERVICE);
         try {
             testEmployees(initAuth, initEmployee);
             EmployeeTests employeeTests = new EmployeeTests(mockMvc);

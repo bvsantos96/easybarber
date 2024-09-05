@@ -41,6 +41,6 @@ public class UserCreateDTO extends BaseDTO {
             return this.countryMobile.equals(employeeDTO.getCountryMobile())
                     && this.mobile.equals(employeeDTO.getMobile()) && this.name.equals(employeeDTO.getName());
         }
-        return this.equals(obj);
+        return false;
     }
 }

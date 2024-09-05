@@ -2,23 +2,23 @@ package com.teamsantos.easybarber.security.filters;
 
 import java.io.IOException;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.security.utils.UserContext;
+import com.teamsantos.easybarber.security.utils.UserPrincipal;
 
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-@Component
 public class UserContextFilter extends OncePerRequestFilter {
     private final JwtUtils jwtUtils;
 
-    @Autowired
     public UserContextFilter(JwtUtils jwtUtils) {
         this.jwtUtils = jwtUtils;
     }
@@ -28,9 +28,14 @@ public class UserContextFilter extends OncePerRequestFilter {
             throws ServletException, IOException {
         try {
             String token = extractTokenFromRequest(request);
-
-            if (token != null && jwtUtils.validateToken(token)) {
-                UserContext.setCurrentUser(jwtUtils.parseToken(token));
+            if (token != null) {
+                Claims claims = jwtUtils.validateToken(token);
+                if (claims != null) {
+                    UserPrincipal userDetails = jwtUtils.parseToken(claims);
+                    SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getUserDetails().getAuthorities()));
+                    UserContext.setCurrentUser(userDetails);
+                }
             }
             filterChain.doFilter(request, response);
         } finally {
