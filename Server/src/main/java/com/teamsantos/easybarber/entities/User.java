@@ -23,6 +23,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -31,6 +32,7 @@ import lombok.ToString;
 @ToString
 @Entity
 @Table(indexes = @Index(columnList = "mobileInformation"))
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,6 +66,22 @@ public class User {
     @ToString.Exclude
     @BatchSize(size = 10)
     private Set<Location> location;
+
+    public User(long id, String countryMobile, String mobile, String name, Set<UserType> userTypes) {
+        this.id = id;
+        this.countryMobile = countryMobile;
+        this.mobile = mobile;
+        this.mobileInformation = countryMobile + mobile;
+        this.name = name;
+        this.userTypes = userTypes;
+    }
+
+    public void addUserType(UserType userType) {
+        if (this.userTypes == null) {
+            this.userTypes = new HashSet<>();
+        }
+        this.userTypes.add(userType);
+    }
 
     private int hashCodeWithNullCheck(String item) {
         return item != null ? item.hashCode() : 0;

@@ -39,7 +39,7 @@ public class Employee extends EntityWithImages<Employee, EmployeeImage> {
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean enabled;
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_mobileInformation", referencedColumnName = "mobileInformation")
+    @JoinColumn(name = "user", referencedColumnName = "id")
     private User user;
     @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude

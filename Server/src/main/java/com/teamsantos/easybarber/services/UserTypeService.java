@@ -21,7 +21,7 @@ public class UserTypeService implements ApplicationListener<ApplicationReadyEven
 
     // LOCKED = 1, SYSTEM_ADMIN = 2, CLIENT = 3, EMPLOYEE = 4
     public enum UserTypes {
-        LOCKED, SYSTEM_ADMIN, CLIENT, EMPLOYEE
+        NONE, LOCKED, SYSTEM_ADMIN, CLIENT, EMPLOYEE
     }
 
     private static Map<String, Long> userTypes;

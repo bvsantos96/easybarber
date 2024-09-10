@@ -20,9 +20,9 @@ import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.ImageDTO;
-import com.teamsantos.easybarber.DTO.ServiceBaseDTO;
 import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
-import com.teamsantos.easybarber.DTO.filters.ServiceFilter;
+import com.teamsantos.easybarber.DTO.ServiceWithImagesDTO;
+import com.teamsantos.easybarber.DTO.filters.ServiceWithEmployeeFilter;
 import com.teamsantos.easybarber.entities.Service;
 import com.teamsantos.easybarber.entities.images.ServiceImage;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
@@ -84,14 +84,14 @@ public class ServiceController extends ImageController<Service, ServiceImage> {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<BasePageDTO<ServiceBaseDTO>> list(
+    public ResponseEntity<BasePageDTO<ServiceWithImagesDTO>> list(
             @RequestParam(name = "serviceType", required = false) Long serviceType,
             Pageable pageable) {
-        BasePageDTO<ServiceBaseDTO> response = new BasePageDTO<>();
+        BasePageDTO<ServiceWithImagesDTO> response = new BasePageDTO<>();
         try {
-            ServiceFilter filter = new ServiceFilter();
+            ServiceWithEmployeeFilter filter = new ServiceWithEmployeeFilter();
             filter.setServiceTypeId(serviceType);
-            response.setItems(serviceService.listServices(filter, pageable));
+            response.setItems(serviceService.listServicesWithEmployee(filter, pageable));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.setResponseMessage(e.getMessage());

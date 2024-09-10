@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +59,7 @@ public class ServiceService extends
     @Transactional
     public void createService(CreateServiceDTO serviceDTO) throws GenericNotFoundException {
         long employeeId = UserContext.getEmployeeId();
-        if (serviceTypeRepository.existsById(serviceDTO.getServiceTypeId())) {
+        if (!serviceTypeRepository.existsById(serviceDTO.getServiceTypeId())) {
             throw new GenericNotFoundException("Service type not found");
         }
         if (serviceRepository.existsByEmployeeIdServiceTypeIdNameAndDescription(employeeId,
@@ -115,14 +116,20 @@ public class ServiceService extends
 
     @Transactional(readOnly = true)
     public Page<ServiceBaseDTO> listServices(ServiceFilter filter, Pageable pageable) {
-        return serviceRepository.findAllBase(filter, pageable)
-                .map(e -> modelMapper.map(e, ServiceBaseDTO.class));
+        return new PageImpl<>(serviceRepository.findAllBase(filter, pageable), pageable,
+                countServices(filter));
     }
 
     @Transactional(readOnly = true)
     public Page<ServiceWithImagesDTO> listServicesWithEmployee(ServiceWithEmployeeFilter filter, Pageable pageable) {
-        return serviceRepository.findAllWEmployee(filter, pageable)
-                .map(e -> modelMapper.map(e, ServiceWithImagesDTO.class));
+        return serviceRepository._findAllWEmployee(filter, pageable);
+        // return new PageImpl<>(serviceRepository.findAllWEmployee(filter, pageable),
+        // pageable,
+        // countServices(filter));
+    }
+
+    private long countServices(ServiceFilter filter) {
+        return serviceRepository.count(filter);
     }
 
     @Transactional(readOnly = true)

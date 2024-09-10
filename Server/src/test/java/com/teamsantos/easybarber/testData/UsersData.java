@@ -4,21 +4,23 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
+import com.teamsantos.easybarber.testDTOs.UserTestDTO;
 
 public class UsersData {
-    public static final List<UserCreateDTO> usersDTO;
+    public static UserTestDTO systemAdmin;
+    public static final List<UserTestDTO> usersDTO;
     public static final List<UserDTO> usersUpdateDTO;
 
     static {
+        systemAdmin = new UserTestDTO("+1", "999999999", "Test123*", "System Admin");
         usersDTO = new ArrayList<>() {
             {
-                add(new UserCreateDTO("+351", "927030780", "Test123*", "Bruno Santos"));
-                add(new UserCreateDTO("+351", "962844407", "Test123*", "Filipe Santos"));
+                add(new UserTestDTO("+351", "927030780", "Test123*", "Bruno Santos"));
+                add(new UserTestDTO("+351", "962844407", "Test123*", "Filipe Santos"));
             }
         };
-        usersDTO.sort(Comparator.comparing(UserCreateDTO::getId));
+        usersDTO.sort(Comparator.comparing(UserTestDTO::getId));
 
         usersUpdateDTO = new ArrayList<>() {
             {
@@ -28,4 +30,5 @@ public class UsersData {
         };
         usersUpdateDTO.sort(Comparator.comparing(UserDTO::getId));
     }
+
 }

@@ -1,7 +1,6 @@
 package com.teamsantos.easybarber.services;
 
 import java.security.Principal;
-import java.util.Collections;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +57,12 @@ public class UserService {
         UserSignInDTO user = userRepository
                 .findUserSignInByMobileInformation(userCreateDTO.getMobileInformation())
                 .orElseThrow(UserNotFoundException::new);
+        // TODO: if we get 2 many users this might me moved to a string in the user
+        // table so that we can load them faster.
+        // This will make the user type change a bit slower but that is not that
+        // frequent of a request compared with the login that affects everyuser
+        user.setUserTypeIds(userRepository.getAllUserTypes(user.getId()));
+
         if (PasswordEncoding.getPasswordEncoder().matches(userCreateDTO.getPassword(), user.getPassword())) {
             return jwtUtils.generateToken(user.getId(), user.getEmployeeId(),
                     UserTypeService.getUserRoles(user.getUserTypeIds()));
@@ -80,8 +85,12 @@ public class UserService {
         employeeRepository.save(employee);
     }
 
-    @Transactional
     public UserDTO createUser(UserCreateDTO userCreateDTO, boolean isEmployee) throws Exception {
+        return createUser(userCreateDTO, isEmployee, false);
+    }
+
+    @Transactional
+    public UserDTO createUser(UserCreateDTO userCreateDTO, boolean isEmployee, boolean systemAdmin) throws Exception {
         userCreateDTO.setPassword(PasswordEncoding.encode(userCreateDTO.getPassword()));
         User user = modelMapper.map(userCreateDTO, User.class);
         if (user != null) {
@@ -89,20 +98,36 @@ public class UserService {
                 if (userRepository.existsByMobileInformation(user.getMobileInformation())) {
                     if (!isEmployee || employeeRepository.existsByUserId(user.getId())) {
                         throw new UserAlreadyExistsException();
+                    } else {
+                        user = userRepository.findByMobileInformation(user.getMobileInformation())
+                                .orElseThrow(UserAlreadyExistsException::new);
                     }
                 }
             } catch (Exception e) {
                 throw new UserAlreadyExistsException();
             }
-            user.setUserTypes(Collections.singleton(entityManager.getReference(UserType.class, UserTypeService
-                    .getUserType(isEmployee ? UserTypeService.UserTypes.EMPLOYEE : UserTypeService.UserTypes.CLIENT))));
+
+            if (user.getUserTypes() == null || user.getUserTypes().isEmpty()) {
+                user.addUserType(entityManager.getReference(UserType.class, UserTypeService
+                        .getUserType(UserTypeService.UserTypes.CLIENT)));
+            }
+            user.addUserType(entityManager.getReference(UserType.class, UserTypeService
+                    .getUserType(isEmployee ? UserTypeService.UserTypes.EMPLOYEE : UserTypeService.UserTypes.CLIENT)));
+            if (systemAdmin)
+                user.addUserType(entityManager.getReference(UserType.class,
+                        UserTypeService.getUserType(UserTypeService.UserTypes.SYSTEM_ADMIN)));
+
             user = userRepository.save(user);
             if (isEmployee)
                 createEmployee((EmployeeCreateDTO) userCreateDTO, user.getId());
             return modelMapper.map(user, UserDTO.class);
         } else
             throw new IllegalArgumentException("User cannot be null");
+    }
 
+    @Transactional
+    public UserDTO createAdmin(UserCreateDTO userCreateDTO) throws Exception {
+        return createUser(userCreateDTO, false, true);
     }
 
     @Transactional
