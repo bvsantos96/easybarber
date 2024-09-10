@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.repositories;
 
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,8 +29,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
                 u.id,
                 u.password,
                 u.mobileInformation,
-                e.id,
-                u.userTypes
+                e.id
             )
             FROM User u
             LEFT JOIN Employee e ON e.user.id = u.id
@@ -39,4 +39,13 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u JOIN u.userTypes ut WHERE ut.id = :userTypeId")
     Page<User> findByUserTypeId(@Param("userTypeId") long userTypeId, Pageable pageable);
+
+    Optional<User> findByMobileInformation(String mobileInformation);
+
+    @Query(value = """
+                SELECT uut.user_type_id
+                FROM user_user_type uut
+                WHERE uut.user_id = :id
+            """, nativeQuery = true)
+    Set<Long> getAllUserTypes(Long id);
 }

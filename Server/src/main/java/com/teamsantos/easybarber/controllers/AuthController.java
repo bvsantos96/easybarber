@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -35,6 +36,26 @@ public class AuthController {
         HttpStatus status = HttpStatus.CREATED;
         try {
             return ResponseEntity.status(status).body(userService.createUser(userDTO));
+        } catch (Exception e) {
+            UserDTO response = new UserDTO();
+            response.setResponseMessage(e.getMessage());
+            if (e instanceof IllegalArgumentException) {
+                status = HttpStatus.BAD_REQUEST;
+            } else if (e instanceof UserAlreadyExistsException) {
+                status = HttpStatus.FOUND;
+            } else {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+            }
+            return ResponseEntity.status(status).body(response);
+        }
+    }
+
+    @Profile("test")
+    @PostMapping("/registerAdmin")
+    public ResponseEntity<UserDTO> createAdmin(@RequestBody UserCreateDTO userDTO) {
+        HttpStatus status = HttpStatus.CREATED;
+        try {
+            return ResponseEntity.status(status).body(userService.createAdmin(userDTO));
         } catch (Exception e) {
             UserDTO response = new UserDTO();
             response.setResponseMessage(e.getMessage());

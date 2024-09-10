@@ -22,7 +22,7 @@ public class UserPrincipal {
         this.employeeId = employeeId;
         this.roles = new ArrayList<>();
         for (String role : roles) {
-            this.roles.add(new SimpleGrantedAuthority(String.format("ROLE_",role.toUpperCase())));
+            this.roles.add(new SimpleGrantedAuthority(String.format("ROLE_%s", role.toUpperCase())));
         }
     }
 

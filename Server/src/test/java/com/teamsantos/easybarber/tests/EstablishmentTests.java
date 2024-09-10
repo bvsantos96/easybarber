@@ -23,6 +23,7 @@ import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
+import com.teamsantos.easybarber.testDTOs.UserTestDTO;
 import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.EstablishmentData;
 import com.teamsantos.easybarber.testData.ServiceData;
@@ -159,7 +160,7 @@ public class EstablishmentTests {
             JSONObject response = new JSONObject(result.andReturn().getResponse().getContentAsString());
             List<EmployeeDTO> _employees = JSONToDTO.fromPageDTO(response, EmployeeDTO.class);
             _employees.sort(Comparator.comparingLong(EmployeeDTO::getId));
-            List<UserCreateDTO> employees = EmployeeData.employees.stream()
+            List<UserTestDTO> employees = EmployeeData.employees.stream()
                     .filter(e -> EmployeeData.employeesEstablishments.get(e.getId()).contains(1L)).toList();
             assert employees.equals(_employees);
         } catch (Exception e) {

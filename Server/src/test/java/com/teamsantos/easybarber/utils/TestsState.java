@@ -26,6 +26,9 @@ public class TestsState {
     public static final String APPOINTMENT_CANCEL_APPOINTMENT = "appointmentCancelAppointment";
     public static final String APPOINTMENT_CONFIRM_APPOINTMENT = "appointmentConfirmAppointment";
     public static final String AUTH_TEST = "authTest";
+    public static final String AUTH_CREATE_SYSTEM_ADMIN = "authCreateSystemAdmin";
+
+    public static String SYSTEM_ADMIN_JWT = null;
 
     private static Set<String> completedSetups = Collections.synchronizedSet(new HashSet<>());
 
@@ -36,4 +39,5 @@ public class TestsState {
     public static void mark(String setupName) {
         completedSetups.add(setupName);
     }
+
 }

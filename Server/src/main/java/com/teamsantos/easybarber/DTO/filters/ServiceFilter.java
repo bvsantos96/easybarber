@@ -17,7 +17,6 @@ public class ServiceFilter {
     private Long serviceTypeId;
     private Long employeeId;
     private boolean includeServiceImage = true;
-    private boolean includeServiceTypeImage = true;
 
     public String getName() {
         return Utils.formatStringToLIKE(name);

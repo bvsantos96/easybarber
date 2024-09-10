@@ -32,9 +32,9 @@ public class UserContextFilter extends OncePerRequestFilter {
                 Claims claims = jwtUtils.validateToken(token);
                 if (claims != null) {
                     UserPrincipal userDetails = jwtUtils.parseToken(claims);
+                    UserContext.setCurrentUser(userDetails);
                     SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getUserDetails().getAuthorities()));
-                    UserContext.setCurrentUser(userDetails);
                 }
             }
             filterChain.doFilter(request, response);
