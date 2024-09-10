@@ -41,7 +41,7 @@ public class EmployeeTests {
     public String login(boolean init) throws Exception {
         if (init)
             createEmployees();
-        return new AuthTests(mockMvc).login(EmployeeData.employees.get(0).toString(), false);
+        return new AuthTests(mockMvc).login(EmployeeData.employees.get(0), false);
     }
 
     public String loginById(Long id, boolean init) throws Exception {
@@ -49,13 +49,13 @@ public class EmployeeTests {
             createEmployees();
         return new AuthTests(mockMvc)
                 .login(EmployeeData.employees.stream().filter(e -> Objects.equals(e.getId(), id)).findFirst()
-                        .orElseThrow(UserNotFoundException::new).toString(), false);
+                        .orElseThrow(UserNotFoundException::new), false);
     }
 
     public String login(int index, boolean init) throws Exception {
         if (init)
             createEmployees();
-        return new AuthTests(mockMvc).login(EmployeeData.employees.get(index).toString(), false);
+        return new AuthTests(mockMvc).login(EmployeeData.employees.get(index), false);
     }
 
     public String login() throws Exception {
@@ -118,8 +118,8 @@ public class EmployeeTests {
         }
         TestsState.mark(TestsState.EMPLOYEE_CREATE_SERVICES);
         try {
-            new ServiceTypeTests(mockMvc).createServiceTypes(init);
-            String jwt = login(false);
+            new ServiceTypeTests(mockMvc).createServiceTypes();
+            String jwt = login(init);
             create("/employee/service", jwt, ServiceData.services.get(0).toString());
             create("/employee/service", jwt, ServiceData.services.get(1).toString());
             jwt = login(1, false);

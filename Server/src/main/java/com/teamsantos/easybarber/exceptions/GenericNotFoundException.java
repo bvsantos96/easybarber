@@ -3,7 +3,7 @@ package com.teamsantos.easybarber.exceptions;
 public class GenericNotFoundException extends Exception {
 
     public GenericNotFoundException(String resource) {
-        super(String.format("%s not found"));
+        super(String.format("%s not found", resource));
     }
 
     public GenericNotFoundException(String message, boolean isPlural) {

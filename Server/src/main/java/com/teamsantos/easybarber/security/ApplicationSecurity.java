@@ -44,6 +44,7 @@ public class ApplicationSecurity {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST,
                                 "/register",
+                                "/registerAdmin",
                                 "/login",
                                 "/employee",
                                 "/sms/**")

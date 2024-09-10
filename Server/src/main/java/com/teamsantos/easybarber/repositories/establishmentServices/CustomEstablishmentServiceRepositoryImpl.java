@@ -55,17 +55,19 @@ public class CustomEstablishmentServiceRepositoryImpl implements CustomEstablish
                     Utils.formatStringToLIKE(filter.getDescription())));
         }
 
+        Predicate[] countPredicate = predicates.toArray(new Predicate[0]);
         if (filter.isIncludeServiceImage()) {
-            predicates.add(cb.equal(establishmentService.get("service").get("images").get("main"), true));
+            predicates.add(cb.equal(establishmentService.get("service").get("images").get("isMain"), true));
         }
 
         if (filter.isIncludeEmployeeImage()) {
             predicates
-                    .add(cb.equal(establishmentService.get("service").get("employee").get("images").get("main"), true));
+                    .add(cb.equal(establishmentService.get("service").get("employee").get("images").get("isMain"),
+                            true));
         }
 
         if (filter.isIncludeEstablishmentImage()) {
-            predicates.add(cb.equal(establishmentService.get("establishment").get("images").get("main"), true));
+            predicates.add(cb.equal(establishmentService.get("establishment").get("images").get("isMain"), true));
         }
 
         return predicates;
@@ -152,7 +154,7 @@ public class CustomEstablishmentServiceRepositoryImpl implements CustomEstablish
 
     private long getTotalCount(Predicate[] predicates, CriteriaBuilder cb, Root<EstablishmentService> service) {
         CriteriaQuery<Long> countQuery = cb.createQuery(Long.class);
-        countQuery.select(cb.count(service));
+        countQuery.select(cb.count(service.get("id")));
         countQuery.where(predicates);
         return entityManager.createQuery(countQuery).getSingleResult();
     }

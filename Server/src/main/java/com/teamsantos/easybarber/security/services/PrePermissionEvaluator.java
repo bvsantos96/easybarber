@@ -29,16 +29,20 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
     public static final String _SCHEDULE_OWNER = "SCHEDULE_OWNER";
     public static final String SCHEDULE_OWNER = "hasPermission(#id, '" + _SCHEDULE_OWNER + "')";
     public static final String _ESTABLISHMENT_EMPLOYEE = "ESTABLISHMENT_EMPLOYEE";
-    public static final String ESTABLISHMENT_EMPLOYEE = "hasPermission(#establishmentId, '" + _ESTABLISHMENT_EMPLOYEE + "')";
-    public static final String ESTABLISHMENT_EMPLOYEE_OBJECT = "hasPermission(#obj.getEstablishmentId(), '" + _ESTABLISHMENT_EMPLOYEE + "')";
+    public static final String ESTABLISHMENT_EMPLOYEE = "hasPermission(#establishmentId, '" + _ESTABLISHMENT_EMPLOYEE
+            + "')";
+    public static final String ESTABLISHMENT_EMPLOYEE_OBJECT = "hasPermission(#obj.getEstablishmentId(), '"
+            + _ESTABLISHMENT_EMPLOYEE + "')";
     public static final String _ESTABLISHMENT_ADMIN = "ESTABLISHMENT_ADMIN";
     public static final String ESTABLISHMENT_ADMIN = "hasPermission(#establishmentId, '" + _ESTABLISHMENT_ADMIN + "')";
     public static final String _SERVICE_OWNER = "SERVICE_OWNER";
     public static final String SERVICE_OWNER_OBJECT = "hasPermission(#service.getId(), '" + _SERVICE_OWNER + "')";
-    public static final String SERVICE_OWNER_OBJECT_SERVICE_ID = "hasPermission(#service.getServiceId(), '" + _SERVICE_OWNER + "')";
+    public static final String SERVICE_OWNER_OBJECT_SERVICE_ID = "hasPermission(#service.getServiceId(), '"
+            + _SERVICE_OWNER + "')";
     public static final String SERVICE_OWNER = "hasPermission(#serviceId, '" + _SERVICE_OWNER + "')";
     public static final String _HAS_APPOINTMENT_CHANGE_PERMISSION = "HAS_APPOINTMENT_CHANGE_PERMISSION";
-    public static final String HAS_APPOINTMENT_CHANGE_PERMISSION = "hasPermission(#id, '" + _HAS_APPOINTMENT_CHANGE_PERMISSION + "')";
+    public static final String HAS_APPOINTMENT_CHANGE_PERMISSION = "hasPermission(#id, '"
+            + _HAS_APPOINTMENT_CHANGE_PERMISSION + "')";
 
     @Autowired
     public PrePermissionEvaluator(EstablishmentStaffRepository establishmentStaffRepository,

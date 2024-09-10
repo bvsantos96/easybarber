@@ -7,19 +7,19 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import com.teamsantos.easybarber.DTO.ImageDTO;
-import com.teamsantos.easybarber.DTO.UserCreateDTO;
+import com.teamsantos.easybarber.testDTOs.UserTestDTO;
 
 public class EmployeeData {
-    public static final List<UserCreateDTO> employees;
+    public static final List<UserTestDTO> employees;
     public static final Map<Long, List<Long>> employeesEstablishments;
     public static final Map<Long, List<Long>> adminEstablishments;
     public static final Map<Long, List<ImageDTO>> employeeImages;
 
     static {
         employees = new ArrayList<>();
-        employees.add(new UserCreateDTO(2L, "+351", "999999999", "Test123*", "Henrique"));
-        employees.add(new UserCreateDTO(3L, "+351", "900000000", "Test123*", "Amigo do Joao"));
-        employees.sort(Comparator.comparing(UserCreateDTO::getId));
+        employees.add(new UserTestDTO(2L, "+351", "999999999", "Test123*", "Henrique"));
+        employees.add(new UserTestDTO(3L, "+351", "900000000", "Test123*", "Amigo do Joao"));
+        employees.sort(Comparator.comparing(UserTestDTO::getId));
 
         employeesEstablishments = new TreeMap<>();
         employeesEstablishments.put(2L, new ArrayList<>());

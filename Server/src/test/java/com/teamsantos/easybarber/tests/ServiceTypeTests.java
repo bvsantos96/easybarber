@@ -35,16 +35,12 @@ public class ServiceTypeTests {
 
     @Test
     public void createServiceTypes() {
-        createServiceTypes(true);
-    }
-
-    public void createServiceTypes(boolean init) {
         if (TestsState.ran(TestsState.SERVICE_TYPES_CREATE_SERVICE_TYPES)) {
             return;
         }
         TestsState.mark(TestsState.SERVICE_TYPES_CREATE_SERVICE_TYPES);
         try {
-            String jwt = new EmployeeTests(mockMvc).login(init);
+            String jwt = new AuthTests(mockMvc).loginAdmin();
             ServiceData.serviceTypes.forEach(serviceType -> {
                 try {
                     create("/service", jwt, serviceType.toString());
@@ -70,7 +66,7 @@ public class ServiceTypeTests {
                     new JSONObject(result.andReturn().getResponse().getContentAsString()), ServiceDTO.class);
             assert services != null;
             List<ServiceDTO> _services = getServicesByServiceType(serviceType);
-            for (int i = 0; i < services.size(); i++) {
+            for (int i = 0; i < _services.size(); i++) {
                 assert services.get(i).equalsWithoutPrice(_services.get(i));
             }
         } catch (Exception e) {
