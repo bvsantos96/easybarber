@@ -39,9 +39,28 @@ public class EstablishmentDTO extends BaseEstablishmentDTO {
         }
     }
 
+    public EstablishmentDTO(Long id, String name, String description, String address, Point location, Object distance) {
+        super(id, name, description, address, location);
+        try {
+            if (distance instanceof Double) {
+                Double _distance = (Double) distance;
+                this.distance = _distance / 1000;
+            }
+        } catch (Exception e) {
+            System.err.println("Error parsing distance from: " + distance.toString());
+        }
+    }
+
     public EstablishmentDTO(Long id, String name, String description, String address, Point location,
             Object distance, Long nVotes, Long sumVotes, EstablishmentImage images) {
-        this(id, name, description, address, location, distance, Set.of(images));
+        this(id, name, description, address, location, distance);
+        if (images != null) {
+            if (this.getImages() == null) {
+                this.setImages(Set.of(images));
+            } else {
+                this.getImages().add(images);
+            }
+        }
         this.nVotes = nVotes;
         this.sumVotes = sumVotes;
     }

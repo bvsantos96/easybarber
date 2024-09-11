@@ -40,15 +40,28 @@ public interface EstablishmentRepository
             SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id,
             e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location,
             :location) AS distance, e.nVotes, e.sumVotes, i)
-            FROM Establishment e
+            FROM EstablishmentService es
+            LEFT JOIN Establishment e ON e.id = es.establishment.id
             LEFT JOIN EstablishmentImage i ON i.isMain = true AND i.entity.id = e.id
-            INNER JOIN EstablishmentService es ON :serviceType IS NULL OR es.service.id = :serviceType
-            WHERE es.establishment.id = e.id
+            WHERE (:serviceType IS NULL OR es.service.id = :serviceType)
             AND (:partialName IS NULL OR lower(e.name) LIKE concat('%', lower(:partialName), '%'))
             AND (:rating IS NULL OR (e.nVotes > 0 AND e.sumVotes / e.nVotes >= :rating))
             ORDER BY ST_Distance_Sphere(e.location, :location) ASC
             """)
     Page<EstablishmentDTO> findClosestEstablishments(Point location, Long serviceType, String partialName,
+            Double rating, Pageable pageable);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id,
+            e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location,
+            :location) AS distance, e.nVotes, e.sumVotes, i)
+            FROM Establishment e
+            LEFT JOIN EstablishmentImage i ON i.isMain = true AND i.entity.id = e.id
+            WHERE (:partialName IS NULL OR lower(e.name) LIKE concat('%', lower(:partialName), '%'))
+            AND (:rating IS NULL OR (e.nVotes > 0 AND e.sumVotes / e.nVotes >= :rating))
+            ORDER BY ST_Distance_Sphere(e.location, :location) ASC
+            """)
+    Page<EstablishmentDTO> findClosestEstablishments(Point location, String partialName,
             Double rating, Pageable pageable);
 
     @Query("""
@@ -67,9 +80,9 @@ public interface EstablishmentRepository
     Page<Establishment> findEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable);
 
     @Query("""
-                SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, e.nVotes, e.sumVotes, e.images)
-                FROM Establishment e
-                WHERE e.id = :id
+            SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, e.nVotes, e.sumVotes, e.images)
+            FROM Establishment e
+            WHERE e.id = :id
             """)
     Optional<EstablishmentDTO> findByIdDTO(long id);
 }
