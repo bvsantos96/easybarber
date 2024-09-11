@@ -154,6 +154,13 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
             throws ParseException {
         if (filter.getLatitude() != null && filter.getLongitude() != null) {
             filter.setLocation(GeometryUtils.parseLocation(filter.getLatitude(), filter.getLongitude()));
+            if (filter.getServiceType() == null) {
+                return establishmentRepository.findClosestEstablishments(
+                        filter.getLocation(),
+                        filter.getPartialName(),
+                        filter.getRating(),
+                        pageable);
+            }
             return establishmentRepository.findClosestEstablishments(
                     filter.getLocation(),
                     filter.getServiceType(),
