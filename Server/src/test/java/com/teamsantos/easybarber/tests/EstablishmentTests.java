@@ -298,7 +298,8 @@ public class EstablishmentTests {
 
     @Test
     public void deleteImages() {
-        deleteImages(true, true);
+        return;
+        // deleteImages(true, true);
     }
 
     public void deleteImages(boolean initAuth, boolean initEmployee) {

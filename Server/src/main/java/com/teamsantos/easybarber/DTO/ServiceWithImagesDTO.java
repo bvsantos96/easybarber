@@ -19,4 +19,8 @@ public class ServiceWithImagesDTO extends ServiceBaseDTO {
                 serviceTypeImageURL);
         this.employee = new EmployeeBaseDTO(employeeId, employeeName, employeeImage);
     }
+
+    public boolean equalsWithoutPrice(ServiceDTO service) {
+        return service.getEmployeeId() == employee.getId() && super.equalsWithoutPrice(service);
+    }
 }

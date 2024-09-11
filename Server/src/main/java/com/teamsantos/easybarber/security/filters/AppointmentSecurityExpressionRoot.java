@@ -9,15 +9,15 @@ import com.teamsantos.easybarber.security.utils.UserContext;
 public class AppointmentSecurityExpressionRoot extends SecurityExpressionRoot {
     private final AppointmentRepository appointmentRepository;
 
-    public AppointmentSecurityExpressionRoot(Authentication authentication, AppointmentRepository appointmentRepository) {
+    public AppointmentSecurityExpressionRoot(Authentication authentication,
+            AppointmentRepository appointmentRepository) {
         super(authentication);
         this.appointmentRepository = appointmentRepository;
     }
 
     public boolean hasAppointmentChangePermission(long appointmentId) {
         Long id = UserContext.getCurrentUser().getEmployeeId();
-        if (id != null && appointmentRepository.existsByIdAndEmployeeId(appointmentId,
-                UserContext.getCurrentUser().getEmployeeId())) {
+        if (id != null && appointmentRepository.existsByIdAndEmployeeId(appointmentId, id)) {
             return true;
         }
         if (appointmentRepository.existsByIdAndUserId(appointmentId, UserContext.getCurrentUser().getId())) {

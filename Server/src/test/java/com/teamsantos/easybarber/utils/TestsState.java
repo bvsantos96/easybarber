@@ -18,6 +18,7 @@ public class TestsState {
     public static final String EMPLOYEE_TEST_DELETE = "employeeTestDelete";
     public static final String EMPLOYEE_CREATE_SERVICES = "employeeCreateServices";
     public static final String EMPLOYEE_UPDATE_SERVICE = "employeeUpdateService";
+    public static final String EMPLOYEE_ADD_IMAGES = "employeeAddImages";
     public static final String EMPLOYEE_DELETE_IMAGES = "employeeDeleteImages";
     public static final String EMPLOYEE_ADD_SERVICE_IMAGES = "employeeAddServiceImages";
     public static final String EMPLOYEE_DELETE_SERVICE_IMAGES = "deleteServiceImages";
