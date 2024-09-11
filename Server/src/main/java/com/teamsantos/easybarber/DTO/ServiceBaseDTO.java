@@ -46,4 +46,12 @@ public class ServiceBaseDTO extends BaseDTO {
                 && serviceType.equals(service.getServiceType())
                 && Objects.equals(image, service.getImage());
     }
+
+    public boolean equalsWithoutPrice(ServiceDTO service) {
+        return getId().equals(service.getId())
+                && name.equals(service.getName())
+                && description.equals(service.getDescription())
+                && Objects.equals(duration, service.getDuration())
+                && serviceType.getId().equals(service.getServiceTypeId());
+    }
 }

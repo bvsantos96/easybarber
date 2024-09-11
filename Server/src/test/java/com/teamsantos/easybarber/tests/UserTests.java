@@ -69,4 +69,9 @@ public class UserTests {
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
     }
+
+    public void deleteUser() {
+        // TODO: This needs to take into account that we are storing jwt in a static
+        // manner in the Testing world
+    }
 }

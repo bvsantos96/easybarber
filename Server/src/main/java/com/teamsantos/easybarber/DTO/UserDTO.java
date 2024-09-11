@@ -61,12 +61,12 @@ public class UserDTO extends BaseResponseDTO {
         try {
             String _name = JSONToDTO.getString(obj, "name");
             Set<Long> _userTypeId = JSONToDTO.getSetLong(obj, "userTypeId");
-            return this.mobile.equals(Objects.requireNonNull(JSONToDTO.getString(obj, "mobile")))
-                    && this.countryMobile
-                            .equals(Objects.requireNonNull(JSONToDTO.getString(obj, "countryMobile")))
+            String mobile = JSONToDTO.getString(obj, "mobile");
+            String countryMobile = JSONToDTO.getString(obj, "countryMobile");
+            return this.mobile.equals(Objects.requireNonNull(mobile))
+                    && this.countryMobile.equals(Objects.requireNonNull(countryMobile))
                     && (this.name == null || _name == null || this.name.equals(_name))
-                    && (this.userTypes == null || _userTypeId == null
-                            || this.userTypes.equals(_userTypeId));
+                    && (this.userTypes == null || _userTypeId == null || this.userTypes.equals(_userTypeId));
         } catch (Exception e) {
             e.printStackTrace();
             return false;

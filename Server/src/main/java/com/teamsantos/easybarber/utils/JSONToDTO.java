@@ -15,13 +15,17 @@ import java.util.Set;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.teamsantos.easybarber.DTO.BaseDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 
 public class JSONToDTO {
 
     public static String getString(Object obj, String fieldName) {
         try {
-            Field field = obj.getClass().getDeclaredField(fieldName);
+            Field field = JSONToDTO.findFieldInHierarchy(obj.getClass(), fieldName);
+            if (field == null) {
+                throw new NoSuchFieldException();
+            }
             field.setAccessible(true);
             return (String) field.get(obj);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -31,7 +35,10 @@ public class JSONToDTO {
 
     public static Long getLong(Object obj, String fieldName) {
         try {
-            Field field = obj.getClass().getDeclaredField(fieldName);
+            Field field = JSONToDTO.findFieldInHierarchy(obj.getClass(), fieldName);
+            if (field == null) {
+                throw new NoSuchFieldException();
+            }
             field.setAccessible(true);
             return (Long) field.get(obj);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -41,7 +48,10 @@ public class JSONToDTO {
 
     public static Set<Long> getSetLong(Object obj, String fieldName) {
         try {
-            Field field = obj.getClass().getDeclaredField(fieldName);
+            Field field = JSONToDTO.findFieldInHierarchy(obj.getClass(), fieldName);
+            if (field == null) {
+                throw new NoSuchFieldException();
+            }
             field.setAccessible(true);
             return (Set<Long>) field.get(obj);
         } catch (NoSuchFieldException | IllegalAccessException e) {
@@ -106,6 +116,9 @@ public class JSONToDTO {
                             value = jsonValue.equals(JSONObject.NULL) ? null
                                     : new HashSet<>(
                                             fromListDTO((JSONArray) jsonValue, findFieldTypeInHierarchy(clazz, key)));
+                        } else if (BaseDTO.class.isAssignableFrom(field.getType())) {
+                            value = jsonValue.equals(JSONObject.NULL) ? null
+                                    : toDTO((JSONObject) jsonValue, (Class<? extends BaseDTO>) field.getType());
                         } else {
                             value = jsonValue.equals(JSONObject.NULL) ? null
                                     : parseByType(jsonValue, field.getType());
@@ -146,7 +159,7 @@ public class JSONToDTO {
         }
     }
 
-    private static Field findFieldInHierarchy(Class<?> clazz, String fieldName) {
+    public static Field findFieldInHierarchy(Class<?> clazz, String fieldName) {
         Class<?> currentClass = clazz;
         while (currentClass != null) {
             try {

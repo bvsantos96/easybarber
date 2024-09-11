@@ -41,7 +41,7 @@ public interface EstablishmentRepository
             e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location,
             :location) AS distance, e.nVotes, e.sumVotes, i)
             FROM Establishment e
-            LEFT JOIN e.images i
+            LEFT JOIN EstablishmentImage i ON i.isMain = true AND i.entity.id = e.id
             INNER JOIN EstablishmentService es ON :serviceType IS NULL OR es.service.id = :serviceType
             WHERE es.establishment.id = e.id
             AND (:partialName IS NULL OR lower(e.name) LIKE concat('%', lower(:partialName), '%'))
