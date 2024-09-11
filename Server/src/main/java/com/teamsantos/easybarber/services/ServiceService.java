@@ -6,7 +6,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -116,20 +115,12 @@ public class ServiceService extends
 
     @Transactional(readOnly = true)
     public Page<ServiceBaseDTO> listServices(ServiceFilter filter, Pageable pageable) {
-        return new PageImpl<>(serviceRepository.findAllBase(filter, pageable), pageable,
-                countServices(filter));
+        return serviceRepository.findAllBase(filter, pageable);
     }
 
     @Transactional(readOnly = true)
     public Page<ServiceWithImagesDTO> listServicesWithEmployee(ServiceWithEmployeeFilter filter, Pageable pageable) {
-        return serviceRepository._findAllWEmployee(filter, pageable);
-        // return new PageImpl<>(serviceRepository.findAllWEmployee(filter, pageable),
-        // pageable,
-        // countServices(filter));
-    }
-
-    private long countServices(ServiceFilter filter) {
-        return serviceRepository.count(filter);
+        return serviceRepository.findAllWEmployee(filter, pageable);
     }
 
     @Transactional(readOnly = true)

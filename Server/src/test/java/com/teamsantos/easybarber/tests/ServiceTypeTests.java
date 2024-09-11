@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.DTO.ServiceWithImagesDTO;
 import com.teamsantos.easybarber.testData.ServiceData;
 import com.teamsantos.easybarber.utils.CreateTest;
 import com.teamsantos.easybarber.utils.JSONToDTO;
@@ -62,10 +63,11 @@ public class ServiceTypeTests {
             long serviceType = 3L;
             ResultActions result = CreateTest.get(mockMvc, String.format("/service/list?serviceType=%d", serviceType));
             result.andExpect(MockMvcResultMatchers.status().isOk());
-            List<ServiceDTO> services = JSONToDTO.fromPageDTO(
-                    new JSONObject(result.andReturn().getResponse().getContentAsString()), ServiceDTO.class);
+            List<ServiceWithImagesDTO> services = JSONToDTO.fromPageDTO(
+                    new JSONObject(result.andReturn().getResponse().getContentAsString()), ServiceWithImagesDTO.class);
             assert services != null;
             List<ServiceDTO> _services = getServicesByServiceType(serviceType);
+            assert services.size() == _services.size();
             for (int i = 0; i < _services.size(); i++) {
                 assert services.get(i).equalsWithoutPrice(_services.get(i));
             }

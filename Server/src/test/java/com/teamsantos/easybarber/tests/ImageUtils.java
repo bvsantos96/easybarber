@@ -45,7 +45,7 @@ public class ImageUtils {
 
     public List<ImageDTO> getImages(String jwt) {
         try {
-            ResultActions result = CreateTest.get(mockMvc, String.format("%s/images", pathPrefix), jwt);
+            ResultActions result = CreateTest.get(mockMvc, String.format("%s/images?sort=id", pathPrefix), jwt);
             result.andExpect(MockMvcResultMatchers.status().isOk());
             return JSONToDTO.fromPageDTO(
                     new JSONObject(result.andReturn().getResponse().getContentAsString()), ImageDTO.class);

@@ -1,8 +1,10 @@
 package com.teamsantos.easybarber.security.filters;
 
-import com.teamsantos.easybarber.repositories.services.ServiceRepository;
 import org.springframework.security.access.expression.SecurityExpressionRoot;
 import org.springframework.security.core.Authentication;
+
+import com.teamsantos.easybarber.repositories.services.ServiceRepository;
+import com.teamsantos.easybarber.security.utils.UserContext;
 
 public class ServiceSecurityExpressionRoot extends SecurityExpressionRoot {
     private final ServiceRepository serviceRepository;
@@ -13,6 +15,10 @@ public class ServiceSecurityExpressionRoot extends SecurityExpressionRoot {
     }
 
     public boolean hasServiceOwnerPermission(Long targetDomainObject) {
-        return serviceRepository.checkIfEmployeeIsServiceOwner(targetDomainObject, this.getAuthentication().getName());
+        Long id = UserContext.getCurrentUser().getEmployeeId();
+        if (id != null && serviceRepository.checkIfEmployeeIsServiceOwner(targetDomainObject, id)) {
+            return true;
+        }
+        return false;
     }
 }
