@@ -2,12 +2,14 @@ package com.teamsantos.easybarber.DTO;
 
 import org.json.JSONObject;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
 @NoArgsConstructor
 public class ImageDTO extends BaseDTO {
     private String data;
@@ -31,6 +33,8 @@ public class ImageDTO extends BaseDTO {
         }
         if (json.has("data"))
             this.data = json.getString("data");
+        if (json.has("main"))
+            this.main = json.getBoolean("main");
     }
 
     @Override

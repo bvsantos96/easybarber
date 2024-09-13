@@ -234,8 +234,7 @@ public class EmployeeTests {
 
     @Test
     public void deleteImages() {
-        return;
-        // deleteImages(true, true);
+        deleteImages(true, true);
     }
 
     public void deleteImages(boolean initAuth, boolean initEmployee) {
@@ -245,46 +244,33 @@ public class EmployeeTests {
         TestsState.mark(TestsState.EMPLOYEE_DELETE_IMAGES);
         try {
             addImages(initAuth, initEmployee);
-            for (Long employeeId : EmployeeData.employees.stream().map(UserCreateDTO::getId).toList()) {
-                String jwt = loginById(employeeId, initAuth);
-                List<ImageDTO> images = EmployeeData.employeeImages.get(employeeId).subList(0, 1);
-                addImageAndCheckIfSaved(images, jwt, employeeId);
-            }
-            // This is meant to reset the images to the original state for following tests
-            addImages(false, false);
+            long employeeId = EmployeeData.employees.get(0).getId();
+            String jwt = loginById(employeeId, false);
+            ImageUtils imageUtils = new ImageUtils(mockMvc, String.format("/employee/%d", employeeId));
+            imageUtils.deleteImagesCheckAndReset(EmployeeData.employeeImages.get(employeeId), jwt);
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
     }
 
-    private void addImageAndCheckIfSaved(List<ImageDTO> images, String jwt, Long establishmentId) {
-        if (images == null || images.isEmpty()) {
-            return;
-        }
-        ImageUtils imageUtils = new ImageUtils(mockMvc, String.format("/employee/%d", establishmentId));
-        imageUtils.saveImages(images, jwt);
-        List<ImageDTO> _images = imageUtils.getImages(jwt);
-        assert _images.equals(images);
-    }
-
     @Test
     public void addServiceImages() {
-        addServiceImages(true, true);
+        addServiceImages(true);
     }
 
-    public void addServiceImages(boolean initAuth, boolean initEmployee) {
+    public void addServiceImages(boolean init) {
         if (TestsState.ran(TestsState.EMPLOYEE_ADD_SERVICE_IMAGES)) {
             return;
         }
         TestsState.mark(TestsState.EMPLOYEE_ADD_SERVICE_IMAGES);
         try {
-            new EmployeeTests(mockMvc).createServices(initEmployee);
+            createServices(init);
             for (Long serviceId : ServiceData.services.stream().map(ServiceDTO::getId).toList()) {
-                String jwt = loginServiceAdmin(serviceId, initAuth);
+                String jwt = loginServiceAdmin(serviceId, false);
                 List<ImageDTO> images = ServiceData.serviceImages.get(serviceId);
                 ImageUtils imageUtils = new ImageUtils(mockMvc, String.format("/service/%d", serviceId));
-                imageUtils.addImageAndCheckIfSaved(images, jwt);
+                imageUtils.addImageAndCheckIfSavedOneByOne(images, jwt);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -295,34 +281,6 @@ public class EmployeeTests {
     public void deleteEmployee() {
         // TODO: This needs to take into account that we are storing jwt in a static
         // manner in the Testing world
-    }
-
-    @Test
-    public void deleteServiceImages() {
-        return;
-        // deleteServiceImages(true, true);
-    }
-
-    public void deleteServiceImages(boolean initAuth, boolean initEmployee) {
-        if (TestsState.ran(TestsState.EMPLOYEE_DELETE_SERVICE_IMAGES)) {
-            return;
-        }
-        TestsState.mark(TestsState.EMPLOYEE_DELETE_SERVICE_IMAGES);
-        try {
-            addServiceImages(initAuth, initEmployee);
-            for (Long serviceId : ServiceData.services.stream().map(ServiceDTO::getId).toList()) {
-                String jwt = loginServiceAdmin(serviceId, initAuth);
-                List<ImageDTO> images = ServiceData.serviceImages.get(serviceId).subList(0, 1);
-                ImageUtils imageUtils = new ImageUtils(mockMvc, String.format("/service/%d", serviceId));
-                imageUtils.addImageAndCheckIfSaved(images, jwt);
-
-            }
-            // This is meant to reset the images to the original state for following tests
-            addServiceImages(false, false);
-        } catch (Exception e) {
-            e.printStackTrace();
-            org.junit.jupiter.api.Assertions.fail(e.getMessage());
-        }
     }
 
     private String loginServiceAdmin(Long id, boolean initEmployee) throws Exception {

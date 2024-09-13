@@ -14,9 +14,24 @@ public class CreateTest {
                 .contentType(MediaType.APPLICATION_JSON));
     }
 
+    public static ResultActions delete(MockMvc mockMvc, String path, String jwt, String data) throws Exception {
+        return mockMvc.perform(MockMvcRequestBuilders
+                .delete(path)
+                .header("Authorization", "Bearer " + jwt)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(data));
+    }
+
+    public static void deleteOk(MockMvc mockMvc, String path, String jwt, String data) throws Exception {
+        ResultActions result = delete(mockMvc, path, jwt, data);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .isOk());
+    }
+
     public static ResultActions put(MockMvc mockMvc, String path, String jwt, String item) throws Exception {
         try {
-           return mockMvc.perform(MockMvcRequestBuilders
+            return mockMvc.perform(MockMvcRequestBuilders
                     .put(path)
                     .header("Authorization", "Bearer " + jwt)
                     .contentType(MediaType.APPLICATION_JSON)

@@ -128,4 +128,11 @@ public class ServiceService extends
         return serviceTypeRepository.findAll().stream().map(e -> modelMapper.map(e, ServiceTypeDTO.class))
                 .toList();
     }
+
+    public boolean checkIfEmployeeIsServiceOwner(Long serviceId, Long id) {
+        if (id != null && serviceRepository.checkIfEmployeeIsServiceOwner(serviceId, id)) {
+            return true;
+        }
+        return false;
+    }
 }
