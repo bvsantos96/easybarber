@@ -79,6 +79,20 @@ public class EstablishmentDTO extends BaseEstablishmentDTO {
         this.sumVotes = sumVotes;
     }
 
+    public EstablishmentDTO(Long id, String name, String description, String address, Point location, Long nVotes,
+            Long sumVotes, EstablishmentImage images) {
+        super(id, name, description, address, location);
+        if (images != null) {
+            if (this.getImages() == null) {
+                this.setImages(Set.of(images));
+            } else {
+                this.getImages().add(images);
+            }
+        }
+        this.nVotes = nVotes;
+        this.sumVotes = sumVotes;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

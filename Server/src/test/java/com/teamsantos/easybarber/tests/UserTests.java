@@ -1,5 +1,7 @@
 package com.teamsantos.easybarber.tests;
 
+import com.teamsantos.easybarber.services.UserTypeService;
+import com.teamsantos.easybarber.testData.EmployeeData;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,12 +57,12 @@ public class UserTests {
 
     public void testList(boolean init) {
         try {
-            ResultActions result = CreateTest.get(mockMvc, "/users?userType=CLIENT",
-                    new AuthTests(mockMvc).login(init));
+            ResultActions result = CreateTest.get(mockMvc, String.format("/users?userType=%s", UserTypeService.UserTypes.EMPLOYEE.toString()),
+                    new EmployeeTests(mockMvc).login(init));
             String json = result.andReturn().getResponse().getContentAsString();
             UsersDTO response = new UsersDTO();
             response.setUsers(JSONToDTO.fromPageDTO(new JSONObject(json), UserDTO.class));
-            if (!response.getUsers().equals(UsersData.usersDTO)) {
+            if (!response.getUsers().equals(EmployeeData.employees)) {
                 org.junit.jupiter.api.Assertions.fail("Response is not equal to expected value.");
             }
             result.andExpect(MockMvcResultMatchers.status().isOk());

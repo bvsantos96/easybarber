@@ -65,7 +65,7 @@ public class AppointmentTests {
                     } else {
                         jwt = new EmployeeTests(mockMvc).loginById(appointment.getEmployeeId(), false);
                     }
-                    create("/appointment", jwt, appointment.toString());
+                    appointment.setId(create("/appointment", jwt, appointment.toString()));
                 } catch (Exception e) {
                     e.printStackTrace();
                     org.junit.jupiter.api.Assertions.fail(e.getMessage());
