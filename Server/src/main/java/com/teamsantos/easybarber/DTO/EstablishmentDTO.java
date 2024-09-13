@@ -56,9 +56,9 @@ public class EstablishmentDTO extends BaseEstablishmentDTO {
         this(id, name, description, address, location, distance);
         if (images != null) {
             if (this.getImages() == null) {
-                this.setImages(Set.of(images));
+                this.setImages(Set.of(images.convertToDto()));
             } else {
-                this.getImages().add(images);
+                this.getImages().add(images.convertToDto());
             }
         }
         this.nVotes = nVotes;
@@ -84,9 +84,9 @@ public class EstablishmentDTO extends BaseEstablishmentDTO {
         super(id, name, description, address, location);
         if (images != null) {
             if (this.getImages() == null) {
-                this.setImages(Set.of(images));
+                this.setImages(Set.of(images.convertToDto()));
             } else {
-                this.getImages().add(images);
+                this.getImages().add(images.convertToDto());
             }
         }
         this.nVotes = nVotes;

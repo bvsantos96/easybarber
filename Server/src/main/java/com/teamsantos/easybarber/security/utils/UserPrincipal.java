@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import com.teamsantos.easybarber.services.UserTypeService.UserTypes;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,4 +31,8 @@ public class UserPrincipal {
     public org.springframework.security.core.userdetails.User getUserDetails() {
         return new org.springframework.security.core.userdetails.User(String.valueOf(id), "", roles);
     }
+
+	public boolean hasRole(UserTypes employee) {
+        return roles.contains(new SimpleGrantedAuthority(String.format("ROLE_%s", employee.toString().toUpperCase())));
+	}
 }

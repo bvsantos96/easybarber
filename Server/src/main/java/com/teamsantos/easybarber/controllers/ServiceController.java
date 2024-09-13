@@ -1,7 +1,5 @@
 package com.teamsantos.easybarber.controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -9,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,12 +16,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
-import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.DTO.ServiceTypeDTO;
 import com.teamsantos.easybarber.DTO.ServiceWithImagesDTO;
 import com.teamsantos.easybarber.DTO.filters.ServiceWithEmployeeFilter;
 import com.teamsantos.easybarber.entities.Service;
 import com.teamsantos.easybarber.entities.images.ServiceImage;
+import com.teamsantos.easybarber.security.filters.ServiceSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.ServiceService;
 
@@ -100,14 +97,7 @@ public class ServiceController extends ImageController<Service, ServiceImage> {
     }
 
     @Override
-    @PostMapping("/{serviceId}/images")
-    @PreAuthorize(PrePermissionEvaluator.SERVICE_OWNER)
-    public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("serviceId") long serviceId,
-            @RequestBody List<ImageDTO> images) {
-        try {
-            return _addImages(serviceId, images);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
-        }
+    public boolean canEdit(long entityId) {
+        return ServiceSecurityExpressionRoot._hasServiceOwnerPermission(serviceService, entityId);
     }
 }

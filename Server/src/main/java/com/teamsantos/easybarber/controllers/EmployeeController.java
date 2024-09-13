@@ -1,7 +1,6 @@
 package com.teamsantos.easybarber.controllers;
 
 import java.security.Principal;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -23,7 +22,6 @@ import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.CreateServiceDTO;
 import com.teamsantos.easybarber.DTO.EmployeeCreateDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.ServiceBaseDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
@@ -40,6 +38,7 @@ import com.teamsantos.easybarber.services.EstablishmentService;
 import com.teamsantos.easybarber.services.SchedulesService;
 import com.teamsantos.easybarber.services.ServiceService;
 import com.teamsantos.easybarber.services.UserService;
+import com.teamsantos.easybarber.services.UserTypeService;
 
 @Controller
 @RequestMapping("/employee")
@@ -165,19 +164,9 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
     }
 
     @Override
-    @PostMapping("/{entityId}/images")
-    @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
-    public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("entityId") long entityId,
-            @RequestBody List<ImageDTO> images) {
-        try {
-            if (UserContext.getEmployeeId() != entityId) {
-                return ResponseEntity.badRequest()
-                        .body(new BaseResponseDTO("You are not allowed to add images to this employee"));
-            }
-            return _addImages(entityId, images);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
-        }
+    public boolean canEdit(long entityId) {
+        return UserContext.getCurrentUser().hasRole(UserTypeService.UserTypes.EMPLOYEE)
+                && UserContext.getEmployeeId() == entityId;
     }
 
     @GetMapping("/schedule/exception")
