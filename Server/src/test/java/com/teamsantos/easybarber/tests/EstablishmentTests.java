@@ -288,7 +288,8 @@ public class EstablishmentTests {
                     .toList()) {
                 String jwt = loginAdminByEstablishmentId(establishmentId);
                 List<ImageDTO> images = EstablishmentData.establishmentImages.get(establishmentId);
-                addImageAndCheckIfSaved(images, jwt, establishmentId);
+                ImageUtils imageUtils = new ImageUtils(mockMvc, String.format("/establishment/%d", establishmentId));
+                imageUtils.addImageAndCheckIfSaved(images, jwt);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -313,7 +314,8 @@ public class EstablishmentTests {
                     .toList()) {
                 String jwt = loginAdminByEstablishmentId(establishmentId);
                 List<ImageDTO> images = EstablishmentData.establishmentImages.get(establishmentId).subList(0, 1);
-                addImageAndCheckIfSaved(images, jwt, establishmentId);
+                ImageUtils imageUtils = new ImageUtils(mockMvc, String.format("/establishment/%d", establishmentId));
+                imageUtils.addImageAndCheckIfSaved(images, jwt);
             }
             // This is meant to reset the images to the original state for following tests
             addImages(false, false);
@@ -321,17 +323,5 @@ public class EstablishmentTests {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
-    }
-
-    private void addImageAndCheckIfSaved(List<ImageDTO> images, String jwt, Long establishmentId) {
-        if (images == null || images.isEmpty()) {
-            return;
-        }
-        ImageUtils imageUtils = new ImageUtils(mockMvc, String.format("/establishment/%d", establishmentId));
-        imageUtils.saveImages(images, jwt);
-        List<ImageDTO> _images = imageUtils.getImages(jwt);
-        if (!_images.equals(images))
-            System.out.println();
-        assert _images.equals(images);
     }
 }

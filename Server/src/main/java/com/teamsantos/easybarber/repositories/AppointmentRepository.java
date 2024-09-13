@@ -32,7 +32,7 @@ public interface AppointmentRepository
                 SELECT 1
                 from Appointment s
                 where s.employee.id = :employeeId
-                and s.id != :appointmentId
+                and s.id = :appointmentId
                 )
             """)
     boolean existsByIdAndEmployeeId(long appointmentId, long employeeId);
@@ -42,7 +42,7 @@ public interface AppointmentRepository
                 SELECT 1
                 from Appointment s
                 where s.user.id = :userId
-                and s.id != :appointmentId
+                and s.id = :appointmentId
                 )
             """)
     boolean existsByIdAndUserId(long appointmentId, long userId);

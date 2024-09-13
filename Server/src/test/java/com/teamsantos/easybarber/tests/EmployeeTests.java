@@ -223,7 +223,8 @@ public class EmployeeTests {
             for (Long employeeId : EmployeeData.employees.stream().map(UserCreateDTO::getId).toList()) {
                 String jwt = loginById(employeeId, initAuth);
                 List<ImageDTO> images = EmployeeData.employeeImages.get(employeeId);
-                addImageAndCheckIfSaved(images, jwt, employeeId);
+                ImageUtils imageUtils = new ImageUtils(mockMvc, String.format("/employee/%d", employeeId));
+                imageUtils.addImageAndCheckIfSaved(images, jwt);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -282,7 +283,8 @@ public class EmployeeTests {
             for (Long serviceId : ServiceData.services.stream().map(ServiceDTO::getId).toList()) {
                 String jwt = loginServiceAdmin(serviceId, initAuth);
                 List<ImageDTO> images = ServiceData.serviceImages.get(serviceId);
-                addServiceImageAndCheckIfSaved(images, jwt, serviceId);
+                ImageUtils imageUtils = new ImageUtils(mockMvc, String.format("/service/%d", serviceId));
+                imageUtils.addImageAndCheckIfSaved(images, jwt);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -291,7 +293,8 @@ public class EmployeeTests {
     }
 
     public void deleteEmployee() {
-        // TODO: This needs to take into account that we are storing jwt in a static manner in the Testing world
+        // TODO: This needs to take into account that we are storing jwt in a static
+        // manner in the Testing world
     }
 
     @Test
@@ -310,7 +313,9 @@ public class EmployeeTests {
             for (Long serviceId : ServiceData.services.stream().map(ServiceDTO::getId).toList()) {
                 String jwt = loginServiceAdmin(serviceId, initAuth);
                 List<ImageDTO> images = ServiceData.serviceImages.get(serviceId).subList(0, 1);
-                addServiceImageAndCheckIfSaved(images, jwt, serviceId);
+                ImageUtils imageUtils = new ImageUtils(mockMvc, String.format("/service/%d", serviceId));
+                imageUtils.addImageAndCheckIfSaved(images, jwt);
+
             }
             // This is meant to reset the images to the original state for following tests
             addServiceImages(false, false);
@@ -318,17 +323,6 @@ public class EmployeeTests {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
-    }
-
-    private void addServiceImageAndCheckIfSaved(List<ImageDTO> images, String jwt, Long establishmentId) {
-        if (images == null || images.isEmpty()) {
-            return;
-        }
-        ImageUtils imageUtils = new ImageUtils(mockMvc, String.format("/service/%d", establishmentId));
-        imageUtils.saveImages(images, jwt);
-        List<ImageDTO> _images = imageUtils.getImages(jwt);
-        assert _images.equals(images);
-
     }
 
     private String loginServiceAdmin(Long id, boolean initEmployee) throws Exception {

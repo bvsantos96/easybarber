@@ -48,17 +48,20 @@ public class EstablishmentData {
         establishmentImages.put(1L, new ArrayList<>() {
             {
                 add(new ImageDTO(null,
-                        "https://us-en-cdn.square.ncms.io/content/uploads/2022/10/BlackCat3.jpg.jpeg"));
+                        "https://us-en-cdn.square.ncms.io/content/uploads/2022/10/BlackCat3.jpg.jpeg", true));
                 add(new ImageDTO(null,
-                        "https://assets-global.website-files.com/644a9d9ce529ef8812f82a28/647fb85c69e95444243ef9bd_Henley%27s%20Gentlemen%27s%20Grooming%20-%20Barbershop%20and%20Mens%20Grooming.webp"));
+                        "https://assets-global.website-files.com/644a9d9ce529ef8812f82a28/647fb85c69e95444243ef9bd_Henley%27s%20Gentlemen%27s%20Grooming%20-%20Barbershop%20and%20Mens%20Grooming.webp",
+                        false));
             }
         });
         establishmentImages.put(2L, new ArrayList<>() {
             {
                 add(new ImageDTO(null,
-                        "https://img.freepik.com/premium-vector/barbershop-logo-barber-shop-logo-vector-template_664675-709.jpg"));
+                        "https://img.freepik.com/premium-vector/barbershop-logo-barber-shop-logo-vector-template_664675-709.jpg",
+                        true));
                 add(new ImageDTO(null,
-                        "https://images.squarespace-cdn.com/content/v1/6499eadde1c0a02a7d1be4ac/66036202-71d4-465f-b189-75fd80017d66/110A2577.jpg"));
+                        "https://images.squarespace-cdn.com/content/v1/6499eadde1c0a02a7d1be4ac/66036202-71d4-465f-b189-75fd80017d66/110A2577.jpg",
+                        false));
             }
         });
     }
