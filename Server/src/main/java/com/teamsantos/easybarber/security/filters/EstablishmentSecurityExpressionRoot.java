@@ -5,6 +5,7 @@ import org.springframework.security.core.Authentication;
 
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.security.utils.UserContext;
+import com.teamsantos.easybarber.services.EstablishmentService;
 
 public class EstablishmentSecurityExpressionRoot extends SecurityExpressionRoot {
     private final EstablishmentStaffRepository establishmentStaffRepository;
@@ -25,11 +26,21 @@ public class EstablishmentSecurityExpressionRoot extends SecurityExpressionRoot 
      * @return returns if the logged user has permission to access the
      *         establishment
      */
-    public boolean hasAdminPermission(Long establishmentId) {
-        return establishmentStaffRepository.isAdminOfEstablishment(UserContext.getEmployeeId(), establishmentId);
+    public boolean hasAdminPermission(long establishmentId) {
+        return _hasAdminPermission(establishmentStaffRepository, establishmentId);
     }
 
-    public boolean hasEmployeePermission(Long establishmentId) {
+    public static boolean _hasAdminPermission(EstablishmentStaffRepository _establishmentStaffRepository,
+            long establishmentID) {
+        return _establishmentStaffRepository.isAdminOfEstablishment(UserContext.getEmployeeId(), establishmentID);
+    }
+
+    public static boolean _hasAdminPermission(EstablishmentService establishmentService,
+            long establishmentID) {
+        return establishmentService.isAdmin(establishmentID, UserContext.getEmployeeId());
+    }
+
+    public boolean hasEmployeePermission(long establishmentId) {
         return establishmentStaffRepository.isEmployeeOfEstablishment(UserContext.getEmployeeId(), establishmentId);
     }
 }

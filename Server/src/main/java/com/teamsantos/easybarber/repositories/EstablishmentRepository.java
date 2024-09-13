@@ -46,7 +46,7 @@ public interface EstablishmentRepository
             WHERE (:serviceType IS NULL OR es.service.id = :serviceType)
             AND (:partialName IS NULL OR lower(e.name) LIKE concat('%', lower(:partialName), '%'))
             AND (:rating IS NULL OR (e.nVotes > 0 AND e.sumVotes / e.nVotes >= :rating))
-            ORDER BY ST_Distance_Sphere(e.location, :location) ASC
+            ORDER BY distance ASC
             """)
     Page<EstablishmentDTO> findClosestEstablishments(Point location, Long serviceType, String partialName,
             Double rating, Pageable pageable);
@@ -59,7 +59,7 @@ public interface EstablishmentRepository
             LEFT JOIN EstablishmentImage i ON i.isMain = true AND i.entity.id = e.id
             WHERE (:partialName IS NULL OR lower(e.name) LIKE concat('%', lower(:partialName), '%'))
             AND (:rating IS NULL OR (e.nVotes > 0 AND e.sumVotes / e.nVotes >= :rating))
-            ORDER BY ST_Distance_Sphere(e.location, :location) ASC
+            ORDER BY distance ASC
             """)
     Page<EstablishmentDTO> findClosestEstablishments(Point location, String partialName,
             Double rating, Pageable pageable);

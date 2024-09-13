@@ -1,6 +1,5 @@
 package com.teamsantos.easybarber.controllers;
 
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,6 @@ import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import com.teamsantos.easybarber.DTO.ImageDTO;
 import com.teamsantos.easybarber.DTO.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
@@ -37,6 +35,7 @@ import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.images.EstablishmentImage;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
+import com.teamsantos.easybarber.security.filters.EstablishmentSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.EstablishmentService;
 import com.teamsantos.easybarber.services.SchedulesService;
@@ -45,7 +44,6 @@ import com.teamsantos.easybarber.utils.Utils;
 @Controller
 @RequestMapping("/establishment")
 public class EstablishmentController extends ImageController<Establishment, EstablishmentImage> {
-
     private final SchedulesService schedulesService;
     private final EstablishmentService establishmentService;
 
@@ -193,11 +191,8 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     }
 
     @Override
-    @PostMapping(path = "/{establishmentId}/images", consumes = "application/json")
-    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
-    public ResponseEntity<BaseResponseDTO> addImages(@PathVariable("establishmentId") long establishmentId,
-            @RequestBody List<ImageDTO> images) {
-        return super._addImages(establishmentId, images);
+    public boolean canEdit(long entityId) {
+        return EstablishmentSecurityExpressionRoot._hasAdminPermission(establishmentService, entityId);
     }
 
     @GetMapping("/{establishmentId}/schedule")

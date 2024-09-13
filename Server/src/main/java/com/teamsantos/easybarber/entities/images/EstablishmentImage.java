@@ -16,6 +16,6 @@ import lombok.Setter;
 @Table(indexes = { @Index(columnList = "entity_id, is_main"), @Index(columnList = "entity_id, data") })
 public class EstablishmentImage extends Image<Establishment, EstablishmentImage> {
     public ImageDTO convertToDto() {
-        return new ImageDTO(this.getId(), this.getData());
+        return new ImageDTO(this.getId(), this.getData(), this.isMain());
     }
 }

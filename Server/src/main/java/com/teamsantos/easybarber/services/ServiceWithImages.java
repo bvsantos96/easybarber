@@ -3,6 +3,7 @@ package com.teamsantos.easybarber.services;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
@@ -47,9 +48,10 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
     }
 
     @Transactional
-    public void saveImages(Long entityId, List<ImageDTO> images) throws GenericNotFoundException {
+    public List<Long> saveImages(long entityId, List<ImageDTO> images) {
         List<E> imagesToAdd = new ArrayList<>();
         boolean newMain = false;
+
         for (ImageDTO image : images) {
             if ((image.getData() != null && !image.getData().isEmpty())) {
                 if (image.getMain() != null && image.getMain()) {
@@ -59,28 +61,54 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
                         newMain = true;
                     }
                 }
-                imagesToAdd.add(parseImage(entityManager, image, entityId));
+                E imageEntity = Utils.getModelMapper().map(image, imageClass);
+                imageEntity.setEntity(entityManager.getReference(entityClass, entityId));
+                imagesToAdd.add(imageEntity);
             }
         }
-
         if (newMain) {
             imageRepository.removeMainFlag(entityId);
-        } else {
-            if (!imageRepository.existsMain(entityId)) {
-                if (imagesToAdd.isEmpty()) {
-                    throw new GenericNotFoundException("No images to set as main");
-                }
+        } else if (!imageRepository.existsMain(entityId)) {
+            if (!imagesToAdd.isEmpty()) {
                 imagesToAdd.get(0).setMain(true);
             }
         }
-
         if (!imagesToAdd.isEmpty()) {
-            imageRepository.saveAll(imagesToAdd);
+            return imageRepository.saveAll(imagesToAdd).stream().map(Image::getId).toList();
         }
+
+        return new ArrayList<>();
+    }
+
+    @Transactional
+    public void deleteImages(long entityId, Set<Long> imageIds) {
+        boolean mainDeleted = imageRepository.isAnyMainImage(entityId, imageIds);
+        imageRepository.deleteImages(entityId, imageIds);
+        if (mainDeleted) {
+            Long id = imageRepository.findOldestImageId(entityId);
+            if (id != null) {
+                imageRepository.setNewMain(entityId, id);
+            }
+        }
+    }
+
+    @Transactional
+    public void setMain(long entityId, long imageId) throws GenericNotFoundException {
+        imageRepository.removeMainFlag(entityId);
+        E i = imageRepository.findByIdAndEntityId(imageId, entityId)
+                .orElseThrow(() -> new GenericNotFoundException("Image not found"));
+        i.setMain(true);
+        imageRepository.save(i);
     }
 
     @Transactional(readOnly = true)
     public Page<ImageDTO> getImages(Long entityId, Pageable pageable) throws NotFoundException {
         return imageRepository.findByEntityId(entityId, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public ImageDTO getMainImage(Long entityId) throws GenericNotFoundException {
+        return imageRepository.findMainImage(entityId)
+                .orElseThrow(() -> new GenericNotFoundException("Image not found"));
     }
 }
