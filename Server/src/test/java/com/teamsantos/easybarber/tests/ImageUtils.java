@@ -55,4 +55,13 @@ public class ImageUtils {
         }
         return null;
     }
+
+    public void addImageAndCheckIfSaved(List<ImageDTO> images, String jwt) {
+        if (images == null || images.isEmpty()) {
+            return;
+        }
+        saveImages(images, jwt);
+        List<ImageDTO> _images = getImages(jwt);
+        assert _images.equals(images);
+    }
 }

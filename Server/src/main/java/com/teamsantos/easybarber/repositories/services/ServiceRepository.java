@@ -64,7 +64,7 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
     @Query("""
                 SELECT new com.teamsantos.easybarber.DTO.ServiceBaseDTO(s.id, s.name, s.description, s.duration, si.data,s.serviceType.id, s.serviceType.name,s.serviceType.description, s.serviceType.imageURL)
                 FROM Service s
-                LEFT JOIN ServiceImage si on si.isMain = true and si.entity.id = s.id
+                LEFT JOIN ServiceImage si ON :#{#filter.includeServiceImage} = true AND si.isMain = true and si.entity.id = s.id
                 WHERE (:#{#filter.employeeId} is null or s.employee.id = :#{#filter.employeeId})
                 AND (:#{#filter.serviceTypeId} is null or s.serviceType.id = :#{#filter.serviceTypeId})
                 AND (:#{#filter.name} is null or lower(s.name) like lower(concat('%', :#{#filter.name}, '%')))
@@ -76,8 +76,8 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
                 SELECT new com.teamsantos.easybarber.DTO.ServiceWithImagesDTO(s.id, s.name, s.description, s.duration, si.data,s.serviceType.id, s.serviceType.name,s.serviceType.description, s.serviceType.imageURL,
                     s.employee.id, s.employee.user.name, ei.data)
                 FROM Service s
-                LEFT JOIN ServiceImage si on si.isMain = true and si.entity.id = s.id
-                LEFT JOIN EmployeeImage ei on ei.isMain = true and ei.entity.id = s.employee.id
+                LEFT JOIN ServiceImage si ON :#{#filter.includeServiceImage} = true AND si.isMain = true and si.entity.id = s.id
+                LEFT JOIN EmployeeImage ei ON :#{#filter.includeEmployeeImage} = true AND ei.isMain = true and ei.entity.id = s.employee.id
                 WHERE (:#{#filter.employeeId} is null or s.employee.id = :#{#filter.employeeId})
                 AND (:#{#filter.serviceTypeId} is null or s.serviceType.id = :#{#filter.serviceTypeId})
                 AND (:#{#filter.name} is null or lower(s.name) like lower(concat('%', :#{#filter.name}, '%')))

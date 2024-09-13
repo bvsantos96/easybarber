@@ -1,16 +1,22 @@
 package com.teamsantos.easybarber.repositories.establishmentServices;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
+import com.teamsantos.easybarber.DTO.ServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceFullDTO;
+import com.teamsantos.easybarber.DTO.filters.EstablishmentServiceFilter;
 import com.teamsantos.easybarber.entities.EstablishmentService;
 import com.teamsantos.easybarber.utils.Pair;
 
 @Repository
 public interface EstablishmentServiceRepository
-        extends JpaRepository<EstablishmentService, Long>, CustomEstablishmentServiceRepository {
+        extends JpaRepository<EstablishmentService, Long> {
 
     void deleteByEstablishmentId(long id);
 
@@ -57,4 +63,35 @@ public interface EstablishmentServiceRepository
                 AND es.service.id = :serviceId
             """)
     ServiceFullDTO findByEstablishmentIdAndServiceId(long establishmentId, long serviceId);
+
+    @Query("""
+                SELECT new com.teamsantos.easybarber.DTO.EstablishmentServiceDTO(ess.service.id, ess.service.name, ess.service.description, ess.service.duration, si.data,
+                ess.service.serviceType.id, ess.service.serviceType.name, ess.service.serviceType.description, ess.service.serviceType.imageURL,
+                ess.service.employee.id, ess.service.employee.user.name, ei.data,
+                ess.establishment.id, ess.establishment.name, esi.data,
+                ess.price, ess.active)
+                FROM EstablishmentService ess
+                LEFT JOIN ServiceImage si ON :#{#filter.includeServiceImage} = true AND si.isMain = true and si.entity.id = ess.service.id
+                LEFT JOIN EmployeeImage ei ON :#{#filter.includeEmployeeImage} = true AND ei.isMain = true and ei.entity.id = ess.service.employee.id
+                LEFT JOIN EstablishmentImage esi ON :#{#filter.includeEstablishmentImage} = true AND esi.isMain = true and esi.entity.id = ess.establishment.id
+                WHERE (:#{#filter.establishmentId} is null or ess.establishment.id = :#{#filter.establishmentId})
+                AND (:#{#filter.employeeId} is null or ess.service.employee.id = :#{#filter.employeeId})
+                AND (:#{#filter.serviceTypeId} is null or ess.service.serviceType.id = :#{#filter.serviceTypeId})
+                AND (:#{#filter.establishmentId} is null or ess.establishment.id = :#{#filter.establishmentId})
+                AND (:#{#filter.name} is null or lower(ess.service.name) like lower(concat('%', :#{#filter.name}, '%')))
+                AND (:#{#filter.description} is null or lower(ess.service.description) like lower(concat('%', :#{#filter.description}, '%')))
+            """)
+    Page<EstablishmentServiceDTO> findAll(@Param("filter") EstablishmentServiceFilter filter, Pageable pageable);
+
+    @Query("""
+                SELECT new com.teamsantos.easybarber.DTO.ServiceDTO(ess.service.id, ess.service.employee.id, ess.service.serviceType.id, ess.service.name, ess.service.description, ess.price, ess.service.duration)
+                FROM EstablishmentService ess
+                WHERE (:#{#filter.establishmentId} is null or ess.establishment.id = :#{#filter.establishmentId})
+                AND (:#{#filter.employeeId} is null or ess.service.employee.id = :#{#filter.employeeId})
+                AND (:#{#filter.serviceTypeId} is null or ess.service.serviceType.id = :#{#filter.serviceTypeId})
+                AND (:#{#filter.establishmentId} is null or ess.establishment.id = :#{#filter.establishmentId})
+                AND (:#{#filter.name} is null or lower(ess.service.name) like lower(concat('%', :#{#filter.name}, '%')))
+                AND (:#{#filter.description} is null or lower(ess.service.description) like lower(concat('%', :#{#filter.description}, '%')))
+            """)
+    Page<ServiceDTO> findAllServiceDTO(EstablishmentServiceFilter filter, Pageable pageable);
 }

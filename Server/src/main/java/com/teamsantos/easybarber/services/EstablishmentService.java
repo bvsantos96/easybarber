@@ -168,8 +168,16 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
                     filter.getRating(),
                     pageable);
         }
+
+        if (filter.getServiceType() == null) {
+            return establishmentRepository.list(
+                    filter.getPartialName(),
+                    filter.getRating(),
+                    pageable);
+        }
         return establishmentRepository.list(
                 filter.getServiceType(),
+                filter.getPartialName(),
                 filter.getRating(),
                 pageable);
     }
