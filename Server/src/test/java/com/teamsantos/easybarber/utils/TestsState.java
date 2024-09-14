@@ -28,6 +28,7 @@ public class TestsState {
     public static final String APPOINTMENT_CONFIRM_APPOINTMENT = "appointmentConfirmAppointment";
     public static final String AUTH_TEST = "authTest";
     public static final String AUTH_CREATE_SYSTEM_ADMIN = "authCreateSystemAdmin";
+    public static final String ADD_USER_LOCATION = "addUserLocation";
 
     public static String SYSTEM_ADMIN_JWT = null;
 

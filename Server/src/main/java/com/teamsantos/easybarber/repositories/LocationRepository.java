@@ -5,7 +5,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.teamsantos.easybarber.entities.Location;
@@ -19,8 +18,8 @@ public interface LocationRepository extends JpaRepository<Location, Long> {
 
     @Modifying
     @Query("DELETE FROM Location l WHERE l.latitude = :latitude AND l.longitude = :longitude AND l.user.id = :userId")
-    int deleteIfExist(@Param("latitude") double latitude, @Param("longitude") double longitude,
-            @Param("user") long userId);
+    int deleteIfExist(double latitude, double longitude,
+            long userId);
 
     @Modifying
     @Query("UPDATE Location l SET l.selected = false WHERE l.user.id = :userId AND l.selected = true")

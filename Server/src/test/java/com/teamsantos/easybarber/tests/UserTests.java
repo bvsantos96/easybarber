@@ -1,7 +1,7 @@
 package com.teamsantos.easybarber.tests;
 
-import com.teamsantos.easybarber.services.UserTypeService;
-import com.teamsantos.easybarber.testData.EmployeeData;
+import java.util.List;
+
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +11,11 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import com.teamsantos.easybarber.DTO.LocationDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
 import com.teamsantos.easybarber.DTO.UsersDTO;
+import com.teamsantos.easybarber.services.UserTypeService;
+import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.UsersData;
 import com.teamsantos.easybarber.utils.CreateTest;
 import com.teamsantos.easybarber.utils.JSONToDTO;
@@ -57,7 +60,8 @@ public class UserTests {
 
     public void testList(boolean init) {
         try {
-            ResultActions result = CreateTest.get(mockMvc, String.format("/users?userType=%s", UserTypeService.UserTypes.EMPLOYEE.toString()),
+            ResultActions result = CreateTest.get(mockMvc,
+                    String.format("/users?userType=%s", UserTypeService.UserTypes.EMPLOYEE.toString()),
                     new EmployeeTests(mockMvc).login(init));
             String json = result.andReturn().getResponse().getContentAsString();
             UsersDTO response = new UsersDTO();
@@ -75,5 +79,48 @@ public class UserTests {
     public void deleteUser() {
         // TODO: This needs to take into account that we are storing jwt in a static
         // manner in the Testing world
+    }
+
+    @Test
+    public void addUserLocation() {
+        addUserLocation(true);
+    }
+
+    public void addUserLocation(boolean init) {
+        if (TestsState.ran(TestsState.ADD_USER_LOCATION)) {
+            return;
+        }
+        TestsState.mark(TestsState.ADD_USER_LOCATION);
+
+        try {
+            String jwt = new AuthTests(mockMvc).login(init);
+            LocationDTO location = UsersData.locations.get(0);
+            ResultActions result = CreateTest.post(mockMvc, "/location", jwt,
+                    location.toString());
+            result.andExpect(MockMvcResultMatchers.status().isOk());
+            location.setId(Long.parseLong(result.andReturn().getResponse().getContentAsString()));
+            location.setSelected(true);
+            result = CreateTest.get(mockMvc, "/locations", jwt);
+            result.andExpect(MockMvcResultMatchers.status().isOk());
+            List<LocationDTO> locations = JSONToDTO.fromPageDTO(
+                    new JSONObject(result.andReturn().getResponse().getContentAsString()), LocationDTO.class);
+            assert locations.get(0).equals(UsersData.locations.get(0));
+            location = UsersData.locations.get(1);
+            result = CreateTest.post(mockMvc, "/location", jwt, location.toString());
+            result.andExpect(MockMvcResultMatchers.status().isOk());
+            location.setId(Long.parseLong(result.andReturn().getResponse().getContentAsString()));
+            for (LocationDTO loc : UsersData.locations) {
+                loc.setSelected(false);
+            }
+            location.setSelected(true);
+            result = CreateTest.get(mockMvc, "/locations", jwt);
+            result.andExpect(MockMvcResultMatchers.status().isOk());
+            locations = JSONToDTO.fromPageDTO(new JSONObject(result.andReturn().getResponse().getContentAsString()),
+                    LocationDTO.class);
+            assert locations.equals(UsersData.locations);
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
     }
 }
