@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Platform, Linking } from 'react-native';
+import { Platform, Linking, PanResponder } from 'react-native';
 import { NavigationContainer, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -41,22 +41,53 @@ export const resetNavigation = (navigation: NavigationProp<any, any>, route: str
     });
 }
 
-const OnBoarding = ({ navigation }: PropNavigation) => {
+const OnBoarding = ({ navigation }) => {
     const Onboarding1 = require("./screens/Onboarding1").default;
     const Onboarding2 = require("./screens/Onboarding2").default;
     const translateXAnimation = useRef(new Animated.Value(0)).current;
     const theme = useTheme();
+    const currentPageRef = useRef(0);
 
-    const changeNewUser = () => {
-        Animated.timing(translateXAnimation, {
-            toValue: 1,
-            duration: 400,
-            useNativeDriver: true,
-        }).start();
-    }
+    const panResponder = useRef(
+        PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
+            onMoveShouldSetPanResponder: (_, gestureState) => {
+                return Math.abs(gestureState.dx) > Math.abs(gestureState.dy);
+            },
+            onPanResponderMove: (_, gestureState) => {
+                const _value = currentPageRef.current + (-gestureState.dx / theme.dimensions.width);
+                translateXAnimation.setValue(_value);
+            },
+            onPanResponderRelease: (_, gestureState) => {
+                const threshold = 0.3;
+                if (gestureState.dx > theme.dimensions.width * threshold) {
+                    currentPageRef.current = 0;
+                    Animated.spring(translateXAnimation, {
+                        toValue: 0,
+                        useNativeDriver: true,
+                    }).start(() => {
+                        currentPageRef.current = 0;
+                    });
+                } else if (gestureState.dx < -theme.dimensions.width * threshold) {
+                    currentPageRef.current = 1;
+                    Animated.spring(translateXAnimation, {
+                        toValue: 1,
+                        useNativeDriver: true,
+                    }).start(() => {
+                        currentPageRef.current = 1;
+                    });
+                } else {
+                    Animated.spring(translateXAnimation, {
+                        toValue: currentPageRef.current,
+                        useNativeDriver: true,
+                    }).start();
+                }
+            },
+        })
+    ).current;
 
     return (
-        <View style={{ flexDirection: 'row' }}>
+        <View style={{ flexDirection: 'row', width: theme.dimensions.width, height: theme.dimensions.height }} {...panResponder.panHandlers}>
             <Animated.View style={{
                 position: 'absolute',
                 top: 0,
@@ -67,11 +98,11 @@ const OnBoarding = ({ navigation }: PropNavigation) => {
                 transform: [{
                     translateX: translateXAnimation.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [0, -1 * theme.dimensions.height / 2],
+                        outputRange: [0, -theme.dimensions.width],
                     })
                 }],
             }}>
-                <Onboarding1 nextPage={changeNewUser} />
+                <Onboarding1 />
             </Animated.View>
 
             <Animated.View style={{
@@ -81,7 +112,7 @@ const OnBoarding = ({ navigation }: PropNavigation) => {
                 transform: [{
                     translateX: translateXAnimation.interpolate({
                         inputRange: [0, 1],
-                        outputRange: [theme.dimensions.height / 2, 0],
+                        outputRange: [theme.dimensions.width, 0],
                     })
                 }],
             }}>
@@ -89,7 +120,7 @@ const OnBoarding = ({ navigation }: PropNavigation) => {
             </Animated.View>
         </View>
     );
-}
+};
 
 const Router = () => {
     // Tabs
