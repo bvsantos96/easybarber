@@ -23,16 +23,27 @@ DROP TABLE IF EXISTS `appointment`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `appointment` (
-  `employee_id` bigint DEFAULT NULL,
+  `active` tinyint(1) NOT NULL DEFAULT '1',
+  `confirmed` tinyint(1) NOT NULL DEFAULT '0',
+  `date` date DEFAULT NULL,
+  `time` time(6) DEFAULT NULL,
+  `employee_id` bigint NOT NULL,
+  `establishment_id` bigint NOT NULL,
+  `establishment_service_id` bigint NOT NULL,
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `user_id` bigint DEFAULT NULL,
+  `user_id` bigint NOT NULL,
   `description` varchar(255) DEFAULT NULL,
+  `non_registered_user` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `FK9daqcqq2nrtbcr5xqeivvkorq` (`employee_id`),
+  KEY `FK995w9yqrlhf2jhiqvon7ndfn2` (`establishment_id`),
+  KEY `FKc5vnhe960ftnpvt7pcwq5pd57` (`establishment_service_id`),
   KEY `FKa8m1smlfsc8kkjn2t6wpdmysk` (`user_id`),
+  CONSTRAINT `FK995w9yqrlhf2jhiqvon7ndfn2` FOREIGN KEY (`establishment_id`) REFERENCES `establishment` (`id`),
   CONSTRAINT `FK9daqcqq2nrtbcr5xqeivvkorq` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`),
-  CONSTRAINT `FKa8m1smlfsc8kkjn2t6wpdmysk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  CONSTRAINT `FKa8m1smlfsc8kkjn2t6wpdmysk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `FKc5vnhe960ftnpvt7pcwq5pd57` FOREIGN KEY (`establishment_service_id`) REFERENCES `establishment_service` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -41,31 +52,8 @@ CREATE TABLE `appointment` (
 
 LOCK TABLES `appointment` WRITE;
 /*!40000 ALTER TABLE `appointment` DISABLE KEYS */;
+INSERT INTO `appointment` VALUES (0,1,'2124-08-18','10:00:00.000000',2,1,1,1,4,'First appointment',''),(1,0,'2124-08-17','10:00:00.000000',2,1,2,2,2,'Second appointment','Pai'),(0,1,'2124-08-16','10:00:00.000000',2,1,2,3,2,'Second appointment','Mae');
 /*!40000 ALTER TABLE `appointment` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `appointment_type`
---
-
-DROP TABLE IF EXISTS `appointment_type`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `appointment_type` (
-  `id` bigint NOT NULL AUTO_INCREMENT,
-  `description` varchar(255) DEFAULT NULL,
-  `type` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `appointment_type`
---
-
-LOCK TABLES `appointment_type` WRITE;
-/*!40000 ALTER TABLE `appointment_type` DISABLE KEYS */;
-/*!40000 ALTER TABLE `appointment_type` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -80,11 +68,11 @@ CREATE TABLE `employee` (
   `n_votes` smallint NOT NULL DEFAULT '0',
   `sum_votes` smallint NOT NULL DEFAULT '0',
   `id` bigint NOT NULL AUTO_INCREMENT,
+  `user` bigint DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
-  `user_mobile_information` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `UK_qnc9fividdvf48rr1jtrcqkcs` (`user_mobile_information`),
-  CONSTRAINT `FKksh4i96ag81kf84awktwksiur` FOREIGN KEY (`user_mobile_information`) REFERENCES `user` (`mobile_information`)
+  UNIQUE KEY `UK_b1od27kmks86dw2jpm4kwdryk` (`user`),
+  CONSTRAINT `FKjdyul4cmndt1b48vw1166bee5` FOREIGN KEY (`user`) REFERENCES `user` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -94,7 +82,7 @@ CREATE TABLE `employee` (
 
 LOCK TABLES `employee` WRITE;
 /*!40000 ALTER TABLE `employee` DISABLE KEYS */;
-INSERT INTO `employee` VALUES (0,0,0,1,NULL,NULL),(1,0,0,2,NULL,'+351999999999'),(1,0,0,3,NULL,'+351900000000');
+INSERT INTO `employee` VALUES (0,0,0,1,NULL,NULL),(1,0,0,2,2,NULL),(1,0,0,3,3,NULL);
 /*!40000 ALTER TABLE `employee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -106,11 +94,13 @@ DROP TABLE IF EXISTS `employee_image`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `employee_image` (
+  `is_main` tinyint(1) NOT NULL DEFAULT '0',
   `entity_id` bigint NOT NULL,
   `id` bigint NOT NULL AUTO_INCREMENT,
   `data` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `FKjqtgbx7ipqgo9j7mqh07tpuyv` (`entity_id`),
+  KEY `IDXbbkynu30go5e2pww6iggdktnb` (`entity_id`,`is_main`),
+  KEY `IDXb1wodbu6fbd4faq15k313h9b0` (`entity_id`,`data`),
   CONSTRAINT `FKjqtgbx7ipqgo9j7mqh07tpuyv` FOREIGN KEY (`entity_id`) REFERENCES `employee` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -121,8 +111,41 @@ CREATE TABLE `employee_image` (
 
 LOCK TABLES `employee_image` WRITE;
 /*!40000 ALTER TABLE `employee_image` DISABLE KEYS */;
-INSERT INTO `employee_image` VALUES (2,1,'https://d2zdpiztbgorvt.cloudfront.net/region1/us/807905/biz_photo/c2da6e290fa84b0392079ca2ae658f-pedro-barber-biz-photo-cf22ec40162841139be5358ccd8193-booksy.jpeg'),(3,3,'https://cdn.camberwellshopping.com.au/wp-content/uploads/2021/07/13111806/The-best-barbers-in-Camberwell.jpg'),(2,5,'https://www.ringmybarber.com/wp-content/uploads/2022/10/qualities-of-a-highly-professional-barber.jpg'),(3,6,'https://www.josephguinbarber.com/uploads/1/2/4/4/124499791/josephguinhome_orig.jpg');
+INSERT INTO `employee_image` VALUES (1,3,3,'https://cdn.camberwellshopping.com.au/wp-content/uploads/2021/07/13111806/The-best-barbers-in-Camberwell.jpg'),(0,3,4,'https://www.josephguinbarber.com/uploads/1/2/4/4/124499791/josephguinhome_orig.jpg'),(1,2,5,'https://d2zdpiztbgorvt.cloudfront.net/region1/us/807905/biz_photo/c2da6e290fa84b0392079ca2ae658f-pedro-barber-biz-photo-cf22ec40162841139be5358ccd8193-booksy.jpeg'),(0,2,6,'https://www.ringmybarber.com/wp-content/uploads/2022/10/qualities-of-a-highly-professional-barber.jpg');
 /*!40000 ALTER TABLE `employee_image` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `employee_schedule`
+--
+
+DROP TABLE IF EXISTS `employee_schedule`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `employee_schedule` (
+  `active` bit(1) DEFAULT NULL,
+  `day` tinyint DEFAULT NULL,
+  `end_hour` time(6) DEFAULT NULL,
+  `start_hour` time(6) DEFAULT NULL,
+  `employee_id` bigint NOT NULL,
+  `establishment_id` bigint DEFAULT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`),
+  KEY `FKopf7kqhml8g3efddqc6rki7jv` (`employee_id`),
+  KEY `FKdnicvgjeytvd7t7nf4yh9itj2` (`establishment_id`),
+  CONSTRAINT `FKdnicvgjeytvd7t7nf4yh9itj2` FOREIGN KEY (`establishment_id`) REFERENCES `establishment` (`id`),
+  CONSTRAINT `FKopf7kqhml8g3efddqc6rki7jv` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `employee_schedule`
+--
+
+LOCK TABLES `employee_schedule` WRITE;
+/*!40000 ALTER TABLE `employee_schedule` DISABLE KEYS */;
+INSERT INTO `employee_schedule` VALUES (_binary '',5,'12:00:00.000000','08:00:00.000000',2,1,1),(_binary '',3,'12:00:00.000000','08:00:00.000000',2,1,2),(_binary '',4,'12:00:00.000000','08:00:00.000000',2,1,3),(_binary '',1,'12:00:00.000000','08:00:00.000000',2,1,4),(_binary '',2,'12:00:00.000000','08:00:00.000000',2,1,5),(_binary '',5,'17:00:00.000000','13:00:00.000000',2,2,6),(_binary '',3,'17:00:00.000000','13:00:00.000000',2,2,7),(_binary '',4,'17:00:00.000000','13:00:00.000000',2,2,8),(_binary '',1,'17:00:00.000000','13:00:00.000000',2,2,9),(_binary '',2,'17:00:00.000000','13:00:00.000000',2,2,10),(_binary '',3,'17:00:00.000000','08:00:00.000000',3,2,11),(_binary '',4,'17:00:00.000000','08:00:00.000000',3,2,12),(_binary '',1,'17:00:00.000000','08:00:00.000000',3,2,13),(_binary '',2,'17:00:00.000000','08:00:00.000000',3,2,14),(_binary '',5,'20:00:00.000000','09:00:00.000000',3,2,15),(_binary '',6,'20:00:00.000000','09:00:00.000000',3,2,16),(_binary '\0',5,'23:00:00.000000','21:00:00.000000',3,2,17),(_binary '\0',6,'23:00:00.000000','21:00:00.000000',3,2,18);
+/*!40000 ALTER TABLE `employee_schedule` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -162,11 +185,13 @@ DROP TABLE IF EXISTS `establishment_image`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `establishment_image` (
+  `is_main` tinyint(1) NOT NULL DEFAULT '0',
   `entity_id` bigint NOT NULL,
   `id` bigint NOT NULL AUTO_INCREMENT,
   `data` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `FKdvuqxcsya8hxjtfsqqdtoy618` (`entity_id`),
+  KEY `IDX368m4bnfqblu9ov75o8psxsqw` (`entity_id`,`is_main`),
+  KEY `IDX95w699v45nsknxm1rvlxdssd2` (`entity_id`,`data`),
   CONSTRAINT `FKdvuqxcsya8hxjtfsqqdtoy618` FOREIGN KEY (`entity_id`) REFERENCES `establishment` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -177,7 +202,7 @@ CREATE TABLE `establishment_image` (
 
 LOCK TABLES `establishment_image` WRITE;
 /*!40000 ALTER TABLE `establishment_image` DISABLE KEYS */;
-INSERT INTO `establishment_image` VALUES (1,1,'https://us-en-cdn.square.ncms.io/content/uploads/2022/10/BlackCat3.jpg.jpeg'),(2,3,'https://img.freepik.com/premium-vector/barbershop-logo-barber-shop-logo-vector-template_664675-709.jpg'),(1,5,'https://assets-global.website-files.com/644a9d9ce529ef8812f82a28/647fb85c69e95444243ef9bd_Henley%27s%20Gentlemen%27s%20Grooming%20-%20Barbershop%20and%20Mens%20Grooming.webp'),(2,6,'https://images.squarespace-cdn.com/content/v1/6499eadde1c0a02a7d1be4ac/66036202-71d4-465f-b189-75fd80017d66/110A2577.jpg');
+INSERT INTO `establishment_image` VALUES (0,1,2,'https://assets-global.website-files.com/644a9d9ce529ef8812f82a28/647fb85c69e95444243ef9bd_Henley%27s%20Gentlemen%27s%20Grooming%20-%20Barbershop%20and%20Mens%20Grooming.webp'),(0,2,4,'https://images.squarespace-cdn.com/content/v1/6499eadde1c0a02a7d1be4ac/66036202-71d4-465f-b189-75fd80017d66/110A2577.jpg'),(1,1,5,'https://us-en-cdn.square.ncms.io/content/uploads/2022/10/BlackCat3.jpg.jpeg'),(1,2,6,'https://img.freepik.com/premium-vector/barbershop-logo-barber-shop-logo-vector-template_664675-709.jpg');
 /*!40000 ALTER TABLE `establishment_image` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -245,6 +270,73 @@ INSERT INTO `establishment_staff` VALUES (1,1,0,2,1,1),(1,1,0,3,2,2),(0,1,0,2,2,
 UNLOCK TABLES;
 
 --
+-- Table structure for table `location`
+--
+
+DROP TABLE IF EXISTS `location`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `location` (
+  `latitude` double NOT NULL,
+  `longitude` double NOT NULL,
+  `selected` bit(1) DEFAULT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user_id` bigint NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  `country` varchar(255) NOT NULL,
+  `name` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `IDXe5jwd37ob25i4e7jwownmu08w` (`user_id`),
+  CONSTRAINT `FKeua4vn06qu0iq9d32qnmuhqkl` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `location`
+--
+
+LOCK TABLES `location` WRITE;
+/*!40000 ALTER TABLE `location` DISABLE KEYS */;
+/*!40000 ALTER TABLE `location` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `schedule_exception`
+--
+
+DROP TABLE IF EXISTS `schedule_exception`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `schedule_exception` (
+  `active` bit(1) DEFAULT NULL,
+  `date` date DEFAULT NULL,
+  `day` tinyint DEFAULT NULL,
+  `end_hour` time(6) DEFAULT NULL,
+  `start_hour` time(6) DEFAULT NULL,
+  `employee_id` bigint DEFAULT NULL,
+  `establishment_id` bigint DEFAULT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`),
+  KEY `IDXhg5cw9l1jytwj3fr72ge5r38g` (`employee_id`),
+  KEY `IDXc7ueuc2o997usil2ewdc4lupa` (`employee_id`,`date`),
+  KEY `FKstfqw5nn4jg2djanwcmxom745` (`establishment_id`),
+  CONSTRAINT `FKcgandf16c4r4sb03tb3aotqiy` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`),
+  CONSTRAINT `FKstfqw5nn4jg2djanwcmxom745` FOREIGN KEY (`establishment_id`) REFERENCES `establishment` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `schedule_exception`
+--
+
+LOCK TABLES `schedule_exception` WRITE;
+/*!40000 ALTER TABLE `schedule_exception` DISABLE KEYS */;
+INSERT INTO `schedule_exception` VALUES (_binary '','2124-09-01',5,'11:30:00.000000','10:30:00.000000',2,NULL,1),(_binary '','2124-09-08',5,'11:30:00.000000','10:30:00.000000',2,NULL,2),(_binary '','2124-09-15',5,'11:30:00.000000','10:30:00.000000',2,NULL,3),(_binary '','2124-09-22',5,'11:30:00.000000','10:30:00.000000',2,NULL,4),(_binary '','2124-09-29',5,'11:30:00.000000','10:30:00.000000',2,NULL,5);
+/*!40000 ALTER TABLE `schedule_exception` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `service`
 --
 
@@ -252,6 +344,7 @@ DROP TABLE IF EXISTS `service`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `service` (
+  `duration` int NOT NULL,
   `employee_id` bigint NOT NULL,
   `id` bigint NOT NULL AUTO_INCREMENT,
   `service_type_id` bigint DEFAULT NULL,
@@ -259,7 +352,7 @@ CREATE TABLE `service` (
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX43gsn9m3vwqnwqctsqta642g5` (`service_type_id`),
-  KEY `FK3xthwhrkfejag3mpvp5ep6ppu` (`employee_id`),
+  KEY `IDXcsgprwtglgj0cf507qpt5oyx5` (`employee_id`),
   CONSTRAINT `FK3xthwhrkfejag3mpvp5ep6ppu` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`),
   CONSTRAINT `FK8e4s0klc1xdmf3dwoy16k7fmi` FOREIGN KEY (`service_type_id`) REFERENCES `service_type` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -271,7 +364,7 @@ CREATE TABLE `service` (
 
 LOCK TABLES `service` WRITE;
 /*!40000 ALTER TABLE `service` DISABLE KEYS */;
-INSERT INTO `service` VALUES (2,1,1,'Simple haircut','Haircut'),(2,2,2,'Simple beard trim','Beard'),(3,3,3,'Simple haircut and beard trim','Beard and haircut');
+INSERT INTO `service` VALUES (30,2,1,1,'Simple haircut','Haircut'),(15,2,2,2,'Simple beard trim','Beard'),(45,3,3,3,'Simple haircut and beard trim','Beard and haircut');
 /*!40000 ALTER TABLE `service` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -283,13 +376,15 @@ DROP TABLE IF EXISTS `service_image`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `service_image` (
+  `is_main` tinyint(1) NOT NULL DEFAULT '0',
   `entity_id` bigint NOT NULL,
   `id` bigint NOT NULL AUTO_INCREMENT,
   `data` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `FKaig970fq9p87bl3ee87fotd1x` (`entity_id`),
+  KEY `IDX916k1n69pqygq1ouva6geaab7` (`entity_id`,`is_main`),
+  KEY `IDXixi75usg18jb8sl9l0g8ncccd` (`entity_id`,`data`),
   CONSTRAINT `FKaig970fq9p87bl3ee87fotd1x` FOREIGN KEY (`entity_id`) REFERENCES `service` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -298,7 +393,7 @@ CREATE TABLE `service_image` (
 
 LOCK TABLES `service_image` WRITE;
 /*!40000 ALTER TABLE `service_image` DISABLE KEYS */;
-INSERT INTO `service_image` VALUES (1,1,'https://cdn-fnknc.nitrocdn.com/jwqHRGAzpUgGskUSHlppNQzwuXgXIKwg/assets/images/optimized/rev-99e07b0/www.fashionbeans.com/wp-content/uploads/2023/08/smartcutzbarbers_manwithnumber2andskinfadehaircut-696x445.jpg'),(2,4,'https://i.ytimg.com/vi/KBKAIdtRinc/maxresdefault.jpg'),(3,7,'https://cdn11.bigcommerce.com/s-h7l2pcerei/product_images/uploaded_images/trimming-beard.jpg'),(1,10,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg6C-koP0XN8yAeszXhRukicFHhQnSkhVQUrQABvhnKQ&s'),(1,11,'https://i.pinimg.com/736x/09/25/9d/09259d4ab3cbf58d8d09312d4c1816b8.jpg'),(2,12,'https://i.ytimg.com/vi/V4aG7_zsyrg/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCQSDIXessxdD6pYgn5Wr5uI2AGcA'),(2,13,'https://cdn.thebeardclub.com/articles/Trim_Your_Beard_2_3202ea96-9f43-43af-bc17-81955f6ddabc_1920x.jpg?ixlib=imgixjs-4.0.1'),(3,14,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOfIzEg-rxJJg7GqAE9vsPYE9NaduGYpFsh0NDOR8DGw&s'),(3,15,'https://cdn.shopify.com/s/files/1/0013/3536/1603/files/Short-And-Shaped.jpg?v=1603734407');
+INSERT INTO `service_image` VALUES (1,1,1,'https://cdn-fnknc.nitrocdn.com/jwqHRGAzpUgGskUSHlppNQzwuXgXIKwg/assets/images/optimized/rev-99e07b0/www.fashionbeans.com/wp-content/uploads/2023/08/smartcutzbarbers_manwithnumber2andskinfadehaircut-696x445.jpg'),(0,1,2,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQg6C-koP0XN8yAeszXhRukicFHhQnSkhVQUrQABvhnKQ&s'),(0,1,3,'https://i.pinimg.com/736x/09/25/9d/09259d4ab3cbf58d8d09312d4c1816b8.jpg'),(1,2,4,'https://i.ytimg.com/vi/KBKAIdtRinc/maxresdefault.jpg'),(0,2,5,'https://i.ytimg.com/vi/V4aG7_zsyrg/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCQSDIXessxdD6pYgn5Wr5uI2AGcA'),(0,2,6,'https://cdn.thebeardclub.com/articles/Trim_Your_Beard_2_3202ea96-9f43-43af-bc17-81955f6ddabc_1920x.jpg?ixlib=imgixjs-4.0.1'),(1,3,7,'https://cdn11.bigcommerce.com/s-h7l2pcerei/product_images/uploaded_images/trimming-beard.jpg'),(0,3,8,'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTOfIzEg-rxJJg7GqAE9vsPYE9NaduGYpFsh0NDOR8DGw&s'),(0,3,9,'https://cdn.shopify.com/s/files/1/0013/3536/1603/files/Short-And-Shaped.jpg?v=1603734407');
 /*!40000 ALTER TABLE `service_image` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -338,7 +433,6 @@ DROP TABLE IF EXISTS `user`;
 CREATE TABLE `user` (
   `id` bigint NOT NULL AUTO_INCREMENT,
   `token_expiration` datetime(6) DEFAULT NULL,
-  `user_type_id` bigint DEFAULT NULL,
   `country_mobile` varchar(255) NOT NULL,
   `email` varchar(255) DEFAULT NULL,
   `mobile` varchar(255) NOT NULL,
@@ -348,7 +442,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_3tbutmd8b2416d77g7dhhnri4` (`mobile_information`),
   KEY `IDXt7ccnc1wptnpgv6dnxbldtfn9` (`mobile_information`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -357,7 +451,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,NULL,2,'+351',NULL,'999999999','+351999999999','Henrique','$argon2id$v=19$m=16384,t=2,p=1$Ct1OuU/c9IESi7NfVgibfQ$2zPAIVy7ZMvUAhwuoQhRXON7G+nFwvL22L1dwEQavBQ'),(2,NULL,2,'+351',NULL,'900000000','+351900000000','Amigo do Joao','$argon2id$v=19$m=16384,t=2,p=1$51NmzMswZnIaexI26Ni63g$qsM2dtXYM+uLO+pIYIT89FIc7pysXlMn+iBZhBHqco0'),(3,NULL,1,'+351',NULL,'927030780','+351927030780','Bruno Vicente dos Santos','$argon2id$v=19$m=16384,t=2,p=1$F5AZF5evfMx+2dxw89jpLg$4FSjxjj3TS/WVUjify9gxMEnnf7DW9jRdIJNIA3ldik'),(4,NULL,1,'+351',NULL,'962844407','+351962844407','Filipe Santos','$argon2id$v=19$m=16384,t=2,p=1$oJBCPTR35Pv1zt6x/nm2Ew$a7rxJEjfB5tn9dnnAm3hoCjPV/V8gq4Bg3W+aLbo0W8');
+INSERT INTO `user` VALUES (1,NULL,'+1',NULL,'999999999','+1999999999','System Admin','$argon2id$v=19$m=16384,t=2,p=1$XgSDQlW3bs2/GahiV6DxhA$6JlIxyMcmNwOfjh0nkUK1t39e80soXx5Ru4LvAiXnug'),(2,NULL,'+351',NULL,'999999999','+351999999999','Henrique','$argon2id$v=19$m=16384,t=2,p=1$VaQaxK5Mk/Kc1o1bxCjJMA$+G8eTlIOoBZYLzLgzujM/mpQctKhXEIANLDgDM3sM90'),(3,NULL,'+351',NULL,'900000000','+351900000000','Amigo do Joao','$argon2id$v=19$m=16384,t=2,p=1$+rMzb5FTtTVPWdHMQuLdfQ$HoQQ8UtouRyr3DvuIMNgg+7m7H2HZftsFtmtzKXJll4'),(4,NULL,'+351',NULL,'927030780','+351927030780','Bruno Vicente dos Santos','$argon2id$v=19$m=16384,t=2,p=1$6LfV+GyN8OxF9NOOYihijQ$oWJc24ED0z88HXYPPF2/VY1u3nPNrOrCD5tG88WIdHE'),(5,NULL,'+351',NULL,'962844407','+351962844407','Filipe Santos','$argon2id$v=19$m=16384,t=2,p=1$vU7dmA1kgFYFW/xDOjskFg$1vy0ZAtF9L/LOligrQVfHq4Dmfg7O6SIqzN8ADXo1FA');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -370,9 +464,12 @@ DROP TABLE IF EXISTS `user_type`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user_type` (
   `id` bigint NOT NULL AUTO_INCREMENT,
+  `user_id` bigint DEFAULT NULL,
   `user_type` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`id`),
+  KEY `FKj0whdmtccunmsfxctomsgp1vn` (`user_id`),
+  CONSTRAINT `FKj0whdmtccunmsfxctomsgp1vn` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -381,8 +478,35 @@ CREATE TABLE `user_type` (
 
 LOCK TABLES `user_type` WRITE;
 /*!40000 ALTER TABLE `user_type` DISABLE KEYS */;
-INSERT INTO `user_type` VALUES (1,'CLIENT'),(2,'EMPLOYEE');
+INSERT INTO `user_type` VALUES (1,NULL,'LOCKED'),(2,NULL,'SYSTEM_ADMIN'),(3,NULL,'CLIENT'),(4,NULL,'EMPLOYEE');
 /*!40000 ALTER TABLE `user_type` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `user_user_type`
+--
+
+DROP TABLE IF EXISTS `user_user_type`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user_user_type` (
+  `user_id` bigint NOT NULL,
+  `user_type_id` bigint NOT NULL,
+  PRIMARY KEY (`user_id`,`user_type_id`),
+  KEY `FKey2ndeuy85hmce2rnahxyr32v` (`user_type_id`),
+  CONSTRAINT `FKdhd4d48ssl8on7mm3scr04s50` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
+  CONSTRAINT `FKey2ndeuy85hmce2rnahxyr32v` FOREIGN KEY (`user_type_id`) REFERENCES `user_type` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user_user_type`
+--
+
+LOCK TABLES `user_user_type` WRITE;
+/*!40000 ALTER TABLE `user_user_type` DISABLE KEYS */;
+INSERT INTO `user_user_type` VALUES (1,2),(1,3),(2,3),(3,3),(4,3),(5,3),(2,4),(3,4);
+/*!40000 ALTER TABLE `user_user_type` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -394,4 +518,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-13 23:06:17
+-- Dump completed on 2024-09-14  0:29:05
