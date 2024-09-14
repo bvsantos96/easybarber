@@ -1,4 +1,6 @@
 {
+    "appName": "EasyBarbers",
+    "allow": "Allow",
     "loadingMore": "Loading More...",
     "updateAvailable": "Update Available",
     "updateAvailableMessage": "A minor update is available. Updating local data.",
@@ -109,4 +111,9 @@
     },
     "recentAddresses": "Recent addresses",
     "savedAddresses": "Saved addresses",
+    "location" : {
+        "title1": " wants to fetch",
+        "title2": "your exact location.",
+        "subTitle": "In order to show you nearby barbers, we\nneed to know your location.",
+    },
 }
