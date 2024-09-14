@@ -128,6 +128,7 @@ const Router = () => {
     const Tabs = require('./screens/Tabs').default;
     const AccountTypeSelection = require('./screens/AccountTypeSelection').default;
     const SignIn = require('./screens/SignIn').default;
+    const LocationRequest = require('./screens/LocationRequest').default;
 
     const [isLoading, setIsLoading] = useState(true);
     const [defaultTab, setDefaultTab] = useState<string>("Tabs");
@@ -186,8 +187,11 @@ const Router = () => {
         <GestureHandlerRootView style={{ flex: 1 }} >
             <NavigationContainer>
                 <Stack.Navigator
-                    initialRouteName={defaultTab}
+                    initialRouteName={"LocationRequest"}
                 >
+                    <Stack.Screen name="LocationRequest" options={{ headerShown: false }}>
+                        {props => <LocationRequest {...props} />}
+                    </Stack.Screen>
                     <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
                         {props => containerizedComponent(<OnBoarding {...props} />)}
                     </Stack.Screen>

@@ -86,6 +86,7 @@ interface Fonts {
 interface Theme {
     colors: Colors;
     dimensions: DimensionsData;
+    bottomRightShadow: StyleProp<ViewStyle>;
     shadow: StyleProp<ViewStyle>;
     fonts: Fonts;
 }
@@ -135,6 +136,21 @@ const defaultTheme: Theme = {
             width: (320 * width) / 390,
             height: (58.75 * height) / 844,
         },
+    },
+    bottomRightShadow: {
+        elevation: 8,
+        shadowColor: '#000',
+        shadowOffset: {
+            screenLeft: 0,
+            screenTop: 0,
+            screenBottom: 2,
+            screenRight: 2,
+            width: 5,
+            height: 5,
+        },
+        shadowOpacity: 0.7,
+        shadowRadius: 14,
+        position: 'absolute',
     },
     shadow: {
         elevation: 8,
