@@ -4,10 +4,28 @@ import { useTheme } from "../styles/ThemeContext";
 import React from "react";
 import Button from "../components/Button";
 import LogoSmall from "@assets/images/logoRounded.svg";
+import useLocationStore from "../storage/stores/LocationStore";
+import * as Location from 'expo-location';
 
 export default function LocationRequest() {
+    const {
+        setRequestingLocationPermission,
+        setHasLocationPermission
+    } = useLocationStore();
     const texts = require("@lang/en.json");
     const styles = getStyles();
+
+    const requestLocationPermission = async () => {
+        const { status }: Location.PermissionResponse = await Location.requestForegroundPermissionsAsync();
+        console.log("LocationRequest::requestLocationPermission");
+        setRequestingLocationPermission(false);
+        if (status === "granted") {
+            setHasLocationPermission(true);
+            return true;
+        }
+        setHasLocationPermission(false);
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.icon}>
@@ -24,7 +42,7 @@ export default function LocationRequest() {
                 <Text style={styles.textSubtitle}>{texts.location.subTitle}</Text>
             </View>
             <View style={styles.buttonContainer}>
-                <Button borderRadius={10} backgroundColor={styles.button.backgroundColor} buttonTextColor={styles.button.color} title={texts.allow} onPress={() => { }} />
+                <Button borderRadius={10} backgroundColor={styles.button.backgroundColor} buttonTextColor={styles.button.color} title={texts.allow} onPress={requestLocationPermission} />
             </View>
         </View>
     );

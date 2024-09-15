@@ -17,13 +17,14 @@ export default function Tabs() {
     const inserts = useSafeAreaInsets();
 
     return (
-        <Tab.Navigator screenOptions={{
-            tabBarActiveTintColor: theme.colors.mainColor,
-            tabBarInactiveTintColor: theme.colors.text.main,
-            tabBarStyle: [{
-                height: theme.dimensions.tabHeight + inserts.bottom,
-            }, theme.shadow],
-        }} >
+        <Tab.Navigator
+            screenOptions={{
+                tabBarActiveTintColor: theme.colors.mainColor,
+                tabBarInactiveTintColor: theme.colors.text.main,
+                tabBarStyle: [{
+                    height: theme.dimensions.tabHeight + inserts.bottom,
+                }, theme.shadow],
+            }} >
             <Tab.Screen name={texts.tabs.home}
                 options={{
                     headerShown: false,
