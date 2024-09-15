@@ -1,12 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform, Linking, PanResponder } from 'react-native';
-import { NavigationContainer, NavigationProp } from '@react-navigation/native';
+import { NavigationContainer, NavigationContainerRef, NavigationProp, useNavigation } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import * as Location from 'expo-location';
+
 import { getToken } from './utils/ApiRequest';
 import { getDefaultCountryString } from './utils/Constants';
+import useLocationStore from './storage/stores/LocationStore';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -86,6 +89,15 @@ const OnBoarding = ({ navigation }) => {
         })
     ).current;
 
+    const gotoOnBoarding2 = () => {
+        currentPageRef.current = 1;
+        Animated.timing(translateXAnimation, {
+            toValue: 1,
+            duration: 400,
+            useNativeDriver: true,
+        }).start();
+    }
+
     return (
         <View style={{ flexDirection: 'row', width: theme.dimensions.width, height: theme.dimensions.height }} {...panResponder.panHandlers}>
             <Animated.View style={{
@@ -102,7 +114,7 @@ const OnBoarding = ({ navigation }) => {
                     })
                 }],
             }}>
-                <Onboarding1 />
+                <Onboarding1 nextPage={gotoOnBoarding2} />
             </Animated.View>
 
             <Animated.View style={{
@@ -129,14 +141,31 @@ const Router = () => {
     const AccountTypeSelection = require('./screens/AccountTypeSelection').default;
     const SignIn = require('./screens/SignIn').default;
     const LocationRequest = require('./screens/LocationRequest').default;
+    const {
+        requestingLocationPermission,
+        setRequestingLocationPermission,
+        setHasLocationPermission,
+    } = useLocationStore();
+
+    type StackParamList = {
+        LocationRequest: undefined;
+        OnBoarding: undefined;
+        AccountTypeSelection: undefined;
+        Sign: undefined;
+        Tabs: undefined;
+        Loading: undefined;
+        Test: undefined;
+    };
 
     const [isLoading, setIsLoading] = useState(true);
-    const [defaultTab, setDefaultTab] = useState<string>("Tabs");
+    const [defaultPage, setDefaultPage] = useState<keyof StackParamList>("Tabs");
 
-    const Stack = createNativeStackNavigator();
+    const Stack = createNativeStackNavigator<StackParamList>();
+    const navigationRef = useRef<NavigationContainerRef<StackParamList> | null>(null);
 
     useEffect(() => {
         const loadInitialData = async () => {
+            let defaultPage: keyof StackParamList = "OnBoarding";
             await Font.loadAsync({
                 'Mazzard': require('./assets/fonts/mazzard/MazzardM-Regular.otf'),
                 'Poppins': require('./assets/fonts/Poppins/Poppins-Regular.ttf'),
@@ -145,15 +174,29 @@ const Router = () => {
             await loadLongTermItems();
             if (DEBUG_AUTO_LOGIN) {
                 console.log("DEBUG AUTO LOGIN");
-                setDefaultTab("Sign");
+                defaultPage = "Sign";
             } else {
-                setDefaultTab(await getToken() !== null ? "Tabs" : "OnBoarding");
+                defaultPage = await getToken() !== null ? "Tabs" : "OnBoarding";
             }
             try {
                 await setCountry();
             } catch (error) {
                 console.error('Error setting country:', error);
             }
+            setDefaultPage(defaultPage);
+
+            const { status } = await Location.getForegroundPermissionsAsync();
+            if (status === 'granted') {
+                setHasLocationPermission(true);
+                navigationRef.current?.navigate(defaultPage);
+            } else if (status === 'denied') {
+                setHasLocationPermission(false);
+                navigationRef.current?.navigate(defaultPage);
+            } else {
+                setHasLocationPermission(false);
+                setRequestingLocationPermission(true);
+            }
+
             setIsLoading(false);
             await SplashScreen.hideAsync();
         };
@@ -161,8 +204,30 @@ const Router = () => {
         loadInitialData();
     }, []);
 
+    useEffect(() => {
+        const navigateToLocationRequest = () => {
+            if (navigationRef.current) {
+                if (requestingLocationPermission) {
+                    const currentPage = navigationRef.current.getCurrentRoute()?.name as keyof StackParamList;
+                    if (currentPage !== "Home" as keyof StackParamList && currentPage !== "Loading" as keyof StackParamList && currentPage !== "LocationRequest" as keyof StackParamList) {
+                        console.log(currentPage);
+                        setDefaultPage(currentPage);
+                    }
+                    navigationRef.current.navigate("LocationRequest");
+                } else if (requestingLocationPermission === false) {
+                    console.log("Navigating to default page:", defaultPage);
+                    navigationRef.current?.navigate(defaultPage);
+                }
+            } else {
+                setTimeout(navigateToLocationRequest, 500);
+            }
+        };
+
+        navigateToLocationRequest();
+    }, [requestingLocationPermission]);
+
     if (isLoading) {
-        return null; // or render a loading indicator
+        return null;
     }
 
     const containerizedComponent = (component: JSX.Element) => {
@@ -185,13 +250,8 @@ const Router = () => {
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }} >
-            <NavigationContainer>
-                <Stack.Navigator
-                    initialRouteName={"LocationRequest"}
-                >
-                    <Stack.Screen name="LocationRequest" options={{ headerShown: false }}>
-                        {props => <LocationRequest {...props} />}
-                    </Stack.Screen>
+            <NavigationContainer ref={navigationRef}>
+                <Stack.Navigator initialRouteName='Loading' >
                     <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
                         {props => containerizedComponent(<OnBoarding {...props} />)}
                     </Stack.Screen>
@@ -203,6 +263,9 @@ const Router = () => {
                     </Stack.Screen>
                     <Stack.Screen name="Tabs" options={{ headerShown: false }} >
                         {props => <Tabs {...props} />}
+                    </Stack.Screen>
+                    <Stack.Screen name="LocationRequest" options={{ headerShown: false }}>
+                        {props => <LocationRequest {...props} />}
                     </Stack.Screen>
                     <Stack.Screen name="Loading" options={{ headerShown: false }} >
                         {props => containerizedComponent(<Loading {...props} />)}
