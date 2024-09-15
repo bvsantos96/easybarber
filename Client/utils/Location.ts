@@ -8,12 +8,30 @@ import { Alert, Banner } from '../components/Alert';
 import { ALERT_TYPE } from 'react-native-alert-notification';
 import texts from '../langs/en.json';
 
-export async function getLocation(): Promise<ILocation> {
+export async function hasLocationPermission(): Promise<boolean> {
     try {
-        const { status }: Location.PermissionResponse = await Location.requestForegroundPermissionsAsync();
+        const {
+            hasLocationPermission,
+            setRequestingLocationPermission,
+        } = useLocationStore.getState();
 
-        if (status !== 'granted') {
-            throw new Error('Permission to access location was denied');
+        if (hasLocationPermission) {
+            return hasLocationPermission;
+        }
+
+        setRequestingLocationPermission(true);
+        return hasLocationPermission;
+    } catch (error) {
+        Alert({ type: ALERT_TYPE.INFO, title: "", message: texts.errors.locationPermissionError });
+        console.error('Error getting location permission:', error);
+        return false;
+    }
+}
+
+export async function getLocation(): Promise<ILocation | null> {
+    try {
+        if (!(await hasLocationPermission())) {
+            return null;
         }
 
         const coords = (await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High })).coords;
@@ -29,14 +47,17 @@ export async function getLocation(): Promise<ILocation> {
         };
         return location;
     } catch (error) {
-        Banner({ type: ALERT_TYPE.INFO, title: "",message: texts.errors.locationError });
+        Banner({ type: ALERT_TYPE.INFO, title: "", message: texts.errors.locationError });
         console.error('Error getting location:', error);
         throw error;
     }
 }
 
 export const setCountry = async (): Promise<void> => {
-    const location: ILocation = await getLocation();
+    const location: ILocation | null = await getLocation();
+    if (location === null) {
+        return;
+    }
     useLocationStore.setState({ country: location.country });
 }
 
@@ -104,7 +125,11 @@ export const getLocations = async (): Promise<ILocation[]> => {
         return locations;
     }
 
-    locations[0] = await getLocation();
+    const location = await getLocation();
+    if (location === null) {
+        return [];
+    }
+    locations[0] = location;
     saveLocation(locations[0], true);
     return locations;
 }

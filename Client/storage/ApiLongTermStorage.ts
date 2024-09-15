@@ -1,8 +1,7 @@
 import { ICategory } from "../declarations";
 import { getCategories } from "../utils/ApiRequest";
 import { clearAll, getArray, store } from "./StorageUtils";
-import { CATEGORY_STORAGE_KEY, LOCATIONS_STORAGE_KEY } from "../utils/Constants";
-import { getLocations } from "../utils/Location";
+import { CATEGORY_STORAGE_KEY } from "../utils/Constants";
 
 // TODO: This function needs to validate if it gets a valid responses otherwise it needs to be retried
 // if after that it fails we need to show an error message to the user, this is a critical function
