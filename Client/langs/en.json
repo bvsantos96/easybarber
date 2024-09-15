@@ -107,7 +107,8 @@
         "reverseGeocodingError": "An error as occured while trying to get the address from your current location. Please try again.",
         "selectLocationError": "An error as occured while trying to update your location. Please try again.",
         "saveLocationError": "An error as occured while trying to save a new location. Please try again.",
-        "fetchSuggestionsError": "Unable to parse your current location"
+        "fetchSuggestionsError": "Unable to parse your current location",
+        "locationPermissionError": "Location permission denied",
     },
     "recentAddresses": "Recent addresses",
     "savedAddresses": "Saved addresses",
