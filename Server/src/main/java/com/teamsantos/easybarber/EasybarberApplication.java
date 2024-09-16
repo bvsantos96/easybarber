@@ -4,13 +4,15 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import org.springframework.scheduling.annotation.EnableAsync;
 
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.utils.Utils;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
+
 @SpringBootApplication
-@EnableAsync
+@OpenAPIDefinition(info = @Info(title = "EasyBarber", version = "1.0", description = "EasyBarber API"))
 public class EasybarberApplication {
     @Bean
     public ModelMapper modelMapper() {
