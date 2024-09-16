@@ -43,6 +43,7 @@ public class ApplicationSecurity {
                 .csrf(AbstractHttpConfigurer::disable) // TODO: See what this is and configure it properly
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST,
+                                "/v3/api-docs/**",
                                 "/register",
                                 "/registerAdmin",
                                 "/login",
@@ -50,6 +51,9 @@ public class ApplicationSecurity {
                                 "/sms/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET,
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
                                 "/version",
                                 "/establishment/list",
                                 "/employee/services",
