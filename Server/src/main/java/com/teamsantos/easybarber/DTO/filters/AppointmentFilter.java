@@ -27,6 +27,7 @@ public class AppointmentFilter {
     private LocalDate date;
     private LocalTime time;
     private LocalTime endTime;
+    Boolean userView = true;
 
     public Specification<Appointment> getSpecification() {
         return (root, query, criteriaBuilder) -> {

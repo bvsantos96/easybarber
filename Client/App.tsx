@@ -210,12 +210,10 @@ const Router = () => {
                 if (requestingLocationPermission) {
                     const currentPage = navigationRef.current.getCurrentRoute()?.name as keyof StackParamList;
                     if (currentPage !== "Home" as keyof StackParamList && currentPage !== "Loading" as keyof StackParamList && currentPage !== "LocationRequest" as keyof StackParamList) {
-                        console.log(currentPage);
                         setDefaultPage(currentPage);
                     }
                     navigationRef.current.navigate("LocationRequest");
                 } else if (requestingLocationPermission === false) {
-                    console.log("Navigating to default page:", defaultPage);
                     navigationRef.current?.navigate(defaultPage);
                 }
             } else {
@@ -251,7 +249,7 @@ const Router = () => {
     return (
         <GestureHandlerRootView style={{ flex: 1 }} >
             <NavigationContainer ref={navigationRef}>
-                <Stack.Navigator initialRouteName='Loading' >
+                <Stack.Navigator initialRouteName='Tabs' >
                     <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
                         {props => containerizedComponent(<OnBoarding {...props} />)}
                     </Stack.Screen>

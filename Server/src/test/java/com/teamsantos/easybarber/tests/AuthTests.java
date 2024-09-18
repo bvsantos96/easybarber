@@ -79,8 +79,9 @@ public class AuthTests {
         }
         TestsState.mark(TestsState.AUTH_TEST);
         try {
-            UsersData.usersDTO.get(0).setId(create("/register", UsersData.usersDTO.get(0).toString()));
-            UsersData.usersDTO.get(1).setId(create("/register", UsersData.usersDTO.get(1).toString()));
+            for (UserTestDTO user : UsersData.usersDTO) {
+                user.setId(create("/register", user.toString()));
+            }
             login(UsersData.usersDTO.get(1), false);
             if (!AuthTests.created)
                 AuthTests.created = true;

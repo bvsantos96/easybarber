@@ -17,7 +17,6 @@ export default function LocationRequest() {
 
     const requestLocationPermission = async () => {
         const { status }: Location.PermissionResponse = await Location.requestForegroundPermissionsAsync();
-        console.log("LocationRequest::requestLocationPermission");
         setRequestingLocationPermission(false);
         if (status === "granted") {
             setHasLocationPermission(true);
@@ -63,7 +62,7 @@ const getStyles = () => {
             flexDirection: 'row',
         },
         icon: {
-            ...theme.bottomRightShadow as any,
+            ...theme.strongShadow as any,
             width: 33 * theme.dimensions.absoluteWidth,
             height: 33 * theme.dimensions.absoluteWidth,
             position: 'absolute',

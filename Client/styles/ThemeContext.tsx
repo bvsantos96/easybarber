@@ -80,13 +80,16 @@ interface Fonts {
         _30: number;
         _31: number;
         _32: number;
+        _33: number;
+        _34: number;
+        _35: number;
     };
 }
 
 interface Theme {
     colors: Colors;
     dimensions: DimensionsData;
-    bottomRightShadow: StyleProp<ViewStyle>;
+    strongShadow: StyleProp<ViewStyle>;
     shadow: StyleProp<ViewStyle>;
     fonts: Fonts;
 }
@@ -137,20 +140,15 @@ const defaultTheme: Theme = {
             height: (58.75 * height) / 844,
         },
     },
-    bottomRightShadow: {
+    strongShadow: {
         elevation: 8,
         shadowColor: '#000',
         shadowOffset: {
-            screenLeft: 0,
-            screenTop: 0,
-            screenBottom: 2,
-            screenRight: 2,
             width: 5,
             height: 5,
         },
         shadowOpacity: 0.7,
         shadowRadius: 14,
-        position: 'absolute',
     },
     shadow: {
         elevation: 8,
@@ -188,6 +186,9 @@ const defaultTheme: Theme = {
             _30: 30 * minDimension / 390,
             _31: 31 * minDimension / 390,
             _32: 32 * minDimension / 390,
+            _33: 33 * minDimension / 390,
+            _34: 34 * minDimension / 390,
+            _35: 35 * minDimension / 390,
         }
     }
 };
