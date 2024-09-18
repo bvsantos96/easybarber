@@ -14,10 +14,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamsantos.easybarber.DTO.AppointmentDTO;
+import com.teamsantos.easybarber.DTO.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
+import com.teamsantos.easybarber.exceptions.ForbidenException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
+import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.services.AppointmentService;
 
 @RestController
@@ -40,11 +43,41 @@ public class AppointmentController {
     }
 
     @GetMapping("/appointments")
-    public ResponseEntity<BasePageDTO<AppointmentDTO>> listSchedules(@ModelAttribute AppointmentFilter filter,
+    public ResponseEntity<BasePageDTO<AppointmentDTO>> listAppointments(@ModelAttribute AppointmentFilter filter,
             Pageable pageable) {
         try {
             BasePageDTO<AppointmentDTO> appointments = appointmentService.listAppointment(filter, pageable);
             return ResponseEntity.ok(appointments);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/appointment/list")
+    public ResponseEntity<BasePageDTO<AppointmentListDTO>> listAppointmentsBase(
+            @ModelAttribute AppointmentFilter filter,
+            Pageable pageable) {
+        try {
+            if (filter.getUserView() == null) {
+                filter.setUserView(true);
+            }
+            if (filter.getUserView()) {
+                if (filter.getClientId() != null && filter.getClientId() != 0
+                        && filter.getClientId() != UserContext.getUserId()) {
+                    throw new ForbidenException("User");
+                }
+                filter.setClientId(UserContext.getUserId());
+            } else {
+                if (filter.getEmployeeId() == null && filter.getEmployeeId() == 0
+                        && filter.getEmployeeId() != UserContext.getEmployeeId()) {
+                    throw new ForbidenException("Employee");
+                }
+                filter.setEmployeeId(UserContext.getEmployeeId());
+            }
+            BasePageDTO<AppointmentListDTO> appointments = appointmentService.listAppointmentBase(filter, pageable);
+            return ResponseEntity.ok(appointments);
+        } catch (ForbidenException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(new BasePageDTO<>(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }

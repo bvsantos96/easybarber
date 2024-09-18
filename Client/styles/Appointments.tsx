@@ -84,5 +84,22 @@ export const getStyles = () => {
             lineHeight: theme.fonts.size._21,
             letterSpacing: 1,
         },
+        titleContainer: {
+            position: "absolute",
+            top: 31 * theme.dimensions.absoluteHeight,
+            left: 31 * theme.dimensions.absoluteWidth,
+            width: theme.dimensions.width,
+            justifyContent: "flex-start",
+            alignItems: "flex-start",
+        },
+        titleText: {
+            color: theme.colors.text.main,
+            fontFamily: 'Mazzard',
+            fontSize: theme.fonts.size._17,
+            fontWeight: '600',
+            lineHeight: theme.fonts.size._34,
+            letterSpacing: 1,
+            textAlign: 'left',
+        },
     });
 }

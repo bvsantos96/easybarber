@@ -117,4 +117,7 @@
         "title2": "your exact location.",
         "subTitle": "In order to show you nearby barbers, we\nneed to know your location.",
     },
+    "appointments": {
+        "upcomming": "Upcoming Appointments",
+    }
 }

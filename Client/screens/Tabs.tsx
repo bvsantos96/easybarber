@@ -18,6 +18,7 @@ export default function Tabs() {
 
     return (
         <Tab.Navigator
+            initialRouteName={texts.tabs.appointments}
             screenOptions={{
                 tabBarActiveTintColor: theme.colors.mainColor,
                 tabBarInactiveTintColor: theme.colors.text.main,
@@ -43,7 +44,18 @@ export default function Tabs() {
                     ) : (
                         <AppointmentsIcon width={20 * theme.dimensions.absoluteWidth} height={20 * theme.dimensions.absoluteWidth} fill={theme.colors.mainColor} />
                     ),
-                    headerTitleAlign: 'center'
+                    headerTitleAlign: 'center',
+                    headerShadowVisible: true,
+                    headerStyle: {
+                        elevation: 8,
+                        shadowColor: '#000',
+                        shadowOffset: {
+                            width: 5,
+                            height: 5,
+                        },
+                        shadowOpacity: 0.1,
+                        shadowRadius: 5,
+                    }
                 }
                 } >
                 {() => (<SafeFullScreen><Appointments /></SafeFullScreen>)}

@@ -67,6 +67,28 @@ public class AppointmentData {
                                 "Mae",
                                 LocalDate.parse("2124-08-16"),
                                 LocalTime.parse("10:00")));
+                add(
+                        new AppointmentDTO(
+                                UsersData.usersDTO.get(1).getId(),
+                                getServiceFromEstablishmentService(EstablishmentData.establishmentServices.get(1))
+                                        .getEmployeeId(),
+                                EstablishmentData.establishmentServices.get(1).getEstablishmentId(),
+                                EstablishmentData.establishmentServices.get(1).getServiceId(),
+                                "Corte de cabelo",
+                                "",
+                                LocalDate.parse("2124-08-16"),
+                                LocalTime.parse("10:00")));
+                add(
+                        new AppointmentDTO(
+                                UsersData.usersDTO.get(1).getId(),
+                                getServiceFromEstablishmentService(EstablishmentData.establishmentServices.get(2))
+                                        .getEmployeeId(),
+                                EstablishmentData.establishmentServices.get(2).getEstablishmentId(),
+                                EstablishmentData.establishmentServices.get(2).getServiceId(),
+                                "Barba",
+                                "",
+                                LocalDate.parse("2124-08-17"),
+                                LocalTime.parse("10:00")));
             };
         };
 
