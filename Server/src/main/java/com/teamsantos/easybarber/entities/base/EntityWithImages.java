@@ -11,6 +11,7 @@ import com.teamsantos.easybarber.utils.Utils;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import lombok.ToString;
@@ -20,7 +21,8 @@ import lombok.ToString;
 public abstract class EntityWithImages<T extends EntityWithImages<T, E>, E extends Image<T, E>> {
     @OneToMany(mappedBy = "entity", fetch = FetchType.LAZY)
     @ToString.Exclude
-    @BatchSize(size = 10)
+    @BatchSize(size = 1)
+    @OrderBy("isMain DESC, id ASC")
     private Set<E> images = new HashSet<>();
 
     @PrePersist
