@@ -18,16 +18,16 @@ public class UsersData {
         systemAdmin = new UserTestDTO("+1", "999999999", "Test123*", "System Admin");
         usersDTO = new ArrayList<>() {
             {
-                add(new UserTestDTO("+351", "927030780", "Test123*", "Bruno Santos"));
                 add(new UserTestDTO("+351", "962844407", "Test123*", "Filipe Santos"));
+                add(new UserTestDTO("+351", "927030780", "Test123*", "Bruno Santos"));
             }
         };
         usersDTO.sort(Comparator.comparing(UserTestDTO::getId));
 
         usersUpdateDTO = new ArrayList<>() {
             {
-                add(new UserDTO().initName("Bruno Vicente dos Santos"));
                 add(new UserDTO().initName("Filipe Miguel Pinho Santos"));
+                add(new UserDTO().initName("Bruno Vicente dos Santos"));
             }
         };
         usersUpdateDTO.sort(Comparator.comparing(UserDTO::getId));

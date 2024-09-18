@@ -43,7 +43,7 @@ CREATE TABLE `appointment` (
   CONSTRAINT `FK9daqcqq2nrtbcr5xqeivvkorq` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`),
   CONSTRAINT `FKa8m1smlfsc8kkjn2t6wpdmysk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `FKc5vnhe960ftnpvt7pcwq5pd57` FOREIGN KEY (`establishment_service_id`) REFERENCES `establishment_service` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -52,7 +52,7 @@ CREATE TABLE `appointment` (
 
 LOCK TABLES `appointment` WRITE;
 /*!40000 ALTER TABLE `appointment` DISABLE KEYS */;
-INSERT INTO `appointment` VALUES (0,1,'2124-08-18','10:00:00.000000',2,1,1,1,4,'First appointment',''),(1,0,'2124-08-17','10:00:00.000000',2,1,2,2,2,'Second appointment','Pai'),(0,1,'2124-08-16','10:00:00.000000',2,1,2,3,2,'Second appointment','Mae');
+INSERT INTO `appointment` VALUES (0,1,'2124-08-18','10:00:00.000000',2,1,1,1,4,'First appointment',''),(1,0,'2124-08-17','10:00:00.000000',2,1,2,2,2,'Second appointment','Pai'),(0,1,'2124-08-16','10:00:00.000000',2,1,2,3,2,'Second appointment','Mae'),(1,0,'2124-08-16','10:00:00.000000',2,1,2,4,4,'Corte de cabelo',''),(0,1,'2124-08-17','10:00:00.000000',3,2,3,5,4,'Barba','');
 /*!40000 ALTER TABLE `appointment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -144,7 +144,7 @@ CREATE TABLE `employee_schedule` (
 
 LOCK TABLES `employee_schedule` WRITE;
 /*!40000 ALTER TABLE `employee_schedule` DISABLE KEYS */;
-INSERT INTO `employee_schedule` VALUES (_binary '',5,'12:00:00.000000','08:00:00.000000',2,1,1),(_binary '',3,'12:00:00.000000','08:00:00.000000',2,1,2),(_binary '',4,'12:00:00.000000','08:00:00.000000',2,1,3),(_binary '',1,'12:00:00.000000','08:00:00.000000',2,1,4),(_binary '',2,'12:00:00.000000','08:00:00.000000',2,1,5),(_binary '',5,'17:00:00.000000','13:00:00.000000',2,2,6),(_binary '',3,'17:00:00.000000','13:00:00.000000',2,2,7),(_binary '',4,'17:00:00.000000','13:00:00.000000',2,2,8),(_binary '',1,'17:00:00.000000','13:00:00.000000',2,2,9),(_binary '',2,'17:00:00.000000','13:00:00.000000',2,2,10),(_binary '',3,'17:00:00.000000','08:00:00.000000',3,2,11),(_binary '',4,'17:00:00.000000','08:00:00.000000',3,2,12),(_binary '',1,'17:00:00.000000','08:00:00.000000',3,2,13),(_binary '',2,'17:00:00.000000','08:00:00.000000',3,2,14),(_binary '',5,'20:00:00.000000','09:00:00.000000',3,2,15),(_binary '',6,'20:00:00.000000','09:00:00.000000',3,2,16),(_binary '\0',5,'23:00:00.000000','21:00:00.000000',3,2,17),(_binary '\0',6,'23:00:00.000000','21:00:00.000000',3,2,18);
+INSERT INTO `employee_schedule` VALUES (_binary '',3,'12:00:00.000000','08:00:00.000000',2,1,1),(_binary '',4,'12:00:00.000000','08:00:00.000000',2,1,2),(_binary '',5,'12:00:00.000000','08:00:00.000000',2,1,3),(_binary '',2,'12:00:00.000000','08:00:00.000000',2,1,4),(_binary '',1,'12:00:00.000000','08:00:00.000000',2,1,5),(_binary '',3,'17:00:00.000000','13:00:00.000000',2,2,6),(_binary '',4,'17:00:00.000000','13:00:00.000000',2,2,7),(_binary '',5,'17:00:00.000000','13:00:00.000000',2,2,8),(_binary '',2,'17:00:00.000000','13:00:00.000000',2,2,9),(_binary '',1,'17:00:00.000000','13:00:00.000000',2,2,10),(_binary '',3,'17:00:00.000000','08:00:00.000000',3,2,11),(_binary '',4,'17:00:00.000000','08:00:00.000000',3,2,12),(_binary '',2,'17:00:00.000000','08:00:00.000000',3,2,13),(_binary '',1,'17:00:00.000000','08:00:00.000000',3,2,14),(_binary '',5,'20:00:00.000000','09:00:00.000000',3,2,15),(_binary '',6,'20:00:00.000000','09:00:00.000000',3,2,16),(_binary '\0',5,'23:00:00.000000','21:00:00.000000',3,2,17),(_binary '\0',6,'23:00:00.000000','21:00:00.000000',3,2,18);
 /*!40000 ALTER TABLE `employee_schedule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -289,7 +289,7 @@ CREATE TABLE `location` (
   PRIMARY KEY (`id`),
   KEY `IDXe5jwd37ob25i4e7jwownmu08w` (`user_id`),
   CONSTRAINT `FKeua4vn06qu0iq9d32qnmuhqkl` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -298,6 +298,7 @@ CREATE TABLE `location` (
 
 LOCK TABLES `location` WRITE;
 /*!40000 ALTER TABLE `location` DISABLE KEYS */;
+INSERT INTO `location` VALUES (37.785834,-122.406417,_binary '\0',1,4,'Powell St','San Francisco','United States',''),(38.67068454237639,-9.165591813983495,_binary '',2,4,'Almada','Setubal','Portugal','');
 /*!40000 ALTER TABLE `location` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -451,7 +452,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,NULL,'+1',NULL,'999999999','+1999999999','System Admin','$argon2id$v=19$m=16384,t=2,p=1$XgSDQlW3bs2/GahiV6DxhA$6JlIxyMcmNwOfjh0nkUK1t39e80soXx5Ru4LvAiXnug'),(2,NULL,'+351',NULL,'999999999','+351999999999','Henrique','$argon2id$v=19$m=16384,t=2,p=1$VaQaxK5Mk/Kc1o1bxCjJMA$+G8eTlIOoBZYLzLgzujM/mpQctKhXEIANLDgDM3sM90'),(3,NULL,'+351',NULL,'900000000','+351900000000','Amigo do Joao','$argon2id$v=19$m=16384,t=2,p=1$+rMzb5FTtTVPWdHMQuLdfQ$HoQQ8UtouRyr3DvuIMNgg+7m7H2HZftsFtmtzKXJll4'),(4,NULL,'+351',NULL,'927030780','+351927030780','Bruno Vicente dos Santos','$argon2id$v=19$m=16384,t=2,p=1$6LfV+GyN8OxF9NOOYihijQ$oWJc24ED0z88HXYPPF2/VY1u3nPNrOrCD5tG88WIdHE'),(5,NULL,'+351',NULL,'962844407','+351962844407','Filipe Santos','$argon2id$v=19$m=16384,t=2,p=1$vU7dmA1kgFYFW/xDOjskFg$1vy0ZAtF9L/LOligrQVfHq4Dmfg7O6SIqzN8ADXo1FA');
+INSERT INTO `user` VALUES (1,NULL,'+1',NULL,'999999999','+1999999999','System Admin','$argon2id$v=19$m=16384,t=2,p=1$zw2lyNxEqKU8MPopHNGOjQ$E+eVsiXR5dsVua2svEVfU2xdTPupnNZxIlBnfZOf1lg'),(2,NULL,'+351',NULL,'999999999','+351999999999','Henrique','$argon2id$v=19$m=16384,t=2,p=1$jtShMF8buea3+WXofMx90g$CQt0P7pxEKeT4FNKuEpLSOOkNH/8js2nJjIaO8EmG6U'),(3,NULL,'+351',NULL,'900000000','+351900000000','Amigo do Joao','$argon2id$v=19$m=16384,t=2,p=1$19G9XhcY3mtmsjaiR0+qRQ$nhG1DbBr9bNzecCo3YGu+lA7MmAn0nTcevRao6i1Qy0'),(4,NULL,'+351',NULL,'927030780','+351927030780','Bruno Vicente dos Santos','$argon2id$v=19$m=16384,t=2,p=1$f8cUrQptnLGBHFys4b+C9g$s3UNvk+Z62sm+tC76c0Z4vLXxzJPctxcqrCpzvyqi6w'),(5,NULL,'+351',NULL,'962844407','+351962844407','Filipe Santos','$argon2id$v=19$m=16384,t=2,p=1$j2MQs54JYgpPzECaAIq9zg$8Q0jkwroqlubG6NifqR1QN96cyCGaYaWO2keu3haX8s');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -518,4 +519,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-14  0:29:05
+-- Dump completed on 2024-09-18 22:55:09

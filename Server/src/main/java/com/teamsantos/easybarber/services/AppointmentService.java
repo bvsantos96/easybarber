@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.AppointmentDTO;
+import com.teamsantos.easybarber.DTO.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.entities.Appointment;
@@ -102,6 +103,16 @@ public class AppointmentService {
     public BasePageDTO<AppointmentDTO> listAppointment(AppointmentFilter filter, Pageable pageable) {
         return new BasePageDTO<>(appointmentRepository.findAll(filter.getSpecification(), pageable)
                 .map((element) -> Utils.getModelMapper().map(element, AppointmentDTO.class)));
+    }
+
+    @Transactional(readOnly = true)
+    public BasePageDTO<AppointmentListDTO> listAppointmentBase(AppointmentFilter filter, Pageable pageable) {
+        if (filter.getUserView() == null || filter.getUserView()) {
+            return new BasePageDTO<>(appointmentRepository.findAllToUser(filter, pageable)
+                    .map((element) -> Utils.getModelMapper().map(element, AppointmentListDTO.class)));
+        }
+        return new BasePageDTO<>(appointmentRepository.findAllToEmployee(filter, pageable)
+                .map((element) -> Utils.getModelMapper().map(element, AppointmentListDTO.class)));
     }
 
     public void cancel(long id) {
