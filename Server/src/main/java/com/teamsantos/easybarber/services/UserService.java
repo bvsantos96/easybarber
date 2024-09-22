@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.services;
 
 import java.security.Principal;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -170,5 +171,29 @@ public class UserService {
         return userRepository
                 .findByUserTypeId(UserTypeService.getUserType(userType), pageable)
                 .map((element) -> modelMapper.map(element, UserDTO.class));
+    }
+
+    @Transactional(readOnly = true)
+    public UserDTO getUserByMobileNr(String mobileNr) throws Exception{
+        Optional<User> user =  userRepository.findByMobileInformation(mobileNr);
+
+        if(user.isEmpty()){
+            throw new Exception("The mobile number doesnt exist");
+        }
+
+        return modelMapper.map(user.get(), UserDTO.class);
+    }
+
+    @Transactional(readOnly = true)
+    public void changeUserPwd(UserDTO userDTO, String newPwd) throws Exception{
+        Optional<User> userOpt = userRepository.findById(userDTO.getId());
+
+        if(userOpt.isEmpty()){
+            throw new Exception("User not found");
+        }
+
+        User user = userOpt.get();
+        user.setPassword(PasswordEncoding.encode(newPwd));
+        userRepository.save(user);
     }
 }
