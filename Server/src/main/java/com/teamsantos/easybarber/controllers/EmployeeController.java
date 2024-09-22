@@ -67,8 +67,10 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
         try {
             if (principal != null && !userService.userChangePermissions(principal, employee.getMobileInformation()))
                 return ResponseEntity.badRequest().body(new BaseResponseDTO("You are not allowed to create this user"));
-            userService.createUser(employee, true);
-            return ResponseEntity.status(status).body(new BaseResponseDTO("Employee created successfully"));
+            BaseResponseDTO response = new BaseResponseDTO();
+            response.setResponseMessage("Employee created successfully");
+            response.setId(userService.createUser(employee, true).getId());
+            return ResponseEntity.status(status).body(response);
         } catch (Exception e) {
             BaseResponseDTO response = new BaseResponseDTO();
             response.setResponseMessage(e.getMessage());
@@ -97,8 +99,10 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
     public ResponseEntity<BaseResponseDTO> createService(@RequestBody CreateServiceDTO service) {
         try {
-            serviceService.createService(service);
-            return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponseDTO("Service created successfully"));
+            BaseResponseDTO response = new BaseResponseDTO();
+            response.setId(serviceService.createService(service));
+            response.setResponseMessage("Service created successfully");
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (AlreadyExistsException e) {
             return ResponseEntity.status(HttpStatus.FOUND).body(new BaseResponseDTO(e.getMessage()));
         } catch (Exception e) {

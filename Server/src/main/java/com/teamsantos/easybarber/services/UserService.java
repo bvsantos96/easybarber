@@ -76,13 +76,13 @@ public class UserService {
         return createUser(userCreateDTO, false);
     }
 
-    private void createEmployee(EmployeeCreateDTO employeeDTO, long userId) throws UserAlreadyExistsException {
+    private Employee createEmployee(EmployeeCreateDTO employeeDTO, long userId) throws UserAlreadyExistsException {
         if (employeeRepository.existsByUserId(userId))
             throw new UserAlreadyExistsException();
         Employee employee = modelMapper.map(employeeDTO, Employee.class);
         employee.setEnabled(true);
         employee.setUser(entityManager.getReference(User.class, userId));
-        employeeRepository.save(employee);
+        return employeeRepository.save(employee);
     }
 
     public UserDTO createUser(UserCreateDTO userCreateDTO, boolean isEmployee) throws Exception {
@@ -91,12 +91,14 @@ public class UserService {
 
     @Transactional
     public UserDTO createUser(UserCreateDTO userCreateDTO, boolean isEmployee, boolean systemAdmin) throws Exception {
+        if (userCreateDTO.getId() != null)
+            userCreateDTO.setId(null);
         userCreateDTO.setPassword(PasswordEncoding.encode(userCreateDTO.getPassword()));
         User user = modelMapper.map(userCreateDTO, User.class);
         if (user != null) {
             try {
                 if (userRepository.existsByMobileInformation(user.getMobileInformation())) {
-                    if (!isEmployee || employeeRepository.existsByUserId(user.getId())) {
+                    if (!isEmployee ) {
                         throw new UserAlreadyExistsException();
                     } else {
                         user = userRepository.findByMobileInformation(user.getMobileInformation())
@@ -118,8 +120,11 @@ public class UserService {
                         UserTypeService.getUserType(UserTypeService.UserTypes.SYSTEM_ADMIN)));
 
             user = userRepository.save(user);
-            if (isEmployee)
-                createEmployee((EmployeeCreateDTO) userCreateDTO, user.getId());
+            if (isEmployee) {
+                UserDTO ret = new UserDTO();
+                ret.setId(createEmployee((EmployeeCreateDTO) userCreateDTO, user.getId()).getId());
+                return ret;
+            }
             return modelMapper.map(user, UserDTO.class);
         } else
             throw new IllegalArgumentException("User cannot be null");
