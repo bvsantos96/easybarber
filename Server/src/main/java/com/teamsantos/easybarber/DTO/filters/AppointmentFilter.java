@@ -28,6 +28,8 @@ public class AppointmentFilter {
     private LocalTime time;
     private LocalTime endTime;
     Boolean userView = true;
+    Boolean future = true;
+    Boolean activeOnly;
 
     public Specification<Appointment> getSpecification() {
         return (root, query, criteriaBuilder) -> {
@@ -67,6 +69,20 @@ public class AppointmentFilter {
 
             if (this.getEndTime() != null) {
                 predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("endTime"), this.getEndTime()));
+            }
+
+            if (this.activeOnly != null) {
+                predicates.add(criteriaBuilder.equal(root.get("active"), this.activeOnly));
+            }
+
+            if (this.future != null) {
+                if (this.future) {
+                    predicates.add(criteriaBuilder.or(
+                            criteriaBuilder.greaterThan(root.get("date"), LocalDate.now()),
+                            criteriaBuilder.and(
+                                    criteriaBuilder.equal(root.get("date"), LocalDate.now()),
+                                    criteriaBuilder.greaterThanOrEqualTo(root.get("time"), LocalTime.now()))));
+                }
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));

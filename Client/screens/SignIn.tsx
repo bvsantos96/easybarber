@@ -7,20 +7,19 @@ import Register from '../components/Register';
 import { getStyles } from '../styles/Sign';
 import { useRef, useState } from 'react';
 import { NavigationProp } from '@react-navigation/native';
-import React from 'react';
 
 export type SignInProps = {
-    navigation:NavigationProp<any, any>,
+    navigation: NavigationProp<any, any>,
     toggleNewUser?: () => void,
 }
 
 export type Props = {
     navigation: NavigationProp<any, any>,
     toggleNewUser?: () => void,
-    setMobileNr:Function
+    setMobileNr: Function
 }
 
-export default function SignIn({ navigation, setMobileNr }: Props ) {
+export default function SignIn({ navigation, setMobileNr }: Props) {
     const styles = getStyles();
     const [newUser, setNewUser] = useState(false);
     const translateYAnimation = useRef(new Animated.Value(0)).current;
@@ -56,7 +55,7 @@ export default function SignIn({ navigation, setMobileNr }: Props ) {
             }]}>
                 {!newUser ?
                     <Login toggleNewUser={changeNewUser} navigation={navigation} /> :
-                    <Register toggleNewUser={changeNewUser} navigation={navigation} setMobileNr={setMobileNr}/>
+                    <Register toggleNewUser={changeNewUser} navigation={navigation} setMobileNr={setMobileNr} />
                 }
             </Animated.View>
         </View >
