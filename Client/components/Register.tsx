@@ -48,9 +48,9 @@ export default function Register({ navigation, toggleNewUser, setMobileNr }: Pro
         const test=(nation?nation.callingCode[0]:"")+phone;
         const result = await getMobileCode(test);
         if (result) {
-            Alert.alert('Success', 'Code confirmed successfully!');
+            //Alert.alert('Success', 'Code confirmed successfully!');
         } else {
-            Alert.alert('Error', 'Invalid code. Please try again.');
+            //Alert.alert('Error', 'Invalid code. Please try again.');
         }
         setMobileNr(test);
         resetNavigation(navigation, 'MobileConfirmation');
