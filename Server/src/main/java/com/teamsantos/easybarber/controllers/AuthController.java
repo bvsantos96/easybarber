@@ -2,24 +2,32 @@ package com.teamsantos.easybarber.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teamsantos.easybarber.DTO.BasePageDTO;
+import com.teamsantos.easybarber.DTO.LocationDTO;
+import com.teamsantos.easybarber.DTO.ResetPwdDTO;
 import com.teamsantos.easybarber.DTO.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.UserDTO;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
+import com.teamsantos.easybarber.security.utils.UserContext;
+import com.teamsantos.easybarber.services.MessagingService;
 import com.teamsantos.easybarber.services.UserService;
 
 @RestController
 public class AuthController {
     private final UserService userService;
-
+    private final MessagingService messagingService;
     @Autowired
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, MessagingService messagingService) {
         this.userService = userService;
+        this.messagingService = messagingService;
     }
 
     @PostMapping("/login")
@@ -47,6 +55,24 @@ public class AuthController {
                 status = HttpStatus.INTERNAL_SERVER_ERROR;
             }
             return ResponseEntity.status(status).body(response);
+        }
+    }
+
+    @GetMapping("/pwd/reset")
+    public ResponseEntity<UserDTO> getUserLocations(@RequestBody ResetPwdDTO resetPwdDTO) {
+        try {
+            UserDTO userDTO = userService.getUserByMobileNr(resetPwdDTO.getPhoneNr());
+            boolean isVerified = messagingService.verifyCode(resetPwdDTO.getPhoneNr(), resetPwdDTO.getConfirmationCode());
+            if(!isVerified)
+            {
+                throw new Exception("The confirmation code does not match");
+            }     
+            userService.changeUserPwd(userDTO, resetPwdDTO.getNewPassword());
+            return ResponseEntity.ok(userDTO);
+        } catch (Exception e) {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(userDTO);
         }
     }
 
