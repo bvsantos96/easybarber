@@ -335,3 +335,19 @@ export const getApiVersion = async (): Promise<string> => {
         return response;
     throw new Error(langs.apiMessages.failed);
 }
+
+export const getMobileCode = async (mobileNr:string): Promise<boolean> => {
+    const response = await request("/sms/confirmation", "POST", {phoneNr: mobileNr}, langs.apiMessages.success, langs.apiMessages.failed, true);
+    if (response.success) {
+        return true;
+    }
+    return false;
+}
+
+export const confirmMobileCode = async (mobileNr:string, confirmationCode:string): Promise<boolean> => {
+    const response = await request("/sms/confirm", "POST", {phoneNr: mobileNr, confirmationCode: confirmationCode}, langs.apiMessages.success, langs.apiMessages.failed, true);
+    if (response.success) {
+        return true;
+    }
+    return false;
+}

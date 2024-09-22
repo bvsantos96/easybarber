@@ -10,16 +10,15 @@ import Button from '../components/Button';
 import { getStyles } from '../styles/Sign';
 import { resetNavigation } from '../App';
 import { Props } from '../screens/SignIn';
-import { doRegister } from '../utils/ApiRequest';
+import { getMobileCode } from '../utils/ApiRequest';
 import { Country } from 'react-native-country-picker-modal';
 import PhoneInput from './PhoneInput';
-import { IResult } from '../declarations';
 import { getDefaultCountryAsync } from '../utils/Constants';
 import { Alert } from './Alert';
 import { ALERT_TYPE } from 'react-native-alert-notification';
 import texts from "../langs/en.json";
 
-export default function Register({ navigation, toggleNewUser }: Props) {
+export default function Register({ navigation, toggleNewUser, setMobileNr }: Props) {
     const styles = getStyles();
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
@@ -41,11 +40,20 @@ export default function Register({ navigation, toggleNewUser }: Props) {
     }, []);
 
     const register = async () => {
-        const result: IResult<any> = await doRegister(nation ? nation.callingCode[0] : "", phone, password, confirmPassword, name);
+        /**const result: IResult<any> = await doRegister(nation?nation.callingCode[0]:"", phone, password, confirmPassword, name);
         if (result.success)
             resetNavigation(navigation, 'Tabs');
         else
-            Alert({ type: ALERT_TYPE.WARNING, title: texts.apiMessages.register.failed, message: result.message });
+            alert(result.message);*/
+        const test=(nation?nation.callingCode[0]:"")+phone;
+        const result = await getMobileCode(test);
+        if (result) {
+            Alert.alert('Success', 'Code confirmed successfully!');
+        } else {
+            Alert.alert('Error', 'Invalid code. Please try again.');
+        }
+        setMobileNr(test);
+        resetNavigation(navigation, 'MobileConfirmation');
     }
 
     return (
