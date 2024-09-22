@@ -271,9 +271,6 @@ const Router = () => {
                     <Stack.Screen name="Test" options={{ headerShown: false, gestureEnabled: false }}>
                         {_ => containerizedComponent(<View style={{ backgroundColor: "red", minHeight: 50, minWidth: 50 }}><Text>Test</Text></View>)}
                     </Stack.Screen>
-                    <Stack.Screen name="MobileConfirmation" options={{ headerShown: false }} >
-                        {props => <MobileConfirmation {...props} mobileNr={mobileNr} />}
-                    </Stack.Screen>
                 </Stack.Navigator>
             </NavigationContainer>
         </GestureHandlerRootView >
