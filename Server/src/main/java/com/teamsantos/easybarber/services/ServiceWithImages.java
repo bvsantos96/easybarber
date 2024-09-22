@@ -53,6 +53,9 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
         boolean newMain = false;
 
         for (ImageDTO image : images) {
+            if (image.getId() != null) {
+                image.setId(null);
+            }
             if ((image.getData() != null && !image.getData().isEmpty())) {
                 if (image.getMain() != null && image.getMain()) {
                     if (newMain) {
