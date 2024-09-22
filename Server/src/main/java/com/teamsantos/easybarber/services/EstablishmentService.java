@@ -91,6 +91,9 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     @Transactional
     private void create(BaseEstablishmentDTO establishmentDTO, long employeeId) throws Exception {
         try {
+            if (establishmentDTO.getId() != null && establishmentRepository.existsById(establishmentDTO.getId())) {
+                establishmentDTO.setId(null);
+            }
             Establishment establishment = modelMapper.map(establishmentDTO, Establishment.class);
             if (establishment != null) {
                 if (establishmentRepository.existsByName(establishment.getName()))
