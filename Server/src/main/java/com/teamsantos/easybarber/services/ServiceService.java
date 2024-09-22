@@ -96,6 +96,9 @@ public class ServiceService extends
 
     @Transactional
     public long createType(ServiceTypeDTO serviceDTO) {
+        if (serviceDTO.getId() != null && serviceTypeRepository.existsById(serviceDTO.getId())) {
+            serviceDTO.setId(null);
+        }
         return serviceTypeRepository.save(modelMapper.map(serviceDTO, ServiceType.class)).getId();
     }
 

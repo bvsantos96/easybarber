@@ -43,6 +43,9 @@ public class AppointmentService {
     public Pair<Long, String> create(AppointmentDTO appointmentDTO) {
         Pair<Long, String> result = new Pair<>(null, "");
         try {
+            if (appointmentDTO.getId() != null) {
+                appointmentDTO.setId(null);
+            }
             // TODO: Is an establishment required? Or can employees be independent?
             if (appointmentDTO.getEstablishmentId() == null) {
                 throw new IllegalArgumentException("An appointment must be associated with an establishment");
