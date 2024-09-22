@@ -54,28 +54,28 @@ declare interface BarberInfo extends Identifiable {
     images: Image[];
 }
 
-declare type Appointment = {
-    // {
-    //         "id": 0,
-    //         "version": "string",
-    //         "userId": 0,
-    //         "employeeId": 0,
-    //         "establishmentId": 0,
-    //         "serviceId": 0,
-    //         "description": "string",
-    //         "nonRegisteredUser": "string",
-    //         "date": "2024-09-17",
-    //         "time": {
-    //           "hour": 0,
-    //           "minute": 0,
-    //           "second": 0,
-    //           "nano": 0
-    //         }
-    //       }
+declare interface AppointmentFilter extends Record<string, string | number | boolean> {
+    employeeId?: number;
+    establishmentId?: number;
+    serviceId?: numbe;
+    date?: string;
+    time?: string;
+    endTime?: string;
+    userView?: boolean;
+    future?: boolean;
+    activeOnly?: boolean;
+}
+
+declare interface AppointmentInfo extends Identifiable {
     id: number;
-    name: string;
-    from: string;
-    to: string;
+    serviceName: string;
+    employeeName: string;
+    establishmentName: string;
+    latitude: number;
+    longitude: number;
+    date: string;
+    time: string;
+    confirmed: boolean;
     photo: string;
 }
 
