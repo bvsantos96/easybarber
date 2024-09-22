@@ -1,9 +1,9 @@
-import { Text, ScrollView, View } from 'react-native';
+import React from 'react';
+import { ScrollView, View } from 'react-native';
 import { getStyles } from '../styles/Appointments';
 import { useEffect, useState } from 'react';
 import { getAppointments } from '../utils/ApiRequest';
 import ListAppointments from '../components/ListAppointments';
-import React from 'react';
 import { Appointment } from '../declarations';
 
 export default function Home() {

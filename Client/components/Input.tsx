@@ -15,7 +15,7 @@ type InputProps = {
 
 // types can be found here: https://reactnative.dev/docs/textinput#autocomplete
 const Input = ({
-    leftIcon = <></>,
+    leftIcon = undefined,
     placeholder = "",
     onInputChange = (e: string) => { alert(`No onInputChange(${e}) passed in props`) },
     type = "text",
@@ -44,9 +44,9 @@ const Input = ({
     return (
         <Pressable style={styles.container} onPress={handleViewPress}>
             <View style={styles.inputView}>
-                <View style={styles.iconView}>
+                {leftIcon && <View style={styles.iconView}>
                     {leftIcon}
-                </View>
+                </View>}
                 <TextInput
                     ref={textInputRef}
                     style={rightIcon?styles.textInputWithShowPasswordIcon:styles.textInput}
