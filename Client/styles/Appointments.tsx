@@ -35,7 +35,7 @@ export const getStyles = () => {
             bottom: 10 * theme.dimensions.absoluteHeight,
         },
         imageStyle: {
-            width: 82 * theme.dimensions.absoluteWidth,
+            width: 90 * theme.dimensions.absoluteWidth,
             height: 90 * theme.dimensions.absoluteHeight,
             borderRadius: 11 * theme.dimensions.absoluteWidth,
         },
