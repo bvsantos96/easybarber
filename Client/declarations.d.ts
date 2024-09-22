@@ -69,7 +69,7 @@ declare interface AppointmentFilter extends Record<string, string | number | boo
 declare interface AppointmentInfo extends Identifiable {
     id: number;
     serviceName: string;
-    employeeName: string;
+    entityName: string;
     establishmentName: string;
     latitude: number;
     longitude: number;
