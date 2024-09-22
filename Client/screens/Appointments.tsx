@@ -23,13 +23,15 @@ export default function Home() {
                 <Text style={styles.titleText}>{texts.appointments.upcomming}</Text>
             </View>
 
-            <PageList<AppointmentInfo>
-                reset={resetSearch}
-                ref={pageListRef}
-                renderItem={({ item }: { item: AppointmentInfo }) =>
-                    <ListAppointments key={item.id} appointment={item} />
-                }
-                requestFunction={loadMoreLocations} />
+            <View style={styles.listContainer}>
+                <PageList<AppointmentInfo>
+                    reset={resetSearch}
+                    ref={pageListRef}
+                    renderItem={({ item }: { item: AppointmentInfo }) =>
+                        <ListAppointments key={item.id} appointment={item} />
+                    }
+                    requestFunction={loadMoreLocations} />
+            </View>
         </View>
     );
 }
