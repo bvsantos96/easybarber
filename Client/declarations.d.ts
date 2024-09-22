@@ -55,23 +55,23 @@ declare interface BarberInfo extends Identifiable {
 }
 
 declare type Appointment = {
-// {
-//         "id": 0,
-//         "version": "string",
-//         "userId": 0,
-//         "employeeId": 0,
-//         "establishmentId": 0,
-//         "serviceId": 0,
-//         "description": "string",
-//         "nonRegisteredUser": "string",
-//         "date": "2024-09-17",
-//         "time": {
-//           "hour": 0,
-//           "minute": 0,
-//           "second": 0,
-//           "nano": 0
-//         }
-//       }
+    // {
+    //         "id": 0,
+    //         "version": "string",
+    //         "userId": 0,
+    //         "employeeId": 0,
+    //         "establishmentId": 0,
+    //         "serviceId": 0,
+    //         "description": "string",
+    //         "nonRegisteredUser": "string",
+    //         "date": "2024-09-17",
+    //         "time": {
+    //           "hour": 0,
+    //           "minute": 0,
+    //           "second": 0,
+    //           "nano": 0
+    //         }
+    //       }
     id: number;
     name: string;
     from: string;
