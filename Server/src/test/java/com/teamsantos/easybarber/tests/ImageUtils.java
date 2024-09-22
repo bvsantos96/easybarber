@@ -91,13 +91,18 @@ public class ImageUtils {
         setMain(images.get(0), jwt);
     }
 
-    public void addImageAndCheckIfSaved(List<ImageDTO> images, String jwt) {
+    public void addImageAndCheckIfSaved(List<ImageDTO> images, String jwt) throws Exception {
         if (images == null || images.isEmpty()) {
             return;
         }
+        deleteImages(images.stream().map(ImageDTO::getId).toList(), jwt);
         saveImages(images, jwt);
         List<ImageDTO> _images = getImages(jwt);
         assert _images.equals(images);
+    }
+
+    public void deleteImages(List<Long> images, String jwt) throws Exception {
+        CreateTest.deleteOk(mockMvc, String.format("%s/images", pathPrefix), jwt, Utils.fromListToString(images));
     }
 
     public void deleteImagesCheckAndReset(List<ImageDTO> images, String jwt) throws Exception {
@@ -108,9 +113,7 @@ public class ImageUtils {
         if (!imagesNotDeleted.isEmpty()) {
             imagesNotDeleted.get(0).setMain(true);
         }
-        CreateTest.deleteOk(mockMvc, String.format("%s/images", pathPrefix), jwt,
-                Utils.fromListToString(
-                        images.stream().filter(e -> (e.getId() % 2 != 0)).map(ImageDTO::getId).toList()));
+        deleteImages(images.stream().filter(e -> (e.getId() % 2 != 0)).map(ImageDTO::getId).toList(), jwt);
         List<ImageDTO> _images = getImages(jwt);
         for (int i = 0; i < _images.size(); i++) {
             assert _images.get(i).equals(imagesNotDeleted.get(i));

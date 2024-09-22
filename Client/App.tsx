@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Platform, Linking, PanResponder } from 'react-native';
-import { NavigationContainer, NavigationContainerRef, NavigationProp, useNavigation } from '@react-navigation/native';
+import { NavigationContainer, NavigationContainerRef, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Font from 'expo-font';
@@ -29,7 +29,7 @@ import Constants from 'expo-constants';
 import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
 import { DEBUG_AUTO_LOGIN } from './utils/EnvVariables';
-import { setCountry } from './utils/Location';
+import { hasLocationPermission, setCountry } from './utils/Location';
 import { ALERT_TYPE, AlertNotificationRoot } from 'react-native-alert-notification';
 import { Alert } from './components/Alert';
 
@@ -143,8 +143,8 @@ const Router = () => {
     const LocationRequest = require('./screens/LocationRequest').default;
     const {
         requestingLocationPermission,
-        setRequestingLocationPermission,
         setHasLocationPermission,
+        hasLocationPermission
     } = useLocationStore();
 
     type StackParamList = {
@@ -175,14 +175,16 @@ const Router = () => {
             if (DEBUG_AUTO_LOGIN) {
                 console.log("DEBUG AUTO LOGIN");
                 defaultPage = "Sign";
+                await waitAndNavigate("Sign");
             } else {
                 defaultPage = await getToken() !== null ? "Tabs" : "OnBoarding";
+                try {
+                    await setCountry();
+                } catch (error) {
+                    console.error('Error setting country:', error);
+                }
             }
-            try {
-                await setCountry();
-            } catch (error) {
-                console.error('Error setting country:', error);
-            }
+
             setDefaultPage(defaultPage);
 
             const { status } = await Location.getForegroundPermissionsAsync();
@@ -192,9 +194,6 @@ const Router = () => {
             } else if (status === 'denied') {
                 setHasLocationPermission(false);
                 navigationRef.current?.navigate(defaultPage);
-            } else {
-                setHasLocationPermission(false);
-                setRequestingLocationPermission(true);
             }
 
             setIsLoading(false);
@@ -203,6 +202,15 @@ const Router = () => {
 
         loadInitialData();
     }, []);
+
+    const waitAndNavigate = async (page: keyof StackParamList) => {
+        if (navigationRef.current) {
+            navigationRef.current?.navigate(page);
+            return;
+        } else {
+            setTimeout(async () => await waitAndNavigate(page), 500);
+        }
+    }
 
     useEffect(() => {
         const navigateToLocationRequest = () => {
@@ -221,8 +229,11 @@ const Router = () => {
             }
         };
 
-        navigateToLocationRequest();
+        if (!hasLocationPermission && requestingLocationPermission !== undefined) {
+            navigateToLocationRequest();
+        }
     }, [requestingLocationPermission]);
+
 
     if (isLoading) {
         return null;
@@ -249,7 +260,7 @@ const Router = () => {
     return (
         <GestureHandlerRootView style={{ flex: 1 }} >
             <NavigationContainer ref={navigationRef}>
-                <Stack.Navigator initialRouteName='Tabs' >
+                <Stack.Navigator >
                     <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
                         {props => containerizedComponent(<OnBoarding {...props} />)}
                     </Stack.Screen>
