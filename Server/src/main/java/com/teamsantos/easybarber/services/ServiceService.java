@@ -56,7 +56,7 @@ public class ServiceService extends
     }
 
     @Transactional
-    public void createService(CreateServiceDTO serviceDTO) throws GenericNotFoundException {
+    public long createService(CreateServiceDTO serviceDTO) throws GenericNotFoundException {
         long employeeId = UserContext.getEmployeeId();
         if (!serviceTypeRepository.existsById(serviceDTO.getServiceTypeId())) {
             throw new GenericNotFoundException("Service type not found");
@@ -69,7 +69,7 @@ public class ServiceService extends
                 com.teamsantos.easybarber.entities.Service.class);
         service.setEmployee(entityManager.getReference(Employee.class, employeeId));
         service.setServiceType(entityManager.getReference(ServiceType.class, serviceDTO.getServiceTypeId()));
-        serviceRepository.save(service);
+        return serviceRepository.save(service).getId();
     }
 
     @Transactional
@@ -95,10 +95,8 @@ public class ServiceService extends
     }
 
     @Transactional
-    public void createType(ServiceTypeDTO serviceDTO) {
-        if (serviceDTO != null) {
-            serviceTypeRepository.save(modelMapper.map(serviceDTO, ServiceType.class));
-        }
+    public long createType(ServiceTypeDTO serviceDTO) {
+        return serviceTypeRepository.save(modelMapper.map(serviceDTO, ServiceType.class)).getId();
     }
 
     @Transactional

@@ -45,7 +45,7 @@ public class ServiceController extends ImageController<Service, ServiceImage> {
     public ResponseEntity<BaseResponseDTO> createServiceType(@RequestBody ServiceTypeDTO serviceDTO) {
         BaseResponseDTO response = new BaseResponseDTO();
         try {
-            serviceService.createType(serviceDTO);
+            response.setId(serviceService.createType(serviceDTO));
             response.setResponseMessage("Service type created successfully");
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (Exception e) {
