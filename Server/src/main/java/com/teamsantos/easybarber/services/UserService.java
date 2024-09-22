@@ -92,14 +92,15 @@ public class UserService {
 
     @Transactional
     public UserDTO createUser(UserCreateDTO userCreateDTO, boolean isEmployee, boolean systemAdmin) throws Exception {
-        if (userCreateDTO.getId() != null)
-            userCreateDTO.setId(null);
         userCreateDTO.setPassword(PasswordEncoding.encode(userCreateDTO.getPassword()));
         User user = modelMapper.map(userCreateDTO, User.class);
         if (user != null) {
             try {
+                if (userCreateDTO.getId() != null && userRepository.existsById(userCreateDTO.getId())) {
+                    userCreateDTO.setId(null);
+                }
                 if (userRepository.existsByMobileInformation(user.getMobileInformation())) {
-                    if (!isEmployee ) {
+                    if (!isEmployee) {
                         throw new UserAlreadyExistsException();
                     } else {
                         user = userRepository.findByMobileInformation(user.getMobileInformation())
