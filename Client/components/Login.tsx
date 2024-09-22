@@ -15,7 +15,7 @@ import { doLogin } from '../utils/ApiRequest';
 
 import { getStyles } from '../styles/Sign';
 import { resetNavigation } from '../App';
-import { Props } from '../screens/SignIn';
+import { SignInProps } from '../screens/SignIn';
 import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
 import { IAPIResponse, IResult } from '../declarations';
@@ -24,7 +24,7 @@ import { ALERT_TYPE } from 'react-native-alert-notification';
 import { Alert } from './Alert';
 import texts from "../langs/en.json";
 
-export default function Login({ navigation, toggleNewUser }: Props) {
+export default function Login({ navigation, toggleNewUser }: SignInProps) {
     const styles = getStyles();
     const [phone, setPhone] = useState("");
     const [nation, setNation] = useState<Country | null>();
