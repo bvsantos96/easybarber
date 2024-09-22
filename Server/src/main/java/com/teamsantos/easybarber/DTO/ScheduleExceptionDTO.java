@@ -47,6 +47,15 @@ public class ScheduleExceptionDTO extends ScheduleDTO {
         this.active = active;
     }
 
+    public ScheduleExceptionDTO(Long employeeId, Long establishmentId, Set<DAY_OF_WEEK> days,
+            LocalTime startHour,
+            LocalTime endHour, LocalDate dateFrom, LocalDate dateTo, Boolean active) {
+        super(employeeId, establishmentId, days, startHour, endHour);
+        this.dateFrom = dateFrom;
+        this.dateTo = dateTo;
+        this.active = active;
+    }
+
     public Set<ScheduleException> toEntitiesExceptions(EntityManager entityManager, Long employeeId,
             Long establishmentId) {
         Set<ScheduleException> schedules = new HashSet<ScheduleException>();
