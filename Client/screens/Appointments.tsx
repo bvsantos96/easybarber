@@ -23,7 +23,7 @@ export default function Home() {
                 <Text style={styles.titleText}>{texts.appointments.upcomming}</Text>
             </View>
 
-            <View style={styles.listContainer}>
+            <View style={[styles.listContainer]}>
                 <PageList<AppointmentInfo>
                     reset={resetSearch}
                     ref={pageListRef}
@@ -35,11 +35,3 @@ export default function Home() {
         </View>
     );
 }
-
-// <ScrollView contentContainerStyle={styles.listContainer}>
-//     {appointmentList && appointmentList.map((appointment: Appointment) => {
-//         return (
-//             <ListAppointments key={appointment.id} appointment={appointment} />
-//         );
-//     })}
-// </ScrollView>
