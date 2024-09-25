@@ -6,7 +6,7 @@ import { getStyles as getHomeGetStyles } from '../styles/Home';
 
 import TopBar from '../components/TopBar';
 import { getNearByBarbers } from '../utils/ApiRequest';
-import ListItem from '../components/ListItemBarbershop';
+import ListItem from '../components/ListEstablishments';
 
 import ExpandableView from '../components/ExpandableView';
 import Divider from '../components/Divider';
@@ -16,14 +16,19 @@ import { createPageable } from '../utils/PageHandling';
 import { TimedRequest } from '../utils/TimedRequest';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
 import { SvgUri } from 'react-native-svg';
-import { BarberInfo, ICategory, IFilterRequest, IPage, ITimedRequest } from '../declarations';
+import { EstablishmentInfo, ICategory, IFilterRequest, IPage, ITimedRequest } from '../declarations';
 import PageList, { PageListRef } from '../components/PageList';
 import useLocationStore from '../storage/stores/LocationStore';
+import { NavigationProp } from '@react-navigation/native';
 
-export default function Home() {
+export type Props = {
+    navigation: NavigationProp<any, any>,
+}
+
+export default function Home({ navigation }: Props) {
     const topBarStyles = topBarGetStyles();
     const homeStyles = getHomeGetStyles();
-    const pageListRef = useRef<PageListRef<BarberInfo>>(null);
+    const pageListRef = useRef<PageListRef<EstablishmentInfo>>(null);
     const [topCategoriesExpanded, setTopCategoriesExpanded] = useState(true);
     const [nearbyBarbersExpanded, setNearbyBarbersExpanded] = useState(false);
     const texts = require("../langs/en.json");
@@ -54,7 +59,7 @@ export default function Home() {
     }, [selectedLocation]);
 
     const replaceFilter = (filter: IFilterRequest) => {
-        let req: ITimedRequest<BarberInfo> = new TimedRequest(createPageable<BarberInfo>(), 0, filter);
+        let req: ITimedRequest<EstablishmentInfo> = new TimedRequest(createPageable<EstablishmentInfo>(), 0, filter);
         pageListRef?.current?.loadMoreItems(req);
         _setFilter(filter);
     }
@@ -67,7 +72,7 @@ export default function Home() {
         pageListRef?.current?.setRequest({ ...pageListRef?.current?.request, pathParams: { ...pageListRef?.current?.request.pathParams, partialName: name } });
     }
 
-    const loadMoreLocations = async (page?: IPage<BarberInfo>, params?: Record<string, string | number | boolean>) => {
+    const loadMoreLocations = async (page?: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>) => {
         if (selectedLocation)
             return await getNearByBarbers(page, params, selectedLocation);
         return undefined;
@@ -118,7 +123,19 @@ export default function Home() {
                     onExpand={() => { setTopCategoriesExpanded(nearbyBarbersExpanded); setNearbyBarbersExpanded(!nearbyBarbersExpanded) }}
                     title={texts.nearbyBarbers}>
                     <Divider size={10} />
-                    <PageList<BarberInfo> reset={resetSearch} ref={pageListRef} renderItem={({ item }: { item: BarberInfo }) => <ListItem barber={item} />} requestFunction={loadMoreLocations} />
+                    <PageList<EstablishmentInfo>
+                        reset={resetSearch}
+                        ref={pageListRef}
+                        renderItem={({ item }: { item: EstablishmentInfo }) =>
+                            <ListItem
+                                onPress={
+                                    (employeeId: number) => {
+                                        navigation.navigate(texts.tabs.employeeDetails, { employeeId: employeeId });
+                                    }
+                                }
+                                establishment={item} />
+                        }
+                        requestFunction={loadMoreLocations} />
                 </ExpandableView>
             </View>
         </>

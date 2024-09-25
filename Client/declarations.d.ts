@@ -41,7 +41,7 @@ interface Identifiable {
     id: string | number;
 }
 
-declare interface BarberInfo extends Identifiable {
+declare interface EstablishmentInfo extends Identifiable {
     id: number;
     name: string;
     description: string;
@@ -135,4 +135,15 @@ declare interface IAddressSuggestion {
     display_name: string;
     address: IAddress;
     boundingbox: string[];
+}
+
+
+interface EmployeeInfo extends Identifiable {
+    name: string;
+    mobileNumber: string;
+    description: string;
+    availableServices: Identifiable[];
+    rating: number;
+    nvotes: number;
+    images: Image[];
 }
