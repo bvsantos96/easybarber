@@ -18,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -32,10 +33,10 @@ public class Employee extends EntityWithImages<Employee, EmployeeImage> {
     private Long id;
     @Column
     private String description;
-    @Column(nullable = false, columnDefinition = "SMALLINT DEFAULT 0")
-    private double sumVotes;
-    @Column(nullable = false, columnDefinition = "SMALLINT DEFAULT 0")
-    private short nVotes;
+    @Column(nullable = false)
+    private Long sumVotes = 0L;
+    @Column(nullable = false)
+    private Long nVotes = 0L;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean enabled;
     @OneToOne(fetch = FetchType.LAZY)
@@ -61,6 +62,17 @@ public class Employee extends EntityWithImages<Employee, EmployeeImage> {
     @ToString.Exclude
     @BatchSize(size = 10)
     private Set<Appointment> appointment;
+
+    @PrePersist
+    public void prePersist() {
+        super.prePersist();
+        if (nVotes == null) {
+            nVotes = 0L;
+        }
+        if (sumVotes == null) {
+            sumVotes = 0L;
+        }
+    }
 
     @Override
     public Employee getEntity() {
