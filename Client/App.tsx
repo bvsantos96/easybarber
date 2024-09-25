@@ -29,7 +29,7 @@ import Constants from 'expo-constants';
 import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
 import { DEBUG_AUTO_LOGIN } from './utils/EnvVariables';
-import { hasLocationPermission, setCountry } from './utils/Location';
+import { setCountry } from './utils/Location';
 import { ALERT_TYPE, AlertNotificationRoot } from 'react-native-alert-notification';
 import { Alert } from './components/Alert';
 
@@ -260,7 +260,7 @@ const Router = () => {
     return (
         <GestureHandlerRootView style={{ flex: 1 }} >
             <NavigationContainer ref={navigationRef}>
-                <Stack.Navigator >
+                <Stack.Navigator>
                     <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
                         {props => containerizedComponent(<OnBoarding {...props} />)}
                     </Stack.Screen>

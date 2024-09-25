@@ -25,6 +25,7 @@ import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.EmployeeInformationDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
@@ -110,6 +111,19 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
+    @GetMapping("/{id}/employee/{employeeId}")
+    public ResponseEntity<EmployeeInformationDTO> getEmployeeInformation(@PathVariable("id") Long establishmentId,
+            @PathVariable Long employeeId) {
+        EmployeeInformationDTO response = new EmployeeInformationDTO();
+        try {
+            response = establishmentService.getEmployeeInformation(establishmentId, employeeId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 

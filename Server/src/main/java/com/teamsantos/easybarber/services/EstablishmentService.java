@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.EmployeeInformationDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.ServiceDTO;
@@ -308,10 +309,18 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         return establishmentService;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<EstablishmentDTO> getEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable) {
         return PageDTO.toDTO(modelMapper,
                 establishmentRepository.findEstablishmentsByEmployeeId(employeeId, admin, pageable),
                 EstablishmentDTO.class, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public EmployeeInformationDTO getEmployeeInformation(long establishmentId, long employeeId)
+            throws NotFoundException {
+        return new EmployeeInformationDTO(
+                establishmentServiceRepository.findEmployeeInformation(establishmentId, employeeId)
+                        .orElseThrow(NotFoundException::new));
     }
 }
