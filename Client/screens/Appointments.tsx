@@ -7,7 +7,7 @@ import ListAppointments from '../components/ListAppointments';
 import { AppointmentFilter, AppointmentInfo, IPage } from '../declarations';
 import PageList, { PageListRef } from '../components/PageList';
 
-export default function Home() {
+export default function Appointments() {
     const texts = require("@lang/en.json");
     const styles = getStyles();
     const [resetSearch] = useState(false);

@@ -1,5 +1,7 @@
 package com.teamsantos.easybarber.repositories.establishmentServices;
 
+import java.util.Optional;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,6 +15,8 @@ import com.teamsantos.easybarber.DTO.ServiceFullDTO;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentServiceFilter;
 import com.teamsantos.easybarber.entities.EstablishmentService;
 import com.teamsantos.easybarber.utils.Pair;
+
+import jakarta.persistence.Tuple;
 
 @Repository
 public interface EstablishmentServiceRepository
@@ -94,4 +98,32 @@ public interface EstablishmentServiceRepository
                 AND (:#{#filter.description} is null or lower(ess.service.description) like lower(concat('%', :#{#filter.description}, '%')))
             """)
     Page<ServiceDTO> findAllServiceDTO(EstablishmentServiceFilter filter, Pageable pageable);
+
+    @Query(value = """
+            SELECT
+            s1_0.employee_id,
+            u1_0.name,
+            e1_0.description,
+            CONCAT(u1_0.country_mobile, u1_0.mobile),
+            CASE WHEN e1_0.n_votes = 0 THEN 0 ELSE (e1_0.sum_votes / e1_0.n_votes) END,
+            e1_0.n_votes,
+            GROUP_CONCAT(DISTINCT s1_0.service_type_id) as availableServices,
+            (
+                SELECT GROUP_CONCAT(ei_sub.data ORDER BY ei_sub.id ASC)
+                FROM (
+                    SELECT data, id
+                    FROM employee_image
+                    WHERE entity_id = e1_0.id
+                    ORDER BY id ASC
+                    LIMIT 2
+                ) ei_sub
+            ) AS images
+            FROM establishment_service es1_0
+            JOIN service s1_0 ON s1_0.id = es1_0.service_id
+            JOIN employee e1_0 ON e1_0.id = s1_0.employee_id
+            JOIN user u1_0 ON u1_0.id = e1_0.user
+            WHERE es1_0.establishment_id = 1 AND s1_0.employee_id = 2
+            GROUP BY s1_0.employee_id;
+            """, nativeQuery = true)
+    Optional<Tuple> findEmployeeInformation(long establishmentId, long employeeId);
 }
