@@ -101,29 +101,29 @@ public interface EstablishmentServiceRepository
 
     @Query(value = """
             SELECT
-            s1_0.employee_id,
-            u1_0.name,
-            e1_0.description,
-            CONCAT(u1_0.country_mobile, u1_0.mobile),
-            CASE WHEN e1_0.n_votes = 0 THEN 0 ELSE (e1_0.sum_votes / e1_0.n_votes) END,
-            e1_0.n_votes,
-            GROUP_CONCAT(DISTINCT s1_0.service_type_id) as availableServices,
+            s.employee_id,
+            u.name,
+            e.description,
+            CONCAT(u.country_mobile, u.mobile),
+            CASE WHEN e.n_votes = 0 THEN 0 ELSE (e.sum_votes / e.n_votes) END,
+            e.n_votes,
+            GROUP_CONCAT(DISTINCT s.service_type_id) as availableServices,
             (
-                SELECT GROUP_CONCAT(ei_sub.data ORDER BY ei_sub.id ASC)
+                SELECT GROUP_CONCAT(CONCAT(ei.id, ',', ei.is_main, ',', ei.data) ORDER BY ei.is_main DESC, ei.id DESC SEPARATOR ';')
                 FROM (
-                    SELECT data, id
+                    SELECT id, data, is_main
                     FROM employee_image
-                    WHERE entity_id = e1_0.id
-                    ORDER BY id ASC
+                    WHERE entity_id = e.id
+                    ORDER BY is_main DESC, id DESC
                     LIMIT 2
-                ) ei_sub
+                ) ei
             ) AS images
-            FROM establishment_service es1_0
-            JOIN service s1_0 ON s1_0.id = es1_0.service_id
-            JOIN employee e1_0 ON e1_0.id = s1_0.employee_id
-            JOIN user u1_0 ON u1_0.id = e1_0.user
-            WHERE es1_0.establishment_id = 1 AND s1_0.employee_id = 2
-            GROUP BY s1_0.employee_id;
+            FROM establishment_service es
+            JOIN service s ON s.id = es.service_id
+            JOIN employee e ON e.id = s.employee_id
+            JOIN user u ON u.id = e.user
+            WHERE es.establishment_id = 1 AND s.employee_id = 2
+            GROUP BY s.employee_id;
             """, nativeQuery = true)
     Optional<Tuple> findEmployeeInformation(long establishmentId, long employeeId);
 }

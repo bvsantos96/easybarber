@@ -65,9 +65,9 @@ DROP TABLE IF EXISTS `employee`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `employee` (
   `enabled` tinyint(1) NOT NULL DEFAULT '1',
-  `n_votes` smallint NOT NULL DEFAULT '0',
-  `sum_votes` smallint NOT NULL DEFAULT '0',
   `id` bigint NOT NULL AUTO_INCREMENT,
+  `n_votes` bigint NOT NULL,
+  `sum_votes` bigint NOT NULL,
   `user` bigint DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -82,7 +82,7 @@ CREATE TABLE `employee` (
 
 LOCK TABLES `employee` WRITE;
 /*!40000 ALTER TABLE `employee` DISABLE KEYS */;
-INSERT INTO `employee` VALUES (0,0,0,1,NULL,NULL),(1,0,0,2,2,NULL),(1,0,0,3,3,NULL);
+INSERT INTO `employee` VALUES (0,1,0,0,NULL,NULL),(1,2,0,0,2,NULL),(1,3,0,0,3,NULL);
 /*!40000 ALTER TABLE `employee` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -144,7 +144,7 @@ CREATE TABLE `employee_schedule` (
 
 LOCK TABLES `employee_schedule` WRITE;
 /*!40000 ALTER TABLE `employee_schedule` DISABLE KEYS */;
-INSERT INTO `employee_schedule` VALUES (_binary '',3,'12:00:00.000000','08:00:00.000000',2,1,1),(_binary '',1,'12:00:00.000000','08:00:00.000000',2,1,2),(_binary '',4,'12:00:00.000000','08:00:00.000000',2,1,3),(_binary '',5,'12:00:00.000000','08:00:00.000000',2,1,4),(_binary '',2,'12:00:00.000000','08:00:00.000000',2,1,5),(_binary '',3,'17:00:00.000000','13:00:00.000000',2,2,6),(_binary '',1,'17:00:00.000000','13:00:00.000000',2,2,7),(_binary '',4,'17:00:00.000000','13:00:00.000000',2,2,8),(_binary '',5,'17:00:00.000000','13:00:00.000000',2,2,9),(_binary '',2,'17:00:00.000000','13:00:00.000000',2,2,10),(_binary '',3,'17:00:00.000000','08:00:00.000000',3,2,11),(_binary '',1,'17:00:00.000000','08:00:00.000000',3,2,12),(_binary '',4,'17:00:00.000000','08:00:00.000000',3,2,13),(_binary '',2,'17:00:00.000000','08:00:00.000000',3,2,14),(_binary '',5,'20:00:00.000000','09:00:00.000000',3,2,15),(_binary '',6,'20:00:00.000000','09:00:00.000000',3,2,16),(_binary '\0',5,'23:00:00.000000','21:00:00.000000',3,2,17),(_binary '\0',6,'23:00:00.000000','21:00:00.000000',3,2,18);
+INSERT INTO `employee_schedule` VALUES (_binary '',3,'12:00:00.000000','08:00:00.000000',2,1,1),(_binary '',5,'12:00:00.000000','08:00:00.000000',2,1,2),(_binary '',1,'12:00:00.000000','08:00:00.000000',2,1,3),(_binary '',2,'12:00:00.000000','08:00:00.000000',2,1,4),(_binary '',4,'12:00:00.000000','08:00:00.000000',2,1,5),(_binary '',3,'17:00:00.000000','13:00:00.000000',2,2,6),(_binary '',5,'17:00:00.000000','13:00:00.000000',2,2,7),(_binary '',1,'17:00:00.000000','13:00:00.000000',2,2,8),(_binary '',2,'17:00:00.000000','13:00:00.000000',2,2,9),(_binary '',4,'17:00:00.000000','13:00:00.000000',2,2,10),(_binary '',3,'17:00:00.000000','08:00:00.000000',3,2,11),(_binary '',1,'17:00:00.000000','08:00:00.000000',3,2,12),(_binary '',2,'17:00:00.000000','08:00:00.000000',3,2,13),(_binary '',4,'17:00:00.000000','08:00:00.000000',3,2,14),(_binary '',6,'20:00:00.000000','09:00:00.000000',3,2,15),(_binary '',5,'20:00:00.000000','09:00:00.000000',3,2,16),(_binary '\0',6,'23:00:00.000000','21:00:00.000000',3,2,17),(_binary '\0',5,'23:00:00.000000','21:00:00.000000',3,2,18);
 /*!40000 ALTER TABLE `employee_schedule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -157,8 +157,8 @@ DROP TABLE IF EXISTS `establishment`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `establishment` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `n_votes` smallint NOT NULL DEFAULT '0',
-  `sum_votes` smallint NOT NULL DEFAULT '0',
+  `n_votes` bigint NOT NULL,
+  `sum_votes` bigint NOT NULL,
   `address` varchar(255) DEFAULT NULL,
   `description` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
@@ -452,7 +452,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,NULL,'+1',NULL,'999999999','+1999999999','System Admin','$argon2id$v=19$m=16384,t=2,p=1$sa46M7fp1zQ+WcHQHcICPw$B++3yUAaSNJnB4O8uA+fG89NO9FBVnO1MEL7J6hmj0k'),(2,NULL,'+351',NULL,'999999999','+351999999999','Henrique','$argon2id$v=19$m=16384,t=2,p=1$afRu5UI2gKgRcuVOorR/HA$b24JyIuBv4XpHA0L5xtF0/KpGTfv9V29ktcc9833Tw8'),(3,NULL,'+351',NULL,'900000000','+351900000000','Amigo do Joao','$argon2id$v=19$m=16384,t=2,p=1$W49ZB0rKvqwfotNpBGdIEQ$0nZ5pQAE18nuTlhqewjkDyeapvx1eH9vSn2IGaQnymk'),(4,NULL,'+351',NULL,'962844407','+351962844407','Filipe Miguel Pinho Santos','$argon2id$v=19$m=16384,t=2,p=1$xnLUcuSRyrB9OAr0Ldjh5Q$ZfOSEbiNcR0wi4uOe7+yhoyYv7880nKO22Df9zfVaZU'),(5,NULL,'+351',NULL,'927030780','+351927030780','Bruno Santos','$argon2id$v=19$m=16384,t=2,p=1$LMMZ7CFnaBKdwZqBUMxxwg$xra7TXcG3OnMKA023S74JJlZygDNwpIpZYUIK0jhvHE');
+INSERT INTO `user` VALUES (1,NULL,'+1',NULL,'999999999','+1999999999','System Admin','$argon2id$v=19$m=16384,t=2,p=1$nE7rVflfcLhiXXPI0LgOUg$TF0+OQhDpAkG1vMaO2h92jgCBXRAr8N1ymWyhYJlgF8'),(2,NULL,'+351',NULL,'999999999','+351999999999','Henrique','$argon2id$v=19$m=16384,t=2,p=1$nqFONXOOydPepZfoVaPEhQ$OICSD8msZ/wAA+cwHGiV5EzuwUFiwiewD6DEZCX45yo'),(3,NULL,'+351',NULL,'900000000','+351900000000','Amigo do Joao','$argon2id$v=19$m=16384,t=2,p=1$/TIL9b2WCKmdi9dZmnq5sA$3NErw4GC+mrHFHKTmT5CUo8m/abS2FlJJ2UO5/ThM94'),(4,NULL,'+351',NULL,'962844407','+351962844407','Filipe Miguel Pinho Santos','$argon2id$v=19$m=16384,t=2,p=1$pFfzSyK3mlaCGQaL5se2og$KRDpKifAgK7Wo2nbJSlriQkwAIMLUj5vo0vJSxpZU6Y'),(5,NULL,'+351',NULL,'927030780','+351927030780','Bruno Santos','$argon2id$v=19$m=16384,t=2,p=1$y7UHAtaFLMhW29mfoAeOOA$IE5ctV42L9pH/9lP2YH8nj2ObEGN7QkNBbvo8RIFknM');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -542,4 +542,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-23 16:42:43
+-- Dump completed on 2024-09-25 23:21:09
