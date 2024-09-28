@@ -5,7 +5,7 @@ import java.util.Set;
 
 import org.hibernate.proxy.HibernateProxy;
 
-import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.DTO.service.ServiceDTO;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
 import com.teamsantos.easybarber.entities.images.ServiceImage;
 import com.teamsantos.easybarber.utils.Utils;

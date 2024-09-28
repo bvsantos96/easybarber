@@ -20,10 +20,10 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
-import com.teamsantos.easybarber.DTO.ScheduleDTO;
-import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
-import com.teamsantos.easybarber.DTO.SchedulesDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
+import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
+import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
+import com.teamsantos.easybarber.DTO.schedule.SchedulesDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.ScheduleData;

@@ -5,3 +5,10 @@ export enum UpdateType {
     NONE = "none",
     FAILED = "failed"
 }
+
+export enum ResponseType {
+    NONE = -1,
+    STRING = 0,
+    OBJECT = 1,
+    LIST = 2,
+}

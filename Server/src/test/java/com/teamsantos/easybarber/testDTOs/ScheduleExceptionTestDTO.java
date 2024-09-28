@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
+import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 
 import lombok.Getter;

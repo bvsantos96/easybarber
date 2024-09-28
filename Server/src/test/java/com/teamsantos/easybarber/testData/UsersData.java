@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import com.teamsantos.easybarber.DTO.LocationDTO;
-import com.teamsantos.easybarber.DTO.UserDTO;
+import com.teamsantos.easybarber.DTO.location.LocationDTO;
+import com.teamsantos.easybarber.DTO.user.UserDTO;
 import com.teamsantos.easybarber.testDTOs.UserTestDTO;
 
 public class UsersData {
