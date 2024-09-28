@@ -17,13 +17,13 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamsantos.easybarber.DTO.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
-import com.teamsantos.easybarber.DTO.ScheduleDTO;
-import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
-import com.teamsantos.easybarber.DTO.SchedulesDTO;
+import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
+import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
+import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
+import com.teamsantos.easybarber.DTO.schedule.SchedulesDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.ScheduleException;

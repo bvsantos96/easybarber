@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
-import com.teamsantos.easybarber.DTO.ScheduleDTO;
-import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
-import com.teamsantos.easybarber.DTO.SchedulesDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
+import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
+import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
+import com.teamsantos.easybarber.DTO.schedule.SchedulesDTO;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.services.SchedulesService;

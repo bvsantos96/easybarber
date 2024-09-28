@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamsantos.easybarber.DTO.BasePageDTO;
-import com.teamsantos.easybarber.DTO.LocationDTO;
-import com.teamsantos.easybarber.DTO.UserCreateDTO;
-import com.teamsantos.easybarber.DTO.UserDTO;
+import com.teamsantos.easybarber.DTO.location.LocationDTO;
+import com.teamsantos.easybarber.DTO.user.UserCreateDTO;
+import com.teamsantos.easybarber.DTO.user.UserDTO;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.services.LocationService;
 import com.teamsantos.easybarber.services.UserService;

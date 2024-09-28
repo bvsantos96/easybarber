@@ -5,9 +5,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.teamsantos.easybarber.DTO.AppointmentDTO;
-import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
-import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
+import com.teamsantos.easybarber.DTO.establishment.service.CreateEstablishmentServiceDTO;
+import com.teamsantos.easybarber.DTO.service.ServiceDTO;
 
 public class AppointmentData {
     public static final List<AppointmentDTO> appointments;
@@ -76,7 +76,7 @@ public class AppointmentData {
                                 EstablishmentData.establishmentServices.get(1).getServiceId(),
                                 "Corte de cabelo",
                                 "",
-                                LocalDate.parse("2124-08-16"),
+                                LocalDate.parse("2124-08-15"),
                                 LocalTime.parse("10:00")));
                 add(
                         new AppointmentDTO(
@@ -87,7 +87,96 @@ public class AppointmentData {
                                 EstablishmentData.establishmentServices.get(2).getServiceId(),
                                 "Barba",
                                 "",
-                                LocalDate.parse("2124-08-17"),
+                                LocalDate.parse("2124-08-14"),
+                                LocalTime.parse("10:00")));
+
+                add(
+                        new AppointmentDTO(
+                                UsersData.usersDTO.get(1).getId(),
+                                getServiceFromEstablishmentService(EstablishmentData.establishmentServices.get(1))
+                                        .getEmployeeId(),
+                                EstablishmentData.establishmentServices.get(1).getEstablishmentId(),
+                                EstablishmentData.establishmentServices.get(1).getServiceId(),
+                                "Corte de cabelo",
+                                "",
+                                LocalDate.parse("2124-08-11"),
+                                LocalTime.parse("10:00")));
+                add(
+                        new AppointmentDTO(
+                                UsersData.usersDTO.get(1).getId(),
+                                getServiceFromEstablishmentService(EstablishmentData.establishmentServices.get(2))
+                                        .getEmployeeId(),
+                                EstablishmentData.establishmentServices.get(2).getEstablishmentId(),
+                                EstablishmentData.establishmentServices.get(2).getServiceId(),
+                                "Barba",
+                                "",
+                                LocalDate.parse("2124-08-10"),
+                                LocalTime.parse("10:00")));
+                add(
+                        new AppointmentDTO(
+                                UsersData.usersDTO.get(1).getId(),
+                                getServiceFromEstablishmentService(EstablishmentData.establishmentServices.get(1))
+                                        .getEmployeeId(),
+                                EstablishmentData.establishmentServices.get(1).getEstablishmentId(),
+                                EstablishmentData.establishmentServices.get(1).getServiceId(),
+                                "Corte de cabelo",
+                                "",
+                                LocalDate.parse("2124-08-09"),
+                                LocalTime.parse("10:00")));
+                add(
+                        new AppointmentDTO(
+                                UsersData.usersDTO.get(1).getId(),
+                                getServiceFromEstablishmentService(EstablishmentData.establishmentServices.get(2))
+                                        .getEmployeeId(),
+                                EstablishmentData.establishmentServices.get(2).getEstablishmentId(),
+                                EstablishmentData.establishmentServices.get(2).getServiceId(),
+                                "Barba",
+                                "",
+                                LocalDate.parse("2124-08-08"),
+                                LocalTime.parse("10:00")));
+                add(
+                        new AppointmentDTO(
+                                UsersData.usersDTO.get(1).getId(),
+                                getServiceFromEstablishmentService(EstablishmentData.establishmentServices.get(1))
+                                        .getEmployeeId(),
+                                EstablishmentData.establishmentServices.get(1).getEstablishmentId(),
+                                EstablishmentData.establishmentServices.get(1).getServiceId(),
+                                "Corte de cabelo",
+                                "",
+                                LocalDate.parse("2124-08-07"),
+                                LocalTime.parse("10:00")));
+                add(
+                        new AppointmentDTO(
+                                UsersData.usersDTO.get(1).getId(),
+                                getServiceFromEstablishmentService(EstablishmentData.establishmentServices.get(2))
+                                        .getEmployeeId(),
+                                EstablishmentData.establishmentServices.get(2).getEstablishmentId(),
+                                EstablishmentData.establishmentServices.get(2).getServiceId(),
+                                "Barba",
+                                "",
+                                LocalDate.parse("2124-08-04"),
+                                LocalTime.parse("10:00")));
+                add(
+                        new AppointmentDTO(
+                                UsersData.usersDTO.get(1).getId(),
+                                getServiceFromEstablishmentService(EstablishmentData.establishmentServices.get(1))
+                                        .getEmployeeId(),
+                                EstablishmentData.establishmentServices.get(1).getEstablishmentId(),
+                                EstablishmentData.establishmentServices.get(1).getServiceId(),
+                                "Corte de cabelo",
+                                "",
+                                LocalDate.parse("2124-08-03"),
+                                LocalTime.parse("10:00")));
+                add(
+                        new AppointmentDTO(
+                                UsersData.usersDTO.get(1).getId(),
+                                getServiceFromEstablishmentService(EstablishmentData.establishmentServices.get(2))
+                                        .getEmployeeId(),
+                                EstablishmentData.establishmentServices.get(2).getEstablishmentId(),
+                                EstablishmentData.establishmentServices.get(2).getServiceId(),
+                                "Barba",
+                                "",
+                                LocalDate.parse("2124-08-02"),
                                 LocalTime.parse("10:00")));
             };
         };

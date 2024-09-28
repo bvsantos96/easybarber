@@ -1,5 +1,6 @@
 {
     "appName": "EasyBarbers",
+    "at": "at",
     "allow": "Allow",
     "loadingMore": "Loading More...",
     "updateAvailable": "Update Available",
@@ -50,6 +51,9 @@
     "search": "Search Barber Here",
     "searchAddress": "Search address here",
     "tabs": {
+        "homeNavigator" : "HomeNavigator",
+        "employeeDetails": "Employee Details",
+        "establishmentDetails": "Establishment Details",
         "home": "Home",
         "appointments": "Appointments",
         "alerts": "Alerts",
@@ -109,6 +113,7 @@
         "saveLocationError": "An error as occured while trying to save a new location. Please try again.",
         "fetchSuggestionsError": "Unable to parse your current location",
         "locationPermissionError": "Location permission denied",
+        "openMapsError": "An error occurred! The address for the establishment was saved to your clipboard."
     },
     "recentAddresses": "Recent addresses",
     "savedAddresses": "Saved addresses",
@@ -119,5 +124,12 @@
     },
     "appointments": {
         "upcomming": "Upcoming Appointments",
-    }
+    },
+    "services" : {
+        "title": "Services",
+    },
+    "about" : {
+        "title": "About",
+    },
+    "checkAvailability": "Check Availability",
 }
