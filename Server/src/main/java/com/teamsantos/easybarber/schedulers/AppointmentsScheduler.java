@@ -20,7 +20,7 @@ public class AppointmentsScheduler {
     private final MessagingService messagingService;
     private final AppointmentService appointmentService;
 
-    @Value("${scheduler.appointments.enabled}")
+    @Value("${scheduler.appointments.reminder.enabled}")
     private boolean isSchedulerEnabled;
     
     @Autowired
