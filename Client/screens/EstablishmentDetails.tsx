@@ -19,6 +19,7 @@ import Button from '../components/Button';
 import { ImageRating } from '../components/ImageRating';
 import PageList from '../components/PageList';
 import { defaultBarberImage } from '../utils/Constants';
+import { PageListType } from '../enums';
 
 export type Props = {
     navigation: NavigationProp<any, any>
@@ -59,11 +60,11 @@ export default function EstablishmentDetails({ navigation }: Props) {
         <View style={styles.container}>
             <View style={styles.imageStyle} >
                 <PageList<IImage>
+                    type={PageListType.PAGERVIEW}
                     initialItems={establishment.images}
+                    pageSize={3}
                     renderItem={
                         ({ item, index }: { item: IImage, index: number }) => {
-                            console.log(item);
-                            console.log(index);
                             return (
                                 <Image
                                     key={index}
