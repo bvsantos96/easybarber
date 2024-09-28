@@ -1,5 +1,5 @@
 import React, { useEffect, useImperativeHandle, useState } from "react";
-import { FlatList, View, Text, ViewStyle } from "react-native";
+import { FlatList, View, Text, ViewStyle, NativeSyntheticEvent } from "react-native";
 import PagerView from "react-native-pager-view";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 
@@ -18,8 +18,13 @@ interface PageListProps<T extends Identifiable> {
     saveCache?: (items: T[]) => void;
     style?: ViewStyle;
     initialItems?: T[];
+    pageSize?: number;
 }
 
+interface PageSwipeEvent {
+    position: number;
+    offset: number;
+}
 export interface PageListRef<T extends Identifiable> {
     _loadMoreItems: () => void;
     loadMoreItems: (req: ITimedRequest<T>) => void;
@@ -31,17 +36,14 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     const { renderItem, requestFunction, loadCache, saveCache, style } = props;
     const type = props.type || PageListType.FLAT;
     const initialItems = props.initialItems || [];
+    const pageSize = props.pageSize || 10;
     const texts = require("@lang/en.json");
     const styles = getStyles();
     const [loadingMore, setLoadingMore] = useState(false);
-    const initPage = (): IPage<T> => {
-        if (initialItems.length > 0) {
-            return createPageableWContent<T>(initialItems);
-        }
-        return createPageable<T>();
-    }
-    const [request, setRequest] = useState<ITimedRequest<T>>(new TimedRequest(initPage(), 0));
+    const [request, setRequest] = useState<ITimedRequest<T>>(new TimedRequest(createPageable<T>(pageSize), 0));
     const [firstLoad, setFirstLoad] = useState(true);
+
+    const pagerViewRef = React.useRef<PagerView>(null);
 
     useImperativeHandle(ref, () => ({
         _loadMoreItems,
@@ -59,6 +61,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
             }
             setRequest(new TimedRequest(req.page, req.lastRequest, req.pathParams));
         }
+
         setLoadingMore(false);
     };
 
@@ -74,7 +77,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
 
     useEffect(() => {
         if (!firstLoad) {
-            setRequest(new TimedRequest(initPage(), 0));
+            setRequest(new TimedRequest(createPageable<T>(pageSize), 0));
             saveCache && saveCache([]);
             _loadMoreItems();
             return;
@@ -139,8 +142,17 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
             if (request.page.content.length > 0) {
                 return (
                     <PagerView
+                        ref={pagerViewRef}
+                        scrollEnabled={true}
+                        overScrollMode={'never'}
+                        onPageScroll={async (event: NativeSyntheticEvent<PageSwipeEvent>) => {
+                            const { position } = event.nativeEvent;
+                            if (position >= request.page.content.length - 2) {
+                                _loadMoreItems();
+                            }
+                        }}
                         style={{ flex: 1 }} >
-                        {request.page.content.map((item, index) => {
+                        {(request.page.content.length > 0 ? request.page.content : initialItems).map((item, index) => {
                             return renderItem({ item, index });
                         })}
                     </PagerView>
