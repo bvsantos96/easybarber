@@ -22,7 +22,7 @@ jobs:
       - name: Build with Maven
         run: |
           cd Server
-          mvn clean package -DskipTests
+          mvn clean package -DskipTests -X
       - name: Prepare Docker build
         run: |
           mkdir -p Server/Docker/target
