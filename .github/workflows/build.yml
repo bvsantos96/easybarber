@@ -20,7 +20,10 @@ jobs:
         with:
           java-version: '17'
           distribution: 'zulu'
-
+      - name: Install Maven
+        run: |
+          sudo apt-get updateß
+          sudo apt-get install -y maven
       - name: Build with Maven
         run: mvn clean package
 
