@@ -51,6 +51,7 @@
     "search": "Search Barber Here",
     "searchAddress": "Search address here",
     "tabs": {
+        "back": "Back",
         "homeNavigator" : "HomeNavigator",
         "employeeDetails": "Employee Details",
         "establishmentDetails": "Establishment Details",

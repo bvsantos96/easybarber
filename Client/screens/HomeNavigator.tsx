@@ -11,8 +11,8 @@ export default function HomeNavigator() {
     const styles = getStyles();
     return (
         <View style={styles.container}>
-            <Stack.Navigator initialRouteName='Home' >
-                <Stack.Screen name={texts.tabs.home} options={{ headerShown: false }} >
+            <Stack.Navigator initialRouteName={texts.tabs.back} >
+                <Stack.Screen name={texts.tabs.back} options={{ headerShown: false }} >
                     {props => <Home {...props} />}
                 </Stack.Screen>
                 <Stack.Screen name={texts.tabs.establishmentDetails} component={EstablishmentDetails} />
