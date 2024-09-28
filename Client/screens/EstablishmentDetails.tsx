@@ -93,8 +93,8 @@ export default function EstablishmentDetails({ navigation }: Props) {
             <View style={styles.servicesContainer}>
                 {categories && categories.map((category) => (
                     <Category
-                        padding={15}
-                        style={{ marginHorizontal: 5 }}
+                        padding={styles.categoryPadding.padding}
+                        style={{ marginHorizontal: styles.categoryPadding.margin }}
                         key={category.id}
                         id={category.id}
                         icon={
@@ -121,10 +121,10 @@ export default function EstablishmentDetails({ navigation }: Props) {
                                 type: ALERT_TYPE.INFO,
                                 title: texts.updateRequired,
                                 message: texts.updateRequiredMessage,
-                                buttonText: 'checkAvailability'
+                                buttonText: texts.ok
                             });
                         }
-                    } title={texts.checkAvailability} />
+                    } title={texts.appointments.book} />
             </View>
 
         </View >
