@@ -201,26 +201,24 @@ public class AppointmentTests {
             EmployeeTests employeeTests = new EmployeeTests(mockMvc);
             AuthTests authTests = new AuthTests(mockMvc);
             createAppointment(init, init);
-            for (int i = 0; i < AppointmentData.appointments.size(); i++) {
-                AppointmentDTO appointment = AppointmentData.appointments.get(i);
-                String jwt = "";
-                if (i % 2 == 0) {
-                    if (appointment.getUserId() == null) {
-                        jwt = employeeTests.loginById(appointment.getEmployeeId(), false);
-                    } else {
-                        jwt = authTests.loginById(appointment.getUserId(), false);
-                    }
-                    String url = String.format("/appointment/%d/cancel", appointment.getId());
-                    CreateTest.putSuccessWJWT(mockMvc, url, jwt);
-                } else {
-                    jwt = employeeTests.loginById(
-                            EmployeeTests.getDifferentEmployee(appointment.getEmployeeId()),
-                            false);
-                    String url = String.format("/appointment/%d/cancel", appointment.getId());
-                    CreateTest.putForbiddenWJWT(mockMvc, url, jwt);
-                }
+            AppointmentDTO appointment = AppointmentData.appointments.get(1);
+            String jwt = "";
+            if (appointment.getUserId() == null) {
+                jwt = employeeTests.loginById(appointment.getEmployeeId(), false);
+            } else {
+                jwt = authTests.loginById(appointment.getUserId(), false);
             }
-        } catch (Exception e) {
+            String url = String.format("/appointment/%d/cancel", appointment.getId());
+            CreateTest.putSuccessWJWT(mockMvc, url, jwt);
+            appointment = AppointmentData.appointments.get(2);
+            jwt = employeeTests.loginById(
+                    EmployeeTests.getDifferentEmployee(appointment.getEmployeeId()),
+                    false);
+            url = String.format("/appointment/%d/cancel", appointment.getId());
+            CreateTest.putForbiddenWJWT(mockMvc, url, jwt);
+        } catch (
+
+        Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }

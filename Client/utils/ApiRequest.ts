@@ -3,7 +3,7 @@ import langs from '../langs/en.json';
 import { PickerItem } from '../components/Picker';
 import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
-import { Appointment, BarberInfo, ICategory, ILocation, IPage, IResult } from '../declarations';
+import { AppointmentFilter, AppointmentInfo, EmployeeInfo, EstablishmentInfo, ICategory, ILocation, IPage, IResult } from '../declarations';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
 import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
 import { getSelectedLocation } from './Location';
@@ -12,10 +12,6 @@ import { Alert, Banner } from '../components/Alert';
 import { ALERT_TYPE } from 'react-native-alert-notification';
 
 import texts from '../langs/en.json';
-
-export const getAppointments = async (): Promise<Appointment[]> => {
-    return [];
-}
 
 export const getTimes = async ({ from, to }: { from?: string, to?: string }): Promise<PickerItem[]> => {
     from = from || "08:00";
@@ -199,10 +195,11 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
 
     const result = await request("login", "POST", { countryMobile: _countryCode, mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed, true);
 
-    if (result.success)
+    if (result.success) {
         await storeData(TOKEN_STORAGE_KEY, result.message);
-    else
+    } else {
         Banner({ type: ALERT_TYPE.WARNING, title: "", message: result.message });
+    }
     return result;
 }
 
@@ -288,7 +285,26 @@ export const getLocationList = async (page: IPage<ILocation>, params?: Record<st
     return _locations;
 }
 
-export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record<string, string | number | boolean>, location?: ILocation): Promise<IPage<BarberInfo> | undefined> => {
+export const getEmployee = async (id: number): Promise<EmployeeInfo | undefined> => {
+    const result = await request<EmployeeInfo>(`employee/${id}`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed);
+    if (result.success && result.data !== undefined && result.data !== null) {
+        return result.data;
+    }
+    return undefined;
+}
+
+
+export const getAppointments = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter): Promise<IPage<AppointmentInfo> | undefined> => {
+    if (params === undefined || params === null)
+        params = {
+            future: true,
+            activeOnly: true
+        };
+    params.sort = "date,time";
+    return await pageGet<AppointmentInfo>("/appointment/list", page, params);
+}
+
+export const getNearByBarbers = async (page?: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>, location?: ILocation): Promise<IPage<EstablishmentInfo> | undefined> => {
     location = location ?? await getSelectedLocation();
     if (location === undefined || location === null) {
         // TODO: alerta para ativar localizacao
@@ -300,10 +316,10 @@ export const getNearByBarbers = async (page?: IPage<BarberInfo>, params?: Record
         params["latitude"] = location.latitude;
     if (!params.hasOwnProperty("longitude"))
         params["longitude"] = location.longitude;
-    return await pageGet<BarberInfo>("establishment/list", page, params);
+    return await pageGet<EstablishmentInfo>("establishment/list", page, params);
 }
 
-export const getBarbersNearMe = async (page: IPage<BarberInfo>, params?: Record<string, string | number | boolean>): Promise<IPage<BarberInfo> | undefined> => {
+export const getBarbersNearMe = async (page: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>): Promise<IPage<EstablishmentInfo> | undefined> => {
     return await getNearByBarbers(page, params);
 }
 
@@ -336,16 +352,16 @@ export const getApiVersion = async (): Promise<string> => {
     throw new Error(langs.apiMessages.failed);
 }
 
-export const getMobileCode = async (mobileNr:string): Promise<boolean> => {
-    const response = await request("/sms/confirmation", "POST", {phoneNr: mobileNr}, langs.apiMessages.success, langs.apiMessages.failed, true);
+export const getMobileCode = async (mobileNr: string): Promise<boolean> => {
+    const response = await request("/sms/confirmation", "POST", { phoneNr: mobileNr }, langs.apiMessages.success, langs.apiMessages.failed, true);
     if (response.success) {
         return true;
     }
     return false;
 }
 
-export const confirmMobileCode = async (mobileNr:string, confirmationCode:string): Promise<boolean> => {
-    const response = await request("/sms/confirm", "POST", {phoneNr: mobileNr, confirmationCode: confirmationCode}, langs.apiMessages.success, langs.apiMessages.failed, true);
+export const confirmMobileCode = async (mobileNr: string, confirmationCode: string): Promise<boolean> => {
+    const response = await request("/sms/confirm", "POST", { phoneNr: mobileNr, confirmationCode: confirmationCode }, langs.apiMessages.success, langs.apiMessages.failed, true);
     if (response.success) {
         return true;
     }
