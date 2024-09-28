@@ -2,15 +2,18 @@ package com.teamsantos.easybarber.repositories;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
+import com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.entities.Appointment;
 
@@ -104,4 +107,19 @@ public interface AppointmentRepository
             """)
     Page<AppointmentListDTO> findAllToEmployee(AppointmentFilter filter, Pageable pageable);
 
+    @Query("""
+                SELECT new com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO(
+                    s.id,
+                    s.user.name,
+                    s.user.mobileInformation,
+                    s.date,
+                    s.time,
+                    s.establishment.name,
+                    s.employee.user.name
+                )
+                FROM Appointment s
+                WHERE s.reminded = false
+                AND s.date = :date
+        """)
+    List<AppointmentReminderDTO> findNextDayAppointmentsNotReminded(@Param("date") LocalDate date);
 }

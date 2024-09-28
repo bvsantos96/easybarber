@@ -17,6 +17,7 @@ import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
+import com.teamsantos.easybarber.DTO.appointment.CancelAppointmentDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.exceptions.ForbidenException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
@@ -89,11 +90,11 @@ public class AppointmentController {
         }
     }
 
-    @PutMapping("/appointment/{id}/cancel")
+    @PutMapping("/appointment/cancel")
     @PreAuthorize(PrePermissionEvaluator.HAS_APPOINTMENT_CHANGE_PERMISSION)
-    public ResponseEntity<BaseResponseDTO> cancel(@PathVariable long id) {
+    public ResponseEntity<BaseResponseDTO> cancel(@RequestBody CancelAppointmentDTO cancelAppointmentDTO) {
         try {
-            appointmentService.cancel(id);
+            appointmentService.cancel(cancelAppointmentDTO);
             return ResponseEntity.status(HttpStatus.OK).body(new BaseResponseDTO("Appointment canceled"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));

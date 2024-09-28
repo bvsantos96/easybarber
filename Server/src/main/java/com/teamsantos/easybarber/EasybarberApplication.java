@@ -4,6 +4,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.utils.Utils;
@@ -13,6 +14,7 @@ import io.swagger.v3.oas.annotations.info.Info;
 
 @SpringBootApplication
 @OpenAPIDefinition(info = @Info(title = "EasyBarber", version = "1.0", description = "EasyBarber API"))
+@EnableScheduling
 public class EasybarberApplication {
     @Bean
     public ModelMapper modelMapper() {
