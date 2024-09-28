@@ -6,6 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,9 @@ public class AppointmentsScheduler {
     private final MessagingService messagingService;
     private final AppointmentService appointmentService;
 
+    @Value("${scheduler.appointments.enabled}")
+    private boolean isSchedulerEnabled;
+    
     @Autowired
     public AppointmentsScheduler(MessagingService messagingService, AppointmentService appointmentService){
         this.messagingService = messagingService;
@@ -27,6 +31,10 @@ public class AppointmentsScheduler {
 
     @Scheduled(cron = "${scheduler.appointments.reminder}")
     public void sendAppointmentReminders() {
+        if (!isSchedulerEnabled) {
+            log.info("Appointment reminders scheduler is disabled in the current environment.");
+            return;
+        }
         log.info("Running appointment reminder scheduler...");
         try {
             List<AppointmentReminderDTO> appointmentsToRemind = appointmentService.getNextDayAppointmentsNotReminded();
