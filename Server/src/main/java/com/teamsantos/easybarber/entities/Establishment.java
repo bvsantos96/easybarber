@@ -8,7 +8,7 @@ import org.hibernate.annotations.BatchSize;
 import org.hibernate.proxy.HibernateProxy;
 import org.locationtech.jts.geom.Point;
 
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
 import com.teamsantos.easybarber.entities.images.EstablishmentImage;
 
@@ -41,10 +41,10 @@ public class Establishment extends EntityWithImages<Establishment, Establishment
     private String address;
     @Column
     private Point location;
-    @Column(nullable = false, columnDefinition = "SMALLINT DEFAULT 0")
-    private Long nVotes;
-    @Column(nullable = false, columnDefinition = "SMALLINT DEFAULT 0")
-    private Long sumVotes;
+    @Column(nullable = false)
+    private Long nVotes = 0L;
+    @Column(nullable = false)
+    private Long sumVotes = 0L;
     @OneToMany(mappedBy = "establishment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @ToString.Exclude
     @BatchSize(size = 10)

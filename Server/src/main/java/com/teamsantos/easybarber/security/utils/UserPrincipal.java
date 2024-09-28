@@ -32,7 +32,7 @@ public class UserPrincipal {
         return new org.springframework.security.core.userdetails.User(String.valueOf(id), "", roles);
     }
 
-	public boolean hasRole(UserTypes employee) {
+    public boolean hasRole(UserTypes employee) {
         return roles.contains(new SimpleGrantedAuthority(String.format("ROLE_%s", employee.toString().toUpperCase())));
-	}
+    }
 }

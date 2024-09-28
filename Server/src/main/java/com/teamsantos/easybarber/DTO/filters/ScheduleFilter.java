@@ -29,6 +29,7 @@ import lombok.Setter;
 public class ScheduleFilter {
     private Long employeeId;
     private Long establishmentId;
+    private Long serviceId;
     private Set<DAY_OF_WEEK> dayOfWeek;
     private LocalDate from;
     private LocalDate to;
@@ -49,6 +50,15 @@ public class ScheduleFilter {
                 url.append("&");
             }
             url.append("employeeId=").append(employeeId);
+        }
+        if (serviceId != null) {
+            if (first) {
+                url.append("?");
+                first = false;
+            } else {
+                url.append("&");
+            }
+            url.append("serviceId=").append(serviceId);
         }
         if (establishmentId != null) {
             if (first) {
@@ -193,6 +203,10 @@ public class ScheduleFilter {
                 identifier = true;
             }
 
+            if (this.getServiceId() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("service").get("id"), this.getServiceId()));
+            }
+
             if (!identifier) {
                 throw new IllegalArgumentException("Employee ID or Establishment ID is required");
             }
@@ -235,6 +249,10 @@ public class ScheduleFilter {
 
             if (this.getDayOfWeek() != null && !this.getDayOfWeek().isEmpty()) {
                 predicates.add(root.get("day").in(this.getDayOfWeek()));
+            }
+
+            if (this.getServiceId() != null) {
+                predicates.add(criteriaBuilder.equal(root.get("service").get("id"), this.getServiceId()));
             }
 
             if (this.getFrom() != null) {

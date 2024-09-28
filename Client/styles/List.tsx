@@ -19,12 +19,16 @@ export const getStyles = () => {
             borderRadius: 11,
             flexDirection: 'row',
         },
-        imageStyle: {
-            position: 'absolute',
-            left: 0,
+        imageContainer: {
             width: 168 * theme.dimensions.absoluteWidth,
             height: 138 * theme.dimensions.absoluteHeight,
             maxHeight: 138 * theme.dimensions.absoluteHeight,
+        },
+        imageStyle: {
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            left: 0,
             borderRadius: 11,
         },
         textContainer: {
@@ -72,6 +76,19 @@ export const getStyles = () => {
             lineHeight: 18,
             height: 50 * theme.dimensions.absoluteHeight,
         },
+        ratingContainerRight: {
+            position: 'absolute',
+            borderRadius: 50,
+            top: 5 * theme.dimensions.absoluteHeight,
+            right: 5 * theme.dimensions.absoluteWidth,
+            width: 67 * theme.dimensions.absoluteWidth,
+            height: 23 * theme.dimensions.absoluteHeight,
+            backgroundColor: theme.colors.mainColor,
+            zIndex: 10,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+
         ratingContainer: {
             position: 'absolute',
             borderRadius: 50,

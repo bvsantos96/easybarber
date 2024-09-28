@@ -12,8 +12,8 @@ import org.json.JSONArray;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import com.teamsantos.easybarber.DTO.UserDTO;
+import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
+import com.teamsantos.easybarber.DTO.user.UserDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.User;

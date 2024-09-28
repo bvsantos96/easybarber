@@ -13,15 +13,17 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
-import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
-import com.teamsantos.easybarber.DTO.EmployeeDTO;
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
-import com.teamsantos.easybarber.DTO.ServiceDTO;
-import com.teamsantos.easybarber.DTO.ServiceFullDTO;
+import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.employee.EmployeeInformationDTO;
+import com.teamsantos.easybarber.DTO.establishment.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
+import com.teamsantos.easybarber.DTO.establishment.EstablishmentInformationDTO;
+import com.teamsantos.easybarber.DTO.establishment.service.CreateEstablishmentServiceDTO;
+import com.teamsantos.easybarber.DTO.establishment.service.EstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentServiceFilter;
+import com.teamsantos.easybarber.DTO.service.ServiceDTO;
+import com.teamsantos.easybarber.DTO.service.ServiceFullDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.EstablishmentStaff;
@@ -308,10 +310,26 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         return establishmentService;
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<EstablishmentDTO> getEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable) {
         return PageDTO.toDTO(modelMapper,
                 establishmentRepository.findEstablishmentsByEmployeeId(employeeId, admin, pageable),
                 EstablishmentDTO.class, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public EmployeeInformationDTO getEmployeeInformation(long establishmentId, long employeeId)
+            throws NotFoundException {
+        return new EmployeeInformationDTO(
+                establishmentServiceRepository.findEmployeeInformation(establishmentId, employeeId)
+                        .orElseThrow(NotFoundException::new));
+    }
+
+    @Transactional(readOnly = true)
+    public EstablishmentInformationDTO getInformation(Long establishmentId)
+            throws NotFoundException {
+        return new EstablishmentInformationDTO(
+                establishmentServiceRepository.findEstablishmentInformation(establishmentId)
+                        .orElseThrow(NotFoundException::new));
     }
 }

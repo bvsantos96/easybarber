@@ -11,9 +11,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import com.teamsantos.easybarber.DTO.LocationDTO;
-import com.teamsantos.easybarber.DTO.UserDTO;
-import com.teamsantos.easybarber.DTO.UsersDTO;
+import com.teamsantos.easybarber.DTO.location.LocationDTO;
+import com.teamsantos.easybarber.DTO.user.UserDTO;
+import com.teamsantos.easybarber.DTO.user.UsersDTO;
 import com.teamsantos.easybarber.services.UserTypeService;
 import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.UsersData;

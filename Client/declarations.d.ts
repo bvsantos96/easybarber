@@ -35,13 +35,14 @@ declare interface ICategory {
 declare interface Image {
     id: number;
     data: string;
+    isMain?: boolean;
 }
 
 interface Identifiable {
     id: string | number;
 }
 
-declare interface BarberInfo extends Identifiable {
+declare interface EstablishmentInfo extends Identifiable {
     id: number;
     name: string;
     description: string;
@@ -54,28 +55,28 @@ declare interface BarberInfo extends Identifiable {
     images: Image[];
 }
 
-declare type Appointment = {
-    // {
-    //         "id": 0,
-    //         "version": "string",
-    //         "userId": 0,
-    //         "employeeId": 0,
-    //         "establishmentId": 0,
-    //         "serviceId": 0,
-    //         "description": "string",
-    //         "nonRegisteredUser": "string",
-    //         "date": "2024-09-17",
-    //         "time": {
-    //           "hour": 0,
-    //           "minute": 0,
-    //           "second": 0,
-    //           "nano": 0
-    //         }
-    //       }
+declare interface AppointmentFilter extends Record<string, string | number | boolean> {
+    employeeId?: number;
+    establishmentId?: number;
+    serviceId?: numbe;
+    date?: string;
+    time?: string;
+    endTime?: string;
+    userView?: boolean;
+    future?: boolean;
+    activeOnly?: boolean;
+}
+
+declare interface AppointmentInfo extends Identifiable {
     id: number;
-    name: string;
-    from: string;
-    to: string;
+    serviceName: string;
+    entityName: string;
+    establishmentName: string;
+    latitude: number;
+    longitude: number;
+    date: string;
+    time: string;
+    confirmed: boolean;
     photo: string;
 }
 
@@ -103,6 +104,12 @@ declare interface ILocation extends Identifiable {
     country: string;
     city: string;
     name: string | null;
+}
+
+declare interface ISmallLocation {
+    latitude: number;
+    longitude: number;
+    address: String;
 }
 
 declare interface IAddress {
@@ -135,4 +142,27 @@ declare interface IAddressSuggestion {
     display_name: string;
     address: IAddress;
     boundingbox: string[];
+}
+
+declare interface EmployeeInfo extends Identifiable {
+    name: string;
+    mobileNumber: string;
+    description: string;
+    availableServices: Identifiable[];
+    rating: number;
+    nvotes: number;
+    images: Image[];
+}
+
+declare interface EstablishmentDetail extends Identifiable {
+    name: string;
+    description: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+    availableServices: number[];
+    sumVotes: number;
+    rating: number;
+    nvotes: number;
+    images: Image[];
 }
