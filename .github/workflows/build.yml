@@ -23,7 +23,10 @@ jobs:
         run: |
           cd Server
           mvn clean package -DskipTests
-
+      - name: Prepare Docker build
+        run: |
+          mkdir -p Server/Docker/target
+          cp Server/target/easybarber-0.0.1-SNAPSHOT.jar Server/Docker/target/
       - name: Build Docker image
         run: |
           cd Server/Docker
