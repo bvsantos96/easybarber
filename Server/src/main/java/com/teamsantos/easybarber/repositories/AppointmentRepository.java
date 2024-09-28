@@ -56,7 +56,9 @@ public interface AppointmentRepository
                     s.id,
                     s.service.service.name,
                     s.employee.user.name,
-                    COALESCE(ei.data, esi.data),
+                    s.establishment.name,
+                    s.establishment.location,
+                    COALESCE(ei.data, esi.data, s.service.service.serviceType.imageURL),
                     s.date,
                     s.time,
                     s.confirmed
@@ -71,6 +73,8 @@ public interface AppointmentRepository
                 and (:#{#filter.date} is null or s.date = :#{#filter.date})
                 and (:#{#filter.time} is null or s.time >= :#{#filter.time})
                 and (:#{#filter.endTime} is null or s.time <= :#{#filter.endTime})
+                and (:#{#filter.future} is null or (s.date > CURRENT_DATE or (s.date = current_date and s.time >= current_time)))
+                and (:#{#filter.activeOnly} is null or s.active = :#{#filter.activeOnly})
             """)
     Page<AppointmentListDTO> findAllToUser(AppointmentFilter filter, Pageable pageable);
 
@@ -79,7 +83,9 @@ public interface AppointmentRepository
                     s.id,
                     s.service.service.name,
                     COALESCE(s.nonRegisteredUser, s.user.name),
-                    esi.data,
+                    s.establishment.name,
+                    s.establishment.location,
+                    COALESCE(esi.data, s.service.service.serviceType.imageURL),
                     s.date,
                     s.time,
                     s.confirmed
@@ -93,6 +99,8 @@ public interface AppointmentRepository
                 and (:#{#filter.date} is null or s.date = :#{#filter.date})
                 and (:#{#filter.time} is null or s.time >= :#{#filter.time})
                 and (:#{#filter.endTime} is null or s.time <= :#{#filter.endTime})
+                and (:#{#filter.future} is null or (s.date > CURRENT_DATE or (s.date = current_date and s.time >= current_time)))
+                and (:#{#filter.activeOnly} is null or s.active = :#{#filter.activeOnly})
             """)
     Page<AppointmentListDTO> findAllToEmployee(AppointmentFilter filter, Pageable pageable);
 

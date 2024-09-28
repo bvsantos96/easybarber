@@ -1,5 +1,4 @@
 import React from 'react';
-import Home from './Home';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Appointments from './Appointments';
 import HomeIcon from "@assets/icons/home.svg";
@@ -9,6 +8,7 @@ import ChatsIcon from "@assets/icons/chats.svg";
 import { useTheme } from '../styles/ThemeContext';
 import SafeFullScreen from '../components/SafeFullScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import HomeNavigator from './HomeNavigator';
 
 export default function Tabs() {
     const Tab = createBottomTabNavigator();
@@ -18,15 +18,16 @@ export default function Tabs() {
 
     return (
         <Tab.Navigator
-            initialRouteName={texts.tabs.appointments}
+            initialRouteName={texts.tabs.homeNavigator}
             screenOptions={{
+                lazy: true,
                 tabBarActiveTintColor: theme.colors.mainColor,
                 tabBarInactiveTintColor: theme.colors.text.main,
                 tabBarStyle: [{
                     height: theme.dimensions.tabHeight + inserts.bottom,
                 }, theme.shadow],
             }} >
-            <Tab.Screen name={texts.tabs.home}
+            <Tab.Screen name={texts.tabs.homeNavigator}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => !focused ? (
@@ -35,7 +36,7 @@ export default function Tabs() {
                         <HomeIcon width={20 * theme.dimensions.absoluteWidth} height={20 * theme.dimensions.absoluteWidth} fill={theme.colors.mainColor} />
                     )
                 }} >
-                {() => (<SafeFullScreen><Home /></SafeFullScreen>)}
+                {() => (<SafeFullScreen><HomeNavigator /></SafeFullScreen>)}
             </Tab.Screen>
             <Tab.Screen name={texts.tabs.appointments}
                 options={{
@@ -60,7 +61,7 @@ export default function Tabs() {
                 } >
                 {() => (<SafeFullScreen><Appointments /></SafeFullScreen>)}
             </Tab.Screen>
-            <Tab.Screen name={texts.tabs.alerts} component={Home}
+            <Tab.Screen name={texts.tabs.alerts} component={Appointments}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => !focused ? (
@@ -69,7 +70,7 @@ export default function Tabs() {
                         <AlertsIcon width={20 * theme.dimensions.absoluteWidth} height={20 * theme.dimensions.absoluteWidth} fill={theme.colors.mainColor} />
                     )
                 }} />
-            <Tab.Screen name={texts.tabs.chats} component={Home}
+            <Tab.Screen name={texts.tabs.chats} component={Appointments}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => !focused ? (
