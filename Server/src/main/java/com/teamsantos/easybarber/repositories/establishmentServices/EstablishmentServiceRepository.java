@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.repositories.establishmentServices;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -154,4 +155,11 @@ public interface EstablishmentServiceRepository
             GROUP BY es.establishment_id;
             """, nativeQuery = true)
     Optional<Tuple> findEstablishmentInformation(long establishmentId);
+
+    @Query("""
+                SELECT DISTINCT es.service.serviceType.id
+                FROM EstablishmentService es
+                WHERE es.establishment.id = :establishmentId
+            """)
+    List<Long> findEstablishmentAvailableServiceTypes(long establishmentId);
 }

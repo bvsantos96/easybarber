@@ -3,6 +3,7 @@ package com.teamsantos.easybarber.services;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.locationtech.jts.io.ParseException;
 import org.modelmapper.ModelMapper;
@@ -331,5 +332,10 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         return new EstablishmentInformationDTO(
                 establishmentServiceRepository.findEstablishmentInformation(establishmentId)
                         .orElseThrow(NotFoundException::new));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> listServicesTypes(long establishmentId) {
+        return establishmentServiceRepository.findEstablishmentAvailableServiceTypes(establishmentId);
     }
 }
