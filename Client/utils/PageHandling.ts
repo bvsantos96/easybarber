@@ -29,6 +29,18 @@ export interface Pageable<T> {
     empty: boolean;
 }
 
+export const createPageableWContent = <T>(arr: T[]): IPage<T> => {
+    return {
+        content: arr,
+        totalPages: 0,
+        totalElements: 0,
+        currentPage: 1,
+        pageSize: arr.length,
+        hasNextPage: true,
+        hasPreviousPage: true
+    }
+}
+
 export const createPageable = <T>(): IPage<T> => {
     return {
         content: [],

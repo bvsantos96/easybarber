@@ -127,6 +127,18 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         }
     }
 
+    @GetMapping("/{id}/servicetypes")
+    public ResponseEntity<BaseListDTO<Long>> listServicesTypes(@PathVariable Long id) {
+        BaseListDTO<Long> response = new BaseListDTO<>();
+        try {
+            response.setItems(establishmentService.listServicesTypes(id));
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
     @GetMapping("/{id}/services")
     public ResponseEntity<BasePageDTO<ServiceDTO>> listServices(
             @PathVariable Long id, Pageable pageable) {
