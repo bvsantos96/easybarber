@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.teamsantos.easybarber.DTO.ImageDTO;
+import com.teamsantos.easybarber.DTO.image.ImageDTO;
 import com.teamsantos.easybarber.testDTOs.UserTestDTO;
 
 public class EmployeeData {

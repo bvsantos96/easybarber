@@ -10,10 +10,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamsantos.easybarber.DTO.EmployeeCreateDTO;
-import com.teamsantos.easybarber.DTO.UserCreateDTO;
-import com.teamsantos.easybarber.DTO.UserDTO;
-import com.teamsantos.easybarber.DTO.UserSignInDTO;
+import com.teamsantos.easybarber.DTO.employee.EmployeeCreateDTO;
+import com.teamsantos.easybarber.DTO.user.UserCreateDTO;
+import com.teamsantos.easybarber.DTO.user.UserDTO;
+import com.teamsantos.easybarber.DTO.user.UserSignInDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.entities.UserType;
@@ -174,10 +174,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public UserDTO getUserByMobileNr(String mobileNr) throws Exception{
-        Optional<User> user =  userRepository.findByMobileInformation(mobileNr);
+    public UserDTO getUserByMobileNr(String mobileNr) throws Exception {
+        Optional<User> user = userRepository.findByMobileInformation(mobileNr);
 
-        if(user.isEmpty()){
+        if (user.isEmpty()) {
             throw new Exception("The mobile number doesnt exist");
         }
 
@@ -185,10 +185,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public void changeUserPwd(UserDTO userDTO, String newPwd) throws Exception{
+    public void changeUserPwd(UserDTO userDTO, String newPwd) throws Exception {
         Optional<User> userOpt = userRepository.findById(userDTO.getId());
 
-        if(userOpt.isEmpty()){
+        if (userOpt.isEmpty()) {
             throw new Exception("User not found");
         }
 
