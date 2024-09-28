@@ -139,25 +139,24 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     )}
                 />);
         case PageListType.PAGERVIEW:
-            if (request.page.content.length > 0) {
-                return (
-                    <PagerView
-                        ref={pagerViewRef}
-                        scrollEnabled={true}
-                        overScrollMode={'never'}
-                        onPageScroll={async (event: NativeSyntheticEvent<PageSwipeEvent>) => {
-                            const { position } = event.nativeEvent;
-                            if (position >= request.page.content.length - 2) {
-                                _loadMoreItems();
-                            }
-                        }}
-                        style={{ flex: 1 }} >
-                        {(request.page.content.length > 0 ? request.page.content : initialItems).map((item, index) => {
-                            return renderItem({ item, index });
-                        })}
-                    </PagerView>
-                );
-            }
+            return (
+
+                <PagerView
+                    ref={pagerViewRef}
+                    scrollEnabled={true}
+                    overScrollMode={'never'}
+                    onPageScroll={async (event: NativeSyntheticEvent<PageSwipeEvent>) => {
+                        const { position } = event.nativeEvent;
+                        if (position >= request.page.content.length - 3) {
+                            _loadMoreItems();
+                        }
+                    }}
+                    style={{ flex: 1 }} >
+                    {(request.page.content.length > 0 ? request.page.content : initialItems).map((item, index) => {
+                        return renderItem({ item, index });
+                    })}
+                </PagerView>
+            );
         default:
             return <></>;
 

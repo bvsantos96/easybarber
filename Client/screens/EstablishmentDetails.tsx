@@ -62,7 +62,7 @@ export default function EstablishmentDetails({ navigation }: Props) {
                 <PageList<IImage>
                     type={PageListType.PAGERVIEW}
                     initialItems={establishment.images}
-                    pageSize={3}
+                    pageSize={4}
                     renderItem={
                         ({ item, index }: { item: IImage, index: number }) => {
                             return (
