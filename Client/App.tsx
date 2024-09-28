@@ -213,7 +213,11 @@ const Router = () => {
     }
 
     useEffect(() => {
-        const navigateToLocationRequest = () => {
+        const navigateToLocationRequest = async () => {
+            const { status } = await Location.getForegroundPermissionsAsync();
+            if (status == "granted" || status == "denied") {
+                return;
+            }
             if (navigationRef.current) {
                 if (requestingLocationPermission) {
                     const currentPage = navigationRef.current.getCurrentRoute()?.name as keyof StackParamList;
@@ -289,6 +293,11 @@ const Router = () => {
 }
 
 export default function App() {
+    const error = console.error;
+    console.error = (...args: any) => {
+        if (/defaultProps/.test(args[0])) return;
+        error(...args);
+    };
     const handleMajorUpdate = () => {
         const texts = require('./langs/en.json');
         const redirectToStore = () => {
