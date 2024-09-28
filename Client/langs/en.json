@@ -125,6 +125,7 @@
     },
     "appointments": {
         "upcomming": "Upcoming Appointments",
+        "book": "Book Appointment",
     },
     "services" : {
         "title": "Services",
