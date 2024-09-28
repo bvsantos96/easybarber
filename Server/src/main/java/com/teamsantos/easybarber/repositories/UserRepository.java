@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.teamsantos.easybarber.DTO.UserSignInDTO;
+import com.teamsantos.easybarber.DTO.user.UserSignInDTO;
 import com.teamsantos.easybarber.entities.User;
 
 @Repository
@@ -25,7 +25,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByMobileInformation(String mobileInforamtion);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.UserSignInDTO(
+            SELECT new com.teamsantos.easybarber.DTO.user.UserSignInDTO(
                 u.id,
                 u.password,
                 u.mobileInformation,

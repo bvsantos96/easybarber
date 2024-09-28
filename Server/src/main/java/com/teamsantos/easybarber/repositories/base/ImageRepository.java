@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.data.repository.query.Param;
 
-import com.teamsantos.easybarber.DTO.ImageDTO;
+import com.teamsantos.easybarber.DTO.image.ImageDTO;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
 import com.teamsantos.easybarber.entities.base.Image;
 
@@ -26,10 +26,10 @@ public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Ima
     @Query("DELETE FROM #{#entityName} i WHERE i.entity.id = :id")
     void deleteByEntityId(@Param("id") long id);
 
-    @Query("SELECT new com.teamsantos.easybarber.DTO.ImageDTO(i.id, i.data, i.isMain) FROM #{#entityName} i WHERE i.entity.id = :entityId")
+    @Query("SELECT new com.teamsantos.easybarber.DTO.image.ImageDTO(i.id, i.data, i.isMain) FROM #{#entityName} i WHERE i.entity.id = :entityId")
     Page<ImageDTO> findByEntityId(long entityId, Pageable pageable);
 
-    @Query("SELECT new com.teamsantos.easybarber.DTO.ImageDTO(i.id, i.data,i.isMain) FROM #{#entityName} i WHERE i.entity.id = :entityId")
+    @Query("SELECT new com.teamsantos.easybarber.DTO.image.ImageDTO(i.id, i.data,i.isMain) FROM #{#entityName} i WHERE i.entity.id = :entityId")
     List<ImageDTO> findAllByEntityId(long entityId);
 
     @Query(value = """
@@ -73,7 +73,7 @@ public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Ima
     @Query("SELECT i FROM #{#entityName} i WHERE i.id = :imageId AND i.entity.id = :entityId")
     Optional<E> findByIdAndEntityId(long imageId, long entityId);
 
-    @Query("SELECT new com.teamsantos.easybarber.DTO.ImageDTO(i.id, i.data, i.isMain) FROM #{#entityName} i WHERE i.entity.id = :entityId AND i.isMain = true")
+    @Query("SELECT new com.teamsantos.easybarber.DTO.image.ImageDTO(i.id, i.data, i.isMain) FROM #{#entityName} i WHERE i.entity.id = :entityId AND i.isMain = true")
     Optional<ImageDTO> findMainImage(Long entityId);
 
     @Modifying

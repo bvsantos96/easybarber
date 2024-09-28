@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.teamsantos.easybarber.DTO.AppointmentListDTO;
+import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.entities.Appointment;
 
@@ -52,7 +52,7 @@ public interface AppointmentRepository
     boolean existsByIdAndUserId(long appointmentId, long userId);
 
     @Query("""
-                SELECT new com.teamsantos.easybarber.DTO.AppointmentListDTO(
+                SELECT new com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO(
                     s.id,
                     s.service.service.name,
                     s.employee.user.name,
@@ -79,7 +79,7 @@ public interface AppointmentRepository
     Page<AppointmentListDTO> findAllToUser(AppointmentFilter filter, Pageable pageable);
 
     @Query("""
-                SELECT new com.teamsantos.easybarber.DTO.AppointmentListDTO(
+                SELECT new com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO(
                     s.id,
                     s.service.service.name,
                     COALESCE(s.nonRegisteredUser, s.user.name),

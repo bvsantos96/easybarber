@@ -158,9 +158,7 @@ export const getStyles = () => {
             width: 60 * theme.dimensions.absoluteWidth,
         },
         categoryIconContainer: {
-            width: 60 * theme.dimensions.absoluteWidth,
-            height: 60 * theme.dimensions.absoluteWidth,
-            borderRadius: 30 * theme.dimensions.absoluteWidth,
+            borderRadius: 100 * theme.dimensions.absoluteWidth,
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: theme.colors.text.black,
