@@ -6,7 +6,7 @@ on:
       - main
     paths:
           - 'Server/**'
-          - '.github/workflows'
+          - '.github/workflows/**'
 jobs:
   build:
     runs-on: self-hosted
