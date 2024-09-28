@@ -1,4 +1,4 @@
-name: Docker Build and Push (staging)
+name: Docker Build and Push trigger change
 
 on:
   push:
