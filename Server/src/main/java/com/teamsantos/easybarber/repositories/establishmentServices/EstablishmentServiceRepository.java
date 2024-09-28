@@ -9,10 +9,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.teamsantos.easybarber.DTO.EstablishmentServiceDTO;
-import com.teamsantos.easybarber.DTO.ServiceDTO;
-import com.teamsantos.easybarber.DTO.ServiceFullDTO;
+import com.teamsantos.easybarber.DTO.establishment.service.EstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentServiceFilter;
+import com.teamsantos.easybarber.DTO.service.ServiceDTO;
+import com.teamsantos.easybarber.DTO.service.ServiceFullDTO;
 import com.teamsantos.easybarber.entities.EstablishmentService;
 import com.teamsantos.easybarber.utils.Pair;
 
@@ -56,7 +56,7 @@ public interface EstablishmentServiceRepository
     boolean existsByServiceIdAndEstablishmentId(long serviceId, long establishmentId);
 
     @Query("""
-                SELECT com.teamsantos.easybarber.DTO.ServiceFullDTO(
+                SELECT com.teamsantos.easybarber.DTO.service.ServiceFullDTO(
                     es.id, es.service.name, es.service.description, es.service.duration, es.price, i,
                     es.service.serviceType.id, es.service.serviceType.name, es.service.serviceType, es.service.serviceType.imageURL,
                     es.service.employee.id, es.service.employee.user.name
@@ -69,7 +69,7 @@ public interface EstablishmentServiceRepository
     ServiceFullDTO findByEstablishmentIdAndServiceId(long establishmentId, long serviceId);
 
     @Query("""
-                SELECT new com.teamsantos.easybarber.DTO.EstablishmentServiceDTO(ess.service.id, ess.service.name, ess.service.description, ess.service.duration, si.data,
+                SELECT new com.teamsantos.easybarber.DTO.establishment.service.EstablishmentServiceDTO(ess.service.id, ess.service.name, ess.service.description, ess.service.duration, si.data,
                 ess.service.serviceType.id, ess.service.serviceType.name, ess.service.serviceType.description, ess.service.serviceType.imageURL,
                 ess.service.employee.id, ess.service.employee.user.name, ei.data,
                 ess.establishment.id, ess.establishment.name, esi.data,
@@ -88,7 +88,7 @@ public interface EstablishmentServiceRepository
     Page<EstablishmentServiceDTO> findAll(@Param("filter") EstablishmentServiceFilter filter, Pageable pageable);
 
     @Query("""
-                SELECT new com.teamsantos.easybarber.DTO.ServiceDTO(ess.service.id, ess.service.employee.id, ess.service.serviceType.id, ess.service.name, ess.service.description, ess.price, ess.service.duration)
+                SELECT new com.teamsantos.easybarber.DTO.service.ServiceDTO(ess.service.id, ess.service.employee.id, ess.service.serviceType.id, ess.service.name, ess.service.description, ess.price, ess.service.duration)
                 FROM EstablishmentService ess
                 WHERE (:#{#filter.establishmentId} is null or ess.establishment.id = :#{#filter.establishmentId})
                 AND (:#{#filter.employeeId} is null or ess.service.employee.id = :#{#filter.employeeId})
@@ -122,8 +122,36 @@ public interface EstablishmentServiceRepository
             JOIN service s ON s.id = es.service_id
             JOIN employee e ON e.id = s.employee_id
             JOIN user u ON u.id = e.user
-            WHERE es.establishment_id = 1 AND s.employee_id = 2
+            WHERE es.establishment_id = :establishmentId AND s.employee_id = :employeeId
             GROUP BY s.employee_id;
             """, nativeQuery = true)
     Optional<Tuple> findEmployeeInformation(long establishmentId, long employeeId);
+
+    @Query(value = """
+            SELECT
+            es.establishment_id,
+            e.name,
+            e.description,
+            e.address,
+            e.location,
+            (
+                SELECT GROUP_CONCAT(CONCAT(ei.id, ',', ei.is_main, ',', ei.data) ORDER BY ei.is_main DESC, ei.id DESC SEPARATOR ';')
+                FROM (
+                    SELECT id, data, is_main
+                    FROM establishment_image
+                    WHERE entity_id = e.id
+                    ORDER BY is_main DESC, id DESC
+                    LIMIT 2
+                ) ei
+            ) AS images,
+            e.n_votes,
+            CASE WHEN e.n_votes = 0 THEN 0 ELSE (e.sum_votes / e.n_votes) END,
+            GROUP_CONCAT(DISTINCT s.service_type_id) as availableServices
+            FROM establishment_service es
+            JOIN establishment e ON e.id = es.establishment_id
+            JOIN service s ON s.id = es.service_id
+            WHERE es.establishment_id = :establishmentId
+            GROUP BY es.establishment_id;
+            """, nativeQuery = true)
+    Optional<Tuple> findEstablishmentInformation(long establishmentId);
 }

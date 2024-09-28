@@ -4,7 +4,7 @@ import java.time.LocalTime;
 
 import org.hibernate.proxy.HibernateProxy;
 
-import com.teamsantos.easybarber.DTO.ScheduleDTO;
+import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

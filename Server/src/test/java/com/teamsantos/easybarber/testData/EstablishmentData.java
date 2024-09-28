@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
-import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
-import com.teamsantos.easybarber.DTO.ImageDTO;
-import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.DTO.establishment.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.DTO.establishment.service.CreateEstablishmentServiceDTO;
+import com.teamsantos.easybarber.DTO.image.ImageDTO;
+import com.teamsantos.easybarber.DTO.service.ServiceDTO;
 
 public class EstablishmentData {
     public static final List<BaseEstablishmentDTO> establishments;
@@ -19,9 +19,10 @@ public class EstablishmentData {
     static {
         establishments = new ArrayList<>() {
             {
-                add(new BaseEstablishmentDTO(1L, "Henrique Barber Shop", "Henrique Barber Shop", 38.62983, -9.19362));
+                add(new BaseEstablishmentDTO(1L, "Henrique Barber Shop", "Henrique Barber Shop", 38.62983, -9.19362,
+                        "Rua Ramiro Ferrao 43, 2805-356"));
                 add(new BaseEstablishmentDTO(2L, "Forum Almada Barber Shop", "Forum Almada Barber Shop", 38.65967,
-                        -9.17385));
+                        -9.17385, "Rua Ramiro Ferrao 43, 2805-356"));
             }
         };
         establishments.sort(Comparator.comparing(BaseEstablishmentDTO::getId));

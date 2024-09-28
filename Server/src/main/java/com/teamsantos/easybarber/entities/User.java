@@ -6,7 +6,7 @@ import java.util.Set;
 
 import org.hibernate.annotations.BatchSize;
 
-import com.teamsantos.easybarber.DTO.UserCreateDTO;
+import com.teamsantos.easybarber.DTO.user.UserCreateDTO;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

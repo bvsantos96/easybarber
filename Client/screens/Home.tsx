@@ -129,8 +129,8 @@ export default function Home({ navigation }: Props) {
                         renderItem={({ item }: { item: EstablishmentInfo }) =>
                             <ListItem
                                 onPress={
-                                    (employeeId: number) => {
-                                        navigation.navigate(texts.tabs.employeeDetails, { employeeId: employeeId });
+                                    (establishmentId: number) => {
+                                        navigation.navigate(texts.tabs.establishmentDetails, { establishmentId: establishmentId });
                                     }
                                 }
                                 establishment={item} />

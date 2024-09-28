@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.teamsantos.easybarber.DTO.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
 import com.teamsantos.easybarber.entities.EstablishmentStaff;
 
 @Repository
@@ -44,7 +44,7 @@ public interface EstablishmentStaffRepository extends JpaRepository<Establishmen
     void deleteByEmployeeId(long id);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.EmployeeDTO(
+            SELECT new com.teamsantos.easybarber.DTO.employee.EmployeeDTO(
                 es.employee
             ) FROM EstablishmentStaff es
             WHERE

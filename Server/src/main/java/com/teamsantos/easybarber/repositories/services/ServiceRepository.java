@@ -7,11 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.teamsantos.easybarber.DTO.ServiceBaseDTO;
-import com.teamsantos.easybarber.DTO.ServiceDTO;
-import com.teamsantos.easybarber.DTO.ServiceWithImagesDTO;
 import com.teamsantos.easybarber.DTO.filters.ServiceFilter;
 import com.teamsantos.easybarber.DTO.filters.ServiceWithEmployeeFilter;
+import com.teamsantos.easybarber.DTO.service.ServiceBaseDTO;
+import com.teamsantos.easybarber.DTO.service.ServiceDTO;
+import com.teamsantos.easybarber.DTO.service.ServiceWithImagesDTO;
 import com.teamsantos.easybarber.entities.Service;
 
 @Repository
@@ -55,14 +55,14 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
     void deleteByEmployeeId(Long id);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.ServiceDTO(s)
+            SELECT new com.teamsantos.easybarber.DTO.service.ServiceDTO(s)
             FROM Service s
             WHERE s.employee.id = :employeeId
             """)
     Page<ServiceDTO> findAllByEmployeeId(Pageable pageable);
 
     @Query("""
-                SELECT new com.teamsantos.easybarber.DTO.ServiceBaseDTO(s.id, s.name, s.description, s.duration, si.data,s.serviceType.id, s.serviceType.name,s.serviceType.description, s.serviceType.imageURL)
+                SELECT new com.teamsantos.easybarber.DTO.service.ServiceBaseDTO(s.id, s.name, s.description, s.duration, si.data,s.serviceType.id, s.serviceType.name,s.serviceType.description, s.serviceType.imageURL)
                 FROM Service s
                 LEFT JOIN ServiceImage si ON :#{#filter.includeServiceImage} = true AND si.isMain = true and si.entity.id = s.id
                 WHERE (:#{#filter.employeeId} is null or s.employee.id = :#{#filter.employeeId})
@@ -73,7 +73,7 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
     Page<ServiceBaseDTO> findAllBase(@Param("filter") ServiceFilter filter, Pageable pageable);
 
     @Query("""
-                SELECT new com.teamsantos.easybarber.DTO.ServiceWithImagesDTO(s.id, s.name, s.description, s.duration, si.data,s.serviceType.id, s.serviceType.name,s.serviceType.description, s.serviceType.imageURL,
+                SELECT new com.teamsantos.easybarber.DTO.service.ServiceWithImagesDTO(s.id, s.name, s.description, s.duration, si.data,s.serviceType.id, s.serviceType.name,s.serviceType.description, s.serviceType.imageURL,
                     s.employee.id, s.employee.user.name, ei.data)
                 FROM Service s
                 LEFT JOIN ServiceImage si ON :#{#filter.includeServiceImage} = true AND si.isMain = true and si.entity.id = s.id
