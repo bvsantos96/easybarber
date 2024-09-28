@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamsantos.easybarber.DTO.ResetPwdDTO;
-import com.teamsantos.easybarber.DTO.UserCreateDTO;
-import com.teamsantos.easybarber.DTO.UserDTO;
+import com.teamsantos.easybarber.DTO.user.ResetPwdDTO;
+import com.teamsantos.easybarber.DTO.user.UserCreateDTO;
+import com.teamsantos.easybarber.DTO.user.UserDTO;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.services.MessagingService;
 import com.teamsantos.easybarber.services.UserService;
@@ -20,6 +20,7 @@ import com.teamsantos.easybarber.services.UserService;
 public class AuthController {
     private final UserService userService;
     private final MessagingService messagingService;
+
     @Autowired
     public AuthController(UserService userService, MessagingService messagingService) {
         this.userService = userService;
@@ -58,7 +59,11 @@ public class AuthController {
     public ResponseEntity<UserDTO> getUserLocations(@RequestBody ResetPwdDTO resetPwdDTO) {
         try {
             UserDTO userDTO = userService.getUserByMobileNr(resetPwdDTO.getPhoneNr());
-            messagingService.verifyCode(resetPwdDTO.getPhoneNr(), resetPwdDTO.getConfirmationCode());
+            boolean isVerified = messagingService.verifyCode(resetPwdDTO.getPhoneNr(),
+                    resetPwdDTO.getConfirmationCode());
+            if (!isVerified) {
+                throw new Exception("The confirmation code does not match");
+            }
             userService.changeUserPwd(userDTO, resetPwdDTO.getNewPassword());
             return ResponseEntity.ok(userDTO);
         } catch (Exception e) {

@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
-import com.teamsantos.easybarber.DTO.ImageDTO;
+import com.teamsantos.easybarber.DTO.image.ImageDTO;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
 import com.teamsantos.easybarber.entities.base.Image;
 import com.teamsantos.easybarber.exceptions.GenericNotFoundException;

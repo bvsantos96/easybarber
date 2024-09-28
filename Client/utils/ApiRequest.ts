@@ -3,7 +3,7 @@ import langs from '../langs/en.json';
 import { PickerItem } from '../components/Picker';
 import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
-import { AppointmentFilter, AppointmentInfo, EmployeeInfo, EstablishmentInfo, ICategory, ILocation, IPage, IResult } from '../declarations';
+import { AppointmentFilter, AppointmentInfo, EmployeeInfo, EstablishmentDetail, EstablishmentInfo, ICategory, ILocation, IPage, IResult } from '../declarations';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
 import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
 import { getSelectedLocation } from './Location';
@@ -12,6 +12,7 @@ import { Alert, Banner } from '../components/Alert';
 import { ALERT_TYPE } from 'react-native-alert-notification';
 
 import texts from '../langs/en.json';
+import { ResponseType } from 'enums';
 
 export const getTimes = async ({ from, to }: { from?: string, to?: string }): Promise<PickerItem[]> => {
     from = from || "08:00";
@@ -85,11 +86,11 @@ export const apiUrlMaker = (url: string): string => {
 }
 
 const stringRequest = async (url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed): Promise<string> => {
-    const result = await request<string>(url, method, body, successMessage, errorMessage, true);
+    const result = await request<string>(url, method, body, successMessage, errorMessage, ResponseType.STRING);
     return result.data ?? "";
 }
 
-const request = async<T>(url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed, stringResponse = false): Promise<IResult<T>> => {
+const request = async<T>(url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed, responseType: ResponseType): Promise<IResult<T>> => {
     let _url = apiUrlMaker(url);
     if (_url.length <= 0)
         return { success: false, message: langs.apiMessages.failed };
@@ -116,40 +117,51 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
         },
         ...(method !== "GET" && { body: JSON.stringify(body) }),
     }).then(async response => {
-        let json;
-        if (stringResponse) {
-            const text = await response.text();
-            if (response.status == 200) {
-                const _response = { success: true, message: text, data: text };
-                if (DEBUG_SERVER_REQUESTS) {
-                    console.log(_response);
-                }
-                return _response;
-            }
-            json = text;
+        let data;
+        if (responseType == ResponseType.STRING) {
+            data = await response.text()
         } else {
-            json = await response.json();
+            data = await response.json();
         }
+
         if (response.status != 200 && response.status != 201) {
-            if (json !== undefined && json !== null) {
-                try {
-                    if (json.responseMessage) {
-                        Banner({ type: ALERT_TYPE.WARNING, message: json.responseMessage });
-                        return { success: false, message: json.responseMessage };
+            try {
+                if (data !== undefined && data !== null) {
+                    try {
+                        if (data.responseMessage) {
+                            Banner({ type: ALERT_TYPE.WARNING, message: data.responseMessage });
+                            return { success: false, message: data.responseMessage };
+                        }
+                        Banner({ type: ALERT_TYPE.WARNING, message: errorMessage });
+                        return { success: false, message: errorMessage };
+                    } catch (e) {
+                        return { success: false, message: response }
                     }
-                    Banner({ type: ALERT_TYPE.WARNING, message: errorMessage });
+                } else
                     return { success: false, message: errorMessage };
-                } catch (e) {
-                    return { success: false, message: response }
-                }
-            } else
+            } catch (e) {
                 return { success: false, message: errorMessage };
-        } else if (json !== undefined && json !== null) {
-            const _response = {
-                success: true,
-                message: successMessage,
-                ...(json.items ? { items: json.items } : { data: json.data })
-            };
+            }
+        } else if (data !== undefined && data !== null) {
+            let _response;
+            switch (responseType) {
+                case ResponseType.STRING:
+                    _response = { success: true, message: data, data: data };
+                    break;
+                case ResponseType.OBJECT:
+                    _response = { success: true, message: data, data: data };
+                    break;
+                case ResponseType.LIST:
+                    _response = {
+                        success: true,
+                        message: successMessage,
+                        ...(data.items ? { items: data.items } : { data: data.data })
+                    };
+                    break;
+                default:
+                    _response = { success: true, message: successMessage, data: data };
+                    break;
+            }
 
             if (DEBUG_SERVER_REQUESTS) {
                 console.log(_response);
@@ -193,7 +205,7 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
     removeData(TOKEN_STORAGE_KEY);
     removeData(LOCATIONS_STORAGE_KEY);
 
-    const result = await request("login", "POST", { countryMobile: _countryCode, mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed, true);
+    const result = await request("login", "POST", { countryMobile: _countryCode, mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed, ResponseType.STRING);
 
     if (result.success) {
         await storeData(TOKEN_STORAGE_KEY, result.message);
@@ -214,7 +226,7 @@ export const doRegister = async (countryCode: string, phone: string, password: s
     name = name.trim();
     if (name.length < 3)
         return { success: false, message: langs.apiMessages.register.invalidName };
-    const result = await request("register", "POST", { countryMobile: countryCode, mobile: phone, password, name }, langs.apiMessages.register.success, langs.apiMessages.register.failed);
+    const result = await request("register", "POST", { countryMobile: countryCode, mobile: phone, password, name }, langs.apiMessages.register.success, langs.apiMessages.register.failed, ResponseType.LIST);
     if (result.success)
         doLogin(countryCode, phone, password);
     return result;
@@ -244,7 +256,7 @@ export const pageGet = async <T>(url: string, page?: IPage<T>, params?: Record<s
         params["page"] = page.currentPage;
     if (!params.hasOwnProperty("size"))
         params["size"] = page.pageSize;
-    const result = await request<T>(parsePathParams(url, params), `GET`, null, langs.apiMessages.success, langs.apiMessages.failed);
+    const result = await request<T>(parsePathParams(url, params), `GET`, null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
     return result.items ? parsePage<T>(result.items) : page;
 }
 
@@ -285,8 +297,16 @@ export const getLocationList = async (page: IPage<ILocation>, params?: Record<st
     return _locations;
 }
 
+export const getEstablishmentDetails = async (id: number): Promise<EstablishmentDetail | undefined> => {
+    const result = await request<EstablishmentDetail>(`establishment/${id}/details`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    if (result.success && result.data !== undefined && result.data !== null) {
+        return result.data;
+    }
+    return undefined;
+}
+
 export const getEmployee = async (id: number): Promise<EmployeeInfo | undefined> => {
-    const result = await request<EmployeeInfo>(`employee/${id}`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed);
+    const result = await request<EmployeeInfo>(`employee/${id}`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
     if (result.success && result.data !== undefined && result.data !== null) {
         return result.data;
     }
@@ -324,7 +344,7 @@ export const getBarbersNearMe = async (page: IPage<EstablishmentInfo>, params?: 
 }
 
 export const setNewLocation = async (location: ILocation): Promise<number> => {
-    const response = await request<number>("/location", "POST", location, langs.apiMessages.success, langs.apiMessages.failed, true);
+    const response = await request<number>("/location", "POST", location, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success && response.data !== undefined && response.data !== null) {
         return response.data;
     }
@@ -332,7 +352,7 @@ export const setNewLocation = async (location: ILocation): Promise<number> => {
 }
 
 export const getCategories = async (): Promise<ICategory[]> => {
-    const response = await request("/service/types", "GET", null, langs.apiMessages.success, langs.apiMessages.failed);
+    const response = await request("/service/types", "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
     if (response.hasOwnProperty("items")) {
         // TODO: save the retrieve images into device storage and replace the imageUrls with the local paths
         for (const element of response?.items) {
@@ -353,7 +373,7 @@ export const getApiVersion = async (): Promise<string> => {
 }
 
 export const getMobileCode = async (mobileNr: string): Promise<boolean> => {
-    const response = await request("/sms/confirmation", "POST", { phoneNr: mobileNr }, langs.apiMessages.success, langs.apiMessages.failed, true);
+    const response = await request("/sms/confirmation", "POST", { phoneNr: mobileNr }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
@@ -361,7 +381,7 @@ export const getMobileCode = async (mobileNr: string): Promise<boolean> => {
 }
 
 export const confirmMobileCode = async (mobileNr: string, confirmationCode: string): Promise<boolean> => {
-    const response = await request("/sms/confirm", "POST", { phoneNr: mobileNr, confirmationCode: confirmationCode }, langs.apiMessages.success, langs.apiMessages.failed, true);
+    const response = await request("/sms/confirm", "POST", { phoneNr: mobileNr, confirmationCode: confirmationCode }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }

@@ -7,6 +7,8 @@ import useLocationStore from '../storage/stores/LocationStore';
 import { Alert, Banner } from '../components/Alert';
 import { ALERT_TYPE } from 'react-native-alert-notification';
 import texts from '../langs/en.json';
+import { Linking, Platform } from 'react-native';
+import { Clipboard } from 'expo-clipboard';
 
 export async function hasLocationPermission(): Promise<boolean> {
     try {
@@ -242,4 +244,20 @@ const appendUniqueSuggestions = async (suggestions: ILocation[], newSuggestions:
         hash.add(key);
     }
     return suggestions;
+}
+
+export const gotoLocation = async (address: string, lat: number, lng: number): Promise<void> => {
+    const scheme = Platform.select({ ios: 'maps://0,0?q=', android: 'geo:0,0?q=' });
+    const latLng = `${lat},${lng}`;
+    const label = 'Custom Label';
+    const url = Platform.select({
+        ios: `${scheme}${label}@${latLng}`,
+        android: `${scheme}${latLng}(${label})`
+    });
+    if (url) {
+        Linking.openURL(url);
+    } else {
+        await Clipboard.setStringAsync(address);
+        Alert({ type: ALERT_TYPE.INFO, title: "", message: texts.errors.openMapsError });
+    }
 }

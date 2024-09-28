@@ -19,18 +19,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamsantos.easybarber.DTO.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
-import com.teamsantos.easybarber.DTO.CreateEstablishmentServiceDTO;
-import com.teamsantos.easybarber.DTO.EmployeeDTO;
-import com.teamsantos.easybarber.DTO.EmployeeInformationDTO;
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
-import com.teamsantos.easybarber.DTO.ScheduleDTO;
-import com.teamsantos.easybarber.DTO.ServiceDTO;
+import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.establishment.BaseEstablishmentDTO;
+import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
+import com.teamsantos.easybarber.DTO.establishment.EstablishmentInformationDTO;
+import com.teamsantos.easybarber.DTO.establishment.service.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
+import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
+import com.teamsantos.easybarber.DTO.service.ServiceDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.images.EstablishmentImage;
@@ -114,12 +114,12 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         }
     }
 
-    @GetMapping("/{id}/employee/{employeeId}")
-    public ResponseEntity<EmployeeInformationDTO> getEmployeeInformation(@PathVariable("id") Long establishmentId,
-            @PathVariable Long employeeId) {
-        EmployeeInformationDTO response = new EmployeeInformationDTO();
+    @GetMapping("/{id}/details")
+    public ResponseEntity<EstablishmentInformationDTO> getEmployeeInformation(
+            @PathVariable("id") Long establishmentId) {
+        EstablishmentInformationDTO response = new EstablishmentInformationDTO();
         try {
-            response = establishmentService.getEmployeeInformation(establishmentId, employeeId);
+            response = establishmentService.getInformation(establishmentId);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.setResponseMessage(e.getMessage());

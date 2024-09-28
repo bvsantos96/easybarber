@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamsantos.easybarber.DTO.ImageDTO;
+import com.teamsantos.easybarber.DTO.image.ImageDTO;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
 import com.teamsantos.easybarber.entities.base.Image;
 import com.teamsantos.easybarber.exceptions.GenericNotFoundException;

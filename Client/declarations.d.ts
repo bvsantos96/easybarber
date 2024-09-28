@@ -35,6 +35,7 @@ declare interface ICategory {
 declare interface Image {
     id: number;
     data: string;
+    isMain?: boolean;
 }
 
 interface Identifiable {
@@ -105,6 +106,12 @@ declare interface ILocation extends Identifiable {
     name: string | null;
 }
 
+declare interface ISmallLocation {
+    latitude: number;
+    longitude: number;
+    address: String;
+}
+
 declare interface IAddress {
     historic: string;
     house_number: string;
@@ -137,12 +144,24 @@ declare interface IAddressSuggestion {
     boundingbox: string[];
 }
 
-
-interface EmployeeInfo extends Identifiable {
+declare interface EmployeeInfo extends Identifiable {
     name: string;
     mobileNumber: string;
     description: string;
     availableServices: Identifiable[];
+    rating: number;
+    nvotes: number;
+    images: Image[];
+}
+
+declare interface EstablishmentDetail extends Identifiable {
+    name: string;
+    description: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+    availableServices: number[];
+    sumVotes: number;
     rating: number;
     nvotes: number;
     images: Image[];

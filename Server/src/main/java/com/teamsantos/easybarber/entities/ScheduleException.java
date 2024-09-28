@@ -5,7 +5,7 @@ import java.time.LocalTime;
 
 import org.hibernate.proxy.HibernateProxy;
 
-import com.teamsantos.easybarber.DTO.ScheduleExceptionDTO;
+import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 
 import jakarta.persistence.Column;
