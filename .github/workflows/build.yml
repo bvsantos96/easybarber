@@ -1,4 +1,4 @@
-name: Docker Build and Push trigger change
+name: Docker Build and Push trigger changee
 
 on:
   push:
