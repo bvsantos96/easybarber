@@ -22,7 +22,6 @@ export default function EmployeeDetails({ navigation }: Props) {
     const [employee, setEmployee] = useState<EmployeeInfo>();
 
     useEffect(() => {
-        console.log("EmployeeDetails employeeId: ", employeeId);
         const fetchEmployee = async () => {
             const employee = await getEmployee(employeeId);
             setEmployee(employee);
