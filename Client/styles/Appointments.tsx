@@ -10,42 +10,47 @@ export const getStyles = () => {
             backgroundColor: theme.colors.backgroundColor,
         },
         listContainer: {
-            position : "absolute",
-            top: 30 * theme.dimensions.absoluteHeight,
+            position: "absolute",
+            top: 60 * theme.dimensions.absoluteHeight,
             left: 25 * theme.dimensions.absoluteWidth,
+            height: theme.dimensions.height - 142 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,
             width: theme.dimensions.width - 50 * theme.dimensions.absoluteWidth,
             bottom: 0,
             alignItems: "center",
         },
         itemContainer: {
-            width: "95%",
+            width: "99%",
             height: 110 * theme.dimensions.absoluteHeight,
             backgroundColor: theme.colors.backgroundColor,
             borderRadius: 11 * theme.dimensions.absoluteWidth,
+            marginLeft: 1 * theme.dimensions.absoluteWidth,
             marginTop: 18 * theme.dimensions.absoluteHeight,
         },
         shadow: {
             ...theme.shadow as any,
         },
-        imageContainer:{
+        imageContainer: {
             position: "absolute",
             top: 10 * theme.dimensions.absoluteHeight,
             left: 10 * theme.dimensions.absoluteWidth,
             bottom: 10 * theme.dimensions.absoluteHeight,
         },
-        imageStyle:{
-            width: 82 * theme.dimensions.absoluteWidth,
+        imageStyle: {
+            width: 90 * theme.dimensions.absoluteWidth,
             height: 90 * theme.dimensions.absoluteHeight,
             borderRadius: 11 * theme.dimensions.absoluteWidth,
         },
-        textContainer:{
+        textContainer: {
             position: "absolute",
-            top: 22 * theme.dimensions.absoluteHeight,
-            left: 111 * theme.dimensions.absoluteWidth,
+            top: 15 * theme.dimensions.absoluteHeight,
+            left: 115 * theme.dimensions.absoluteWidth,
             right: 32 * theme.dimensions.absoluteWidth,
             bottom: 30 * theme.dimensions.absoluteHeight,
         },
-        title:{
+        subTitleContainer: {
+            marginLeft: 3 * theme.dimensions.absoluteWidth,
+        },
+        title: {
             color: theme.colors.text.main,
             fontFamily: 'Poppins',
             fontSize: theme.fonts.size._15,
@@ -65,7 +70,7 @@ export const getStyles = () => {
         },
         infoContainer: {
             position: "absolute",
-            top: 33 * theme.dimensions.absoluteHeight,
+            top: 47 * theme.dimensions.absoluteHeight,
             left: 0,
             flexDirection: "row",
             alignItems: "center",

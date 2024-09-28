@@ -93,6 +93,8 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                 keyExtractor={(item) => item.id.toString()}
                 onEndReached={_loadMoreItems}
                 onEndReachedThreshold={0.1}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
                 ListFooterComponent={() => (
                     loadingMore && (
                         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
@@ -112,6 +114,8 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
             keyExtractor={(item) => item.id.toString()}
             onEndReached={_loadMoreItems}
             onEndReachedThreshold={0.1}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
             ListFooterComponent={() => (
                 loadingMore && (
                     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
