@@ -25,14 +25,14 @@ export const getStyles = () => {
         imageStyle: {
             position: 'absolute',
             width: 356 * theme.dimensions.absoluteWidth,
-            height: 200 * theme.dimensions.absoluteHeight,
+            height: 190 * theme.dimensions.absoluteHeight,
             top: padding,
             left: padding,
             borderRadius: padding,
         },
         nameContainer: {
             position: 'absolute',
-            top: 225 * theme.dimensions.absoluteHeight,
+            top: 215 * theme.dimensions.absoluteHeight,
             left: padding,
         },
         name: {
@@ -45,7 +45,7 @@ export const getStyles = () => {
         },
         address: {
             position: 'absolute',
-            top: 22 * theme.dimensions.absoluteHeight,
+            top: 18 * theme.dimensions.absoluteHeight,
             fontFamily: 'Poppins',
             fontSize: theme.fonts.size._12,
             fontWeight: 300,
@@ -57,7 +57,7 @@ export const getStyles = () => {
         },
         serviceTitleContainer: {
             position: 'absolute',
-            top: 290 * theme.dimensions.absoluteHeight,
+            top: 270 * theme.dimensions.absoluteHeight,
             left: padding,
         },
         serviceTitle: {
@@ -70,7 +70,7 @@ export const getStyles = () => {
         },
         servicesContainer: {
             position: 'absolute',
-            top: 330 * theme.dimensions.absoluteHeight,
+            top: 310 * theme.dimensions.absoluteHeight,
             left: padding,
             width: "100%",
             flexDirection: 'row',
@@ -78,7 +78,7 @@ export const getStyles = () => {
         },
         aboutTitleContainer: {
             position: 'absolute',
-            top: 415 * theme.dimensions.absoluteHeight,
+            top: 390 * theme.dimensions.absoluteHeight,
             left: padding
         },
         aboutTitle: {
@@ -91,20 +91,25 @@ export const getStyles = () => {
         },
         aboutText: {
             position: 'absolute',
-            top: 450 * theme.dimensions.absoluteHeight,
+            color: theme.colors.text.lightGray,
+            top: 430 * theme.dimensions.absoluteHeight,
             left: padding,
             maxWidth: theme.dimensions.width - 2 * padding,
-            maxHeight: 95 * theme.dimensions.absoluteHeight,
+            minHeight: 95 * theme.dimensions.absoluteHeight,
         },
         button: {
             position: 'absolute',
-            bottom: 235 * theme.dimensions.absoluteHeight,
+            bottom: 255 * theme.dimensions.absoluteHeight,
             left: padding,
             width: theme.dimensions.width - 2 * padding,
         },
         categoryIcon: {
             width: 20 * theme.dimensions.absoluteWidth,
             height: 20 * theme.dimensions.absoluteHeight,
+        },
+        categoryPadding: {
+            padding: 12 * theme.dimensions.absoluteWidth,
+            margin: 12 * theme.dimensions.absoluteWidth,
         },
         alignCenter: {
             textAlign: 'center',
