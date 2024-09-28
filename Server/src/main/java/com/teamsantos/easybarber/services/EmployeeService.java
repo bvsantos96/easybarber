@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamsantos.easybarber.DTO.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.images.EmployeeImage;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;

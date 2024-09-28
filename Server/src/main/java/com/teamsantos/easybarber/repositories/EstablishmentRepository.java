@@ -12,7 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
-import com.teamsantos.easybarber.DTO.EstablishmentDTO;
+import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule;
 import com.teamsantos.easybarber.entities.Establishment;
 
@@ -37,7 +37,7 @@ public interface EstablishmentRepository
     Optional<Establishment> findByIdWithStaff(long establishmentId);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id,
+            SELECT new com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO(e.id,
             e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location,
             :location) AS distance, e.nVotes, e.sumVotes, i)
             FROM EstablishmentService es
@@ -52,7 +52,7 @@ public interface EstablishmentRepository
             Double rating, Pageable pageable);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id,
+            SELECT new com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO(e.id,
             e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location,
             :location) AS distance, e.nVotes, e.sumVotes, i)
             FROM Establishment e
@@ -65,7 +65,7 @@ public interface EstablishmentRepository
             Double rating, Pageable pageable);
 
     @Query("""
-            SELECT DISTINCT new com.teamsantos.easybarber.DTO.EstablishmentDTO(
+            SELECT DISTINCT new com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO(
                 e.id, e.name, e.description, e.address, e.location, e.nVotes, e.sumVotes, i)
             FROM EstablishmentService es
             LEFT JOIN Establishment e ON e.id = es.establishment.id
@@ -79,7 +79,7 @@ public interface EstablishmentRepository
             Pageable pageable);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id,
+            SELECT new com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO(e.id,
             e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location,
             :location) AS distance, e.nVotes, e.sumVotes, i)
             FROM Establishment e
@@ -94,7 +94,7 @@ public interface EstablishmentRepository
     Page<Establishment> findEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, e.nVotes, e.sumVotes, e.images)
+            SELECT new com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, e.nVotes, e.sumVotes, e.images)
             FROM Establishment e
             WHERE e.id = :id
             """)

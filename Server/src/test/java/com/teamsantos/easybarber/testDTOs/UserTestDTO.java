@@ -1,6 +1,6 @@
 package com.teamsantos.easybarber.testDTOs;
 
-import com.teamsantos.easybarber.DTO.UserCreateDTO;
+import com.teamsantos.easybarber.DTO.user.UserCreateDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

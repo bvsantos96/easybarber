@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamsantos.easybarber.DTO.AppointmentDTO;
-import com.teamsantos.easybarber.DTO.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
+import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
+import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.exceptions.ForbidenException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
@@ -35,6 +35,9 @@ public class AppointmentController {
     @PostMapping("/appointment")
     public ResponseEntity<BaseResponseDTO> create(@RequestBody AppointmentDTO appointment) {
         try {
+            if (appointment.getDate().getDayOfMonth() == 13) {
+                System.out.println("");
+            }
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new BaseResponseDTO(appointmentService.create(appointment)));
         } catch (Exception e) {
@@ -60,6 +63,9 @@ public class AppointmentController {
         try {
             if (filter.getUserView() == null) {
                 filter.setUserView(true);
+            }
+            if (filter.getFuture() == null) {
+                filter.setFuture(true);
             }
             if (filter.getUserView()) {
                 if (filter.getClientId() != null && filter.getClientId() != 0

@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamsantos.easybarber.DTO.LocationDTO;
+import com.teamsantos.easybarber.DTO.location.LocationDTO;
 import com.teamsantos.easybarber.entities.Location;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.repositories.LocationRepository;
