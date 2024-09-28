@@ -149,7 +149,7 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
                     _response = { success: true, message: data, data: data };
                     break;
                 case ResponseType.OBJECT:
-                    _response = { success: 200, message: data, data: data };
+                    _response = { success: true, message: data, data: data };
                     break;
                 case ResponseType.LIST:
                     _response = {
