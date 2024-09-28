@@ -11,6 +11,7 @@ import { getLocationList } from '../utils/ApiRequest';
 import useLocationStore from '../storage/stores/LocationStore';
 import { fetchSuggestions, suggestionsInputValidation } from '../utils/Location';
 import { debounce } from 'lodash';
+import { PageListType } from '../enums';
 
 interface LocationModalProps {
     toggleModal: () => void;
@@ -49,7 +50,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ toggleModal }) => {
                     ({ item, index }) => {
                         return (
                             <LocationItem
-                                reset={() => { setResetList(!resetList); setAddresses([]); toggleModal()}}
+                                reset={() => { setResetList(!resetList); setAddresses([]); toggleModal() }}
                                 key={index}
                                 idx={index}
                                 location={item} />
@@ -68,9 +69,9 @@ const LocationModal: React.FC<LocationModalProps> = ({ toggleModal }) => {
             <Divider size={styles.divider.minHeight} />
             <PageList<ILocation>
                 saveCache={setLocations}
-                loadCache={() => locations} 
+                loadCache={() => locations}
                 reset={resetList}
-                inModal
+                type={PageListType.BOTTOM_SHEET}
                 renderItem={
                     ({ item, index }) =>
                         <LocationItem

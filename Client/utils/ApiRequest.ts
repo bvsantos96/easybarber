@@ -3,7 +3,7 @@ import langs from '../langs/en.json';
 import { PickerItem } from '../components/Picker';
 import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
-import { AppointmentFilter, AppointmentInfo, EmployeeInfo, EstablishmentDetail, EstablishmentInfo, ICategory, ILocation, IPage, IResult } from '../declarations';
+import { AppointmentFilter, AppointmentInfo, EmployeeInfo, EstablishmentDetail, EstablishmentInfo, ICategory, IImage, ILocation, IPage, IResult } from '../declarations';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
 import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
 import { getSelectedLocation } from './Location';
@@ -297,20 +297,34 @@ export const getLocationList = async (page: IPage<ILocation>, params?: Record<st
     return _locations;
 }
 
+export const getImageList = async (urlPrefix: string, page: IPage<IImage>, params?: Record<string, string | number | boolean>): Promise<IPage<IImage> | undefined> => {
+    return await pageGet<IImage>(`${urlPrefix}/images`, page, params);
+}
+
+const getItemsFromRequest = <T>(result: IResult<T>): T => {
+    if (result.success) {
+        if (result.items !== undefined && result.items !== null) {
+            return result.items;
+        } else if (result.data !== undefined && result.data !== null) {
+            return result.data;
+        }
+    }
+    throw new Error(langs.apiMessages.failed);
+}
+
+export const getEstablishmentCats = async (id: number): Promise<number[] | undefined> => {
+    const result = await request<number[]>(`establishment/${id}/servicetypes`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
+    return getItemsFromRequest(result);
+}
+
 export const getEstablishmentDetails = async (id: number): Promise<EstablishmentDetail | undefined> => {
     const result = await request<EstablishmentDetail>(`establishment/${id}/details`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
-    if (result.success && result.data !== undefined && result.data !== null) {
-        return result.data;
-    }
-    return undefined;
+    return getItemsFromRequest(result);
 }
 
 export const getEmployee = async (id: number): Promise<EmployeeInfo | undefined> => {
     const result = await request<EmployeeInfo>(`employee/${id}`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
-    if (result.success && result.data !== undefined && result.data !== null) {
-        return result.data;
-    }
-    return undefined;
+    return getItemsFromRequest(result);
 }
 
 
