@@ -60,7 +60,7 @@ export default function ServiceSelection({ navigation }: Props) {
                     onPress={
                         () => {
                             Banner({ type: ALERT_TYPE.SUCCESS, message: `Service ${selected} selected` });
-                            navigation.navigate(texts.employees.title, { appointment: { establishmentId: establishmentId, serviceId: selected } });
+                            navigation.navigate(texts.employees.title, { establishmentId: establishmentId, serviceId: selected });
                         }
                     } title={texts.appointments.selectService} />
             </View>
