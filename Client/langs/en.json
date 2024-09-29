@@ -126,10 +126,17 @@
     "appointments": {
         "upcomming": "Upcoming Appointments",
         "book": "Book Appointment",
+        "selectBarber": "Select Barber",
+        "selectService": "Select service",
+        "schedule": "Schedule Date & Time",
     },
     "services" : {
         "title": "Services",
         "select": "Select service you want"
+    },
+    "employees" : {
+        "title": "Employees",
+        "select": "Select employee you want (optional)"
     },
     "about" : {
         "title": "About",

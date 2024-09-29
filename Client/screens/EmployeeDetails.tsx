@@ -1,7 +1,6 @@
 import { NavigationProp, RouteProp, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { Button, View, Text } from 'react-native';
-import { EmployeeInfo } from '../declarations';
 import { getStyles } from '../styles/EmployeeDetails';
 
 export type Props = {

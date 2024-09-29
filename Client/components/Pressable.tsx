@@ -7,6 +7,7 @@ interface MyPressableProps {
     onPress: () => void;
     children: ReactNode | ReactNode[];
     shadow?: boolean;
+    disabled?: boolean;
     onLayout?: (event: LayoutChangeEvent) => void;
 }
 
@@ -15,14 +16,16 @@ export default function Pressable({
     onPress = () => { },
     children = <></>,
     shadow = false,
+    disabled = false,
     onLayout,
 }: MyPressableProps) {
     const theme = useTheme();
     return (
         <DefaultPressable
+            disabled={disabled}
             style={({ pressed }) => [
                 style,
-                { opacity: pressed ? 0.5 : 1 },
+                { opacity: (disabled || pressed) ? 0.5 : 1 },
                 shadow ? theme.shadow : undefined,
             ]}
             onPress={onPress}

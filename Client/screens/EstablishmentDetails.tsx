@@ -6,7 +6,6 @@ import { Image } from 'expo-image';
 import { getStyles } from '../styles/EstablishmentDetails';
 import { getStyles as getListStyles } from '../styles/List';
 
-import { EstablishmentInfo, ICategory, IImage, IPage } from '../declarations';
 import { getEstablishmentCats, getImageList } from '../utils/ApiRequest';
 import { gotoLocation } from '../utils/Location';
 import { Underline } from '../components/Underline';
