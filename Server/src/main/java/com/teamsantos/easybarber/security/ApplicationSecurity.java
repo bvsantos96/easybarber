@@ -1,5 +1,7 @@
 package com.teamsantos.easybarber.security;
 
+import java.util.Arrays;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
@@ -70,33 +73,24 @@ public class ApplicationSecurity {
                                 "/sms/**")
                         .permitAll()
                         .anyRequest().authenticated())
-                .cors(Customizer.withDefaults())
-                // TODO: update this to use cors properly (use expo url as allowed origin)
-                // .cors(cors -> cors.configurationSource(request -> {
-                // var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
-                // corsConfiguration.setAllowedOrigins(java.util.List.of("http://localhost:3000",
-                // "http:192.168.1.225:3000", "http://127.0.0.1:3000"));
-                // corsConfiguration.setAllowedMethods(java.util.List.of("GET", "POST", "PUT",
-                // "DELETE", "OPTIONS"));
-                // corsConfiguration.setAllowedHeaders(java.util.List.of("*"));
-                // return corsConfiguration;
-                // }))
-                // .httpBasic(Customizer.withDefaults())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
     @Bean
-    public CorsFilter corsFilter() {
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "http://127.0.0.1:3000", "https://yourfrontend.com"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L); // 1 hour
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        CorsConfiguration config = new CorsConfiguration();
-        config.setAllowCredentials(true);
-        config.addAllowedOriginPattern("*");
-        config.addAllowedHeader("*");
-        config.addAllowedMethod("*");
-        source.registerCorsConfiguration("/**", config);
-        return new CorsFilter(source);
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 
     @Bean
