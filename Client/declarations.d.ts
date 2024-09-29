@@ -167,3 +167,11 @@ declare interface EstablishmentDetail extends Identifiable {
     nvotes: number;
     images: IImage[];
 }
+
+declare interface ServiceInfo extends Identifiable {
+    name: string;
+    description: string;
+    serviceTypeId: number;
+    price: number;
+    image: IImage;
+}

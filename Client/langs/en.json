@@ -129,9 +129,11 @@
     },
     "services" : {
         "title": "Services",
+        "select": "Select service you want"
     },
     "about" : {
         "title": "About",
     },
     "checkAvailability": "Check Availability",
+    "currency": "€",
 }

@@ -1,5 +1,7 @@
 package com.teamsantos.easybarber.entities.base;
 
+import com.teamsantos.easybarber.DTO.image.ImageDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -31,4 +33,8 @@ public class Image<T extends EntityWithImages<T, E>, E extends Image<T, E>> {
     private String data;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isMain;
+
+    public ImageDTO convertToDTO() {
+        return new ImageDTO(id, data, isMain);
+    }
 }
