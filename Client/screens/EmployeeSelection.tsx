@@ -27,7 +27,6 @@ export default function EmployeeSelection({ navigation }: Props) {
 
     useEffect(() => {
         const fetchEmployees = async () => {
-            console.log(establishmentId, serviceId);
             let _employees = await getEstablishmentServiceEmployees(establishmentId, serviceId);
             setEmployees(_employees);
         }
@@ -43,9 +42,24 @@ export default function EmployeeSelection({ navigation }: Props) {
                         data={employees || []}
                         renderItem={
                             ({ item }: { item: ImageEntity }) =>
-                                <SelectionItem key={item.id} image={item.image} selected={item.id == selected} onPress={() => { setSelected(item.id) }}>
-                                    <View style={styles.textContainer}>
-                                        <Text style={styles.title}>{item.name}</Text>
+                                <SelectionItem
+                                    key={item.id}
+                                    image={item.image}
+                                    selected={item.id == selected}
+                                    onPress={() => {
+                                        if (selected == item.id) {
+                                            setSelected(0);
+                                            return;
+                                        }
+                                        setSelected(item.id);
+                                    }}>
+                                    <View style={styles.titleContainer}>
+                                        <View style={{
+                                            justifyContent: 'center',
+                                            height: styles.titleContainer.height
+                                        }}>
+                                            <Text style={styles.singleTitle}>{item.name}</Text>
+                                        </View>
                                     </View>
                                 </SelectionItem>
                         }
@@ -57,11 +71,10 @@ export default function EmployeeSelection({ navigation }: Props) {
             </View>
             <View style={styles.button}>
                 <Button
-                    disabled={selected === 0}
                     stylesInput={{ width: '100%' }}
                     onPress={
                         () => {
-                            Banner({ type: ALERT_TYPE.SUCCESS, message: `Service ${selected} selected` });
+                            Banner({ type: ALERT_TYPE.SUCCESS, message: `${selected === 0 && "No"} Employee ${selected !== 0 ? selected : ""} selected` });
                         }
                     } title={texts.appointments.schedule} />
             </View>
