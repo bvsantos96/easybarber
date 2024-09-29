@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
 import com.teamsantos.easybarber.entities.EmployeeSchedule;
@@ -17,8 +18,9 @@ import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 @Repository
 public interface EmployeeScheduleRepository
         extends JpaRepository<EmployeeSchedule, Long>, JpaSpecificationExecutor<EmployeeSchedule> {
+
     @Override
-    Optional<EmployeeSchedule> findById(Long id);
+    @NonNull Optional<EmployeeSchedule> findById(@NonNull Long id);
 
     Optional<EmployeeSchedule> findByEmployeeIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
             Long id, DAY_OF_WEEK day, LocalTime startHour, LocalTime endHour, boolean active);
