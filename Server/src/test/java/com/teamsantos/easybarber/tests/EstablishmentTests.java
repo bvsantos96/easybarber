@@ -136,12 +136,28 @@ public class EstablishmentTests {
                 jwt = employeeTests.loginById(employeeId, false);
                 create(String.format("/establishment/%d/service", service.getEstablishmentId()), jwt,
                         service.toString());
+                employeeId = null;
+                for (Long employeeId2 : EmployeeData.employeesEstablishments.keySet()) {
+                    if (EmployeeData.employeesEstablishments.get(employeeId2).contains(service.getEstablishmentId())) {
+                        employeeId = employeeId2;
+                        break;
+                    }
+                }
+                if (employeeId != null) {
+                    CreateTest.post(mockMvc,
+                            String.format("/%d/service/%d/employee",
+                                    service.getEstablishmentId(), service.getId()),
+                            loginAdminByEstablishmentId(service.getEstablishmentId()),
+                            String.format("[%d]", employeeId));
+                }
             }
             jwt = employeeTests.login(1, false);
             CreateEstablishmentServiceDTO service = EstablishmentData.establishmentServices.get(2);
             ResultActions result = CreateTest.post(mockMvc, "/establishment/1/service", jwt, service.toString());
             result.andExpect(MockMvcResultMatchers.status().isForbidden());
-        } catch (Exception e) {
+        } catch (
+
+        Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());
         }
