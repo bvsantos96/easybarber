@@ -124,7 +124,7 @@ public class AppointmentService {
     }
 
     @Transactional
-    public void cancel(CancelAppointmentDTO cancelAppointmentDTO) {
+    public void cancel(CancelAppointmentDTO cancelAppointmentDTO) throws Exception{
         Appointment appointment = appointmentRepository.findById(cancelAppointmentDTO.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
 
@@ -134,33 +134,7 @@ public class AppointmentService {
 
         appointment.setActive(false);
         appointmentRepository.save(appointment);
-
-        String messageBody;
-        String reason = cancelAppointmentDTO.getReason();
-
-        if (reason != null && !reason.trim().isEmpty()) {
-            messageBody = String.format(
-                "Your appointment scheduled on %s at %s at %s with %s has been canceled for the following reason: %s.",
-                appointment.getDate().toString(),
-                appointment.getTime().toString(),
-                appointment.getEstablishment().getName(),
-                appointment.getEmployee().getUser().getName(),
-                reason
-            );
-        } else {
-            messageBody = String.format(
-                "Your appointment scheduled on %s at %s at %s with %s has been canceled. No reason was provided.",
-                appointment.getDate().toString(),
-                appointment.getTime().toString(),
-                appointment.getEstablishment().getName(),
-                appointment.getEmployee().getUser().getName()
-            );
-        }
-        try {
-            messagingService.sendMessage(appointment.getUser().getMobileInformation(), messageBody);
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to send cancellation message", e);
-        }
+        messagingService.appointmentCancelationMessage(appointment, cancelAppointmentDTO.getReason());
     }
 
     @Transactional
