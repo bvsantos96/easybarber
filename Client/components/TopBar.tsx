@@ -6,7 +6,6 @@ import SearchBar from './SearchBar';
 import Pressable from './Pressable';
 import { getStyles } from '../styles/TopBar';
 import { useTheme } from '../styles/ThemeContext';
-import { IFilterRequest, ILocation } from '../declarations';
 import ModalTextButton from './ModalTextButton';
 import { getAddressFromCoordinates } from '../utils/Location';
 

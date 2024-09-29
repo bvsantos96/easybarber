@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { ILocation } from '../../declarations';
 import { getLocation } from '../../utils/Location';
 import { getArrayFromPage } from '../StorageUtils';
 import { getLocationsRequest, setNewLocation } from '../../utils/ApiRequest';

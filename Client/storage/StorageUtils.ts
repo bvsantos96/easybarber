@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as FileSystem from 'expo-file-system';
-import { IPage } from '../declarations';
 
 export const store = async (id: string, data: string) => {
     await AsyncStorage.setItem(id, data);
