@@ -48,7 +48,8 @@ public class AppointmentDTO extends BaseDTO {
         appointment.setDate(date);
         appointment.setTime(time);
         appointment.setActive(true);
-        appointment.setConfirmed(false);
+        appointment.setConfirmed(true);
+        appointment.setReminded(false);
         return appointment;
     }
 }

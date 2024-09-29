@@ -43,6 +43,8 @@ public class PrePermissionEvaluator implements PermissionEvaluator {
     public static final String _HAS_APPOINTMENT_CHANGE_PERMISSION = "HAS_APPOINTMENT_CHANGE_PERMISSION";
     public static final String HAS_APPOINTMENT_CHANGE_PERMISSION = "hasPermission(#id, '"
             + _HAS_APPOINTMENT_CHANGE_PERMISSION + "')";
+    public static final String HAS_APPOINTMENT_CHANGE_PERMISSION_OBJECT = "hasPermission(#cancelAppointmentDTO.getId(), '"
+            + _HAS_APPOINTMENT_CHANGE_PERMISSION + "')";
 
     @Autowired
     public PrePermissionEvaluator(EstablishmentStaffRepository establishmentStaffRepository,
