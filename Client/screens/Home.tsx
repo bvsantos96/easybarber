@@ -16,7 +16,6 @@ import { createPageable } from '../utils/PageHandling';
 import { TimedRequest } from '../utils/TimedRequest';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
 import { SvgUri } from 'react-native-svg';
-import { EstablishmentInfo, ICategory, IFilterRequest, IPage, ITimedRequest } from '../declarations';
 import PageList, { PageListRef } from '../components/PageList';
 import useLocationStore from '../storage/stores/LocationStore';
 import { NavigationProp } from '@react-navigation/native';

@@ -1,6 +1,5 @@
 import { ALERT_TYPE } from "react-native-alert-notification";
 import { Banner } from "../components/Alert";
-import { IPage, ITimedRequest, Identifiable } from "../declarations";
 import texts from "../langs/en.json";
 
 export class TimedRequest<T extends Identifiable> implements ITimedRequest<T> {

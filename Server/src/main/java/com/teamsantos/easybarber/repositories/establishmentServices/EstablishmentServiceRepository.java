@@ -10,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.teamsantos.easybarber.DTO.NameIdImageDTO;
 import com.teamsantos.easybarber.DTO.establishment.service.EstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentServiceFilter;
 import com.teamsantos.easybarber.DTO.service.ServiceDTO;
@@ -178,4 +179,18 @@ public interface EstablishmentServiceRepository
             WHERE se.establishment.id = :establishmentId
             """)
     List<ServiceListDTO> listServices(long establishmentId);
+
+    @Query("""
+                SELECT new com.teamsantos.easybarber.DTO.NameIdImageDTO(
+                        es.service.employee.id,
+                        es.service.employee.user.name,
+                        i.data
+                    )
+                    FROM EstablishmentService es
+                    LEFT JOIN es.service.employee.images i
+                    WHERE es.establishment.id = :establishmentId
+                    AND es.service.id = :serviceId
+                    AND i.isMain = true
+            """)
+    List<NameIdImageDTO> listEmployeesOfEstablishmentService(Long establishmentId, Long serviceId);
 }

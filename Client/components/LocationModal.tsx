@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text } from 'react-native';
-import { ILocation } from '../declarations';
 import SearchBar from './SearchBar';
 import { useTheme } from '../styles/ThemeContext';
 import { getStyles } from '../styles/LocationModal';
