@@ -13,8 +13,6 @@ import { Underline } from '../components/Underline';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
 import Category from '../components/Category';
 import { SvgUri } from 'react-native-svg';
-import { Alert } from '../components/Alert';
-import { ALERT_TYPE } from 'react-native-alert-notification';
 import Button from '../components/Button';
 import { ImageRating } from '../components/ImageRating';
 import PageList from '../components/PageList';
@@ -117,12 +115,7 @@ export default function EstablishmentDetails({ navigation }: Props) {
                     stylesInput={{ width: '100%' }}
                     onPress={
                         () => {
-                            Alert({
-                                type: ALERT_TYPE.INFO,
-                                title: texts.updateRequired,
-                                message: texts.updateRequiredMessage,
-                                buttonText: texts.ok
-                            });
+                            navigation.navigate(texts.services.title, { establishmentId: establishment.id });
                         }
                     } title={texts.appointments.book} />
             </View>

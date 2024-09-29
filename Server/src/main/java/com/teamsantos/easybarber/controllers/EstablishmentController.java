@@ -31,6 +31,7 @@ import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.service.ServiceDTO;
+import com.teamsantos.easybarber.DTO.service.ServiceListDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.images.EstablishmentImage;
@@ -139,12 +140,24 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         }
     }
 
+    @GetMapping("/{id}/services/list")
+    public ResponseEntity<BaseListDTO<ServiceListDTO>> listServices(@PathVariable Long id) {
+        BaseListDTO<ServiceListDTO> response = new BaseListDTO<>();
+        try {
+            response.setItems(establishmentService.listServices(id));
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
     @GetMapping("/{id}/services")
-    public ResponseEntity<BasePageDTO<ServiceDTO>> listServices(
+    public ResponseEntity<BasePageDTO<ServiceDTO>> getServices(
             @PathVariable Long id, Pageable pageable) {
         BasePageDTO<ServiceDTO> listDTO = new BasePageDTO<>();
         try {
-            listDTO.setItems(establishmentService.listServices(id, pageable));
+            listDTO.setItems(establishmentService.getServices(id, pageable));
             return ResponseEntity.ok(listDTO);
         } catch (Exception e) {
             listDTO.setResponseMessage(e.getMessage());
