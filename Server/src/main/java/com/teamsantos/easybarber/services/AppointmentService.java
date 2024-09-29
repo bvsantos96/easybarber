@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -140,21 +141,19 @@ public class AppointmentService {
 
         if (reason != null && !reason.trim().isEmpty()) {
             messageBody = String.format(
-                "Your appointment scheduled on %s at %s at %s with %s has been canceled for the following reason: %s.",
-                appointment.getDate().toString(),
-                appointment.getTime().toString(),
-                appointment.getEstablishment().getName(),
-                appointment.getEmployee().getUser().getName(),
-                reason
-            );
+                    "Your appointment scheduled on %s at %s at %s with %s has been canceled for the following reason: %s.",
+                    appointment.getDate().toString(),
+                    appointment.getTime().toString(),
+                    appointment.getEstablishment().getName(),
+                    appointment.getEmployee().getUser().getName(),
+                    reason);
         } else {
             messageBody = String.format(
-                "Your appointment scheduled on %s at %s at %s with %s has been canceled. No reason was provided.",
-                appointment.getDate().toString(),
-                appointment.getTime().toString(),
-                appointment.getEstablishment().getName(),
-                appointment.getEmployee().getUser().getName()
-            );
+                    "Your appointment scheduled on %s at %s at %s with %s has been canceled. No reason was provided.",
+                    appointment.getDate().toString(),
+                    appointment.getTime().toString(),
+                    appointment.getEstablishment().getName(),
+                    appointment.getEmployee().getUser().getName());
         }
         try {
             messagingService.sendMessage(appointment.getUser().getMobileInformation(), messageBody);
@@ -175,13 +174,13 @@ public class AppointmentService {
     }
 
     @Transactional(readOnly = true)
-    public List<AppointmentReminderDTO> getNextDayAppointmentsNotReminded() throws Exception{
+    public List<AppointmentReminderDTO> getNextDayAppointmentsNotReminded() throws Exception {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         return appointmentRepository.findNextDayAppointmentsNotReminded(tomorrow);
     }
 
     @Transactional
-    public void setAppointmentAsReminded(Long appointmentID) throws Exception{
+    public void setAppointmentAsReminded(Long appointmentID) throws Exception {
         Appointment appointment = appointmentRepository.findById(appointmentID)
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
 
