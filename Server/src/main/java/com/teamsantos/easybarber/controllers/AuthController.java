@@ -59,11 +59,8 @@ public class AuthController {
     public ResponseEntity<UserDTO> getUserLocations(@RequestBody ResetPwdDTO resetPwdDTO) {
         try {
             UserDTO userDTO = userService.getUserByMobileNr(resetPwdDTO.getPhoneNr());
-            boolean isVerified = messagingService.verifyCode(resetPwdDTO.getPhoneNr(),
+            messagingService.verifyCode(resetPwdDTO.getPhoneNr(),
                     resetPwdDTO.getConfirmationCode());
-            if (!isVerified) {
-                throw new Exception("The confirmation code does not match");
-            }
             userService.changeUserPwd(userDTO, resetPwdDTO.getNewPassword());
             return ResponseEntity.ok(userDTO);
         } catch (Exception e) {
