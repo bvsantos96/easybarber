@@ -2,6 +2,7 @@ package com.teamsantos.easybarber.services;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -11,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
+import com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO;
+import com.teamsantos.easybarber.DTO.appointment.CancelAppointmentDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.entities.Appointment;
 import com.teamsantos.easybarber.repositories.AppointmentRepository;
@@ -27,17 +30,19 @@ public class AppointmentService {
     private final AppointmentRepository appointmentRepository;
     private final SchedulesService scheduleService;
     private final EntityManager entityManager;
+    private final MessagingService messagingService;
 
     @Autowired
     public AppointmentService(EmployeeService employeeService,
             EstablishmentService establishmentService,
             AppointmentRepository appointmentRepository, SchedulesService scheduleService,
-            EntityManager entityManager) {
+            EntityManager entityManager, MessagingService messagingService) {
         this.employeeService = employeeService;
         this.establishmentService = establishmentService;
         this.appointmentRepository = appointmentRepository;
         this.scheduleService = scheduleService;
         this.entityManager = entityManager;
+        this.messagingService = messagingService;
     }
 
     public Pair<Long, String> create(AppointmentDTO appointmentDTO) {
@@ -118,16 +123,47 @@ public class AppointmentService {
                 .map((element) -> Utils.getModelMapper().map(element, AppointmentListDTO.class)));
     }
 
-    public void cancel(long id) {
-        Appointment appointment = appointmentRepository.findById(id)
+    @Transactional
+    public void cancel(CancelAppointmentDTO cancelAppointmentDTO) {
+        Appointment appointment = appointmentRepository.findById(cancelAppointmentDTO.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+
         if (appointment.getDate().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("You cannot cancel an appointment that has already happened");
         }
+
         appointment.setActive(false);
         appointmentRepository.save(appointment);
+
+        String messageBody;
+        String reason = cancelAppointmentDTO.getReason();
+
+        if (reason != null && !reason.trim().isEmpty()) {
+            messageBody = String.format(
+                "Your appointment scheduled on %s at %s at %s with %s has been canceled for the following reason: %s.",
+                appointment.getDate().toString(),
+                appointment.getTime().toString(),
+                appointment.getEstablishment().getName(),
+                appointment.getEmployee().getUser().getName(),
+                reason
+            );
+        } else {
+            messageBody = String.format(
+                "Your appointment scheduled on %s at %s at %s with %s has been canceled. No reason was provided.",
+                appointment.getDate().toString(),
+                appointment.getTime().toString(),
+                appointment.getEstablishment().getName(),
+                appointment.getEmployee().getUser().getName()
+            );
+        }
+        try {
+            messagingService.sendMessage(appointment.getUser().getMobileInformation(), messageBody);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to send cancellation message", e);
+        }
     }
 
+    @Transactional
     public void confirm(long id) {
         Appointment appointment = appointmentRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
@@ -135,6 +171,21 @@ public class AppointmentService {
             throw new IllegalArgumentException("You do not have permission to confirm this appointment");
         }
         appointment.setConfirmed(true);
+        appointmentRepository.save(appointment);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AppointmentReminderDTO> getNextDayAppointmentsNotReminded() throws Exception{
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+        return appointmentRepository.findNextDayAppointmentsNotReminded(tomorrow);
+    }
+
+    @Transactional
+    public void setAppointmentAsReminded(Long appointmentID) throws Exception{
+        Appointment appointment = appointmentRepository.findById(appointmentID)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+
+        appointment.setReminded(true);
         appointmentRepository.save(appointment);
     }
 }
