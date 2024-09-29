@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { View, Text, ViewStyle } from "react-native";
 import { EvilIcons } from '@expo/vector-icons';
 
-import { ILocation } from "../declarations";
 import { useTheme } from "../styles/ThemeContext";
 import Pressable from "./Pressable";
 import { getStyles } from '../styles/LocationModal';

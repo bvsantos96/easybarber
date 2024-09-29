@@ -58,16 +58,11 @@ export const getStyles = () => {
             letterSpacing: -0.16500000655651093 * theme.dimensions.absoluteWidth,
             textAlign: 'left',
         },
-        flatList: {
-            flex: 1,
-            zIndex: 999,
-            elevation: 999,
-        },
         listContainer: {
             position: 'absolute',
             top: 50 * theme.dimensions.absoluteHeight,
             width: 335 * theme.dimensions.absoluteWidth,
-            maxHeight: 470 * theme.dimensions.absoluteHeight,
+            height: 470 * theme.dimensions.absoluteHeight,
             left: 29 * theme.dimensions.absoluteWidth,
         },
     })
