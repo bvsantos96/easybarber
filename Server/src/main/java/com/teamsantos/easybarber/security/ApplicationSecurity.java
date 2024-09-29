@@ -65,6 +65,7 @@ public class ApplicationSecurity {
                                 "/establishment/{id}/services",
                                 "/establishment/{id}/services/list",
                                 "/establishment/{id}/employees",
+                                "establishment/{establishmentId}/service/{serviceId}/employees",
                                 "/service/list",
                                 "/service/types",
                                 "/icons/**",

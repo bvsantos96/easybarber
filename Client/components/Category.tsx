@@ -5,7 +5,6 @@ import Divider from "./Divider";
 import { getStyles as topBarGetStyles } from "../styles/TopBar";
 import { getStyles as homeGetStyles } from "../styles/Home";
 import { useEffect, useState } from "react";
-import { IFilterRequest } from "../declarations";
 import { useTheme } from "../styles/ThemeContext";
 
 interface CategoryProps {

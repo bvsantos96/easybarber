@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.teamsantos.easybarber.DTO.NameIdImageDTO;
 import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.employee.EmployeeInformationDTO;
 import com.teamsantos.easybarber.DTO.establishment.BaseEstablishmentDTO;
@@ -341,5 +342,9 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
 
     public List<ServiceListDTO> listServices(long establishmentId) {
         return establishmentServiceRepository.listServices(establishmentId);
+    }
+
+    public List<NameIdImageDTO> listEmployeesOfEstablishmentService(Long establishmentId, Long serviceId) {
+        return establishmentServiceRepository.listEmployeesOfEstablishmentService(establishmentId, serviceId);
     }
 }

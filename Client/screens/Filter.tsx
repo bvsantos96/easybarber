@@ -8,7 +8,6 @@ import Picker, { PickerItem } from '../components/Picker';
 import { getTimes } from '../utils/ApiRequest';
 import { useTheme } from '../styles/ThemeContext';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
-import { ICategory, IFilterRequest } from '../declarations';
 import Pressable from '../components/Pressable';
 
 

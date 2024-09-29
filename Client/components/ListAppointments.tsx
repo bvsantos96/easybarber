@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text } from "react-native";
 import { Image } from "expo-image";
 
-import { AppointmentInfo } from "../declarations";
 
 import { getStyles } from "../styles/Appointments";
 
