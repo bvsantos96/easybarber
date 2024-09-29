@@ -136,7 +136,7 @@
     },
     "employees" : {
         "title": "Employees",
-        "select": "Select employee you want (optional)"
+        "select": "Select the employee you want (optional)"
     },
     "about" : {
         "title": "About",
