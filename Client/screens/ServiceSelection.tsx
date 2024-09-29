@@ -7,8 +7,6 @@ import { getStyles } from "../styles/ServiceSelection";
 import { Props } from "./EstablishmentDetails";
 import SelectionItem from "../components/SelectionItems";
 import Button from '../components/Button';
-import { ALERT_TYPE } from "react-native-alert-notification";
-import { Banner } from "../components/Alert";
 
 type RouteParams = {
     establishment: { establishmentId: number }
@@ -41,8 +39,10 @@ export default function ServiceSelection({ navigation }: Props) {
                             ({ item }: { item: ServiceInfo }) =>
                                 <SelectionItem key={item.id} image={item.image.data} selected={item.id == selected} onPress={() => { setSelected(item.id) }}>
                                     <View style={styles.textContainer}>
-                                        <Text style={styles.title}>{item.name}</Text>
-                                        <Text style={styles.description}>{item.description}</Text>
+                                        <View style={styles.titleAndSubTitleContainer}>
+                                            <Text style={styles.title}>{item.name}</Text>
+                                            <Text style={styles.description}>{item.description}</Text>
+                                        </View>
                                         <Text style={styles.price}>{texts.currency}{item.price.toFixed(2)}</Text>
                                     </View>
                                 </SelectionItem>
