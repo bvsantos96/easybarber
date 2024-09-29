@@ -36,9 +36,6 @@ public class AppointmentController {
     @PostMapping("/appointment")
     public ResponseEntity<BaseResponseDTO> create(@RequestBody AppointmentDTO appointment) {
         try {
-            if (appointment.getDate().getDayOfMonth() == 13) {
-                System.out.println("");
-            }
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new BaseResponseDTO(appointmentService.create(appointment)));
         } catch (Exception e) {

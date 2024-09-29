@@ -12,3 +12,9 @@ export enum ResponseType {
     OBJECT = 1,
     LIST = 2,
 }
+
+export enum PageListType {
+    FLAT = "flat",
+    BOTTOM_SHEET = "bottom_sheet",
+    PAGERVIEW = "page_view"
+}

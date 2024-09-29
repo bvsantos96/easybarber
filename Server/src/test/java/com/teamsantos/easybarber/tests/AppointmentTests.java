@@ -16,7 +16,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
 import com.teamsantos.easybarber.testData.AppointmentData;
-import com.teamsantos.easybarber.testData.UsersData;
 import com.teamsantos.easybarber.utils.CreateTest;
 import com.teamsantos.easybarber.utils.JSONToDTO;
 import com.teamsantos.easybarber.utils.TestsState;
@@ -60,7 +59,6 @@ public class AppointmentTests {
                 try {
                     String jwt;
                     if (appointment.getUserId() != null) {
-                        appointment.setUserId(UsersData.usersDTO.get(0).getId());
                         jwt = new AuthTests(mockMvc).loginById(appointment.getUserId(), false);
                     } else {
                         jwt = new EmployeeTests(mockMvc).loginById(appointment.getEmployeeId(), false);

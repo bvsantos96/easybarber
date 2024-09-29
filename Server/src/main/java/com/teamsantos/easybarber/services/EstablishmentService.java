@@ -24,6 +24,7 @@ import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentServiceFilter;
 import com.teamsantos.easybarber.DTO.service.ServiceDTO;
 import com.teamsantos.easybarber.DTO.service.ServiceFullDTO;
+import com.teamsantos.easybarber.DTO.service.ServiceListDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.EstablishmentStaff;
@@ -188,7 +189,7 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     }
 
     @Transactional(readOnly = true)
-    public Page<ServiceDTO> listServices(long id, Pageable pageable) {
+    public Page<ServiceDTO> getServices(long id, Pageable pageable) {
         EstablishmentServiceFilter filter = new EstablishmentServiceFilter();
         filter.setEstablishmentId(id);
         filter.setIncludeEstablishmentImage(false);
@@ -331,5 +332,14 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         return new EstablishmentInformationDTO(
                 establishmentServiceRepository.findEstablishmentInformation(establishmentId)
                         .orElseThrow(NotFoundException::new));
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> listServicesTypes(long establishmentId) {
+        return establishmentServiceRepository.findEstablishmentAvailableServiceTypes(establishmentId);
+    }
+
+    public List<ServiceListDTO> listServices(long establishmentId) {
+        return establishmentServiceRepository.listServices(establishmentId);
     }
 }
