@@ -14,6 +14,7 @@ import com.teamsantos.easybarber.DTO.establishment.service.EstablishmentServiceD
 import com.teamsantos.easybarber.DTO.filters.EstablishmentServiceFilter;
 import com.teamsantos.easybarber.DTO.service.ServiceDTO;
 import com.teamsantos.easybarber.DTO.service.ServiceFullDTO;
+import com.teamsantos.easybarber.DTO.service.ServiceListDTO;
 import com.teamsantos.easybarber.entities.EstablishmentService;
 import com.teamsantos.easybarber.utils.Pair;
 
@@ -162,4 +163,19 @@ public interface EstablishmentServiceRepository
                 WHERE es.establishment.id = :establishmentId
             """)
     List<Long> findEstablishmentAvailableServiceTypes(long establishmentId);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.service.ServiceListDTO(
+                se.service.id,
+                se.service.serviceType.id,
+                se.service.name,
+                se.service.description,
+                se.price,
+                img
+            )
+            FROM EstablishmentService se
+            LEFT JOIN se.service.images img ON img.isMain = true
+            WHERE se.establishment.id = :establishmentId
+            """)
+    List<ServiceListDTO> listServices(long establishmentId);
 }
