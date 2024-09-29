@@ -32,7 +32,7 @@ declare interface ICategory {
     imageURL: string;
 }
 
-declare interface Image {
+declare interface IImage {
     id: number;
     data: string;
     isMain?: boolean;
@@ -52,7 +52,7 @@ declare interface EstablishmentInfo extends Identifiable {
     distance: number;
     nvotes: number;
     sumVotes: number;
-    images: Image[];
+    images: IImage[];
 }
 
 declare interface AppointmentFilter extends Record<string, string | number | boolean> {
@@ -151,7 +151,7 @@ declare interface EmployeeInfo extends Identifiable {
     availableServices: Identifiable[];
     rating: number;
     nvotes: number;
-    images: Image[];
+    images: IImage[];
 }
 
 declare interface EstablishmentDetail extends Identifiable {
@@ -160,9 +160,18 @@ declare interface EstablishmentDetail extends Identifiable {
     address: string;
     latitude: number;
     longitude: number;
+    distance?: number
     availableServices: number[];
     sumVotes: number;
     rating: number;
     nvotes: number;
-    images: Image[];
+    images: IImage[];
+}
+
+declare interface ServiceInfo extends Identifiable {
+    name: string;
+    description: string;
+    serviceTypeId: number;
+    price: number;
+    image: IImage;
 }

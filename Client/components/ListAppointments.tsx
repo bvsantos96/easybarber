@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Image, Text } from "react-native";
+import { View, Text } from "react-native";
+import { Image } from "expo-image";
 
 import { AppointmentInfo } from "../declarations";
 
@@ -20,7 +21,9 @@ export default function ListAppointments({ appointment }: { appointment: Appoint
     return (
         <Pressable onPress={() => { alert(`Open barber ${appointment.establishmentName}`); }} style={[styles.itemContainer, styles.shadow]}>
             <View style={styles.imageContainer}>
-                <Image source={{ uri: appointment.photo }} style={styles.imageStyle} />
+                <Image
+                    cachePolicy="memory"
+                    source={{ uri: appointment.photo }} style={styles.imageStyle} />
             </View>
             <View style={styles.textContainer}>
                 <Text numberOfLines={1} style={styles.title}>{appointment.establishmentName}</Text>

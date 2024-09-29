@@ -29,13 +29,13 @@ export interface Pageable<T> {
     empty: boolean;
 }
 
-export const createPageable = <T>(): IPage<T> => {
+export const createPageable = <T>(size = 10): IPage<T> => {
     return {
         content: [],
         totalPages: 0,
         totalElements: 0,
         currentPage: 0,
-        pageSize: 10,
+        pageSize: size,
         hasNextPage: true,
         hasPreviousPage: false
     };
