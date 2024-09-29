@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { View, Text, FlatList } from "react-native";
 
-import { getEstablishmentServices } from "../utils/ApiRequest";
+import { getEstablishmentServiceEmployees } from "../utils/ApiRequest";
 import { getStyles } from "../styles/ServiceSelection";
 import { Props } from "./EstablishmentDetails";
 import SelectionItem from "../components/SelectionItems";
@@ -10,40 +10,44 @@ import Button from '../components/Button';
 import { ALERT_TYPE } from "react-native-alert-notification";
 import { Banner } from "../components/Alert";
 
-type RouteParams = {
-    establishment: { establishmentId: number }
+type AppointmentParams = {
+    establishmentId: number;
+    serviceId: number;
 };
 
-export default function ServiceSelection({ navigation }: Props) {
+type RouteParams = {
+    appointment: AppointmentParams;
+};
+
+export default function EmployeeSelection({ navigation }: Props) {
     const styles = getStyles();
     const texts = require('@lang/en.json');
-    const route = useRoute<RouteProp<RouteParams, 'establishment'>>();
-    const { establishmentId } = route.params;
-    const [services, setServices] = useState<ServiceInfo[]>();
+    const route = useRoute<RouteProp<RouteParams>>();
+    const { establishmentId, serviceId } = route.params.appointment;
+    const [employees, setEmployees] = useState<ImageEntity[]>();
     const [selected, setSelected] = useState<number | string>(0);
 
     useEffect(() => {
-        const fetchService = async () => {
-            let _services = await getEstablishmentServices(establishmentId);
-            setServices(_services);
+        const fetchEmployees = async () => {
+            console.log(establishmentId, serviceId);
+            let _employees = await getEstablishmentServiceEmployees(establishmentId, serviceId);
+            setEmployees(_employees);
         }
-        fetchService();
+        fetchEmployees();
     }, [establishmentId]);
 
     return (
         <View style={styles.container} >
-            <Text style={styles.selectTextContainer}>{texts.services.select}</Text>
+            <Text style={styles.selectTextContainer}>{texts.employees.select}</Text>
             <View style={styles.listContainer}>
-                {services && services.length > 0 && (
+                {employees && employees.length > 0 && (
                     <FlatList
-                        data={services || []}
+                        data={employees || []}
                         renderItem={
-                            ({ item }: { item: ServiceInfo }) =>
-                                <SelectionItem key={item.id} image={item.image.data} selected={item.id == selected} onPress={() => { setSelected(item.id) }}>
+                            ({ item }: { item: ImageEntity }) =>
+                                <SelectionItem key={item.id} image={item.image} selected={item.id == selected} onPress={() => { setSelected(item.id) }}>
                                     <View style={styles.textContainer}>
                                         <Text style={styles.title}>{item.name}</Text>
-                                        <Text style={styles.description}>{item.description}</Text>
-                                        <Text style={styles.price}>{texts.currency}{item.price.toFixed(2)}</Text>
                                     </View>
                                 </SelectionItem>
                         }
@@ -60,9 +64,8 @@ export default function ServiceSelection({ navigation }: Props) {
                     onPress={
                         () => {
                             Banner({ type: ALERT_TYPE.SUCCESS, message: `Service ${selected} selected` });
-                            navigation.navigate(texts.employees.title, { appointment: { establishmentId: establishmentId, serviceId: selected } });
                         }
-                    } title={texts.appointments.selectService} />
+                    } title={texts.appointments.schedule} />
             </View>
         </View>
     );

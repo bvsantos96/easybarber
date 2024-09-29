@@ -4,9 +4,8 @@ import PagerView from "react-native-pager-view";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
 
 import { getStyles } from "../styles/Home";
-import { IPage, ITimedRequest, Identifiable } from "../declarations";
 import { TimedRequest } from "../utils/TimedRequest";
-import { createPageable, createPageableWContent } from "../utils/PageHandling";
+import { createPageable } from "../utils/PageHandling";
 import { PageListType } from "../enums";
 
 interface PageListProps<T extends Identifiable> {
@@ -121,7 +120,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
         case PageListType.FLAT:
             return (
                 <FlatList
-                    data={request?.page?.content}
+                    data={(request?.page?.content && request.page.content.length > 0) ? request.page.content : initialItems}
                     style={[styles.homeListContainer, { ...style }]}
                     contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom }}
                     renderItem={renderItem}

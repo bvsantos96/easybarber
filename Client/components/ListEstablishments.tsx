@@ -4,7 +4,6 @@ import Pressable from "./Pressable";
 import LocationIcon from '@assets/icons/location.svg';
 
 import React from "react";
-import { EstablishmentInfo } from "../declarations";
 import { defaultBarberImage } from "../utils/Constants";
 import { ImageWithRating } from "./ImageWithRating";
 

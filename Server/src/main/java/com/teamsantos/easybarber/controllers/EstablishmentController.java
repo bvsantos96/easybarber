@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
+import com.teamsantos.easybarber.DTO.NameIdImageDTO;
 import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.establishment.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
@@ -210,6 +211,19 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
+    @GetMapping("/establishment/{establishmentId}/service/{serviceId}/employees")
+    public ResponseEntity<BaseListDTO<NameIdImageDTO>> listEmployeesOfEstablishmentService(
+            @PathVariable Long establishmentId, @PathVariable Long serviceId) {
+        BaseListDTO<NameIdImageDTO> response = new BaseListDTO<>();
+        try {
+            response.setItems(establishmentService.listEmployeesOfEstablishmentService(establishmentId, serviceId));
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 
