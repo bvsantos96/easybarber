@@ -3,7 +3,7 @@ import langs from '../langs/en.json';
 import { PickerItem } from '../components/Picker';
 import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
-import { AppointmentFilter, AppointmentInfo, EmployeeInfo, EstablishmentDetail, EstablishmentInfo, ICategory, IImage, ILocation, IPage, IResult } from '../declarations';
+import { AppointmentFilter, AppointmentInfo, EmployeeInfo, EstablishmentDetail, EstablishmentInfo, ICategory, IImage, ILocation, IPage, IResult, ServiceInfo } from '../declarations';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
 import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
 import { getSelectedLocation } from './Location';
@@ -315,6 +315,11 @@ const getItemsFromRequest = <T>(result: IResult<T>): T => {
 export const getEstablishmentCats = async (id: number): Promise<number[] | undefined> => {
     const result = await request<number[]>(`establishment/${id}/servicetypes`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
     return getItemsFromRequest(result);
+}
+
+export const getEstablishmentServices = async (establishementId: number): Promise<ServiceInfo[]> => {
+    const result = await request<ServiceInfo[]>(`establishment/${establishementId}/services/list`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
+    return getItemsFromRequest<ServiceInfo[]>(result);
 }
 
 export const getEstablishmentDetails = async (id: number): Promise<EstablishmentDetail | undefined> => {
