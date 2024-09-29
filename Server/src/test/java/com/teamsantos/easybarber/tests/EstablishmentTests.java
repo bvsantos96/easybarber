@@ -136,16 +136,20 @@ public class EstablishmentTests {
                 jwt = employeeTests.loginById(employeeId, false);
                 create(String.format("/establishment/%d/service", service.getEstablishmentId()), jwt,
                         service.toString());
-                employeeId = null;
+                boolean found = false;
                 for (Long employeeId2 : EmployeeData.employeesEstablishments.keySet()) {
+                    if (employeeId2.equals(employeeId)) {
+                        continue;
+                    }
                     if (EmployeeData.employeesEstablishments.get(employeeId2).contains(service.getEstablishmentId())) {
+                        found = true;
                         employeeId = employeeId2;
                         break;
                     }
                 }
-                if (employeeId != null) {
+                if (found) {
                     CreateTest.post(mockMvc,
-                            String.format("/%d/service/%d/employee",
+                            String.format("/establishment/%d/service/%d/employee",
                                     service.getEstablishmentId(), service.getId()),
                             loginAdminByEstablishmentId(service.getEstablishmentId()),
                             String.format("[%d]", employeeId));
