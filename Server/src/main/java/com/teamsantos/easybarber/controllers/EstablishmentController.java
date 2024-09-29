@@ -214,7 +214,7 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         }
     }
 
-    @GetMapping("/establishment/{establishmentId}/service/{serviceId}/employees")
+    @GetMapping("/{establishmentId}/service/{serviceId}/employees")
     public ResponseEntity<BaseListDTO<NameIdImageDTO>> listEmployeesOfEstablishmentService(
             @PathVariable Long establishmentId, @PathVariable Long serviceId) {
         BaseListDTO<NameIdImageDTO> response = new BaseListDTO<>();

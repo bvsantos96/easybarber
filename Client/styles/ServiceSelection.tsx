@@ -33,9 +33,21 @@ export const getStyles = () => {
             left: 141 * theme.dimensions.absoluteWidth,
             width: 130 * theme.dimensions.absoluteWidth,
         },
+        titleContainer: {
+            position: 'absolute',
+            left: 141 * theme.dimensions.absoluteWidth,
+            width: 130 * theme.dimensions.absoluteWidth,
+            height: 93 * theme.dimensions.absoluteHeight,
+        },
         title: {
             fontFamily: 'Poppins',
             fontSize: theme.fonts.size._16,
+            fontWeight: 900,
+            lineHeight: 21 * theme.dimensions.absoluteHeight,
+        },
+        singleTitle: {
+            fontFamily: 'Poppins',
+            fontSize: theme.fonts.size._18,
             fontWeight: 900,
             lineHeight: 21 * theme.dimensions.absoluteHeight,
         },
