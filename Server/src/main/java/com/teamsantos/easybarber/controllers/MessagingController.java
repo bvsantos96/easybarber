@@ -26,11 +26,6 @@ public class MessagingController {
         this.messagingService = messagingService;
     }
 
-    @GetMapping("/sms/test")
-    public ResponseEntity<String> test() {
-            return new ResponseEntity<>("it worked eheh", HttpStatus.OK);
-    }
-
     @PostMapping("/sms/confirmation")
     public ResponseEntity<BaseResponseDTO> sendMobileConfirmationMessage(@RequestBody RequestConfirmationCode sms) {
         BaseResponseDTO response = new BaseResponseDTO();
