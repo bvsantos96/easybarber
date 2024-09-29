@@ -52,7 +52,7 @@ public class MessagingService {
     }
 
     public String pwdRecoveryCodeBodyMessage(String code) {
-        return "Your verification code is: " + code+". Use this code to reset your password. If you didn't request this, please ignore this message.";
+        return "Olaaaa. Your verification code is: " + code+". Use this code to reset your password. If you didn't request this, please ignore this message.";
     }
 
     public void sendMessage(String to, String body) throws Exception {
