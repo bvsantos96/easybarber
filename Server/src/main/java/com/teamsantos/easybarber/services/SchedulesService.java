@@ -89,7 +89,7 @@ public class SchedulesService {
             authorized = isOwner;
         }
 
-        if (!authorized) {
+        if (!authorized || employee == null) {
             throw new IllegalArgumentException("Employee is not authorized to create this exception");
         }
 
