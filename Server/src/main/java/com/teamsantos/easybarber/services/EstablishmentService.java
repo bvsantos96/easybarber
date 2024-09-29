@@ -355,8 +355,11 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     }
 
     @Transactional(readOnly = true)
-    public List<NameIdImageDTO> listEmployeesOfEstablishmentService(Long establishmentId, Long serviceId) {
-        return establishmentServiceRepository.listEmployeesOfEstablishmentService(establishmentId, serviceId);
+    public List<NameIdImageDTO> listEmployeesOfEstablishmentService(Long establishmentId, Long serviceId)
+            throws NotFoundException {
+        long establishmentServiceId = establishmentServiceRepository.findIdByEstablishmentAndService(establishmentId,
+                serviceId).orElseThrow(NotFoundException::new);
+        return establishmentServiceEmployeeRepository.listEmployeesOfEstablishmentService(establishmentServiceId);
     }
 
     @Transactional
