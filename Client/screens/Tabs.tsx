@@ -18,7 +18,7 @@ export default function Tabs() {
 
     return (
         <Tab.Navigator
-            initialRouteName={texts.tabs.homeNavigator}
+            initialRouteName={texts.tabs.home}
             screenOptions={{
                 lazy: true,
                 tabBarActiveTintColor: theme.colors.mainColor,
@@ -27,7 +27,7 @@ export default function Tabs() {
                     height: theme.dimensions.tabHeight + inserts.bottom,
                 }, theme.shadow],
             }} >
-            <Tab.Screen name={texts.tabs.homeNavigator}
+            <Tab.Screen name={texts.tabs.home}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => !focused ? (
