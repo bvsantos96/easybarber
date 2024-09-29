@@ -87,7 +87,7 @@ public class ApplicationSecurity {
         configuration.setAllowedOrigins(Arrays.asList("https://yourfrontend.com"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
-        configuration.setAllowCredentials(true);
+        //configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L); // 1 hour
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
