@@ -10,20 +10,18 @@ import Button from '../components/Button';
 import { ALERT_TYPE } from "react-native-alert-notification";
 import { Banner } from "../components/Alert";
 
-type AppointmentParams = {
-    establishmentId: number;
-    serviceId: number;
-};
-
 type RouteParams = {
-    appointment: AppointmentParams;
+    appointment: {
+        establishmentId: number;
+        serviceId: number;
+    };
 };
 
 export default function EmployeeSelection({ navigation }: Props) {
     const styles = getStyles();
     const texts = require('@lang/en.json');
-    const route = useRoute<RouteProp<RouteParams>>();
-    const { establishmentId, serviceId } = route.params.appointment;
+    const route = useRoute<RouteProp<RouteParams, 'appointment'>>();
+    const { establishmentId, serviceId } = route.params;
     const [employees, setEmployees] = useState<ImageEntity[]>();
     const [selected, setSelected] = useState<number | string>(0);
 
