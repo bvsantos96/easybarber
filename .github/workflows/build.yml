@@ -30,7 +30,7 @@ jobs:
       - name: Build Docker image
         run: |
           cd Server/Docker
-          docker build -f Dockerfile.stage -t easy-barber:latest .
+          docker build --no-cache -f Dockerfile.stage -t easy-barber:latest .
         env:
           DOCKER_BUILDKIT: 1
       - name: Run Docker container
