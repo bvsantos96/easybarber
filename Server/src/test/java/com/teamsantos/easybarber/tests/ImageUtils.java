@@ -87,8 +87,23 @@ public class ImageUtils {
             assert _image != image;
         }
         List<ImageDTO> _images = getImages(jwt);
-        assert _images.equals(images);
+        assert compareImageList(images, _images);
         setMain(images.get(0), jwt);
+    }
+
+    private boolean compareImageList(List<ImageDTO> images1, List<ImageDTO> images2) {
+        if (images1.size() != images2.size()) {
+            return false;
+        }
+        for (int i = 0; i < images1.size(); i++) {
+            final int _i = i;
+            if (!images1.get(i)
+                    .equals(images2.stream().filter(e -> e.getId().equals(images1.get(_i).getId())).findFirst()
+                            .get())) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void addImageAndCheckIfSaved(List<ImageDTO> images, String jwt) throws Exception {

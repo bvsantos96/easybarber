@@ -49,11 +49,11 @@ public class Appointment {
     @Temporal(TemporalType.TIME)
     private LocalTime time;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
-    private Boolean active;
+    private Boolean active = true;
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private Boolean confirmed = true;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private Boolean confirmed;
-    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private Boolean reminded;
+    private Boolean reminded = false;
 
     @Override
     public final boolean equals(Object o) {
