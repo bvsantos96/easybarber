@@ -1,34 +1,3 @@
-import { IPage } from "../declarations";
-
-export interface Pageable<T> {
-    content: T[];
-    pageable: {
-        pageNumber: number;
-        pageSize: number;
-        sort: {
-            empty: boolean;
-            sorted: boolean;
-            unsorted: boolean;
-        },
-        offset: number;
-        paged: boolean;
-        unpaged: boolean;
-    },
-    last: boolean;
-    totalElements: number;
-    totalPages: number;
-    sort: {
-        empty: boolean;
-        sorted: boolean;
-        unsorted: boolean;
-    },
-    first: boolean;
-    size: number;
-    number: number;
-    numberOfElements: number;
-    empty: boolean;
-}
-
 export const createPageable = <T>(size = 10): IPage<T> => {
     return {
         content: [],

@@ -1,17 +1,16 @@
 import React from 'react';
 import { View } from 'react-native';
 import { getStyles } from '../styles/SelectionItem';
-import { ServiceInfo } from '../declarations';
 import { Image } from 'expo-image';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import Pressable from './Pressable';
 
-export default function SelectionItem({ service, children, selected = false, onPress }: { service: ServiceInfo, children: React.ReactNode, selected?: boolean, onPress: () => void }) {
+export default function SelectionItem({ image, children, selected = false, onPress }: { image: string, children: React.ReactNode, selected?: boolean, onPress: () => void }) {
     const styles = getStyles();
 
     return (
-        <TouchableOpacity style={styles.container} onPress={onPress}>
-            <Image source={{ uri: service.image.data }} style={styles.image} />
+        <Pressable style={styles.container} onPress={onPress}>
+            <Image source={{ uri: image }} style={styles.image} />
             <View>
                 {children}
             </View>
@@ -20,6 +19,6 @@ export default function SelectionItem({ service, children, selected = false, onP
                     <FontAwesome name="circle" size={styles.radio.width} color={styles.radio.color} />
                 }
             </View>
-        </TouchableOpacity>
+        </Pressable>
     );
 }

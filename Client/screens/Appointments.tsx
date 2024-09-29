@@ -4,7 +4,6 @@ import { getStyles } from '../styles/Appointments';
 import { useState } from 'react';
 import { getAppointments } from '../utils/ApiRequest';
 import ListAppointments from '../components/ListAppointments';
-import { AppointmentFilter, AppointmentInfo, IPage } from '../declarations';
 import PageList, { PageListRef } from '../components/PageList';
 
 export default function Appointments() {

@@ -3,7 +3,6 @@ import langs from '../langs/en.json';
 import { PickerItem } from '../components/Picker';
 import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
-import { AppointmentFilter, AppointmentInfo, EmployeeInfo, EstablishmentDetail, EstablishmentInfo, ICategory, IImage, ILocation, IPage, IResult, ServiceInfo } from '../declarations';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
 import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
 import { getSelectedLocation } from './Location';
@@ -12,7 +11,7 @@ import { Alert, Banner } from '../components/Alert';
 import { ALERT_TYPE } from 'react-native-alert-notification';
 
 import texts from '../langs/en.json';
-import { ResponseType } from 'enums';
+import { ResponseType } from '../enums';
 
 export const getTimes = async ({ from, to }: { from?: string, to?: string }): Promise<PickerItem[]> => {
     from = from || "08:00";
@@ -118,10 +117,14 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
         ...(method !== "GET" && { body: JSON.stringify(body) }),
     }).then(async response => {
         let data;
-        if (responseType == ResponseType.STRING) {
-            data = await response.text()
-        } else {
-            data = await response.json();
+        try {
+            if (responseType == ResponseType.STRING) {
+                data = await response.text()
+            } else {
+                data = await response.json();
+            }
+        } catch (e) {
+            console.error(e);
         }
 
         if (response.status != 200 && response.status != 201) {
@@ -304,9 +307,9 @@ export const getImageList = async (urlPrefix: string, page: IPage<IImage>, param
 const getItemsFromRequest = <T>(result: IResult<T>): T => {
     if (result.success) {
         if (result.items !== undefined && result.items !== null) {
-            return result.items;
+            return result.items as T;
         } else if (result.data !== undefined && result.data !== null) {
-            return result.data;
+            return result.data as T;
         }
     }
     throw new Error(langs.apiMessages.failed);
@@ -315,6 +318,11 @@ const getItemsFromRequest = <T>(result: IResult<T>): T => {
 export const getEstablishmentCats = async (id: number): Promise<number[] | undefined> => {
     const result = await request<number[]>(`establishment/${id}/servicetypes`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
     return getItemsFromRequest(result);
+}
+
+export const getEstablishmentServiceEmployees = async (establishmentId: number, serviceId: number): Promise<ImageEntity[]> => {
+    const result = await request<ImageEntity[]>(`establishment/${establishmentId}/service/${serviceId}/employees`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
+    return getItemsFromRequest<ImageEntity[]>(result);
 }
 
 export const getEstablishmentServices = async (establishementId: number): Promise<ServiceInfo[]> => {

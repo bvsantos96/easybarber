@@ -18,7 +18,6 @@ import { resetNavigation } from '../App';
 import { SignInProps } from '../screens/SignIn';
 import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
-import { IAPIResponse, IResult } from '../declarations';
 import { DEBUG_AUTO_LOGIN, DEBUG_AUTO_LOGIN_PASSWORD, DEBUG_AUTO_LOGIN_PHONE } from '../utils/EnvVariables';
 import { ALERT_TYPE } from 'react-native-alert-notification';
 import { Alert } from './Alert';
