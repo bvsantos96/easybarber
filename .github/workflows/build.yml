@@ -33,8 +33,6 @@ jobs:
           docker build -f Dockerfile.stage -t easy-barber:latest .
         env:
           DOCKER_BUILDKIT: 1
-
-      - name: Restart Easy Barber service
+      - name: Run Docker container
         run: |
-          sudo systemctl daemon-reload
-          sudo systemctl restart easy-barber.service
+          docker run -d -p 8080:8080 --rm easy-barber:latest
