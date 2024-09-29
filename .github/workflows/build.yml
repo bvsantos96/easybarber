@@ -1,4 +1,4 @@
-name: Docker Build and Push..
+name: Docker Build and Push
 
 on:
   push:
@@ -41,9 +41,9 @@ jobs:
       
       - name: Stop and remove old Docker container (if exists)
         run: |
-          if [ $(docker ps -q -f name=easy-barber) ]; then
-            docker stop easy-barber
-            docker rm easy-barber
+          if [ "$(docker ps -q -f name=easy-barber)" ]; then
+            docker stop easy-barber || true
+            docker rm easy-barber || true
           fi
 
       - name: Run Docker container
