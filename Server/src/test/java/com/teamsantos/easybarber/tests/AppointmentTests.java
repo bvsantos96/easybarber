@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
+import com.teamsantos.easybarber.DTO.appointment.CancelAppointmentDTO;
 import com.teamsantos.easybarber.testData.AppointmentData;
 import com.teamsantos.easybarber.utils.CreateTest;
 import com.teamsantos.easybarber.utils.JSONToDTO;
@@ -199,21 +200,23 @@ public class AppointmentTests {
             EmployeeTests employeeTests = new EmployeeTests(mockMvc);
             AuthTests authTests = new AuthTests(mockMvc);
             createAppointment(init, init);
-            AppointmentDTO appointment = AppointmentData.appointments.get(1);
+            AppointmentDTO appointment = AppointmentData.appointments.get(0);
             String jwt = "";
             if (appointment.getUserId() == null) {
                 jwt = employeeTests.loginById(appointment.getEmployeeId(), false);
             } else {
                 jwt = authTests.loginById(appointment.getUserId(), false);
             }
-            String url = String.format("/appointment/%d/cancel", appointment.getId());
-            CreateTest.putSuccessWJWT(mockMvc, url, jwt);
+            String url = String.format("/appointment/cancel");
+            CancelAppointmentDTO reason = new CancelAppointmentDTO(appointment.getId(), "Reasons");
+            CreateTest.putSuccess(mockMvc, url, jwt, reason.toString());
             appointment = AppointmentData.appointments.get(2);
             jwt = employeeTests.loginById(
                     EmployeeTests.getDifferentEmployee(appointment.getEmployeeId()),
                     false);
-            url = String.format("/appointment/%d/cancel", appointment.getId());
-            CreateTest.putForbiddenWJWT(mockMvc, url, jwt);
+            url = String.format("/appointment/cancel");
+            reason = new CancelAppointmentDTO(appointment.getId(), "Reasons");
+            CreateTest.putForbidden(mockMvc, url, jwt, reason.toString());
         } catch (
 
         Exception e) {
