@@ -1,5 +1,4 @@
 import * as Location from 'expo-location';
-import { ILocation, IAddressSuggestion } from "../declarations";
 import { getLocationsRequest, setNewLocation } from './ApiRequest';
 import { getArrayFromPage, getArrayOrEmpty, store } from '../storage/StorageUtils';
 import { LOCATIONS_STORAGE_KEY } from './Constants';
@@ -8,7 +7,7 @@ import { Alert, Banner } from '../components/Alert';
 import { ALERT_TYPE } from 'react-native-alert-notification';
 import texts from '../langs/en.json';
 import { Linking, Platform } from 'react-native';
-import { Clipboard } from 'expo-clipboard';
+import * as expoClipboard from 'expo-clipboard';
 
 export async function hasLocationPermission(): Promise<boolean> {
     try {
@@ -257,7 +256,7 @@ export const gotoLocation = async (address: string, lat: number, lng: number): P
     if (url) {
         Linking.openURL(url);
     } else {
-        await Clipboard.setStringAsync(address);
+        await expoClipboard.setStringAsync(address);
         Alert({ type: ALERT_TYPE.INFO, title: "", message: texts.errors.openMapsError });
     }
 }

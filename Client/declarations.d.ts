@@ -1,4 +1,32 @@
-import { SvgProps } from "react-native-svg";
+declare interface Pageable<T> {
+    content: T[];
+    pageable: {
+        pageNumber: number;
+        pageSize: number;
+        sort: {
+            empty: boolean;
+            sorted: boolean;
+            unsorted: boolean;
+        },
+        offset: number;
+        paged: boolean;
+        unpaged: boolean;
+    },
+    last: boolean;
+    totalElements: number;
+    totalPages: number;
+    sort: {
+        empty: boolean;
+        sorted: boolean;
+        unsorted: boolean;
+    },
+    first: boolean;
+    size: number;
+    number: number;
+    numberOfElements: number;
+    empty: boolean;
+}
+
 
 declare interface IPage<T> {
     content: T[];
@@ -174,4 +202,9 @@ declare interface ServiceInfo extends Identifiable {
     serviceTypeId: number;
     price: number;
     image: IImage;
+}
+
+declare interface ImageEntity extends Identifiable {
+    name: string;
+    image: string;
 }
