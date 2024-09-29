@@ -116,6 +116,20 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         }
     }
 
+    @DeleteMapping("/{establishmentId}/employee/{employeeId}")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    public ResponseEntity<BaseResponseDTO> removeEmployee(@PathVariable("establishmentId") Long establishmentId,
+            @PathVariable Long employeeId) {
+        BaseResponseDTO responseDTO = new BaseResponseDTO();
+        try {
+            establishmentService.removeEmployee(establishmentId, employeeId);
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            responseDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
     @GetMapping("/{id}/details")
     public ResponseEntity<EstablishmentInformationDTO> getEmployeeInformation(
             @PathVariable("id") Long establishmentId) {
@@ -193,6 +207,34 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
             establishmentService.updateService(establishmentId, service);
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            responseDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
+    @PostMapping("/{establishmentId}/service/{serviceId}/employee")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    public ResponseEntity<BaseResponseDTO> addEmployeeToService(@PathVariable Long establishmentId,
+            @PathVariable Long serviceId, @RequestBody Set<Long> employees) {
+        BaseResponseDTO responseDTO = new BaseResponseDTO();
+        try {
+            establishmentService.addEmployeesToService(establishmentId, serviceId, employees);
+            return ResponseEntity.ok(responseDTO);
+        } catch (Exception e) {
+            responseDTO.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(responseDTO);
+        }
+    }
+
+    @DeleteMapping("/{establishmentId}/service/{serviceId}/employee/{employeeId}")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    public ResponseEntity<BaseResponseDTO> removeEmployeeFromService(@PathVariable Long establishmentId,
+            @PathVariable Long serviceId, @PathVariable Long employee) {
+        BaseResponseDTO responseDTO = new BaseResponseDTO();
+        try {
+            establishmentService.removeEmployeeFromService(establishmentId, serviceId, employee);
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());

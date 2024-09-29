@@ -88,7 +88,7 @@ public class AppointmentController {
     }
 
     @PutMapping("/appointment/cancel")
-    @PreAuthorize(PrePermissionEvaluator.HAS_APPOINTMENT_CHANGE_PERMISSION)
+    @PreAuthorize(PrePermissionEvaluator.HAS_APPOINTMENT_CHANGE_PERMISSION_OBJECT)
     public ResponseEntity<BaseResponseDTO> cancel(@RequestBody CancelAppointmentDTO cancelAppointmentDTO) {
         try {
             appointmentService.cancel(cancelAppointmentDTO);
