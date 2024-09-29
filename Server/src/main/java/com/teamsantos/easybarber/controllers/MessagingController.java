@@ -27,7 +27,7 @@ public class MessagingController {
     }
 
     @GetMapping("/sms/test")
-    public ResponseEntity<String> test(@RequestBody RequestConfirmationCode sms) {
+    public ResponseEntity<String> test() {
             return new ResponseEntity<>("it worked eheh", HttpStatus.OK);
     }
 
