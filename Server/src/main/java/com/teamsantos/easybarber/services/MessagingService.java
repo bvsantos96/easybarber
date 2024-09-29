@@ -21,6 +21,9 @@ public class MessagingService {
     @Autowired
     private VerificationCodeRepository verificationCodeRepository;
 
+    @Value("${teamsantos.istest}")
+    private boolean isTestContext;
+
     @Value("${twilio.sender-id}")
     private String senderId;
 
@@ -43,14 +46,15 @@ public class MessagingService {
         verificationCodeRepository.save(verificationCode);
     }
 
-    public void verifyCode(String phoneNumber, String code) throws Exception{
-        VerificationCode verificationCode = verificationCodeRepository.findById(phoneNumber).orElseThrow( () -> new Exception("Phone number does not have a code assigned"));
-        
-        if(verificationCode.getCode().isEmpty()){
+    public void verifyCode(String phoneNumber, String code) throws Exception {
+        VerificationCode verificationCode = verificationCodeRepository.findById(phoneNumber)
+                .orElseThrow(() -> new Exception("Phone number does not have a code assigned"));
+
+        if (verificationCode.getCode().isEmpty()) {
             throw new Exception("Code is empty");
         }
-        
-        if(!verificationCode.getCode().isEmpty() && !verificationCode.getCode().equals(code)){
+
+        if (!verificationCode.getCode().isEmpty() && !verificationCode.getCode().equals(code)) {
             throw new Exception("Code does not match");
         }
     }
@@ -101,10 +105,14 @@ public class MessagingService {
     }
 
     public void sendMessage(String to, String body) throws Exception {
+        if (isTestContext) {
+            return;
+        }
+
         Message.creator(
-            new PhoneNumber(to),
-            new PhoneNumber(senderId),
-            body).create();
+                new PhoneNumber(to),
+                new PhoneNumber(senderId),
+                body).create();
     }
 
 }

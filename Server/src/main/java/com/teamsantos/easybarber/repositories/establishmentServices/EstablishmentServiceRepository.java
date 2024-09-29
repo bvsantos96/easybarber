@@ -193,4 +193,25 @@ public interface EstablishmentServiceRepository
                     AND i.isMain = true
             """)
     List<NameIdImageDTO> listEmployeesOfEstablishmentService(Long establishmentId, Long serviceId);
+
+    @Query("""
+                SELECT new com.teamsantos.easybarber.DTO.NameIdImageDTO(
+                        es.service.serviceType.id,
+                        es.service.serviceType.name,
+                        es.service.serviceType.imageURL
+                    )
+                    FROM EstablishmentService es
+                    WHERE es.establishment.id = :establishmentId
+                    AND es.service.id = :serviceId
+            """)
+    Optional<EstablishmentService> findByEstablishmentAndService(Long establishmentId, Long serviceId);
+
+    @Query("""
+                SELECT es.id
+                FROM EstablishmentService es
+                WHERE
+                    es.establishment.id = :establishmentId
+                    AND es.service.id = :serviceId
+            """)
+    Optional<Long> findIdByEstablishmentAndService(long establishmentId, long serviceId);
 }
