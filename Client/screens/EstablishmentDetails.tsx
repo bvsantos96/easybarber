@@ -1,63 +1,84 @@
 import { NavigationProp, RouteProp, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-import { EstablishmentDetail, ICategory } from '../declarations';
+import { Image } from 'expo-image';
+
 import { getStyles } from '../styles/EstablishmentDetails';
-import { getEstablishmentDetails } from '../utils/ApiRequest';
-import { defaultBarberImage } from '../utils/Constants';
+import { getStyles as getListStyles } from '../styles/List';
+
+import { EstablishmentInfo, ICategory, IImage, IPage } from '../declarations';
+import { getEstablishmentCats, getImageList } from '../utils/ApiRequest';
 import { gotoLocation } from '../utils/Location';
-import { ImageWithRating } from '../components/ImageWithRating';
 import { Underline } from '../components/Underline';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
 import Category from '../components/Category';
 import { SvgUri } from 'react-native-svg';
-import Divider from '../components/Divider';
-import { Alert } from '../components/Alert';
-import { ALERT_TYPE } from 'react-native-alert-notification';
 import Button from '../components/Button';
+import { ImageRating } from '../components/ImageRating';
+import PageList from '../components/PageList';
+import { defaultBarberImage } from '../utils/Constants';
+import { PageListType } from '../enums';
 
 export type Props = {
     navigation: NavigationProp<any, any>
 }
 
 type RouteParams = {
-    establishment: { establishmentId: number };
+    establishment: EstablishmentInfo
 };
 
 export default function EstablishmentDetails({ navigation }: Props) {
     const texts = require("@lang/en.json");
     const styles = getStyles();
+    const listStyles = getListStyles();
 
     const route = useRoute<RouteProp<RouteParams, 'establishment'>>();
-    const { establishmentId } = route.params;
+    const establishment: EstablishmentInfo = route.params;
     const [categories, setCategories] = useState<ICategory[]>([]);
-    const [establishment, setEstablishment] = useState<EstablishmentDetail>();
 
     useEffect(() => {
-        const fetchEstablishment = async () => {
-            const _establishment = await getEstablishmentDetails(establishmentId);
-            if (_establishment === null || _establishment === undefined) {
-                return;
-            }
+        const fetchEstablishmentServices = async () => {
+            const establishmentCats = await getEstablishmentCats(establishment.id);
             let _categories: ICategory[] = [];
-            if (_establishment?.availableServices) {
+            if (establishmentCats) {
                 let _cats: ICategory[] = await retrieveCategories();
                 for (let cat of _cats) {
-                    if (_establishment?.availableServices.includes(cat.id)) {
+                    if (establishmentCats.includes(cat.id)) {
                         _categories.push(cat);
                     }
                 }
             }
-            setEstablishment(_establishment);
             setCategories(_categories);
         }
-        fetchEstablishment();
-    }, [establishmentId]);
+
+        fetchEstablishmentServices();
+    }, [establishment.id]);
 
     return (
         <View style={styles.container}>
             <View style={styles.imageStyle} >
-                <ImageWithRating right rating={establishment?.rating.toFixed(1) ?? "0.0"} nvotes={establishment?.nvotes ?? 0} data={establishment?.images ? establishment.images[0]?.data : defaultBarberImage} />
+                <PageList<IImage>
+                    type={PageListType.PAGERVIEW}
+                    initialItems={establishment.images}
+                    pageSize={4}
+                    renderItem={
+                        ({ item, index }: { item: IImage, index: number }) => {
+                            return (
+                                <Image
+                                    key={index}
+                                    cachePolicy="memory-disk"
+                                    source={{ uri: (item.data || defaultBarberImage) }}
+                                    style={listStyles.imageStyle}
+                                />
+                            )
+                        }
+                    }
+                    requestFunction={(page: IPage<IImage>, params?: Record<string, string | number | boolean>) => getImageList(`establishment/${establishment.id}`, page, params)} />
+                <ImageRating
+                    rating={establishment.nvotes > 0 ? (establishment.sumVotes / establishment.nvotes).toFixed(1) : "0.0"}
+                    nvotes={establishment?.nvotes ?? 0}
+                    right
+                />
             </View>
             <TouchableOpacity style={styles.nameContainer} onPress={() => { if (establishment) gotoLocation(establishment?.address, establishment?.latitude, establishment.longitude) }}>
                 <Text style={styles.name}>{establishment?.name}</Text>
@@ -70,8 +91,8 @@ export default function EstablishmentDetails({ navigation }: Props) {
             <View style={styles.servicesContainer}>
                 {categories && categories.map((category) => (
                     <Category
-                        padding={15}
-                        style={{ marginHorizontal: 5 }}
+                        padding={styles.categoryPadding.padding}
+                        style={{ marginHorizontal: styles.categoryPadding.margin }}
                         key={category.id}
                         id={category.id}
                         icon={
@@ -94,14 +115,9 @@ export default function EstablishmentDetails({ navigation }: Props) {
                     stylesInput={{ width: '100%' }}
                     onPress={
                         () => {
-                            Alert({
-                                type: ALERT_TYPE.INFO,
-                                title: texts.updateRequired,
-                                message: texts.updateRequiredMessage,
-                                buttonText: 'checkAvailability'
-                            });
+                            navigation.navigate(texts.services.title, { establishmentId: establishment.id });
                         }
-                    } title={texts.checkAvailability} />
+                    } title={texts.appointments.book} />
             </View>
 
         </View >

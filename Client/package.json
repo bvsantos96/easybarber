@@ -46,7 +46,9 @@
     "react-native-web": "~0.19.6",
     "react-native-webview": "13.8.6",
     "world-countries": "^5.0.0",
-    "zustand": "^4.5.4"
+    "zustand": "^4.5.4",
+    "react-native-pager-view": "6.3.0",
+    "expo-image": "~1.13.0"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",

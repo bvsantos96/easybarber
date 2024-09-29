@@ -26,10 +26,10 @@ public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Ima
     @Query("DELETE FROM #{#entityName} i WHERE i.entity.id = :id")
     void deleteByEntityId(@Param("id") long id);
 
-    @Query("SELECT new com.teamsantos.easybarber.DTO.image.ImageDTO(i.id, i.data, i.isMain) FROM #{#entityName} i WHERE i.entity.id = :entityId")
+    @Query("SELECT new com.teamsantos.easybarber.DTO.image.ImageDTO(i.id, i.data, i.isMain) FROM #{#entityName} i WHERE i.entity.id = :entityId ORDER BY i.isMain DESC, i.id ASC")
     Page<ImageDTO> findByEntityId(long entityId, Pageable pageable);
 
-    @Query("SELECT new com.teamsantos.easybarber.DTO.image.ImageDTO(i.id, i.data,i.isMain) FROM #{#entityName} i WHERE i.entity.id = :entityId")
+    @Query("SELECT new com.teamsantos.easybarber.DTO.image.ImageDTO(i.id, i.data,i.isMain) FROM #{#entityName} i WHERE i.entity.id = :entityId ORDER BY i.isMain DESC, i.id ASC")
     List<ImageDTO> findAllByEntityId(long entityId);
 
     @Query(value = """

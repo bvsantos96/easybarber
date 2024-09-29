@@ -51,6 +51,7 @@
     "search": "Search Barber Here",
     "searchAddress": "Search address here",
     "tabs": {
+        "back": "Back",
         "homeNavigator" : "HomeNavigator",
         "employeeDetails": "Employee Details",
         "establishmentDetails": "Establishment Details",
@@ -124,12 +125,15 @@
     },
     "appointments": {
         "upcomming": "Upcoming Appointments",
+        "book": "Book Appointment",
     },
     "services" : {
         "title": "Services",
+        "select": "Select service you want"
     },
     "about" : {
         "title": "About",
     },
     "checkAvailability": "Check Availability",
+    "currency": "€",
 }
