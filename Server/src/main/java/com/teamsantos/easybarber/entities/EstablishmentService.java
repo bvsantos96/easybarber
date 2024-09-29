@@ -43,6 +43,10 @@ public class EstablishmentService {
     @ToString.Exclude
     @BatchSize(size = 10)
     private Set<Appointment> appointment;
+    @OneToMany(mappedBy = "service", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @BatchSize(size = 10)
+    private Set<EstablishmentServiceEmployee> establishmentServiceEmployee;
 
     @PrePersist
     public void prePersist() {

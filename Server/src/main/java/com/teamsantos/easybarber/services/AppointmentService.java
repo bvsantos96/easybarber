@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -149,13 +150,13 @@ public class AppointmentService {
     }
 
     @Transactional(readOnly = true)
-    public List<AppointmentReminderDTO> getNextDayAppointmentsNotReminded() throws Exception{
+    public List<AppointmentReminderDTO> getNextDayAppointmentsNotReminded() throws Exception {
         LocalDate tomorrow = LocalDate.now().plusDays(1);
         return appointmentRepository.findNextDayAppointmentsNotReminded(tomorrow);
     }
 
     @Transactional
-    public void setAppointmentAsReminded(Long appointmentID) throws Exception{
+    public void setAppointmentAsReminded(Long appointmentID) throws Exception {
         Appointment appointment = appointmentRepository.findById(appointmentID)
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
 
