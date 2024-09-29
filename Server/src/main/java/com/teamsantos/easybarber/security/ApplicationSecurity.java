@@ -34,7 +34,7 @@ public class ApplicationSecurity {
 
     @Value("${cors.allowed.origins}")
     private String allowedOrigins;
-    
+
     @Autowired
     public ApplicationSecurity(JwtUtils jwtUtils,
             PrePermissionEvaluator establishmentPermissionEvaluator) {
