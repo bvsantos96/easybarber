@@ -8,14 +8,16 @@ import { View, Text } from "react-native";
 import { useTheme } from "@styles/ThemeContext";
 import { MarkedDates } from "react-native-calendars/src/types";
 import { Underline } from "@components/Underline";
+import TimeSlot from "@components/TimeSlot";
+import TimeSlotView from "@components/TimeSlotView";
+import PagerView from "react-native-pager-view";
 
 export default function Availability() {
     const theme = useTheme();
     const texts = require('@lang/en.json');
     const styles = getStyles();
     const [date, setDate] = useState<string>("");
-    const [time, setTime] = useState<string>("");
-
+    const [time, setTime] = useState<TimeSlot | null>(null);
     const disableDates = (dates: string[]): MarkedDates => {
         let disabled: MarkedDates = {};
         dates.forEach(d => {
@@ -24,6 +26,34 @@ export default function Availability() {
         return disabled;
     }
     const [unSelectable, setUnSelectable] = useState<MarkedDates>(disableDates(["2024-09-10"]));
+    const nLines = 2;
+    const nCols = 2;
+    const elemsPerPage = nLines * nCols;
+    const buildTimeSlotViews = (slots: TimeSlot[]): TimeSlot[][][] => {
+        let viewSlots: TimeSlot[][][] = [];
+        for (let i = 0; i < slots.length; i += elemsPerPage) {
+            let _vsl: TimeSlot[][] = [];
+            for (let j = i; j < slots.length && j < i + nLines; j++) {
+                let _vsc: TimeSlot[] = [];
+                for (let k = j; k < slots.length && k < j + nCols; k++) {
+                    _vsc.push(slots[k]);
+                }
+                _vsl.push(_vsc);
+            }
+            viewSlots.push(_vsl);
+        }
+        return viewSlots;
+    }
+    const [timeSlots, setTimeSlots] = useState<TimeSlot[][][]>(buildTimeSlotViews([
+        { start: "09:00", end: "09:30" },
+        { start: "09:30", end: "10:00" },
+        { start: "10:00", end: "10:30" },
+        { start: "10:30", end: "11:00" },
+        { start: "11:00", end: "11:30" },
+        { start: "11:30", end: "12:00" },
+    ]));
+
+
 
     return (
         <Selection
@@ -34,12 +64,15 @@ export default function Availability() {
                     Banner({ type: ALERT_TYPE.SUCCESS, message: "Booked Appointment" });
                 }
             }
-            selected={date.length > 0 && time.length > 0}
+            selected={date.length > 0 && time !== null}
         >
             <View style={styles.calendar}>
                 <Calendar
                     onDayPress={day => {
-                        setDate(day.dateString);
+                        if (day.dateString !== date) {
+                            setDate(day.dateString);
+                            setTime(null);
+                        }
                     }}
                     markedDates={{
                         [date]: { selected: true, disableTouchEvent: true },
@@ -63,6 +96,17 @@ export default function Availability() {
                     <Text style={styles.slotsTitle}>{texts.appointments.slotsAvailable}</Text>
                     <Underline />
                 </View>
+                <PagerView style={styles.timeSlotsContainer}>
+                    {timeSlots.map((item, index) => (
+                        <TimeSlotView
+                            key={index}
+                            offset={index * elemsPerPage}
+                            select={setTime}
+                            selected={time}
+                            slots={item}
+                        />
+                    ))}
+                </PagerView>
             </View>
         </Selection>
     );
