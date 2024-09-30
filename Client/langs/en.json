@@ -129,6 +129,8 @@
         "selectBarber": "Select Barber",
         "selectService": "Select service",
         "schedule": "Schedule Date & Time",
+        "scheduleSelection": "Click on any date and check available slots.",
+        "slotsAvailable": "Slots Avalilable",
     },
     "services" : {
         "title": "Services",
