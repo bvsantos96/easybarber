@@ -75,6 +75,7 @@
     "availableTime": "Available Time",
     "from": "From",
     "to": "To",
+    "lowerTo": "to",
     "applyFilter": "Apply Filters",
     "category": "Category",
     "gettingStarted": "Getting Started",
