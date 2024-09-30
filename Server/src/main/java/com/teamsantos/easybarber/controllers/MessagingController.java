@@ -36,7 +36,7 @@ public class MessagingController {
         try {
             final String code = messagingService.generateCode();
             messagingService.saveVerificationCode(sms.getPhoneNr(), code);
-            messagingService.sendMessage(sms.getPhoneNr(), messagingService.verificationCodeBodyMessage(code));
+            messagingService.verificationCodeMessage(code, sms);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Failed to send confirmation message: " + e.getMessage(), e);
@@ -51,7 +51,7 @@ public class MessagingController {
         try {
             final String code = messagingService.generateCode();
             messagingService.saveVerificationCode(sms.getPhoneNr(), code);
-            messagingService.sendMessage(sms.getPhoneNr(), messagingService.pwdRecoveryCodeBodyMessage(code));
+            messagingService.pwdRecoveryCodeMessage(code, sms);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Failed to send confirmation message: " + e.getMessage(), e);

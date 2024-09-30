@@ -5,4 +5,5 @@ import lombok.Data;
 @Data
 public class RequestConfirmationCode {
     private String phoneNr;
+    private String phoneCountryCode;
 }
