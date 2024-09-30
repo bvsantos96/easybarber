@@ -8,6 +8,7 @@ import ServiceSelection from './ServiceSelection';
 import EstablishmentDetails from './EstablishmentDetails';
 import { getStyles } from '../styles/HomeNavigator';
 import EmployeeSelection from './EmployeeSelection';
+import Availability from './Availability';
 
 
 const Header = ({ navigation, title }) => {
@@ -59,6 +60,13 @@ export default function HomeNavigator() {
                         ),
                     }}
                     name={texts.employees.title} component={EmployeeSelection} />
+                <Stack.Screen
+                    options={{
+                        header: ({ navigation }) => (
+                            <Header navigation={navigation} title={texts.appointments.schedule} />
+                        ),
+                    }}
+                    name={texts.appointments.schedule} component={Availability} />
             </Stack.Navigator>
         </View>
     );

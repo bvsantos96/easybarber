@@ -5,15 +5,6 @@ export const getStyles = () => {
     const theme = useTheme();
     const padding = (theme.dimensions.width - 356.11 * theme.dimensions.absoluteWidth) / 2;
     return StyleSheet.create({
-        container: {
-            width: theme.dimensions.width,
-            height: theme.dimensions.height,
-            backgroundColor: theme.colors.backgroundColor,
-            textAlign: 'center',
-            alignSelf: 'center',
-            alignItems: 'center',
-            alignContent: 'center',
-        },
         title: {
             fontSize: theme.fonts.size._20,
             fontFamily: 'Poppins',
@@ -96,12 +87,6 @@ export const getStyles = () => {
             left: padding,
             maxWidth: theme.dimensions.width - 2 * padding,
             minHeight: 95 * theme.dimensions.absoluteHeight,
-        },
-        button: {
-            position: 'absolute',
-            bottom: 255 * theme.dimensions.absoluteHeight,
-            left: padding,
-            width: theme.dimensions.width - 2 * padding,
         },
         categoryIcon: {
             width: 20 * theme.dimensions.absoluteWidth,
