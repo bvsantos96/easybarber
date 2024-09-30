@@ -5,6 +5,7 @@ import { Image } from 'expo-image';
 
 import { getStyles } from '../styles/EstablishmentDetails';
 import { getStyles as getListStyles } from '../styles/List';
+import { getStyles as getSelectionStyles } from "../styles/Selection";
 
 import { getEstablishmentCats, getImageList } from '../utils/ApiRequest';
 import { gotoLocation } from '../utils/Location';
@@ -29,6 +30,7 @@ type RouteParams = {
 export default function EstablishmentDetails({ navigation }: Props) {
     const texts = require("@lang/en.json");
     const styles = getStyles();
+    const selectionStyles = getSelectionStyles();
     const listStyles = getListStyles();
 
     const route = useRoute<RouteProp<RouteParams, 'establishment'>>();
@@ -54,7 +56,7 @@ export default function EstablishmentDetails({ navigation }: Props) {
     }, [establishment.id]);
 
     return (
-        <View style={styles.container}>
+        <View style={selectionStyles.container}>
             <View style={styles.imageStyle} >
                 <PageList<IImage>
                     type={PageListType.PAGERVIEW}
@@ -109,7 +111,7 @@ export default function EstablishmentDetails({ navigation }: Props) {
                 <Underline />
             </View>
             <Text style={styles.aboutText}>{establishment?.description}</Text>
-            <View style={styles.button}>
+            <View style={selectionStyles.button}>
                 <Button
                     stylesInput={{ width: '100%' }}
                     onPress={

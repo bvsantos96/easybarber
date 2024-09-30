@@ -4,11 +4,13 @@ import { View, Text, FlatList } from "react-native";
 
 import { getEstablishmentServiceEmployees } from "../utils/ApiRequest";
 import { getStyles } from "../styles/ServiceSelection";
+import { getStyles as getSelectionStyles } from "../styles/Selection";
 import { Props } from "./EstablishmentDetails";
 import SelectionItem from "../components/SelectionItems";
 import Button from '../components/Button';
 import { ALERT_TYPE } from "react-native-alert-notification";
 import { Banner } from "../components/Alert";
+import Selection from "./Selection";
 
 type RouteParams = {
     appointment: {
@@ -18,8 +20,8 @@ type RouteParams = {
 };
 
 export default function EmployeeSelection({ navigation }: Props) {
-    const styles = getStyles();
     const texts = require('@lang/en.json');
+    const styles = getStyles();
     const route = useRoute<RouteProp<RouteParams, 'appointment'>>();
     const { establishmentId, serviceId } = route.params;
     const [employees, setEmployees] = useState<ImageEntity[]>();
@@ -34,8 +36,15 @@ export default function EmployeeSelection({ navigation }: Props) {
     }, [establishmentId]);
 
     return (
-        <View style={styles.container} >
-            <Text style={styles.selectTextContainer}>{texts.employees.select}</Text>
+        <Selection
+            buttonText={texts.appointments.schedule}
+            selectionText={texts.employees.select}
+            selected={true}
+            onButtonPress={
+                () => {
+                    navigation.navigate(texts.appointments.schedule, { establishmentId, serviceId, selected });
+                }
+            }>
             <View style={styles.listContainer}>
                 {employees && employees.length > 0 && (
                     <FlatList
@@ -69,15 +78,6 @@ export default function EmployeeSelection({ navigation }: Props) {
                     />
                 )}
             </View>
-            <View style={styles.button}>
-                <Button
-                    stylesInput={{ width: '100%' }}
-                    onPress={
-                        () => {
-                            Banner({ type: ALERT_TYPE.SUCCESS, message: `${selected === 0 && "No"} Employee ${selected !== 0 ? selected : ""} selected` });
-                        }
-                    } title={texts.appointments.schedule} />
-            </View>
-        </View>
+        </Selection>
     );
 }

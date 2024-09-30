@@ -14,8 +14,6 @@ import { getMobileCode } from '../utils/ApiRequest';
 import { Country } from 'react-native-country-picker-modal';
 import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
-import { Alert } from './Alert';
-import { ALERT_TYPE } from 'react-native-alert-notification';
 import texts from "../langs/en.json";
 
 export default function Register({ navigation, toggleNewUser, setMobileNr }: Props) {
