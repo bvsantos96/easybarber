@@ -20,10 +20,12 @@ export default function TimeSlotView({ slots = [], select, selected, offset }: P
     return (
         <View style={styles.container}>
             {slots.map((line, index) => (
-                <View style={styles.line}>
-                    {line.map((slot, j) => (
-                        <TimeSlot key={offset + index * line.length + j} slot={slot} selected={selected === slot} select={select} />
-                    ))}
+                <View key={offset + index * line.length} style={styles.line}>
+                    {line.map((slot, j) => {
+                        return (
+                            <TimeSlot key={offset + index * line.length + j} slot={slot} selected={selected === slot} select={select} />
+                        )
+                    })}
                 </View>
             ))}
         </View>
