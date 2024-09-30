@@ -26,5 +26,31 @@ export const getStyles = () => {
             lineHeight: 24 * theme.dimensions.absoluteHeight,
             letterSpacing: 0.02,
         },
+        "timeSlotsContainer": {
+            top: 10 * theme.dimensions.absoluteHeight,
+            height: 140 * theme.dimensions.absoluteHeight,
+        },
+        "slotContainer": {
+            width: 155 * theme.dimensions.absoluteWidth,
+            height: 51 * theme.dimensions.absoluteHeight,
+            borderWidth: 2 * theme.dimensions.absoluteWidth,
+            borderRadius: 50 * theme.dimensions.absoluteMinDimension,
+            justifyContent: 'center',
+            alignItems: 'center'
+        },
+        "selectedBorder": {
+            borderColor: theme.colors.mainColor,
+        },
+        "slotText": {
+            fontFamily: 'Poppins',
+            fontSize: theme.fonts.size._12,
+            fontWeight: 600,
+            lineHeight: 18 * theme.dimensions.absoluteHeight,
+            letterSpacing: 0.02,
+            textAlign: 'center',
+        },
+        selectedText: {
+            color: theme.colors.mainColor,
+        },
     });
 }

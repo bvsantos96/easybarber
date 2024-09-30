@@ -208,3 +208,8 @@ declare interface ImageEntity extends Identifiable {
     name: string;
     image: string;
 }
+
+declare interface TimeSlot {
+    start: string;
+    end: string;
+}
