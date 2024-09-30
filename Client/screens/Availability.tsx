@@ -8,7 +8,6 @@ import { View, Text } from "react-native";
 import { useTheme } from "@styles/ThemeContext";
 import { MarkedDates } from "react-native-calendars/src/types";
 import { Underline } from "@components/Underline";
-import TimeSlot from "@components/TimeSlot";
 import TimeSlotView from "@components/TimeSlotView";
 import PagerView from "react-native-pager-view";
 
@@ -26,14 +25,16 @@ export default function Availability() {
         return disabled;
     }
     const [unSelectable, setUnSelectable] = useState<MarkedDates>(disableDates(["2024-09-10"]));
-    const nLines = 2;
-    const nCols = 2;
-    const elemsPerPage = nLines * nCols;
+
+    const nLines = Math.floor(styles.calendar.width / (styles.slotContainer.width + 10));
+    const nCols = Math.floor(styles.timeSlotsContainer.height / (styles.slotContainer.height + 10));
+    const elemsPerPage: number = nLines * nCols;
+
     const buildTimeSlotViews = (slots: TimeSlot[]): TimeSlot[][][] => {
         let viewSlots: TimeSlot[][][] = [];
         for (let i = 0; i < slots.length; i += elemsPerPage) {
             let _vsl: TimeSlot[][] = [];
-            for (let j = i; j < slots.length && j < i + nLines; j++) {
+            for (let j = i; j < slots.length && j < i + elemsPerPage; j += nCols) {
                 let _vsc: TimeSlot[] = [];
                 for (let k = j; k < slots.length && k < j + nCols; k++) {
                     _vsc.push(slots[k]);
