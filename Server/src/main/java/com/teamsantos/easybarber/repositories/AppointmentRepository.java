@@ -16,6 +16,7 @@ import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.entities.Appointment;
+import com.teamsantos.easybarber.entities.ScheduleException;
 
 @Repository
 public interface AppointmentRepository
@@ -108,18 +109,35 @@ public interface AppointmentRepository
     Page<AppointmentListDTO> findAllToEmployee(AppointmentFilter filter, Pageable pageable);
 
     @Query("""
-                SELECT new com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO(
-                    s.id,
-                    s.user.name,
-                    s.user.mobileInformation,
-                    s.date,
-                    s.time,
-                    s.establishment.name,
-                    s.employee.user.name
-                )
-                FROM Appointment s
-                WHERE s.reminded = false
-                AND s.date = :date
-        """)
+                    SELECT new com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO(
+                        s.id,
+                        s.user.name,
+                        s.user.mobileInformation,
+                        s.date,
+                        s.time,
+                        s.establishment.name,
+                        s.employee.user.name
+                    )
+                    FROM Appointment s
+                    WHERE s.reminded = false
+                    AND s.date = :date
+            """)
     List<AppointmentReminderDTO> findNextDayAppointmentsNotReminded(@Param("date") LocalDate date);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.entities.ScheduleException(
+                s.employee.id,
+                s.establishment.id,
+                s.date,
+                s.time,
+                s.service.service.duration
+            )
+            FROM Appointment s
+            WHERE s.date = :from
+                AND (:employeeId = null OR s.employee.id = :employeeId)
+                AND s.establishment.id = :establishmentId
+                AND s.active = true
+            """)
+    List<ScheduleException> findAppointmentsByDateEmployeeEstablishment(LocalDate from, Long employeeId,
+            long establishmentId);
 }

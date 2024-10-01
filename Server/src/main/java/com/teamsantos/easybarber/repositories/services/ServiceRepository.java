@@ -84,4 +84,11 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
                 AND (:#{#filter.description} is null or lower(s.description) like lower(concat('%', :#{#filter.description}, '%')))
             """)
     Page<ServiceWithImagesDTO> findAllWEmployee(@Param("filter") ServiceWithEmployeeFilter filter, Pageable pageable);
+
+    @Query("""
+            SELECT s.duration
+            FROM Service s
+            WHERE s.id = :serviceId
+            """)
+    Integer getDuration(Long serviceId);
 }

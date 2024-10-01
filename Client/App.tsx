@@ -44,7 +44,7 @@ export const resetNavigation = (navigation: NavigationProp<any, any>, route: str
     });
 }
 
-const OnBoarding = ({ navigation }) => {
+const OnBoarding = ({ navigation }: PropNavigation) => {
     const Onboarding1 = require("./screens/Onboarding1").default;
     const Onboarding2 = require("./screens/Onboarding2").default;
     const translateXAnimation = useRef(new Animated.Value(0)).current;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getStyles } from "../styles/Availability";
 import Selection from "./Selection";
 import { ALERT_TYPE } from "react-native-alert-notification";
@@ -10,11 +10,26 @@ import { MarkedDates } from "react-native-calendars/src/types";
 import { Underline } from "@components/Underline";
 import TimeSlotView from "@components/TimeSlotView";
 import PagerView from "react-native-pager-view";
+import { Props } from "./EmployeeDetails";
+import { RouteProp, useRoute } from "@react-navigation/native";
+import { getAvailability, getUnavailableDates, setAppointment } from "utils/ApiRequest";
+import { twoDigits } from "utils/Utils";
 
-export default function Availability() {
+type RouteParams = {
+    appointment: {
+        establishmentId: number;
+        serviceId: number;
+        employeeId: number;
+    };
+};
+
+export default function Availability({ navigation }: Props) {
+    const pagerRef = React.useRef<PagerView>(null);
     const theme = useTheme();
     const texts = require('@lang/en.json');
     const styles = getStyles();
+    const route = useRoute<RouteProp<RouteParams, 'appointment'>>();
+    const { establishmentId, serviceId, employeeId } = route.params;
     const [date, setDate] = useState<string>("");
     const [time, setTime] = useState<TimeSlot | null>(null);
     const disableDates = (dates: string[]): MarkedDates => {
@@ -24,7 +39,28 @@ export default function Availability() {
         });
         return disabled;
     }
-    const [unSelectable, setUnSelectable] = useState<MarkedDates>(disableDates(["2024-09-10"]));
+
+    const disableUntilToday = (): MarkedDates => {
+        let disabled: MarkedDates = {};
+        const today = new Date();
+        let _month = month;
+        let _year = year;
+        if (month === undefined || month === 0 || year === undefined || year === 0) {
+            _month = today.getMonth() + 1;
+            _year = today.getFullYear();
+        }
+
+        for (let _date = new Date(_year, _month - 1, 1, 23, 59); _date.getMonth() === _month - 1 && _date < today; _date.setDate(_date.getDate() + 1)) {
+            const dateString = _date.toISOString().split('T')[0];
+            disabled[dateString] = { selected: false, disabled: true, disableTouchEvent: true };
+        }
+        return disabled;
+    }
+
+    const [unSelectable, setUnSelectable] = useState<MarkedDates>(disableUntilToday());
+    const [calculatedMonth, setCalculatedMonth] = useState<Set<string>>(new Set());
+    const [month, setMonth] = useState<number>(0);
+    const [year, setYear] = useState<number>(0);
 
     const nLines = Math.floor(styles.calendar.width / (styles.slotContainer.width + 10));
     const nCols = Math.floor(styles.timeSlotsContainer.height / (styles.slotContainer.height + 10));
@@ -45,16 +81,62 @@ export default function Availability() {
         }
         return viewSlots;
     }
-    const [timeSlots, setTimeSlots] = useState<TimeSlot[][][]>(buildTimeSlotViews([
-        { start: "09:00", end: "09:30" },
-        { start: "09:30", end: "10:00" },
-        { start: "10:00", end: "10:30" },
-        { start: "10:30", end: "11:00" },
-        { start: "11:00", end: "11:30" },
-        { start: "11:30", end: "12:00" },
-    ]));
+    const [timeSlots, setTimeSlots] = useState<TimeSlot[][][]>([]);
 
+    const getStartingHour = (today: Date): string => {
+        const todayHourAndMinute = twoDigits(today.getHours()) + ":" + twoDigits(today.getMinutes());
+        return date == today.toISOString().split('T')[0] ? todayHourAndMinute : "00:01";
+    }
 
+    useEffect(() => {
+        const today = new Date();
+        const fetchAvailability = async () => {
+            let availability: TimeSlots = await getAvailability(establishmentId, serviceId, employeeId, date, getStartingHour(today));
+            setTimeSlots(buildTimeSlotViews(availability.slots));
+        }
+
+        if (date.length > 0) {
+            fetchAvailability();
+        }
+    }, [date]);
+
+    useEffect(() => {
+        pagerRef?.current?.forceUpdate();
+    }, [timeSlots]);
+
+    useEffect(() => {
+        const today = new Date();
+        if (month === 0 || year === 0) {
+            setMonth(today.getMonth() + 1);
+            setYear(today.getFullYear());
+            return;
+        }
+        const monthYearStr = `${month}-${year}`;
+        if (month > 0 && year > 0 && !calculatedMonth.has(monthYearStr)) {
+            setCalculatedMonth(new Set([...calculatedMonth, monthYearStr]));
+            getUnavailableDates(establishmentId, serviceId, employeeId, year, month, getStartingHour(new Date())).then(dates => {
+                const _disabledDates = { ...unSelectable, ...disableDates(dates) };
+                setUnSelectable(_disabledDates);
+                // select the first available date
+                let day = 1;
+                if (month === today.getMonth() + 1 && year === today.getFullYear()) {
+                    day = today.getDate();
+                }
+                for (let _date = new Date(year, month - 1, day, 23, 59); _date.getMonth() <= month + 1; _date.setDate(_date.getDate() + 1)) {
+                    const dateString = _date.toISOString().split('T')[0];
+                    if (!_disabledDates[dateString]) {
+                        if (_date.getMonth() != month - 1) {
+                            setMonth(_date.getMonth() + 1);
+                            setYear(_date.getFullYear());
+                        }
+                        setDate(dateString);
+                        return;
+                    }
+                }
+                setDate("");
+            });
+        }
+    }, [month, year]);
 
     return (
         <Selection
@@ -62,13 +144,31 @@ export default function Availability() {
             selectionText={texts.appointments.scheduleSelection}
             onButtonPress={
                 () => {
-                    Banner({ type: ALERT_TYPE.SUCCESS, message: "Booked Appointment" });
+                    if (employeeId === 0 || employeeId === undefined) {
+                        navigation.navigate(texts.employees.title, { establishmentId, serviceId, date, startHour: time?.start });
+                        return;
+                    }
+                    setAppointment({
+                        id: 0,
+                        establishmentId: establishmentId,
+                        serviceId: serviceId,
+                        employeeId: employeeId,
+                        date: date,
+                        time: time?.start || ""
+                    }).then((success: boolean) => {
+                        if (success) {
+                            navigation.navigate(texts.appointments.appointment);
+                        } else {
+                            Banner({ type: ALERT_TYPE.DANGER, message: "Failed to Book Appointment" });
+                        }
+                    });
                 }
             }
             selected={date.length > 0 && time !== null}
         >
             <View style={styles.calendar}>
                 <Calendar
+                    onMonthChange={date => { setYear(date.year); setMonth(date.month); }}
                     onDayPress={day => {
                         if (day.dateString !== date) {
                             setDate(day.dateString);
@@ -97,17 +197,26 @@ export default function Availability() {
                     <Text style={styles.slotsTitle}>{texts.appointments.slotsAvailable}</Text>
                     <Underline />
                 </View>
-                <PagerView style={styles.timeSlotsContainer}>
-                    {timeSlots.map((item, index) => (
-                        <TimeSlotView
-                            key={index}
-                            offset={index * elemsPerPage}
-                            select={setTime}
-                            selected={time}
-                            slots={item}
-                        />
-                    ))}
-                </PagerView>
+                {timeSlots.length > 0 && (
+                    <PagerView
+                        ref={pagerRef}
+                        style={styles.timeSlotsContainer}>
+                        {timeSlots && timeSlots.map((item, index) => (
+                            <TimeSlotView
+                                key={index}
+                                offset={index * elemsPerPage}
+                                select={setTime}
+                                selected={time}
+                                slots={item}
+                            />
+                        ))}
+                    </PagerView>
+                )}
+                {timeSlots.length === 0 && (
+                    <View style={styles.noSlotsContainer}>
+                        <Text style={styles.noSlots}>{texts.appointments.noSlots}</Text>
+                    </View>
+                )}
             </View>
         </Selection>
     );

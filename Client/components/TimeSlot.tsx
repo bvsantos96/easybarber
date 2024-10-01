@@ -15,7 +15,7 @@ export default function TimeSlot({ select, slot, selected }: TimeSlotProps) {
         <Pressable
             onPress={() => { select(slot) }}
             style={[styles.slotContainer, selected ? styles.selectedBorder : {}]}>
-            <Text style={[styles.slotText, selected ? styles.selectedText : {}]}>{`${slot.start}AM ${texts.to} ${slot.end}AM`}</Text>
+            <Text style={[styles.slotText, selected ? styles.selectedText : {}]}>{`${slot.start} ${texts.to} ${slot.end}`}</Text>
         </Pressable>
     );
 }
