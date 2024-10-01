@@ -320,6 +320,42 @@ export const getEstablishmentCats = async (id: number): Promise<number[] | undef
     return getItemsFromRequest(result);
 }
 
+export const getUnavailableDates = async (establishmentId: number, serviceId: number, employeeId: number, year: number, month: number, startHour: string): Promise<string[]> => {
+    const params = {
+        establishmentId: establishmentId,
+        serviceId: serviceId,
+        ...(employeeId == 0 ? {} : { employeeId: employeeId }),
+        available: false,
+        startHour: startHour,
+    };
+    const url = parsePathParams(`schedules/availabledays/year/${year}/month/${month}`, params);
+    const result = await request<string[]>(url, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    return getItemsFromRequest<string[]>(result);
+}
+
+export const setAppointment = async (appointment: Appointment): Promise<boolean> => {
+    const result = await request<number>("appointment", "POST", appointment, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    try {
+        getItemsFromRequest<number>(result);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+export const getAvailability = async (establishmentId: number, serviceId: number, employeeId: number, date: string, startHour: string): Promise<TimeSlots> => {
+    const params = {
+        establishmentId: establishmentId,
+        serviceId: serviceId,
+        from: date,
+        startHour: startHour,
+        ...(employeeId == 0 ? {} : { employeeId: employeeId }),
+    };
+    const url = parsePathParams("schedules/day", params);
+    const result = await request<TimeSlots>(url, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    return getItemsFromRequest<TimeSlots>(result);
+}
+
 export const getEstablishmentServiceEmployees = async (establishmentId: number, serviceId: number): Promise<ImageEntity[]> => {
     const result = await request<ImageEntity[]>(`establishment/${establishmentId}/service/${serviceId}/employees`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
     return getItemsFromRequest<ImageEntity[]>(result);

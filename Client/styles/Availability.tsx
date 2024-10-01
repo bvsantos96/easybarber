@@ -52,5 +52,20 @@ export const getStyles = () => {
         selectedText: {
             color: theme.colors.mainColor,
         },
+        noSlotsContainer: {
+            height: 140 * theme.dimensions.absoluteHeight,
+            justifyContent: 'center',
+            alignSelf: 'center',
+            alignItems: 'center',
+        },
+        noSlots: {
+            fontFamily: 'Poppins',
+            textAlign: 'center',
+            fontSize: theme.fonts.size._12,
+            fontWeight: 600,
+            lineHeight: 18 * theme.dimensions.absoluteHeight,
+            letterSpacing: 0.02,
+            color: theme.colors.mainColor,
+        },
     });
 }
