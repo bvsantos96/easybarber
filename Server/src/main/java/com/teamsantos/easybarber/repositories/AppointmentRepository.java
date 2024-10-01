@@ -3,6 +3,7 @@ package com.teamsantos.easybarber.repositories;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
+import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.entities.Appointment;
 import com.teamsantos.easybarber.entities.ScheduleException;
 
@@ -140,4 +142,42 @@ public interface AppointmentRepository
             """)
     List<ScheduleException> findAppointmentsByDateEmployeeEstablishment(LocalDate from, Long employeeId,
             long establishmentId);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO(
+                s.id,
+                s.employee.id,
+                s.establishment.id,
+                s.date,
+                s.time,
+                s.service.service.duration
+            )
+            FROM Appointment s
+            WHERE s.date = :from
+                AND (:employeeId = null OR s.employee.id = :employeeId)
+                AND s.establishment.id = :establishmentId
+                AND s.active = true
+            """)
+    List<ScheduleExceptionDTO> findAppointmentsByDateEmployeeEstablishmentDTO(LocalDate from,
+            Long employeeId, Long establishmentId);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO(
+                s.id,
+                s.employee.id,
+                s.establishment.id,
+                s.date,
+                s.time,
+                s.service.service.duration
+            )
+            FROM Appointment s
+            WHERE s.date = :from
+                AND (:employeeIds IS NULL OR s.employee.id IN :employeeIds)
+                AND s.establishment.id = :establishmentId
+                AND s.active = true
+            """)
+    List<ScheduleExceptionDTO> findAppointmentsByDateEmployeesEstablishmentDTO(
+            @Param("from") LocalDate from,
+            @Param("employeeIds") Set<Long> employeeIds,
+            @Param("establishmentId") Long establishmentId);
 }
