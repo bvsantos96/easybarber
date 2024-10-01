@@ -209,7 +209,20 @@ declare interface ImageEntity extends Identifiable {
     image: string;
 }
 
+declare interface TimeSlots {
+    availableTimes: TimeSlot[];
+    slots: TimeSlot[];
+}
+
 declare interface TimeSlot {
     start: string;
     end: string;
+}
+
+declare interface Appointment extends Identifiable {
+    employeeId: number;
+    establishmentId: number;
+    serviceId: number;
+    date: string;
+    time: string;
 }

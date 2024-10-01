@@ -20,7 +20,8 @@ public interface EmployeeScheduleRepository
         extends JpaRepository<EmployeeSchedule, Long>, JpaSpecificationExecutor<EmployeeSchedule> {
 
     @Override
-    @NonNull Optional<EmployeeSchedule> findById(@NonNull Long id);
+    @NonNull
+    Optional<EmployeeSchedule> findById(@NonNull Long id);
 
     Optional<EmployeeSchedule> findByEmployeeIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqualAndActive(
             Long id, DAY_OF_WEEK day, LocalTime startHour, LocalTime endHour, boolean active);

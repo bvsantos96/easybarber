@@ -157,35 +157,33 @@ public class ScheduleFilter {
             } else {
                 setFrom(LocalDate.now());
                 setTo(from.plusDays(getDayOfWeek().size()));
-            }
-        } else {
-            if (getTo() == null) {
-                if (getDayOfWeek() != null && !getDayOfWeek().isEmpty()) {
-                    setTo(from.plusDays(getDayOfWeek().size()));
-                } else {
-                    setTo(getFrom());
-                }
-            }
-            if (getDayOfWeek() != null && !getDayOfWeek().isEmpty()) {
-                if (getTo() != null && getTo().isBefore(getFrom())) {
-                    LocalDate temp = getTo();
-                    setTo(getFrom());
-                    setFrom(temp);
-                }
-                Set<DAY_OF_WEEK> days = new HashSet<>();
-                int startDay = Utils.getDayOfWeek(getFrom()).ordinal();
-                int nDays = (int) Math.min(7, getTo().toEpochDay() - getFrom().toEpochDay()) + 1;
-                DAY_OF_WEEK[] DAY_OF_WEEK = EmployeeSchedule.DAY_OF_WEEK.values();
-                days.add(DAY_OF_WEEK[startDay]);
-                for (int i = 1; i < nDays; i++) {
-                    days.add(DAY_OF_WEEK[(startDay + i) % 7]);
-                }
-                setDayOfWeek(days);
-            } else {
-                throw new Exception("No day of week specified");
+                return;
             }
         }
-
+        if (getTo() == null) {
+            if (getDayOfWeek() != null && !getDayOfWeek().isEmpty()) {
+                setTo(from.plusDays(getDayOfWeek().size()));
+                return;
+            } else {
+                setTo(getFrom().plusDays(1));
+            }
+        }
+        if (getDayOfWeek() == null || !getDayOfWeek().isEmpty()) {
+            if (getTo().isBefore(getFrom())) {
+                LocalDate temp = getTo();
+                setTo(getFrom());
+                setFrom(temp);
+            }
+            Set<DAY_OF_WEEK> days = new HashSet<>();
+            int startDay = Utils.getDayOfWeek(getFrom()).ordinal();
+            int nDays = (int) Math.min(7, getTo().toEpochDay() - getFrom().toEpochDay()) + 1;
+            DAY_OF_WEEK[] DAY_OF_WEEK = EmployeeSchedule.DAY_OF_WEEK.values();
+            days.add(DAY_OF_WEEK[startDay]);
+            for (int i = 1; i < nDays; i++) {
+                days.add(DAY_OF_WEEK[(startDay + i) % 7]);
+            }
+            setDayOfWeek(days);
+        }
     }
 
     public Specification<EmployeeSchedule> getSpecification() {
@@ -203,21 +201,21 @@ public class ScheduleFilter {
                 identifier = true;
             }
 
-            if (this.getServiceId() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("service").get("id"), this.getServiceId()));
-            }
-
             if (!identifier) {
                 throw new IllegalArgumentException("Employee ID or Establishment ID is required");
             }
 
-            predicates.add(root.get("day").in(this.getDayOfWeek()));
+            if (this.getDayOfWeek() != null && !this.getDayOfWeek().isEmpty()) {
+                predicates.add(root.get("day").in(this.getDayOfWeek()));
+            }
 
             if (this.getActive() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("active"), this.getActive()));
             } else {
                 predicates.add(criteriaBuilder.equal(root.get("active"), true));
             }
+
+            query.orderBy(criteriaBuilder.asc(root.get("startHour")));
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
@@ -251,10 +249,6 @@ public class ScheduleFilter {
                 predicates.add(root.get("day").in(this.getDayOfWeek()));
             }
 
-            if (this.getServiceId() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("service").get("id"), this.getServiceId()));
-            }
-
             if (this.getFrom() != null) {
                 predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("date"), this.getFrom()));
             }
@@ -272,6 +266,8 @@ public class ScheduleFilter {
                     predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("endHour"), this.getEndHour()));
                 }
             }
+
+            query.orderBy(criteriaBuilder.asc(root.get("startHour")));
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
         };
