@@ -1,9 +1,6 @@
 package com.teamsantos.easybarber.services;
 
-import java.time.Duration;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +10,6 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -26,15 +22,14 @@ import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.schedule.SchedulesDTO;
-import com.teamsantos.easybarber.DTO.schedule.TimeSlotDTO;
 import com.teamsantos.easybarber.DTO.schedule.TimeSlotsDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule;
-import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.ScheduleException;
 import com.teamsantos.easybarber.repositories.AppointmentRepository;
 import com.teamsantos.easybarber.repositories.EmployeeScheduleRepository;
 import com.teamsantos.easybarber.repositories.ScheduleExceptionsRepository;
 import com.teamsantos.easybarber.repositories.services.ServiceRepository;
+import com.teamsantos.easybarber.services.helper.AvailabilityCalculation;
 import com.teamsantos.easybarber.utils.PageDTO;
 import com.teamsantos.easybarber.utils.Pair;
 import com.teamsantos.easybarber.utils.Utils;
@@ -165,129 +160,26 @@ public class SchedulesService {
     @Transactional(readOnly = true)
     public BasePageDTO<SchedulesDTO> getSchedulesMerged(ScheduleFilter filter, Pageable pageable) throws Exception {
         filter.parseDate(pageable);
-        Map<LocalDate, List<ScheduleException>> exceptionsMap = null;
-        if (filter.getFrom() != null) {
-            exceptionsMap = getExceptionMapByDate(filter.getExceptionSpecification(true, true));
-            if (filter.getEmployeeId() != null) {
-                exceptionsMap.putAll(getExceptionMapByDate(filter.getExceptionSpecification(true, false)));
-            }
-            if (filter.getEstablishmentId() != null) {
-                exceptionsMap.putAll(getExceptionMapByDate(filter.getExceptionSpecification(false, true)));
-            }
-        }
-        List<EmployeeSchedule> schedules = employeeScheduleRepository.findAll(filter.getSpecification());
-        Map<DAY_OF_WEEK, List<EmployeeSchedule>> schedulesMap = schedules.stream()
-                .collect(Collectors.groupingBy(EmployeeSchedule::getDay));
-        List<SchedulesDTO> content = new ArrayList<>();
-        if (filter.getFrom() != null) {
-            for (LocalDate _from = filter.getFrom(); _from.isBefore(filter.getTo()); _from = _from.plusDays(1)) {
-                SchedulesDTO dayDTO = new SchedulesDTO();
-                dayDTO.setDate(_from);
-                dayDTO.setEmployeeId(filter.getEmployeeId());
-                dayDTO.setEstablishmentId(filter.getEstablishmentId());
-                DAY_OF_WEEK day = Utils.getDayOfWeek(_from);
-                if (!schedulesMap.containsKey(day)) {
-                    continue;
-                }
-                DAY_OF_WEEK _day = day;
-                for (EmployeeSchedule schedule : schedulesMap.get(Utils.getDayOfWeek(_from))) {
-                    if (schedule.getDay() != _day) {
-                        _day = null;
-                    }
-                    dayDTO.addSchedule(schedule.toDTO());
-                }
-                if (exceptionsMap != null && exceptionsMap.containsKey(_from)) {
-                    for (ScheduleException exception : exceptionsMap.get(_from)) {
-                        dayDTO.applyException(exception);
-                    }
-                }
-                dayDTO.setDayOfWeek(_day);
-                content.add(dayDTO);
-            }
-        } else {
-            for (DAY_OF_WEEK day : schedulesMap.keySet()) {
-                SchedulesDTO dayDTO = new SchedulesDTO();
-                dayDTO.setDayOfWeek(day);
-                dayDTO.setEmployeeId(filter.getEmployeeId());
-                dayDTO.setEstablishmentId(filter.getEstablishmentId());
-                if (!schedulesMap.containsKey(day)) {
-                    continue;
-                }
-                for (EmployeeSchedule schedule : schedulesMap.get(day)) {
-                    dayDTO.addSchedule(schedule.toDTO());
-                }
-                content.add(dayDTO);
-            }
-        }
-
-        return new BasePageDTO<SchedulesDTO>(new PageImpl<SchedulesDTO>(content, pageable,
-                filter.getDayOfWeek() == null ? schedulesMap.size() : filter.numberOfDays()));
+        AvailabilityCalculation availability = new AvailabilityCalculation(filter, employeeScheduleRepository,
+                scheduleExceptionRepository, appointmentRepository, serviceRepository);
+        return availability.getSchedulesMerged(pageable);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public TimeSlotsDTO getSchedulesByDay(ScheduleFilter filter) throws Exception {
         filter.parseDate();
-        Map<LocalDate, List<ScheduleException>> exceptionsMap = null;
-        if (filter.getFrom() != null) {
-            exceptionsMap = getExceptionMapByDate(filter.getExceptionSpecification(true, true));
-            if (filter.getEmployeeId() != null) {
-                exceptionsMap.putAll(getExceptionMapByDate(filter.getExceptionSpecification(true, false)));
-            }
-            if (filter.getEstablishmentId() != null) {
-                exceptionsMap.putAll(getExceptionMapByDate(filter.getExceptionSpecification(false, true)));
-            }
-        }
-        List<EmployeeSchedule> schedules = employeeScheduleRepository.findAll(filter.getSpecification());
-        TimeSlotsDTO content = new TimeSlotsDTO();
-        int serviceDuration = filter.getServiceId() == null ? 1 : serviceRepository.getDuration(filter.getServiceId());
-        SchedulesDTO dayDTO = new SchedulesDTO();
-        dayDTO.setDate(filter.getFrom());
-        dayDTO.setEmployeeId(filter.getEmployeeId());
-        dayDTO.setEstablishmentId(filter.getEstablishmentId());
-        dayDTO.setDayOfWeek(Utils.getDayOfWeek(filter.getFrom()));
-        for (EmployeeSchedule schedule : schedules) {
-            dayDTO.addSchedule(schedule.toDTO());
-        }
-        if (exceptionsMap != null && exceptionsMap.containsKey(filter.getFrom())) {
-            for (ScheduleException exception : exceptionsMap.get(filter.getFrom())) {
-                dayDTO.applyException(exception);
-            }
-        }
+        AvailabilityCalculation availability = new AvailabilityCalculation(filter, employeeScheduleRepository,
+                scheduleExceptionRepository, appointmentRepository, serviceRepository);
+        return availability.getTimeSlots().sort();
+    }
 
-        List<ScheduleException> appointments = appointmentRepository.findAppointmentsByDateEmployeeEstablishment(
-                filter.getFrom(), filter.getEmployeeId(), filter.getEstablishmentId());
+    @Transactional(readOnly = true)
+    public List<String> getDaysByAvailability(ScheduleFilter filter) throws Exception {
+        filter.parseDate();
+        AvailabilityCalculation availability = new AvailabilityCalculation(filter, employeeScheduleRepository,
+                scheduleExceptionRepository, appointmentRepository, serviceRepository);
 
-        for (ScheduleException appointment : appointments) {
-            dayDTO.applyException(appointment);
-        }
-
-        for (ScheduleDTO s : dayDTO.getSchedules()) {
-            LocalTime start = s.getStartHour();
-            if (filter.getStartHour() != null) {
-                if (s.getEndHour().isBefore(filter.getStartHour())) {
-                    continue;
-                }
-                start = s.getStartHour().isBefore(filter.getStartHour()) ? filter.getStartHour()
-                        : s.getStartHour();
-            }
-            if (s.getEndHour().isBefore(start.plusMinutes(serviceDuration))) {
-                continue;
-            }
-            content.addAvailableTime(new TimeSlotDTO(start, s.getEndHour()));
-            long numberOfSlots = Duration.between(start, s.getEndHour()).toMinutes()
-                    / serviceDuration;
-            for (int i = 0; i < numberOfSlots; i++) {
-                LocalTime _start = start.plusMinutes(i * serviceDuration);
-                LocalTime end = start.plusMinutes((i + 1) * serviceDuration);
-                if (filter.getStartHour() == null
-                        || !(_start.isBefore(filter.getStartHour())
-                                || end.isBefore(filter.getStartHour()))) {
-                    content.addTimeSlot(new TimeSlotDTO(_start, end));
-                }
-            }
-        }
-
-        return content;
+        return availability.getUnavailableDates();
     }
 
     @Transactional
@@ -361,83 +253,5 @@ public class SchedulesService {
                         Utils.getDayOfWeek(appointmentDTO.getDate()), appointmentDTO.getTime(),
                         appointmentDTO.getTime().plusMinutes(duration));
         return !notValid;
-    }
-
-    public List<String> getDaysByAvailability(ScheduleFilter filter, boolean available) throws Exception {
-        filter.parseDate();
-        Map<LocalDate, List<ScheduleException>> exceptionsMap = null;
-        if (filter.getFrom() != null) {
-            exceptionsMap = getExceptionMapByDate(filter.getExceptionSpecification(true, true));
-            if (filter.getEmployeeId() != null) {
-                exceptionsMap.putAll(getExceptionMapByDate(filter.getExceptionSpecification(true, false)));
-            }
-            if (filter.getEstablishmentId() != null) {
-                exceptionsMap.putAll(getExceptionMapByDate(filter.getExceptionSpecification(false, true)));
-            }
-        }
-        List<EmployeeSchedule> schedules = employeeScheduleRepository.findAll(filter.getSpecification());
-        Map<DAY_OF_WEEK, List<EmployeeSchedule>> schedulesMap = schedules.stream()
-                .collect(Collectors.groupingBy(EmployeeSchedule::getDay));
-        List<String> content = new ArrayList<>();
-        Set<String> helper = new HashSet<>();
-        int serviceDuration = filter.getServiceId() == null ? 1 : serviceRepository.getDuration(filter.getServiceId());
-        for (LocalDate _from = filter.getFrom(); _from.isBefore(filter.getTo()); _from = _from.plusDays(1)) {
-            SchedulesDTO dayDTO = new SchedulesDTO();
-            dayDTO.setDate(_from);
-            DAY_OF_WEEK day = Utils.getDayOfWeek(_from);
-            if (!schedulesMap.containsKey(day)) {
-                if (!available) {
-                    if (!helper.contains(_from.toString())) {
-                        helper.add(_from.toString());
-                        content.add(_from.toString());
-                    }
-                }
-                continue;
-            }
-            DAY_OF_WEEK _day = day;
-            for (EmployeeSchedule schedule : schedulesMap.get(Utils.getDayOfWeek(_from))) {
-                if (schedule.getDay() != _day) {
-                    _day = null;
-                }
-                dayDTO.addSchedule(schedule.toDTO());
-            }
-            if (exceptionsMap != null && exceptionsMap.containsKey(_from)) {
-                for (ScheduleException exception : exceptionsMap.get(_from)) {
-                    dayDTO.applyException(exception);
-                }
-            }
-
-            if (!available && dayDTO.getSchedules().isEmpty()) {
-                if (!helper.contains(_from.toString())) {
-                    helper.add(_from.toString());
-                    content.add(_from.toString());
-                }
-                continue;
-            }
-
-            for (ScheduleDTO s : dayDTO.getSchedules()) {
-                LocalTime start = s.getStartHour();
-                if (filter.getStartHour() != null) {
-                    if (s.getEndHour().isBefore(filter.getStartHour())) {
-                        continue;
-                    }
-                    start = s.getStartHour().isBefore(filter.getStartHour()) ? filter.getStartHour()
-                            : s.getStartHour();
-                }
-
-                if (s.getEndHour().isAfter(start.plusMinutes(serviceDuration))) {
-                    if (!available) {
-                        break;
-                    }
-                }
-            }
-            if (available) {
-                if (!helper.contains(_from.toString())) {
-                    helper.add(_from.toString());
-                    content.add(_from.toString());
-                }
-            }
-        }
-        return content;
     }
 }

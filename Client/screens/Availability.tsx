@@ -10,10 +10,10 @@ import { MarkedDates } from "react-native-calendars/src/types";
 import { Underline } from "@components/Underline";
 import TimeSlotView from "@components/TimeSlotView";
 import PagerView from "react-native-pager-view";
-import { Props } from "./EmployeeDetails";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { getAvailability, getUnavailableDates, setAppointment } from "utils/ApiRequest";
 import { twoDigits } from "utils/Utils";
+import { Props } from "./Home";
 
 type RouteParams = {
     appointment: {
@@ -31,7 +31,7 @@ export default function Availability({ navigation }: Props) {
     const route = useRoute<RouteProp<RouteParams, 'appointment'>>();
     const { establishmentId, serviceId, employeeId } = route.params;
     const [date, setDate] = useState<string>("");
-    const [time, setTime] = useState<TimeSlot | null>(null);
+    const [time, setTime] = useState<TimeSlot>();
     const disableDates = (dates: string[]): MarkedDates => {
         let disabled: MarkedDates = {};
         dates.forEach(d => {
@@ -118,22 +118,22 @@ export default function Availability({ navigation }: Props) {
                 const _disabledDates = { ...unSelectable, ...disableDates(dates) };
                 setUnSelectable(_disabledDates);
                 // select the first available date
-                let day = 1;
-                if (month === today.getMonth() + 1 && year === today.getFullYear()) {
-                    day = today.getDate();
-                }
-                for (let _date = new Date(year, month - 1, day, 23, 59); _date.getMonth() <= month + 1; _date.setDate(_date.getDate() + 1)) {
-                    const dateString = _date.toISOString().split('T')[0];
-                    if (!_disabledDates[dateString]) {
-                        if (_date.getMonth() != month - 1) {
-                            setMonth(_date.getMonth() + 1);
-                            setYear(_date.getFullYear());
-                        }
-                        setDate(dateString);
-                        return;
-                    }
-                }
-                setDate("");
+                // let day = 1;
+                // if (month === today.getMonth() + 1 && year === today.getFullYear()) {
+                //     day = today.getDate();
+                // }
+                // for (let _date = new Date(year, month - 1, day, 23, 59); _date.getMonth() <= month + 1; _date.setDate(_date.getDate() + 1)) {
+                //     const dateString = _date.toISOString().split('T')[0];
+                //     if (!_disabledDates[dateString]) {
+                //         if (_date.getMonth() != month - 1) {
+                //             setMonth(_date.getMonth() + 1);
+                //             setYear(_date.getFullYear());
+                //         }
+                //         setDate(dateString);
+                //         return;
+                //     }
+                // }
+                // setDate("");
             });
         }
     }, [month, year]);
@@ -143,28 +143,29 @@ export default function Availability({ navigation }: Props) {
             buttonText={texts.appointments.book}
             selectionText={texts.appointments.scheduleSelection}
             onButtonPress={
-                () => {
-                    if (employeeId === 0 || employeeId === undefined) {
-                        navigation.navigate(texts.employees.title, { establishmentId, serviceId, date, startHour: time?.start });
-                        return;
-                    }
-                    setAppointment({
-                        id: 0,
-                        establishmentId: establishmentId,
-                        serviceId: serviceId,
-                        employeeId: employeeId,
-                        date: date,
-                        time: time?.start || ""
-                    }).then((success: boolean) => {
-                        if (success) {
-                            navigation.navigate(texts.appointments.appointment);
+                async () => {
+                    let _employeeId = (employeeId !== undefined && employeeId !== 0) ? employeeId : time?.employeeIds.length === 1 ? time?.employeeIds[0] : undefined;
+                    if (_employeeId !== undefined) {
+                        if (await setAppointment({
+                            id: 0,
+                            establishmentId: establishmentId,
+                            serviceId: serviceId,
+                            employeeId: _employeeId,
+                            date: date,
+                            time: time?.start || ""
+                        })) {
+                            navigation.navigate(texts.tabs.back);
+
                         } else {
                             Banner({ type: ALERT_TYPE.DANGER, message: "Failed to Book Appointment" });
                         }
-                    });
+                        return;
+                    }
+                    navigation.navigate(texts.employees.title, { establishmentId, serviceId, date, startHour: time?.start, availableEmployees: time?.employeeIds });
+                    return;
                 }
             }
-            selected={date.length > 0 && time !== null}
+            selected={date.length > 0 && time !== undefined}
         >
             <View style={styles.calendar}>
                 <Calendar
@@ -172,7 +173,7 @@ export default function Availability({ navigation }: Props) {
                     onDayPress={day => {
                         if (day.dateString !== date) {
                             setDate(day.dateString);
-                            setTime(null);
+                            setTime(undefined);
                         }
                     }}
                     markedDates={{
@@ -218,6 +219,6 @@ export default function Availability({ navigation }: Props) {
                     </View>
                 )}
             </View>
-        </Selection>
+        </Selection >
     );
 }

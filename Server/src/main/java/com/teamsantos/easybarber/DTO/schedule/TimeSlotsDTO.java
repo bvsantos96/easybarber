@@ -1,9 +1,9 @@
 package com.teamsantos.easybarber.DTO.schedule;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -16,41 +16,37 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TimeSlotsDTO {
     private String responseMessage;
-    private List<TimeSlotDTO> availableTimes;
     private List<TimeSlotDTO> slots;
 
     @JsonIgnore
-    private Set<String> availableTimesSet;
-    @JsonIgnore
-    private Set<String> slotsSet;
+    private Map<String, Integer> slotsMap;
 
     public TimeSlotsDTO(String responseMessage) {
         this.responseMessage = responseMessage;
     }
 
-    public void addAvailableTime(TimeSlotDTO timeSlot) {
-        if (availableTimes == null) {
-            availableTimes = new ArrayList<>();
-            availableTimesSet = new HashSet<>();
-        }
-        String key = String.format("%s-%s", timeSlot.getStart(), timeSlot.getEnd());
-        if (availableTimesSet.contains(key)) {
-            return;
-        }
-        availableTimesSet.add(key);
-        availableTimes.add(timeSlot);
-    }
-
-    public void addTimeSlot(TimeSlotDTO timeSlot) {
+    public void addTimeSlot(TimeSlotDTO timeSlot, Long employeeId) {
         if (slots == null) {
             slots = new ArrayList<>();
-            slotsSet = new HashSet<>();
+            slotsMap = new HashMap<>();
         }
         String key = String.format("%s-%s", timeSlot.getStart(), timeSlot.getEnd());
-        if (slotsSet.contains(key)) {
+        if (slotsMap.containsKey(key)) {
+            if (employeeId != null) {
+                slots.get(slotsMap.get(key)).setEmployeeId(employeeId);
+            }
             return;
         }
-        slotsSet.add(key);
+        slotsMap.put(key, slots.size());
+        timeSlot.setEmployeeId(employeeId);
         slots.add(timeSlot);
+    }
+
+    public TimeSlotsDTO sort() {
+        if (slots == null) {
+            return this;
+        }
+        slots.sort((s1, s2) -> s1.getStart().compareTo(s2.getStart()));
+        return this;
     }
 }

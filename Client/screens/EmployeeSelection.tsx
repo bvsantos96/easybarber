@@ -7,8 +7,6 @@ import { getStyles } from "../styles/ServiceSelection";
 import { Props } from "./EstablishmentDetails";
 import SelectionItem from "../components/SelectionItems";
 import Selection from "./Selection";
-import { Banner } from "@components/Alert";
-import { ALERT_TYPE } from "react-native-alert-notification";
 
 type RouteParams = {
     appointment: {
@@ -16,6 +14,7 @@ type RouteParams = {
         serviceId: number;
         date?: string;
         startHour?: string;
+        availableEmployees?: number[];
     };
 };
 
@@ -23,14 +22,18 @@ export default function EmployeeSelection({ navigation }: Props) {
     const texts = require('@lang/en.json');
     const styles = getStyles();
     const route = useRoute<RouteProp<RouteParams, 'appointment'>>();
-    const { establishmentId, serviceId, date, startHour } = route.params;
+    const { establishmentId, serviceId, date, startHour, availableEmployees } = route.params;
     const [employees, setEmployees] = useState<ImageEntity[]>();
     const [selected, setSelected] = useState<number | string>(0);
 
     useEffect(() => {
         const fetchEmployees = async () => {
+            setSelected(0);
             let _employees = await getEstablishmentServiceEmployees(establishmentId, serviceId);
             setEmployees(_employees);
+            if (_employees.length == 1) {
+                setSelected(_employees[0].id);
+            }
         }
         fetchEmployees();
     }, [establishmentId]);
@@ -41,21 +44,19 @@ export default function EmployeeSelection({ navigation }: Props) {
             selectionText={(date && startHour) ? texts.employees.selectNot : texts.employees.select}
             selected={(date && startHour) ? selected != 0 : true}
             onButtonPress={
-                () => {
+                async () => {
                     if (date && startHour && selected != 0) {
-                        setAppointment({
+                        if (await setAppointment({
                             id: 0,
                             establishmentId,
                             serviceId,
                             employeeId: Number.parseInt(`${selected}`),
                             date,
                             time: startHour
-                        }).then((result: boolean) => {
-                            if (result) {
-                                navigation.navigate(texts.appointments.appointment);
-                                return;
-                            }
-                        });
+                        })) {
+                            navigation.navigate(texts.tabs.back);
+                            return;
+                        }
                     } else if (!(date && startHour)) {
                         navigation.navigate(texts.appointments.schedule, { establishmentId, serviceId, employeeId: selected });
                     }
@@ -64,7 +65,10 @@ export default function EmployeeSelection({ navigation }: Props) {
             <View style={styles.listContainer}>
                 {employees && employees.length > 0 && (
                     <FlatList
-                        data={employees || []}
+                        data={employees.filter((e) => {
+                            if (availableEmployees == undefined) return true;
+                            availableEmployees.includes(Number.parseInt("" + e.id))
+                        }) || []}
                         renderItem={
                             ({ item }: { item: ImageEntity }) =>
                                 <SelectionItem
