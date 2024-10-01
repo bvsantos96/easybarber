@@ -9,9 +9,14 @@ import EstablishmentDetails from './EstablishmentDetails';
 import { getStyles } from '../styles/HomeNavigator';
 import EmployeeSelection from './EmployeeSelection';
 import Availability from './Availability';
+import { NavigationProp } from '@react-navigation/native';
 
+interface HeaderProps {
+    navigation: NavigationProp<any, any>
+    title: string;
+}
 
-const Header = ({ navigation, title }) => {
+const Header = ({ navigation, title }: HeaderProps) => {
     const styles = getStyles();
     return (
         <View style={styles.header}>

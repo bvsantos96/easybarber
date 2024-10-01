@@ -2,20 +2,20 @@ import React, { useEffect, useState } from "react";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { View, Text, FlatList } from "react-native";
 
-import { getEstablishmentServiceEmployees } from "../utils/ApiRequest";
+import { getEstablishmentServiceEmployees, setAppointment } from "../utils/ApiRequest";
 import { getStyles } from "../styles/ServiceSelection";
-import { getStyles as getSelectionStyles } from "../styles/Selection";
 import { Props } from "./EstablishmentDetails";
 import SelectionItem from "../components/SelectionItems";
-import Button from '../components/Button';
-import { ALERT_TYPE } from "react-native-alert-notification";
-import { Banner } from "../components/Alert";
 import Selection from "./Selection";
+import { Banner } from "@components/Alert";
+import { ALERT_TYPE } from "react-native-alert-notification";
 
 type RouteParams = {
     appointment: {
         establishmentId: number;
         serviceId: number;
+        date?: string;
+        startHour?: string;
     };
 };
 
@@ -23,7 +23,7 @@ export default function EmployeeSelection({ navigation }: Props) {
     const texts = require('@lang/en.json');
     const styles = getStyles();
     const route = useRoute<RouteProp<RouteParams, 'appointment'>>();
-    const { establishmentId, serviceId } = route.params;
+    const { establishmentId, serviceId, date, startHour } = route.params;
     const [employees, setEmployees] = useState<ImageEntity[]>();
     const [selected, setSelected] = useState<number | string>(0);
 
@@ -38,11 +38,27 @@ export default function EmployeeSelection({ navigation }: Props) {
     return (
         <Selection
             buttonText={texts.appointments.schedule}
-            selectionText={texts.employees.select}
-            selected={true}
+            selectionText={(date && startHour) ? texts.employees.selectNot : texts.employees.select}
+            selected={(date && startHour) ? selected != 0 : true}
             onButtonPress={
                 () => {
-                    navigation.navigate(texts.appointments.schedule, { establishmentId, serviceId, selected });
+                    if (date && startHour && selected != 0) {
+                        setAppointment({
+                            id: 0,
+                            establishmentId,
+                            serviceId,
+                            employeeId: Number.parseInt(`${selected}`),
+                            date,
+                            time: startHour
+                        }).then((result: boolean) => {
+                            if (result) {
+                                navigation.navigate(texts.appointments.appointment);
+                                return;
+                            }
+                        });
+                    } else if (!(date && startHour)) {
+                        navigation.navigate(texts.appointments.schedule, { establishmentId, serviceId, employeeId: selected });
+                    }
                 }
             }>
             <View style={styles.listContainer}>
@@ -78,6 +94,6 @@ export default function EmployeeSelection({ navigation }: Props) {
                     />
                 )}
             </View>
-        </Selection>
+        </Selection >
     );
 }

@@ -132,6 +132,7 @@
         "schedule": "Schedule Date & Time",
         "scheduleSelection": "Click on any date and check available slots.",
         "slotsAvailable": "Slots Avalilable",
+        "noSlots": "No slots available for the selected day"
     },
     "services" : {
         "title": "Services",
@@ -139,7 +140,8 @@
     },
     "employees" : {
         "title": "Employees",
-        "select": "Select the employee you want (optional)"
+        "select": "Select the employee you want\n(or skip and choose the appointment date first)",
+        "selectNot": "Select the employee you want",
     },
     "about" : {
         "title": "About",
