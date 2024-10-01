@@ -22,8 +22,12 @@ export default function ServiceSelection({ navigation }: Props) {
 
     useEffect(() => {
         const fetchService = async () => {
+            setSelected(0);
             let _services = await getEstablishmentServices(establishmentId);
             setServices(_services);
+            if (_services.length == 1) {
+                setSelected(_services[0].id);
+            }
         }
         fetchService();
     }, [establishmentId]);

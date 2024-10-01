@@ -210,13 +210,13 @@ declare interface ImageEntity extends Identifiable {
 }
 
 declare interface TimeSlots {
-    availableTimes: TimeSlot[];
     slots: TimeSlot[];
 }
 
 declare interface TimeSlot {
     start: string;
     end: string;
+    employeeIds: number[];
 }
 
 declare interface Appointment extends Identifiable {
