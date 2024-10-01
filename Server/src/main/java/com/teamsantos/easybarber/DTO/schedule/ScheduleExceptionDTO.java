@@ -30,6 +30,14 @@ public class ScheduleExceptionDTO extends ScheduleDTO {
         super();
     }
 
+    public ScheduleExceptionDTO(Long id, Long employeeId, Long establishmentId, LocalDate date,
+            LocalTime time, int duration) {
+        super(id, employeeId, establishmentId, Set.of(Utils.getDayOfWeek(date)), time, time.plusMinutes(duration));
+        this.dateFrom = date;
+        this.dateTo = date;
+        this.active = true;
+    }
+
     public ScheduleExceptionDTO(Long id, Long employeeId, Long establishmentId, Set<DAY_OF_WEEK> days,
             LocalTime startHour,
             LocalTime endHour, LocalDate dateFrom, LocalDate dateTo, Boolean active) {
@@ -100,6 +108,30 @@ public class ScheduleExceptionDTO extends ScheduleDTO {
             schedule.setEmployeeId(getEmployeeId());
             schedule.setEstablishmentId(getEstablishmentId());
             schedule.setDays(Set.of(day));
+            schedule.setStartHour(getStartHour());
+            schedule.setEndHour(getEndHour());
+            schedules.add(schedule);
+        }
+        return schedules;
+    }
+
+    public List<EmployeeScheduleDTO> toEmployeeScheduleDTOs(LocalDate from, LocalDate to) {
+        List<EmployeeScheduleDTO> schedules = new ArrayList<EmployeeScheduleDTO>();
+        for (; dateFrom.isBefore(dateTo) || dateFrom.isEqual(dateTo); dateFrom = dateFrom.plusDays(1)) {
+            if (dateFrom.isBefore(from) || dateFrom.isAfter(to)) {
+                continue;
+            }
+            DAY_OF_WEEK day = Utils.getDayOfWeek(dateFrom);
+            if (getDays().size() > 0) {
+                if (!getDays().contains(day)) {
+                    continue;
+                }
+            }
+            EmployeeScheduleDTO schedule = new EmployeeScheduleDTO();
+            schedule.setId(getId());
+            schedule.setEmployeeId(getEmployeeId());
+            schedule.setEstablishmentId(getEstablishmentId());
+            schedule.setDay(day);
             schedule.setStartHour(getStartHour());
             schedule.setEndHour(getEndHour());
             schedules.add(schedule);

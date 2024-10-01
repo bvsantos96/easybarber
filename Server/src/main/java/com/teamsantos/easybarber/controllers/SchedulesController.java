@@ -77,7 +77,7 @@ public class SchedulesController {
             if (filter.getFrom() == null) {
                 throw new IllegalArgumentException("From date needs to be provided");
             }
-            filter.setTo(filter.getFrom().plusDays(1));
+            filter.setTo(filter.getFrom());
             return ResponseEntity.ok(schedulesService.getSchedulesByDay(filter));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new TimeSlotsDTO(e.getMessage()));
@@ -90,7 +90,6 @@ public class SchedulesController {
             @PathVariable Integer month,
             @RequestParam(required = true) long establishmentId,
             @RequestParam(required = true) long serviceId,
-            @RequestParam(required = true) boolean available,
             @RequestParam(required = false) Long employeeId) {
         try {
             ScheduleFilter filter = new ScheduleFilter();
@@ -100,7 +99,7 @@ public class SchedulesController {
             filter.setEstablishmentId(establishmentId);
             filter.setServiceId(serviceId);
             filter.setEmployeeId(employeeId);
-            return ResponseEntity.ok(schedulesService.getDaysByAvailability(filter, available));
+            return ResponseEntity.ok(schedulesService.getDaysByAvailability(filter));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(List.of());
         }

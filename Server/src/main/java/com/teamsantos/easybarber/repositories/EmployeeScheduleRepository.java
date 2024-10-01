@@ -12,6 +12,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
+import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
+import com.teamsantos.easybarber.DTO.schedule.EmployeeScheduleDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 
@@ -86,4 +88,23 @@ public interface EmployeeScheduleRepository
             """)
     boolean existsByEmployeeIdAndEstablishmentIdAndDayAndStartHourLessThanEqualAndEndHourGreaterThanEqual(
             Long employeeId, Long establishmentId, DAY_OF_WEEK dayOfWeek, LocalTime time, LocalTime endTime);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.schedule.EmployeeScheduleDTO(
+                s.id,
+                s.employee.id,
+                s.establishment.id,
+                s.day,
+                s.startHour,
+                s.endHour
+            )
+            FROM EmployeeSchedule s
+            WHERE (:#{#filter.employeeId} IS NULL OR s.employee.id = :#{#filter.employeeId})
+                AND (:#{#filter.establishmentId} IS NULL OR s.establishment.id = :#{#filter.establishmentId})
+                AND (:#{#filter.dayOfWeek} IS NULL OR s.day IN :#{#filter.dayOfWeek})
+                AND (s.active = :#{#filter.active} OR (s.active = true AND :#{#filter.active} IS NULL))
+            ORDER BY s.startHour ASC
+             """)
+
+    List<EmployeeScheduleDTO> findAllDTO(ScheduleFilter filter);
 }

@@ -10,7 +10,7 @@ export interface TimeSlotProps {
 
 interface Props {
     select: (s: TimeSlot) => void,
-    selected: TimeSlot | null,
+    selected: TimeSlot | undefined,
     slots: TimeSlot[][],
     offset: number;
 }
