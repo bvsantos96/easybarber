@@ -376,6 +376,9 @@ export const getEmployee = async (id: number): Promise<EmployeeInfo | undefined>
     return getItemsFromRequest(result);
 }
 
+export const getAppointmentCount = async (): Promise<AppointmentCounts> => {
+    return getItemsFromRequest<AppointmentCounts>(await request<AppointmentCounts>(`appointment/count`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT));
+}
 
 export const getAppointments = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter): Promise<IPage<AppointmentInfo> | undefined> => {
     if (params === undefined || params === null)
