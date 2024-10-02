@@ -5,8 +5,6 @@ import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
 import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
-import { getSelectedLocation } from './Location';
-import useLocationStore from '../storage/stores/LocationStore';
 import { Alert, Banner } from '../components/Alert';
 import { ALERT_TYPE } from 'react-native-alert-notification';
 
@@ -272,6 +270,7 @@ export const getLocationsRequest = async (page?: IPage<ILocation>, params?: Reco
 }
 
 export const getLocationList = async (page: IPage<ILocation>, params?: Record<string, string | number | boolean>): Promise<IPage<ILocation> | undefined> => {
+    const useLocationStore = require('../storage/stores/LocationStore');
     const {
         locations,
         hasMoreLocations
@@ -391,22 +390,16 @@ export const getAppointments = async (page?: IPage<AppointmentInfo>, params?: Ap
 }
 
 export const getNearByBarbers = async (page?: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>, location?: ILocation): Promise<IPage<EstablishmentInfo> | undefined> => {
-    location = location ?? await getSelectedLocation();
-    if (location === undefined || location === null) {
-        // TODO: alerta para ativar localizacao
-        return page;
-    }
     if (params === undefined || params === null)
         params = {};
+    if (location === undefined || location === null) {
+        return await pageGet<EstablishmentInfo>("establishment/list", page, params);
+    }
     if (!params.hasOwnProperty("latitude"))
         params["latitude"] = location.latitude;
     if (!params.hasOwnProperty("longitude"))
         params["longitude"] = location.longitude;
     return await pageGet<EstablishmentInfo>("establishment/list", page, params);
-}
-
-export const getBarbersNearMe = async (page: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>): Promise<IPage<EstablishmentInfo> | undefined> => {
-    return await getNearByBarbers(page, params);
 }
 
 export const setNewLocation = async (location: ILocation): Promise<number> => {
