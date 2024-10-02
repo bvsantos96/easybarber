@@ -1,13 +1,7 @@
 import { create } from 'zustand';
-import { getLocation } from '../../utils/Location';
-import { getArrayFromPage } from '../StorageUtils';
-import { getLocationsRequest, setNewLocation } from '../../utils/ApiRequest';
+import { setNewLocation } from '../../utils/ApiRequest';
 
 interface LocationState {
-    requestingLocationPermission: boolean | undefined;
-    setRequestingLocationPermission: (requestingLocationPermission: boolean) => void;
-    hasLocationPermission: boolean;
-    setHasLocationPermission: (hasLocationPermission: boolean) => void;
     hasMoreLocations: boolean;
     locations: ILocation[];
     selectedLocation: ILocation | undefined;
@@ -15,20 +9,13 @@ interface LocationState {
     addLocations: (locations: ILocation[]) => void;
     selectLocation: (location: ILocation) => Promise<void>;
     selectLocationIdx: (idx: number) => void;
-    getSelectedLocation: () => Promise<ILocation | undefined>;
     clearLocations: () => void;
-    country: string;
+    country: string | undefined;
 }
 
 const useLocationStore = create<LocationState>()(
     (set) => ({
         country: "",
-        requestingLocationPermission: undefined,
-        setRequestingLocationPermission: (requestingLocationPermission: boolean) => {
-            return set({ requestingLocationPermission })
-        },
-        hasLocationPermission: false,
-        setHasLocationPermission: (hasLocationPermission: boolean) => set({ hasLocationPermission }),
         hasMoreLocations: true,
         locations: [],
         selectedLocation: undefined,
@@ -67,23 +54,6 @@ const useLocationStore = create<LocationState>()(
                 selectedLocation: location,
             };
         }),
-        getSelectedLocation: async () => {
-            const state: LocationState = useLocationStore.getState();
-            if (state.selectedLocation === undefined) {
-                let locations = getArrayFromPage(await getLocationsRequest());
-                if (locations.length <= 0) {
-                    const location = await getLocation();
-                    if (location === null) {
-                        return undefined;
-                    }
-                    locations[0] = location;
-                    locations[0].id = await setNewLocation(locations[0]);
-                }
-                useLocationStore.setState({ locations: locations, selectedLocation: locations[0] });
-                return locations[0];
-            }
-            return state.selectedLocation;
-        },
         clearLocations: () => set({ hasMoreLocations: true, locations: [] }),
     }));
 

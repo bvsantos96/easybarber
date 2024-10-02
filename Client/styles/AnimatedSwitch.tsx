@@ -14,6 +14,7 @@ export const getStyles = () => {
         movingBox: {
             position: "absolute",
             borderRadius: 50,
+            zIndex: 2,
             top: 0,
             left: 0,
             width: "53%",
@@ -22,6 +23,7 @@ export const getStyles = () => {
         },
         box: {
             position: "absolute",
+            zIndex: 1,
             top: 0,
             borderRadius: 50,
             width: '100%',
@@ -29,11 +31,12 @@ export const getStyles = () => {
             backgroundColor: "rgba(223, 34, 56, 0.22)",
         },
         textContainer: {
-            elevation: 5,
-            zIndex: 5,
+            zIndex: 3,
             width: "100%",
             height: "100%",
             flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
         },
         textLeftContainer: {
             height: "100%",

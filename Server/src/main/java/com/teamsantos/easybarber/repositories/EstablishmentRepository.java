@@ -80,8 +80,7 @@ public interface EstablishmentRepository
 
     @Query("""
             SELECT new com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO(e.id,
-            e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location,
-            :location) AS distance, e.nVotes, e.sumVotes, i)
+            e.name, e.description, e.address, e.location, e.nVotes, e.sumVotes, i)
             FROM Establishment e
             LEFT JOIN EstablishmentImage i ON i.isMain = true AND i.entity.id = e.id
             WHERE (:partialName IS NULL OR lower(e.name) LIKE concat('%', lower(:partialName), '%'))
