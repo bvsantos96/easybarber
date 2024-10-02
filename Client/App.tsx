@@ -9,7 +9,7 @@ import * as Location from 'expo-location';
 
 import { getToken } from './utils/ApiRequest';
 import { getDefaultCountryString } from './utils/Constants';
-import useLocationStore from './storage/stores/LocationStore';
+import usePermissionStore from './storage/stores/PermissionStore';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,9 +29,9 @@ import Constants from 'expo-constants';
 import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
 import { DEBUG_AUTO_LOGIN } from './utils/EnvVariables';
-import { setCountry } from './utils/Location';
 import { ALERT_TYPE, AlertNotificationRoot } from 'react-native-alert-notification';
 import { Alert } from './components/Alert';
+import { getSelectedLocation } from 'utils/Location';
 
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
@@ -145,7 +145,7 @@ const Router = () => {
         requestingLocationPermission,
         setHasLocationPermission,
         hasLocationPermission
-    } = useLocationStore();
+    } = usePermissionStore();
 
     type StackParamList = {
         LocationRequest: undefined;
@@ -178,11 +178,6 @@ const Router = () => {
                 await waitAndNavigate("Sign");
             } else {
                 defaultPage = await getToken() !== null ? "Tabs" : "OnBoarding";
-                try {
-                    await setCountry();
-                } catch (error) {
-                    console.error('Error setting country:', error);
-                }
             }
 
             setDefaultPage(defaultPage);
@@ -232,6 +227,12 @@ const Router = () => {
                 setTimeout(navigateToLocationRequest, 500);
             }
         };
+
+        if (hasLocationPermission) {
+            getSelectedLocation();
+            navigationRef.current?.navigate(defaultPage);
+            return;
+        }
 
         if (!hasLocationPermission && requestingLocationPermission !== undefined) {
             navigateToLocationRequest();
