@@ -19,6 +19,7 @@ import { SvgUri } from 'react-native-svg';
 import PageList, { PageListRef } from '../components/PageList';
 import useLocationStore from '../storage/stores/LocationStore';
 import { NavigationProp } from '@react-navigation/native';
+import { getSelectedLocation } from 'utils/Location';
 
 export type Props = {
     navigation: NavigationProp<any, any>,
@@ -38,7 +39,6 @@ export default function Home({ navigation }: Props) {
 
     const {
         selectedLocation,
-        getSelectedLocation,
     } = useLocationStore();
 
     const loadCategories = async () => {
@@ -72,9 +72,11 @@ export default function Home({ navigation }: Props) {
     }
 
     const loadMoreLocations = async (page?: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>) => {
-        if (selectedLocation)
-            return await getNearByBarbers(page, params, selectedLocation);
-        return undefined;
+        let _selectedLocation = selectedLocation;
+        if (selectedLocation === undefined) {
+            _selectedLocation = await getSelectedLocation();
+        }
+        return await getNearByBarbers(page, params, selectedLocation);
     }
 
     return (
