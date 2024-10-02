@@ -3,6 +3,7 @@ package com.teamsantos.easybarber.services;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.BasePageDTO;
+import com.teamsantos.easybarber.DTO.appointment.AppointmentCountDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO;
@@ -22,6 +24,7 @@ import com.teamsantos.easybarber.utils.Pair;
 import com.teamsantos.easybarber.utils.Utils;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Tuple;
 
 @Service
 public class AppointmentService {
@@ -154,5 +157,13 @@ public class AppointmentService {
 
         appointment.setReminded(true);
         appointmentRepository.save(appointment);
+    }
+
+    public AppointmentCountDTO countAppointments(boolean userView) {
+        Optional<Tuple> count = appointmentRepository.countAppointments(UserContext.getUserId(), userView);
+        if (count.isEmpty()) {
+            return new AppointmentCountDTO(0, 0);
+        }
+        return new AppointmentCountDTO(count.get());
     }
 }
