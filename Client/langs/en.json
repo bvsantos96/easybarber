@@ -132,7 +132,9 @@
         "schedule": "Schedule Date & Time",
         "scheduleSelection": "Click on any date and check available slots.",
         "slotsAvailable": "Slots Avalilable",
-        "noSlots": "No slots available for the selected day"
+        "noSlots": "No slots available for the selected day",
+        "upcomming": "Upcomming",
+        "past": "Past",
     },
     "services" : {
         "title": "Services",

@@ -11,7 +11,7 @@ export const getStyles = () => {
         },
         listContainer: {
             position: "absolute",
-            top: 60 * theme.dimensions.absoluteHeight,
+            top: 70 * theme.dimensions.absoluteHeight,
             left: 25 * theme.dimensions.absoluteWidth,
             height: theme.dimensions.height - 142 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,
             width: theme.dimensions.width - 50 * theme.dimensions.absoluteWidth,
@@ -91,8 +91,9 @@ export const getStyles = () => {
         },
         titleContainer: {
             position: "absolute",
-            top: 31 * theme.dimensions.absoluteHeight,
+            top: 20 * theme.dimensions.absoluteHeight,
             left: 31 * theme.dimensions.absoluteWidth,
+            height: 49 * theme.dimensions.absoluteHeight,
             width: theme.dimensions.width,
             justifyContent: "flex-start",
             alignItems: "flex-start",
