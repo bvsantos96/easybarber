@@ -3,6 +3,7 @@ package com.teamsantos.easybarber.repositories;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Page;
@@ -19,6 +20,8 @@ import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.entities.Appointment;
 import com.teamsantos.easybarber.entities.ScheduleException;
+
+import jakarta.persistence.Tuple;
 
 @Repository
 public interface AppointmentRepository
@@ -79,7 +82,12 @@ public interface AppointmentRepository
                 and (:#{#filter.date} is null or s.date = :#{#filter.date})
                 and (:#{#filter.time} is null or s.time >= :#{#filter.time})
                 and (:#{#filter.endTime} is null or s.time <= :#{#filter.endTime})
-                and (:#{#filter.future} is null or (s.date > CURRENT_DATE or (s.date = current_date and s.time >= current_time)))
+                and (:#{#filter.future} is null OR (
+                        (:#{#filter.future} = true AND (s.date > CURRENT_DATE or (s.date = current_date and s.time >= current_time)))
+                    OR
+                        (:#{#filter.future} = false AND (s.date < CURRENT_DATE or (s.date = current_date and s.time < current_time)))
+                    )
+                )
                 and (:#{#filter.activeOnly} is null or s.active = :#{#filter.activeOnly})
             """)
     Page<AppointmentListDTO> findAllToUser(AppointmentFilter filter, Pageable pageable);
@@ -105,7 +113,12 @@ public interface AppointmentRepository
                 and (:#{#filter.date} is null or s.date = :#{#filter.date})
                 and (:#{#filter.time} is null or s.time >= :#{#filter.time})
                 and (:#{#filter.endTime} is null or s.time <= :#{#filter.endTime})
-                and (:#{#filter.future} is null or (s.date > CURRENT_DATE or (s.date = current_date and s.time >= current_time)))
+                and (:#{#filter.future} is null OR (
+                        (:#{#filter.future} = true AND (s.date > CURRENT_DATE or (s.date = current_date and s.time >= current_time)))
+                    OR
+                        (:#{#filter.future} = false AND (s.date < CURRENT_DATE or (s.date = current_date and s.time < current_time)))
+                    )
+                )
                 and (:#{#filter.activeOnly} is null or s.active = :#{#filter.activeOnly})
             """)
     Page<AppointmentListDTO> findAllToEmployee(AppointmentFilter filter, Pageable pageable);
@@ -180,4 +193,15 @@ public interface AppointmentRepository
             @Param("from") LocalDate from,
             @Param("employeeIds") Set<Long> employeeIds,
             @Param("establishmentId") Long establishmentId);
+
+    @Query(value = """
+                SELECT
+                    SUM(CASE WHEN (a.date > CURRENT_DATE OR (a.date = CURRENT_DATE AND a.time >= CURRENT_TIME)) THEN 1 ELSE 0 END) AS future,
+                    SUM(CASE WHEN (a.date < CURRENT_DATE OR (a.date = CURRENT_DATE AND a.time < CURRENT_TIME)) THEN 1 ELSE 0 END) AS past
+                FROM appointment a
+                WHERE (:userView = true AND :userId = a.user_id OR :userView = false AND :userId = a.employee_id)
+                    AND a.active = true
+                    AND a.confirmed = true
+            """, nativeQuery = true)
+    Optional<Tuple> countAppointments(long userId, boolean userView);
 }

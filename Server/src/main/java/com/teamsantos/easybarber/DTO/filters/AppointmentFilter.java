@@ -82,6 +82,12 @@ public class AppointmentFilter {
                             criteriaBuilder.and(
                                     criteriaBuilder.equal(root.get("date"), LocalDate.now()),
                                     criteriaBuilder.greaterThanOrEqualTo(root.get("time"), LocalTime.now()))));
+                } else {
+                    predicates.add(criteriaBuilder.or(
+                            criteriaBuilder.lessThan(root.get("date"), LocalDate.now()),
+                            criteriaBuilder.and(
+                                    criteriaBuilder.equal(root.get("date"), LocalDate.now()),
+                                    criteriaBuilder.lessThan(root.get("time"), LocalTime.now()))));
                 }
             }
 
