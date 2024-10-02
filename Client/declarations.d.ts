@@ -226,3 +226,8 @@ declare interface Appointment extends Identifiable {
     date: string;
     time: string;
 }
+
+declare interface AppointmentCounts {
+    upcomming: number;
+    past: number;
+}
