@@ -41,9 +41,7 @@ export default function HomeNavigator() {
             <Stack.Navigator initialRouteName={texts.tabs.back} >
                 <Stack.Screen name={texts.tabs.back} options={{
                     headerShown: false
-                }} >
-                    {props => <Home {...props} />}
-                </Stack.Screen>
+                }} component={Home} />
                 <Stack.Screen
                     options={{
                         header: ({ navigation }) => (
