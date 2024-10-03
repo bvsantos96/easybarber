@@ -115,6 +115,7 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
         },
         ...(method !== "GET" && { body: JSON.stringify(body) }),
     }).then(async response => {
+        console.log("response", response);
         let data;
         try {
             if (responseType == ResponseType.STRING) {
@@ -180,6 +181,7 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
         }
         return { success: true, message: successMessage };
     }).catch(error => {
+        console.log(error);
         console.error(error);
         return { success: false, message: errorMessage };
     });
@@ -433,6 +435,7 @@ export const getCategories = async (): Promise<ICategory[]> => {
 
 export const getApiVersion = async (): Promise<string> => {
     const response: string = await stringRequest("version", "GET", null, langs.apiMessages.success, langs.apiMessages.failed);
+    console.log(response);
     if (response.length > 0)
         return response;
     throw new Error(langs.apiMessages.failed);
