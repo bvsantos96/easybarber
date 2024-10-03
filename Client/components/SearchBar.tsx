@@ -6,7 +6,7 @@ import SearchIcon from "@assets/icons/search.svg";
 import SearchIconAlt from "@assets/icons/searchMainColor.svg";
 
 import { getStyles } from '../styles/TopBar';
-import { BottomSheetFlatList } from '@gorhom/bottom-sheet';
+import { BottomSheetFlatList } from '@gorhom/bottom-sheet/src';
 import { useTheme } from '../styles/ThemeContext';
 
 interface SearchBarProps<T extends Identifiable> {

@@ -11,6 +11,7 @@ export enum ResponseType {
     STRING = 0,
     OBJECT = 1,
     LIST = 2,
+    FULL_LIST = 3
 }
 
 export enum PageListType {

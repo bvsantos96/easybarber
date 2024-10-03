@@ -1,7 +1,7 @@
 import React, { useEffect, useImperativeHandle, useState } from "react";
 import { FlatList, View, Text, ViewStyle, NativeSyntheticEvent } from "react-native";
 import PagerView from "react-native-pager-view";
-import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import { BottomSheetFlatList } from "@gorhom/bottom-sheet/src";
 
 import { getStyles } from "../styles/Home";
 import { TimedRequest } from "../utils/TimedRequest";
