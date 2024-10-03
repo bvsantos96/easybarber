@@ -7,6 +7,7 @@ import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
 import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
 import { Alert, Banner } from '../components/Alert';
 import { ALERT_TYPE } from 'react-native-alert-notification';
+import useLocationStore from '../storage/stores/LocationStore';
 
 import texts from '../langs/en.json';
 import { ResponseType } from '../enums';
@@ -159,6 +160,13 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
                         ...(data.items ? { items: data.items } : { data: data.data })
                     };
                     break;
+                case ResponseType.FULL_LIST:
+                    _response = {
+                        success: true,
+                        message: successMessage,
+                        ...(data.items ? { data: data.items } : { data: data.data })
+                    };
+                    break;
                 default:
                     _response = { success: true, message: successMessage, data: data };
                     break;
@@ -270,7 +278,6 @@ export const getLocationsRequest = async (page?: IPage<ILocation>, params?: Reco
 }
 
 export const getLocationList = async (page: IPage<ILocation>, params?: Record<string, string | number | boolean>): Promise<IPage<ILocation> | undefined> => {
-    const useLocationStore = require('../storage/stores/LocationStore');
     const {
         locations,
         hasMoreLocations
@@ -411,15 +418,15 @@ export const setNewLocation = async (location: ILocation): Promise<number> => {
 }
 
 export const getCategories = async (): Promise<ICategory[]> => {
-    const response = await request("/service/types", "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
-    if (response.hasOwnProperty("items")) {
+    const response = await request<ICategory[]>("/service/types", "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.FULL_LIST);
+    if (response.hasOwnProperty("data") && response.data !== undefined && response.data !== null) {
         // TODO: save the retrieve images into device storage and replace the imageUrls with the local paths
-        for (const element of response?.items) {
+        for (const element of response.data) {
             if (element.hasOwnProperty("imageURL")) {
                 element.imageURL = await downloadToDevice(element.name, apiUrlMaker(element.imageURL));
             }
         }
-        return response.items;
+        return response.data;
     }
     throw new Error(langs.apiMessages.failed);
 }

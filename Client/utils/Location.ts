@@ -89,6 +89,7 @@ export const selectLocation = async (location: ILocation): Promise<void> => {
         }
         locations.unshift(location);
         await store(LOCATIONS_STORAGE_KEY, JSON.stringify(locations));
+        useLocationStore.setState({ locations: locations, selectedLocation: location });
     } catch (error) {
         Banner({ type: ALERT_TYPE.DANGER, title: "", message: texts.errors.selectLocationError });
         console.error('Error selecting location:', error);
