@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { setNewLocation } from '../../utils/ApiRequest';
 
 interface LocationState {
     hasMoreLocations: boolean;
@@ -7,7 +6,6 @@ interface LocationState {
     selectedLocation: ILocation | undefined;
     setLocations: (locations: ILocation[]) => void;
     addLocations: (locations: ILocation[]) => void;
-    selectLocation: (location: ILocation) => Promise<void>;
     selectLocationIdx: (idx: number) => void;
     clearLocations: () => void;
     country: string | undefined;
@@ -29,21 +27,6 @@ const useLocationStore = create<LocationState>()(
                 locations: state.locations.concat(locations),
                 selectedLocation: state.selectedLocation || locations[0]
             }));
-        },
-        selectLocation: async (location: ILocation) => {
-            location.id = await setNewLocation(location);
-            return set((state: LocationState) => {
-                const idx = state.locations.findIndex(loc => loc.id === location.id);
-                if (idx > -1) {
-                    state.locations.splice(idx, 1);
-                }
-                state.locations.unshift(location);
-                return {
-                    locations: state.locations,
-                    selectedLocation: location,
-                };
-            }
-            )
         },
         selectLocationIdx: (idx: number) => set((state: LocationState) => {
             const location = state.locations.splice(idx, 1)[0];
