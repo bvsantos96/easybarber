@@ -1,8 +1,9 @@
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import React, { useEffect, useRef, useState } from 'react';
 
 import { getStyles as topBarGetStyles } from '../styles/TopBar';
 import { getStyles as getHomeGetStyles } from '../styles/Home';
+import { getStyles as getExpandedGetStyles } from '../styles/ExpandableView';
 
 import TopBar from '../components/TopBar';
 import { getNearByBarbers } from '../utils/ApiRequest';
@@ -20,6 +21,7 @@ import PageList, { PageListRef } from '../components/PageList';
 import useLocationStore from '../storage/stores/LocationStore';
 import { NavigationProp } from '@react-navigation/native';
 import { getSelectedLocation } from 'utils/Location';
+import Pressable from '@components/Pressable';
 
 export type Props = {
     navigation: NavigationProp<any, any>,
@@ -28,6 +30,7 @@ export type Props = {
 export default function Home({ navigation }: Props) {
     const topBarStyles = topBarGetStyles();
     const homeStyles = getHomeGetStyles();
+    const expandedStyles = getExpandedGetStyles();
     const pageListRef = useRef<PageListRef<EstablishmentInfo>>(null);
     const [topCategoriesExpanded, setTopCategoriesExpanded] = useState(true);
     const [nearbyBarbersExpanded, setNearbyBarbersExpanded] = useState(false);
@@ -83,14 +86,14 @@ export default function Home({ navigation }: Props) {
         <>
             <TopBar location={selectedLocation} filter={filter} setFilter={setFilter} setName={setName} />
             <View style={topBarStyles.homeContainer}>
-                <Divider size={28.44} color="transparent" />
+                <Divider size={10} color="transparent" />
                 <ExpandableView
                     style={homeStyles.topCategoriesContainer}
                     maxHeight={homeStyles.topCategoriesHeights.maxHeight}
                     onExpand={() => { setNearbyBarbersExpanded(topCategoriesExpanded); setTopCategoriesExpanded(!topCategoriesExpanded) }}
                     expanded={topCategoriesExpanded}
                     title={texts.topCategories}>
-                    <Divider size={19} />
+                    <Divider size={10} />
                     <View style={homeStyles.topCategoriesList}>
                         {categories && categories.map((category) => (
                             <Category
@@ -114,15 +117,14 @@ export default function Home({ navigation }: Props) {
                             />
                         ))}
                     </View>
-                    <Divider size={19} />
                 </ExpandableView>
-                <ExpandableView
-                    style={homeStyles.nearByBarbersContainer}
-                    maxHeight={homeStyles.nearByBarbersContainerHeights.maxHeight - inserts.bottom * 2}
-                    minHeight={homeStyles.nearByBarbersContainerHeights.minHeight - inserts.bottom}
-                    expanded={nearbyBarbersExpanded}
-                    onExpand={() => { setTopCategoriesExpanded(nearbyBarbersExpanded); setNearbyBarbersExpanded(!nearbyBarbersExpanded) }}
-                    title={texts.nearbyBarbers}>
+                <View style={expandedStyles.titleContainer}>
+                    <Text style={expandedStyles.titleText}>{texts.nearbyBarbers}</Text>
+                    <Pressable style={expandedStyles.expandContainer} onPress={() => { setTopCategoriesExpanded(nearbyBarbersExpanded); setNearbyBarbersExpanded(!nearbyBarbersExpanded) }}>
+                        <Text style={expandedStyles.expandText} >{texts.viewAll}</Text>
+                    </Pressable>
+                </View>
+                <View style={[homeStyles.nearByBarbersContainer]}>
                     <Divider size={10} />
                     <PageList<EstablishmentInfo>
                         reset={resetSearch}
@@ -137,8 +139,8 @@ export default function Home({ navigation }: Props) {
                                 establishment={item} />
                         }
                         requestFunction={loadMoreLocations} />
-                </ExpandableView>
-            </View>
+                </View>
+            </View >
         </>
     );
 }
