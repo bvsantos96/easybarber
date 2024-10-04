@@ -4,6 +4,11 @@
   "main": "node_modules/expo/AppEntry.js",
   "scripts": {
     "start": "npx expo start --tunnel",
+    "startrelease": "npx expo start -c --tunnel --no-dev --minify",
+    "build": "eas build --platform all",
+    "prebuild": "npx expo prebuild",
+    "buildios": "eas build --platform ios",
+    "buildandroid": "eas build --platform android",
     "publish": "npx expo publish",
     "android": "expo run:android",
     "ios": "expo run:ios",
