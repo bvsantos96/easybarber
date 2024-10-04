@@ -181,6 +181,7 @@ const Router = () => {
             }
 
             setDefaultPage(defaultPage);
+            await waitAndNavigate(defaultPage);
 
             const { status } = await Location.getForegroundPermissionsAsync();
             if (status === 'granted') {

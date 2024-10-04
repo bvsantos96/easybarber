@@ -1,5 +1,5 @@
 import { getCategories } from "../utils/ApiRequest";
-import { clearAll, getArray, store } from "./StorageUtils";
+import { getArray, store } from "./StorageUtils";
 import { CATEGORY_STORAGE_KEY } from "../utils/Constants";
 import { ALERT_TYPE } from "react-native-alert-notification";
 import { Alert } from "@components/Alert";
@@ -8,7 +8,6 @@ import { Alert } from "@components/Alert";
 // if after that it fails we need to show an error message to the user, this is a critical function
 export const loadLongTermItems = async (): Promise<Boolean> => {
     try {
-        await clearAll();
         await store(CATEGORY_STORAGE_KEY, JSON.stringify(await getCategories()));
         return true;
     } catch (e) {

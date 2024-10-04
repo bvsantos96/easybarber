@@ -50,12 +50,9 @@ const storeData = async (key: string, value: string) => {
 const getData = async (key: string): Promise<string | null> => {
     try {
         const value = await AsyncStorage.getItem(key);
-        if (value !== null) {
-            return value;
-        }
-        return null;
+        return value;
     } catch (e) {
-        // error reading value
+        console.error(`Error reading data(${key}): ${e}`);
         return null;
     }
 };
@@ -64,12 +61,13 @@ const removeData = async (key: string) => {
     try {
         await AsyncStorage.removeItem(key);
     } catch (e) {
+        console.error(`Error removing data(${key}): ${e}`);
         // error reading value
     }
 }
 
 export const getToken = async (): Promise<string | null> => {
-    return getData(TOKEN_STORAGE_KEY);
+    return await getData(TOKEN_STORAGE_KEY);
 }
 
 export const apiUrlMaker = (url: string): string => {
@@ -115,7 +113,6 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
         },
         ...(method !== "GET" && { body: JSON.stringify(body) }),
     }).then(async response => {
-        console.log("response", response);
         let data;
         try {
             if (responseType == ResponseType.STRING) {
