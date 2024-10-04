@@ -1,7 +1,7 @@
 import { Text, StyleProp, ViewStyle, Animated, Easing, View } from "react-native";
 import { getStyles } from "../styles/ExpandableView";
 import Pressable from "./Pressable";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import React from "react";
 
 type ExpandableViewProps = {
@@ -20,17 +20,16 @@ export default function ExpandableView({ children = <></>, style = {}, minHeight
     const expandCurrent = () => {
         onExpand();
     }
-    const _minHeight = minHeight === 0 ? 0 : minHeight;
-    const [heightAnim] = useState(new Animated.Value(expanded ? maxHeight : _minHeight));
+    const heightAnim = useRef(new Animated.Value(expanded ? 1 : 0)).current;
 
     useEffect(() => {
         Animated.timing(
             heightAnim,
             {
-                toValue: expanded ? maxHeight : _minHeight,
+                toValue: expanded ? 1 : 0,
                 duration: 300,
-                easing: Easing.ease,
-                useNativeDriver: false,
+                easing: Easing.elastic(1),
+                useNativeDriver: true,
             }
         ).start();
 
@@ -44,7 +43,7 @@ export default function ExpandableView({ children = <></>, style = {}, minHeight
                     <Text style={styles.expandText} >{texts.viewAll}</Text>
                 </Pressable>
             </View>
-            <Animated.View style={[style, { height: heightAnim }]}>
+            <Animated.View style={[style, { transform: [{ translateY: heightAnim }] }]}>
                 {children}
             </Animated.View>
         </>
