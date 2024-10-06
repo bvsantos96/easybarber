@@ -15,11 +15,10 @@ export type SignInProps = {
 
 export type Props = {
     navigation: NavigationProp<any, any>,
-    toggleNewUser?: () => void,
-    setMobileNr: Function
+    toggleNewUser?: () => void
 }
 
-export default function SignIn({ navigation, setMobileNr }: Props) {
+export default function SignIn({ navigation }: Props) {
     const styles = getStyles();
     const [newUser, setNewUser] = useState(false);
     const translateYAnimation = useRef(new Animated.Value(0)).current;
@@ -55,7 +54,7 @@ export default function SignIn({ navigation, setMobileNr }: Props) {
             }]}>
                 {!newUser ?
                     <Login toggleNewUser={changeNewUser} navigation={navigation} /> :
-                    <Register toggleNewUser={changeNewUser} navigation={navigation} setMobileNr={setMobileNr} />
+                    <Register toggleNewUser={changeNewUser} navigation={navigation} />
                 }
             </Animated.View>
         </View >

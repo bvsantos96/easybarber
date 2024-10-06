@@ -10,7 +10,7 @@ import { getStyles } from '../styles/HomeNavigator';
 import EmployeeSelection from './EmployeeSelection';
 
 
-const Header = ({ navigation, title }) => {
+export const Header = ({ navigation, title }) => {
     const styles = getStyles();
     return (
         <View style={styles.header}>

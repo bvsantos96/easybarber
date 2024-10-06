@@ -42,6 +42,22 @@
         "button": "Register",
         "newUser": "Already a user?"
     },
+    "code": {
+        "verifyPhone": "Verify Phone",
+        "resendCode": "Resend Code",
+        "codeNotReceived" : "Not received yet?",
+        "enterCode" :"Please enter the code sent to",
+        "verify": "Verify",
+        "successfullVerification": "Your phone has been verified successfully",
+        "getStarted": "Get Started",
+        "verificationFailed": "Verification failed. Please try again."
+    },
+    "pwdRecovery": {
+        "enterPhone": "Please enter your phone number on which your account registered.",
+        "forgotPwd": "Forgot Password",
+        "setNewPed": "Set a new password",
+        "set": "set",
+    },
     "phoneNumber": "Phone Number",
     "password": "Password",
     "forgotPassword": "Forgot password?",
@@ -58,7 +74,8 @@
         "home": "Home",
         "appointments": "Appointments",
         "alerts": "Alerts",
-        "chats": "Chats"
+        "chats": "Chats",
+        "forgotPwd": "InsertPhone"
     },
     "kmAway": "km away",
     "topCategories": "Top Categories",
@@ -121,14 +138,14 @@
     "location" : {
         "title1": " wants to fetch",
         "title2": "your exact location.",
-        "subTitle": "In order to show you nearby barbers, we\nneed to know your location.",
+        "subTitle": "In order to show you nearby barbers, we\nneed to know your location."
     },
     "appointments": {
         "upcomming": "Upcoming Appointments",
         "book": "Book Appointment",
         "selectBarber": "Select Barber",
         "selectService": "Select service",
-        "schedule": "Schedule Date & Time",
+        "schedule": "Schedule Date & Time"
     },
     "services" : {
         "title": "Services",
@@ -139,8 +156,8 @@
         "select": "Select the employee you want (optional)"
     },
     "about" : {
-        "title": "About",
+        "title": "About"
     },
     "checkAvailability": "Check Availability",
-    "currency": "€",
+    "currency": "€"
 }
