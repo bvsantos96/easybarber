@@ -35,7 +35,6 @@ export default function Home({ navigation }: Props) {
     const [topCategoriesExpanded, setTopCategoriesExpanded] = useState(true);
     const [nearbyBarbersExpanded, setNearbyBarbersExpanded] = useState(false);
     const texts = require("../langs/en.json");
-    const inserts = useSafeAreaInsets();
     const [categories, setCategories] = useState<ICategory[]>([]);
     const [resetSearch, setResetSearch] = useState(false);
     const [filter, _setFilter] = useState<IFilterRequest | undefined>({});
@@ -57,13 +56,11 @@ export default function Home({ navigation }: Props) {
     }, []);
 
     useEffect(() => {
-        console.log("resetSearch");
         setResetSearch(!resetSearch);
     }, [selectedLocation]);
 
     const replaceFilter = (filter: IFilterRequest) => {
         let req: ITimedRequest<EstablishmentInfo> = new TimedRequest(createPageable<EstablishmentInfo>(), 0, filter);
-        console.log("replaceFilter");
         pageListRef?.current?.loadMoreItems(req);
         _setFilter(filter);
     }
