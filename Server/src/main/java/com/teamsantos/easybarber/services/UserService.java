@@ -184,7 +184,7 @@ public class UserService {
         return modelMapper.map(user.get(), UserDTO.class);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional
     public void changeUserPwd(UserDTO userDTO, String newPwd) throws Exception {
         Optional<User> userOpt = userRepository.findById(userDTO.getId());
 

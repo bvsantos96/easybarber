@@ -16,7 +16,7 @@ import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
 import texts from "../langs/en.json";
 
-export default function Register({ navigation, toggleNewUser, setMobileNr }: Props) {
+export default function Register({ navigation, toggleNewUser }: Props) {
     const styles = getStyles();
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
@@ -43,15 +43,9 @@ export default function Register({ navigation, toggleNewUser, setMobileNr }: Pro
             resetNavigation(navigation, 'Tabs');
         else
             alert(result.message);*/
-        const test=(nation?nation.callingCode[0]:"")+phone;
-        const result = await getMobileCode(test);
-        if (result) {
-            //Alert.alert('Success', 'Code confirmed successfully!');
-        } else {
-            //Alert.alert('Error', 'Invalid code. Please try again.');
-        }
-        setMobileNr(test);
-        resetNavigation(navigation, 'MobileConfirmation');
+        const mobileInformation=(nation?nation.callingCode[0]:"")+phone;
+        //const result = await getMobileCode(mobileInformation);
+        navigation.navigate('MobileConfirmation', {mobileInformation: mobileInformation, nextScreen: "Tabs", resetNavigationBoolean:true});
     }
 
     return (

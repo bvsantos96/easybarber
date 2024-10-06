@@ -31,6 +31,7 @@ interface Colors {
         black: string;
         lightBlack: string;
         lightGray: string;
+        darkBlueGray:string;
     };
     button: {
         main: string;
@@ -120,6 +121,7 @@ const defaultTheme: Theme = {
             black: 'black',
             lightBlack: 'rgba(0, 0, 0, 0.66)',
             lightGray: 'rgba(0, 0, 0, 0.4)',
+            darkBlueGray: '#263238'
         },
         button: {
             main: '#DF2238',
