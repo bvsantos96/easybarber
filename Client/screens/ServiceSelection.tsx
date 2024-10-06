@@ -6,7 +6,7 @@ import { getEstablishmentServices } from "../utils/ApiRequest";
 import { getStyles } from "../styles/ServiceSelection";
 import { Props } from "./EstablishmentDetails";
 import SelectionItem from "../components/SelectionItems";
-import Button from '../components/Button';
+import Selection from './Selection';
 
 type RouteParams = {
     establishment: { establishmentId: number }
@@ -22,15 +22,26 @@ export default function ServiceSelection({ navigation }: Props) {
 
     useEffect(() => {
         const fetchService = async () => {
+            setSelected(0);
             let _services = await getEstablishmentServices(establishmentId);
             setServices(_services);
+            if (_services.length == 1) {
+                setSelected(_services[0].id);
+            }
         }
         fetchService();
     }, [establishmentId]);
 
     return (
-        <View style={styles.container} >
-            <Text style={styles.selectTextContainer}>{texts.services.select}</Text>
+        <Selection
+            buttonText={texts.appointments.selectService}
+            selectionText={texts.services.select}
+            selected={selected !== 0}
+            onButtonPress={
+                () => {
+                    navigation.navigate(texts.employees.title, { establishmentId: establishmentId, serviceId: selected });
+                }
+            }>
             <View style={styles.listContainer}>
                 {services && services.length > 0 && (
                     <FlatList
@@ -53,16 +64,6 @@ export default function ServiceSelection({ navigation }: Props) {
                     />
                 )}
             </View>
-            <View style={styles.button}>
-                <Button
-                    disabled={selected === 0}
-                    stylesInput={{ width: '100%' }}
-                    onPress={
-                        () => {
-                            navigation.navigate(texts.employees.title, { establishmentId: establishmentId, serviceId: selected });
-                        }
-                    } title={texts.appointments.selectService} />
-            </View>
-        </View>
+        </Selection>
     );
 }

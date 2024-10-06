@@ -5,10 +5,9 @@ import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
 import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
-import { getSelectedLocation } from './Location';
-import useLocationStore from '../storage/stores/LocationStore';
 import { Alert, Banner } from '../components/Alert';
 import { ALERT_TYPE } from 'react-native-alert-notification';
+import useLocationStore from '../storage/stores/LocationStore';
 
 import texts from '../langs/en.json';
 import { ResponseType } from '../enums';
@@ -51,12 +50,9 @@ const storeData = async (key: string, value: string) => {
 const getData = async (key: string): Promise<string | null> => {
     try {
         const value = await AsyncStorage.getItem(key);
-        if (value !== null) {
-            return value;
-        }
-        return null;
+        return value;
     } catch (e) {
-        // error reading value
+        console.error(`Error reading data(${key}): ${e}`);
         return null;
     }
 };
@@ -65,12 +61,13 @@ const removeData = async (key: string) => {
     try {
         await AsyncStorage.removeItem(key);
     } catch (e) {
+        console.error(`Error removing data(${key}): ${e}`);
         // error reading value
     }
 }
 
 export const getToken = async (): Promise<string | null> => {
-    return getData(TOKEN_STORAGE_KEY);
+    return await getData(TOKEN_STORAGE_KEY);
 }
 
 export const apiUrlMaker = (url: string): string => {
@@ -161,6 +158,13 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
                         ...(data.items ? { items: data.items } : { data: data.data })
                     };
                     break;
+                case ResponseType.FULL_LIST:
+                    _response = {
+                        success: true,
+                        message: successMessage,
+                        ...(data.items ? { data: data.items } : { data: data.data })
+                    };
+                    break;
                 default:
                     _response = { success: true, message: successMessage, data: data };
                     break;
@@ -174,6 +178,7 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
         }
         return { success: true, message: successMessage };
     }).catch(error => {
+        console.log(error);
         console.error(error);
         return { success: false, message: errorMessage };
     });
@@ -320,6 +325,42 @@ export const getEstablishmentCats = async (id: number): Promise<number[] | undef
     return getItemsFromRequest(result);
 }
 
+export const getUnavailableDates = async (establishmentId: number, serviceId: number, employeeId: number, year: number, month: number, startHour: string): Promise<string[]> => {
+    const params = {
+        establishmentId: establishmentId,
+        serviceId: serviceId,
+        ...(employeeId == 0 ? {} : { employeeId: employeeId }),
+        available: false,
+        startHour: startHour,
+    };
+    const url = parsePathParams(`schedules/availabledays/year/${year}/month/${month}`, params);
+    const result = await request<string[]>(url, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    return getItemsFromRequest<string[]>(result);
+}
+
+export const setAppointment = async (appointment: Appointment): Promise<boolean> => {
+    const result = await request<number>("appointment", "POST", appointment, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    try {
+        getItemsFromRequest<number>(result);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+
+export const getAvailability = async (establishmentId: number, serviceId: number, employeeId: number, date: string, startHour: string): Promise<TimeSlots> => {
+    const params = {
+        establishmentId: establishmentId,
+        serviceId: serviceId,
+        from: date,
+        startHour: startHour,
+        ...(employeeId == 0 ? {} : { employeeId: employeeId }),
+    };
+    const url = parsePathParams("schedules/day", params);
+    const result = await request<TimeSlots>(url, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    return getItemsFromRequest<TimeSlots>(result);
+}
+
 export const getEstablishmentServiceEmployees = async (establishmentId: number, serviceId: number): Promise<ImageEntity[]> => {
     const result = await request<ImageEntity[]>(`establishment/${establishmentId}/service/${serviceId}/employees`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
     return getItemsFromRequest<ImageEntity[]>(result);
@@ -340,6 +381,9 @@ export const getEmployee = async (id: number): Promise<EmployeeInfo | undefined>
     return getItemsFromRequest(result);
 }
 
+export const getAppointmentCount = async (): Promise<AppointmentCounts> => {
+    return getItemsFromRequest<AppointmentCounts>(await request<AppointmentCounts>(`appointment/count`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT));
+}
 
 export const getAppointments = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter): Promise<IPage<AppointmentInfo> | undefined> => {
     if (params === undefined || params === null)
@@ -352,22 +396,16 @@ export const getAppointments = async (page?: IPage<AppointmentInfo>, params?: Ap
 }
 
 export const getNearByBarbers = async (page?: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>, location?: ILocation): Promise<IPage<EstablishmentInfo> | undefined> => {
-    location = location ?? await getSelectedLocation();
-    if (location === undefined || location === null) {
-        // TODO: alerta para ativar localizacao
-        return page;
-    }
     if (params === undefined || params === null)
         params = {};
+    if (location === undefined || location === null) {
+        return await pageGet<EstablishmentInfo>("establishment/list", page, params);
+    }
     if (!params.hasOwnProperty("latitude"))
         params["latitude"] = location.latitude;
     if (!params.hasOwnProperty("longitude"))
         params["longitude"] = location.longitude;
     return await pageGet<EstablishmentInfo>("establishment/list", page, params);
-}
-
-export const getBarbersNearMe = async (page: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>): Promise<IPage<EstablishmentInfo> | undefined> => {
-    return await getNearByBarbers(page, params);
 }
 
 export const setNewLocation = async (location: ILocation): Promise<number> => {
@@ -379,21 +417,22 @@ export const setNewLocation = async (location: ILocation): Promise<number> => {
 }
 
 export const getCategories = async (): Promise<ICategory[]> => {
-    const response = await request("/service/types", "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
-    if (response.hasOwnProperty("items")) {
+    const response = await request<ICategory[]>("/service/types", "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.FULL_LIST);
+    if (response.hasOwnProperty("data") && response.data !== undefined && response.data !== null) {
         // TODO: save the retrieve images into device storage and replace the imageUrls with the local paths
-        for (const element of response?.items) {
+        for (const element of response.data) {
             if (element.hasOwnProperty("imageURL")) {
                 element.imageURL = await downloadToDevice(element.name, apiUrlMaker(element.imageURL));
             }
         }
-        return response.items;
+        return response.data;
     }
     throw new Error(langs.apiMessages.failed);
 }
 
 export const getApiVersion = async (): Promise<string> => {
     const response: string = await stringRequest("version", "GET", null, langs.apiMessages.success, langs.apiMessages.failed);
+    console.log(response);
     if (response.length > 0)
         return response;
     throw new Error(langs.apiMessages.failed);

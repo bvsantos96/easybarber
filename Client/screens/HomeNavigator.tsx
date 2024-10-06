@@ -8,7 +8,13 @@ import ServiceSelection from './ServiceSelection';
 import EstablishmentDetails from './EstablishmentDetails';
 import { getStyles } from '../styles/HomeNavigator';
 import EmployeeSelection from './EmployeeSelection';
+import Availability from './Availability';
+import { NavigationProp } from '@react-navigation/native';
 
+interface HeaderProps {
+    navigation: NavigationProp<any, any>
+    title: string;
+}
 
 export const Header = ({ navigation, title }) => {
     const styles = getStyles();
@@ -35,9 +41,7 @@ export default function HomeNavigator() {
             <Stack.Navigator initialRouteName={texts.tabs.back} >
                 <Stack.Screen name={texts.tabs.back} options={{
                     headerShown: false
-                }} >
-                    {props => <Home {...props} />}
-                </Stack.Screen>
+                }} component={Home} />
                 <Stack.Screen
                     options={{
                         header: ({ navigation }) => (
@@ -59,6 +63,13 @@ export default function HomeNavigator() {
                         ),
                     }}
                     name={texts.employees.title} component={EmployeeSelection} />
+                <Stack.Screen
+                    options={{
+                        header: ({ navigation }) => (
+                            <Header navigation={navigation} title={texts.appointments.schedule} />
+                        ),
+                    }}
+                    name={texts.appointments.schedule} component={Availability} />
             </Stack.Navigator>
         </View>
     );

@@ -5,16 +5,12 @@ import { EvilIcons } from '@expo/vector-icons';
 import { useTheme } from "../styles/ThemeContext";
 import Pressable from "./Pressable";
 import { getStyles } from '../styles/LocationModal';
-import useLocationStore from "../storage/stores/LocationStore";
+import { selectLocation } from "utils/Location";
 
 const LocationItem = ({ idx, location, reset, highlightFirst, style }: { style?: ViewStyle, idx: Number | string, location: ILocation, reset: () => void, highlightFirst?: boolean }) => {
     const theme = useTheme();
     const styles = getStyles();
     const [numLines, setNumLines] = useState(1);
-
-    const {
-        selectLocation
-    } = useLocationStore();
 
     const handleAddressLayout = (event: any) => {
         let nLines = Math.floor(event.nativeEvent.layout.height / styles.itemTitle.fontSize);

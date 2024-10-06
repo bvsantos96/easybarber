@@ -26,6 +26,10 @@ public class ScheduleDTO extends BaseDTO {
     private LocalTime startHour;
     private LocalTime endHour;
 
+    public String getKey() {
+        return String.format("%s-%s", startHour, endHour);
+    }
+
     public ScheduleDTO() {
         super();
     }
