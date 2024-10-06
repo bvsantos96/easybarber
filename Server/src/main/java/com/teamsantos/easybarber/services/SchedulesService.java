@@ -1,7 +1,6 @@
 package com.teamsantos.easybarber.services;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +10,6 @@ import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -24,12 +22,14 @@ import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.schedule.SchedulesDTO;
+import com.teamsantos.easybarber.DTO.schedule.TimeSlotsDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule;
-import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.ScheduleException;
 import com.teamsantos.easybarber.repositories.AppointmentRepository;
 import com.teamsantos.easybarber.repositories.EmployeeScheduleRepository;
 import com.teamsantos.easybarber.repositories.ScheduleExceptionsRepository;
+import com.teamsantos.easybarber.repositories.services.ServiceRepository;
+import com.teamsantos.easybarber.services.helper.AvailabilityCalculation;
 import com.teamsantos.easybarber.utils.PageDTO;
 import com.teamsantos.easybarber.utils.Pair;
 import com.teamsantos.easybarber.utils.Utils;
@@ -40,6 +40,7 @@ import jakarta.persistence.EntityManager;
 public class SchedulesService {
     private final AppointmentRepository appointmentRepository;
     private final EmployeeScheduleRepository employeeScheduleRepository;
+    private final ServiceRepository serviceRepository;
     private final EstablishmentService establishmentService;
     private final ScheduleExceptionsRepository scheduleExceptionRepository;
     private final ModelMapper modelMapper;
@@ -48,6 +49,7 @@ public class SchedulesService {
     @Autowired
     public SchedulesService(EmployeeScheduleRepository employeeScheduleRepository,
             AppointmentRepository appointmentRepository,
+            ServiceRepository serviceRepository,
             ScheduleExceptionsRepository scheduleExceptionRepository,
             EstablishmentService establishmentService,
             ModelMapper modelMapper, EntityManager entityManager) {
@@ -55,6 +57,7 @@ public class SchedulesService {
         this.establishmentService = establishmentService;
         this.scheduleExceptionRepository = scheduleExceptionRepository;
         this.appointmentRepository = appointmentRepository;
+        this.serviceRepository = serviceRepository;
         this.modelMapper = modelMapper;
         this.entityManager = entityManager;
     }
@@ -157,62 +160,26 @@ public class SchedulesService {
     @Transactional(readOnly = true)
     public BasePageDTO<SchedulesDTO> getSchedulesMerged(ScheduleFilter filter, Pageable pageable) throws Exception {
         filter.parseDate(pageable);
-        Map<LocalDate, List<ScheduleException>> exceptionsMap = null;
-        if (filter.getFrom() != null) {
-            exceptionsMap = getExceptionMapByDate(filter.getExceptionSpecification(true, true));
-            if (filter.getEmployeeId() != null) {
-                exceptionsMap.putAll(getExceptionMapByDate(filter.getExceptionSpecification(true, false)));
-            }
-            if (filter.getEstablishmentId() != null) {
-                exceptionsMap.putAll(getExceptionMapByDate(filter.getExceptionSpecification(false, true)));
-            }
-        }
-        List<EmployeeSchedule> schedules = employeeScheduleRepository.findAll(filter.getSpecification());
-        Map<DAY_OF_WEEK, List<EmployeeSchedule>> schedulesMap = schedules.stream()
-                .collect(Collectors.groupingBy(EmployeeSchedule::getDay));
-        List<SchedulesDTO> content = new ArrayList<>();
-        if (filter.getFrom() != null) {
-            for (LocalDate _from = filter.getFrom(); _from.isBefore(filter.getTo()); _from = _from.plusDays(1)) {
-                SchedulesDTO dayDTO = new SchedulesDTO();
-                dayDTO.setDate(_from);
-                dayDTO.setEmployeeId(filter.getEmployeeId());
-                dayDTO.setEstablishmentId(filter.getEstablishmentId());
-                DAY_OF_WEEK day = Utils.getDayOfWeek(_from);
-                if (!schedulesMap.containsKey(day)) {
-                    continue;
-                }
-                DAY_OF_WEEK _day = day;
-                for (EmployeeSchedule schedule : schedulesMap.get(Utils.getDayOfWeek(_from))) {
-                    if (schedule.getDay() != _day) {
-                        _day = null;
-                    }
-                    dayDTO.addSchedule(schedule.toDTO());
-                }
-                if (exceptionsMap != null && exceptionsMap.containsKey(_from)) {
-                    for (ScheduleException exception : exceptionsMap.get(_from)) {
-                        dayDTO.applyException(exception);
-                    }
-                }
-                dayDTO.setDayOfWeek(_day);
-                content.add(dayDTO);
-            }
-        } else {
-            for (DAY_OF_WEEK day : schedulesMap.keySet()) {
-                SchedulesDTO dayDTO = new SchedulesDTO();
-                dayDTO.setDayOfWeek(day);
-                dayDTO.setEmployeeId(filter.getEmployeeId());
-                dayDTO.setEstablishmentId(filter.getEstablishmentId());
-                if (!schedulesMap.containsKey(day)) {
-                    continue;
-                }
-                for (EmployeeSchedule schedule : schedulesMap.get(day)) {
-                    dayDTO.addSchedule(schedule.toDTO());
-                }
-                content.add(dayDTO);
-            }
-        }
+        AvailabilityCalculation availability = new AvailabilityCalculation(filter, employeeScheduleRepository,
+                scheduleExceptionRepository, appointmentRepository, serviceRepository);
+        return availability.getSchedulesMerged(pageable);
+    }
 
-        return new BasePageDTO<SchedulesDTO>(new PageImpl<SchedulesDTO>(content, pageable, filter.numberOfDays()));
+    @Transactional(readOnly = true)
+    public TimeSlotsDTO getSchedulesByDay(ScheduleFilter filter) throws Exception {
+        filter.parseDate();
+        AvailabilityCalculation availability = new AvailabilityCalculation(filter, employeeScheduleRepository,
+                scheduleExceptionRepository, appointmentRepository, serviceRepository);
+        return availability.getTimeSlots().sort();
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getDaysByAvailability(ScheduleFilter filter) throws Exception {
+        filter.parseDate();
+        AvailabilityCalculation availability = new AvailabilityCalculation(filter, employeeScheduleRepository,
+                scheduleExceptionRepository, appointmentRepository, serviceRepository);
+
+        return availability.getUnavailableDates();
     }
 
     @Transactional

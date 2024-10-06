@@ -92,6 +92,7 @@
     "availableTime": "Available Time",
     "from": "From",
     "to": "To",
+    "lowerTo": "to",
     "applyFilter": "Apply Filters",
     "category": "Category",
     "gettingStarted": "Getting Started",
@@ -145,7 +146,12 @@
         "book": "Book Appointment",
         "selectBarber": "Select Barber",
         "selectService": "Select service",
-        "schedule": "Schedule Date & Time"
+        "schedule": "Schedule Date & Time",
+        "scheduleSelection": "Click on any date and check available slots.",
+        "slotsAvailable": "Slots Avalilable",
+        "noSlots": "No slots available for the selected day",
+        "upcomming": "Upcomming",
+        "past": "Past",
     },
     "services" : {
         "title": "Services",
@@ -153,7 +159,8 @@
     },
     "employees" : {
         "title": "Employees",
-        "select": "Select the employee you want (optional)"
+        "select": "Select the employee you want\n(or skip and choose the appointment date first)",
+        "selectNot": "Select the employee you want",
     },
     "about" : {
         "title": "About"
