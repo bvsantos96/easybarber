@@ -30,7 +30,8 @@ import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
 import { DEBUG_AUTO_LOGIN } from './utils/EnvVariables';
 import { ALERT_TYPE, AlertNotificationRoot } from 'react-native-alert-notification';
-import { Alert } from './components/Alert';
+import CustomAlert from './components/Alert';
+import { Header } from '@screens/HomeNavigator';
 import { getSelectedLocation } from 'utils/Location';
 
 export type PropNavigation = {
@@ -141,6 +142,9 @@ const Router = () => {
     const AccountTypeSelection = require('./screens/AccountTypeSelection').default;
     const SignIn = require('./screens/SignIn').default;
     const LocationRequest = require('./screens/LocationRequest').default;
+    const MobileConfirmation = require('./screens/MobileConfirmation').default;
+    const InsertPhone = require('./screens/InsertPhone').default;
+    const ResetPwd = require('./screens/ResetPwd').default;
     const {
         requestingLocationPermission,
         setHasLocationPermission,
@@ -155,6 +159,9 @@ const Router = () => {
         Tabs: undefined;
         Loading: undefined;
         Test: undefined;
+        MobileConfirmation:undefined;
+        InsertPhone:undefined;
+        ResetPwd:undefined;
     };
 
     const [isLoading, setIsLoading] = useState(true);
@@ -175,7 +182,7 @@ const Router = () => {
             if (DEBUG_AUTO_LOGIN) {
                 console.log("DEBUG AUTO LOGIN");
                 defaultPage = "Sign";
-                await waitAndNavigate("Sign");
+                await waitAndNavigate(defaultPage);
             } else {
                 defaultPage = await getToken() !== null ? "Tabs" : "OnBoarding";
             }
@@ -300,6 +307,21 @@ const Router = () => {
                     <Stack.Screen name="Test" options={{ headerShown: false, gestureEnabled: false }}>
                         {_ => containerizedComponent(<View style={{ backgroundColor: "red", minHeight: 50, minWidth: 50 }}><Text>Test</Text></View>)}
                     </Stack.Screen>
+                    <Stack.Screen name="MobileConfirmation" options={{ header: ({ navigation }) => (
+                            <Header navigation={navigation} title={"Verify Phone"} />
+                        ) }}>
+                        {props => <MobileConfirmation {...props} />}
+                    </Stack.Screen>
+                    <Stack.Screen name="InsertPhone" options={{ header: ({ navigation }) => (
+                            <Header navigation={navigation} title={"Forgot Password"} />
+                        ) }}>
+                        {props => <InsertPhone {...props} />}
+                    </Stack.Screen>
+                    <Stack.Screen name="ResetPwd" options={{ header: ({ navigation }) => (
+                            <Header navigation={navigation} title={"New Password"} />
+                        ) }}>
+                        {props => <ResetPwd {...props} />}
+                    </Stack.Screen>
                 </Stack.Navigator>
             </NavigationContainer>
         </GestureHandlerRootView >
@@ -360,13 +382,23 @@ export default function App() {
         versionCheck();
     }, [versionCheck]);
 
+    const {
+        alertVisible,
+        alert,
+        alertProps
+    } = useLocationStore();
+
     return (
         <SafeAreaProvider style={{ flex: 1 }}>
             <ThemeProvider>
                 <DismissKeyboard>
-                    <AlertNotificationRoot>
+                    <CustomAlert 
+                        {...alertProps}
+                        visible={alertVisible}
+                        setVisible={alert}
+                    >
                         <Router />
-                    </AlertNotificationRoot>
+                    </CustomAlert>
                 </DismissKeyboard>
             </ThemeProvider>
         </SafeAreaProvider>

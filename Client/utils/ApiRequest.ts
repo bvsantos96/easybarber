@@ -437,18 +437,38 @@ export const getApiVersion = async (): Promise<string> => {
     throw new Error(langs.apiMessages.failed);
 }
 
-export const getMobileCode = async (mobileNr: string): Promise<boolean> => {
-    const response = await request("/sms/confirmation", "POST", { phoneNr: mobileNr }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+export const getMobileCode = async (phoneNr: string): Promise<boolean> => {
+    const response = await request("/sms/confirmation", "POST", { phoneNr: "+"+phoneNr }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
     return false;
 }
 
-export const confirmMobileCode = async (mobileNr: string, confirmationCode: string): Promise<boolean> => {
-    const response = await request("/sms/confirm", "POST", { phoneNr: mobileNr, confirmationCode: confirmationCode }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+export const confirmMobileCode = async (phoneNr: string, confirmationCode: string): Promise<boolean> => {
+    const response = await request("/sms/confirm", "POST", { phoneNr: "+"+phoneNr, confirmationCode: confirmationCode }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
     return false;
 }
+
+export const getMobileCodeResetPwd = async (phoneNr: string): Promise<boolean> => {
+    const response = await request("/sms/resetpwd", "POST", { phoneNr: "+"+phoneNr }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+    if (response.success) {
+        return true;
+    }
+    return false;
+}
+
+export const resetPwdRQ = async (phoneNr: string, confirmationCode: string, password:string, confirmPassword:string): Promise<boolean> => {
+    if (password != confirmPassword)
+        return false;
+    
+    const response = await request("/pwd/reset", "PUT", { phoneNr: "+"+phoneNr, confirmationCode: confirmationCode, newPassword:password }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+    if (response.success) {
+        return true;
+    }
+    return false;
+}
+
