@@ -5,14 +5,15 @@ import Pressable from '../components/Pressable';
 import { getStyles } from '../styles/TopBar';
 import { AntDesign } from '@expo/vector-icons';
 import { useTheme } from "../styles/ThemeContext";
-import { Alert } from './Alert';
-import { ALERT_TYPE } from 'react-native-alert-notification';
+import { TOKEN_STORAGE_KEY } from 'utils/Constants';
+import { removeData } from 'utils/ApiRequest';
 
 export default function ProfileImage({ uri = "" }: { uri?: string }) {
     const styles = getStyles();
     const theme = useTheme();
+
     return (
-        <Pressable onPress={() => { Alert({ type: ALERT_TYPE.DANGER, title: "Implementation missing", message: "No profile layout defined" }) }} style={styles.profileImageContainer}>
+        <Pressable onPress={() => { removeData(TOKEN_STORAGE_KEY); }} style={styles.profileImageContainer}>
             {uri && uri.length > 0 ?
                 (<Image
                     cachePolicy="memory-disk"

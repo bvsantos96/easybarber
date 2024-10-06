@@ -29,10 +29,11 @@ import Constants from 'expo-constants';
 import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
 import { DEBUG_AUTO_LOGIN } from './utils/EnvVariables';
-import { ALERT_TYPE, AlertNotificationRoot } from 'react-native-alert-notification';
-import CustomAlert from './components/Alert';
+import { ALERT_TYPE } from 'react-native-alert-notification';
+import CustomAlert, { Alert } from './components/Alert';
 import { Header } from '@screens/HomeNavigator';
 import { getSelectedLocation } from 'utils/Location';
+import useLocationStore from 'storage/stores/LocationStore';
 
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
@@ -159,9 +160,9 @@ const Router = () => {
         Tabs: undefined;
         Loading: undefined;
         Test: undefined;
-        MobileConfirmation:undefined;
-        InsertPhone:undefined;
-        ResetPwd:undefined;
+        MobileConfirmation: undefined;
+        InsertPhone: undefined;
+        ResetPwd: undefined;
     };
 
     const [isLoading, setIsLoading] = useState(true);
@@ -307,19 +308,25 @@ const Router = () => {
                     <Stack.Screen name="Test" options={{ headerShown: false, gestureEnabled: false }}>
                         {_ => containerizedComponent(<View style={{ backgroundColor: "red", minHeight: 50, minWidth: 50 }}><Text>Test</Text></View>)}
                     </Stack.Screen>
-                    <Stack.Screen name="MobileConfirmation" options={{ header: ({ navigation }) => (
+                    <Stack.Screen name="MobileConfirmation" options={{
+                        header: ({ navigation }) => (
                             <Header navigation={navigation} title={"Verify Phone"} />
-                        ) }}>
+                        )
+                    }}>
                         {props => <MobileConfirmation {...props} />}
                     </Stack.Screen>
-                    <Stack.Screen name="InsertPhone" options={{ header: ({ navigation }) => (
+                    <Stack.Screen name="InsertPhone" options={{
+                        header: ({ navigation }) => (
                             <Header navigation={navigation} title={"Forgot Password"} />
-                        ) }}>
+                        )
+                    }}>
                         {props => <InsertPhone {...props} />}
                     </Stack.Screen>
-                    <Stack.Screen name="ResetPwd" options={{ header: ({ navigation }) => (
+                    <Stack.Screen name="ResetPwd" options={{
+                        header: ({ navigation }) => (
                             <Header navigation={navigation} title={"New Password"} />
-                        ) }}>
+                        )
+                    }}>
                         {props => <ResetPwd {...props} />}
                     </Stack.Screen>
                 </Stack.Navigator>
@@ -361,6 +368,7 @@ export default function App() {
             buttonText: texts.retry
         });
     }
+
     const versionCheck = useCallback(async () => {
         switch (await validateVersion()) {
             case UpdateType.MAJOR:
@@ -392,7 +400,7 @@ export default function App() {
         <SafeAreaProvider style={{ flex: 1 }}>
             <ThemeProvider>
                 <DismissKeyboard>
-                    <CustomAlert 
+                    <CustomAlert
                         {...alertProps}
                         visible={alertVisible}
                         setVisible={alert}
