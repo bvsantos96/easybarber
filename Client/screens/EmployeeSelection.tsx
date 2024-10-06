@@ -2,44 +2,73 @@ import React, { useEffect, useState } from "react";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { View, Text, FlatList } from "react-native";
 
-import { getEstablishmentServiceEmployees } from "../utils/ApiRequest";
+import { getEstablishmentServiceEmployees, setAppointment } from "../utils/ApiRequest";
 import { getStyles } from "../styles/ServiceSelection";
 import { Props } from "./EstablishmentDetails";
 import SelectionItem from "../components/SelectionItems";
-import Button from '../components/Button';
-import { ALERT_TYPE } from "react-native-alert-notification";
-import { Banner } from "../components/Alert";
+import Selection from "./Selection";
 
 type RouteParams = {
     appointment: {
         establishmentId: number;
         serviceId: number;
+        date?: string;
+        startHour?: string;
+        availableEmployees?: number[];
     };
 };
 
 export default function EmployeeSelection({ navigation }: Props) {
-    const styles = getStyles();
     const texts = require('@lang/en.json');
+    const styles = getStyles();
     const route = useRoute<RouteProp<RouteParams, 'appointment'>>();
-    const { establishmentId, serviceId } = route.params;
+    const { establishmentId, serviceId, date, startHour, availableEmployees } = route.params;
     const [employees, setEmployees] = useState<ImageEntity[]>();
     const [selected, setSelected] = useState<number | string>(0);
 
     useEffect(() => {
         const fetchEmployees = async () => {
+            setSelected(0);
             let _employees = await getEstablishmentServiceEmployees(establishmentId, serviceId);
             setEmployees(_employees);
+            if (_employees.length == 1) {
+                setSelected(_employees[0].id);
+            }
         }
         fetchEmployees();
     }, [establishmentId]);
 
     return (
-        <View style={styles.container} >
-            <Text style={styles.selectTextContainer}>{texts.employees.select}</Text>
+        <Selection
+            buttonText={texts.appointments.schedule}
+            selectionText={(date && startHour) ? texts.employees.selectNot : texts.employees.select}
+            selected={(date && startHour) ? selected != 0 : true}
+            onButtonPress={
+                async () => {
+                    if (date && startHour && selected != 0) {
+                        if (await setAppointment({
+                            id: 0,
+                            establishmentId,
+                            serviceId,
+                            employeeId: Number.parseInt(`${selected}`),
+                            date,
+                            time: startHour
+                        })) {
+                            navigation.navigate(texts.tabs.back);
+                            return;
+                        }
+                    } else if (!(date && startHour)) {
+                        navigation.navigate(texts.appointments.schedule, { establishmentId, serviceId, employeeId: selected });
+                    }
+                }
+            }>
             <View style={styles.listContainer}>
                 {employees && employees.length > 0 && (
                     <FlatList
-                        data={employees || []}
+                        data={employees.filter((e) => {
+                            if (availableEmployees == undefined) return true;
+                            availableEmployees.includes(Number.parseInt("" + e.id))
+                        }) || []}
                         renderItem={
                             ({ item }: { item: ImageEntity }) =>
                                 <SelectionItem
@@ -69,15 +98,6 @@ export default function EmployeeSelection({ navigation }: Props) {
                     />
                 )}
             </View>
-            <View style={styles.button}>
-                <Button
-                    stylesInput={{ width: '100%' }}
-                    onPress={
-                        () => {
-                            Banner({ type: ALERT_TYPE.SUCCESS, message: `${selected === 0 && "No"} Employee ${selected !== 0 ? selected : ""} selected` });
-                        }
-                    } title={texts.appointments.schedule} />
-            </View>
-        </View>
+        </Selection >
     );
 }

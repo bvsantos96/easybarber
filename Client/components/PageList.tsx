@@ -1,7 +1,7 @@
-import React, { useEffect, useImperativeHandle, useState } from "react";
+import React, { useCallback, useEffect, useImperativeHandle, useState } from "react";
 import { FlatList, View, Text, ViewStyle, NativeSyntheticEvent } from "react-native";
 import PagerView from "react-native-pager-view";
-import { BottomSheetFlatList } from "@gorhom/bottom-sheet";
+import { BottomSheetFlatList } from "@gorhom/bottom-sheet/src";
 
 import { getStyles } from "../styles/Home";
 import { TimedRequest } from "../utils/TimedRequest";
@@ -64,13 +64,15 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
         setLoadingMore(false);
     };
 
-    const _loadMoreItems = () => {
-        setLoadingMore(true);
-    }
 
-    useEffect(() => {
-        if (loadingMore) {
-            loadMoreItems();
+    const _loadMoreItems = useCallback(async () => {
+        if (loadingMore) return;
+
+        try {
+            setLoadingMore(true);
+            await loadMoreItems();
+        } finally {
+            setLoadingMore(false);
         }
     }, [loadingMore]);
 
@@ -78,7 +80,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
         if (!firstLoad) {
             setRequest(new TimedRequest(createPageable<T>(pageSize), 0));
             saveCache && saveCache([]);
-            _loadMoreItems();
+            setLoadingMore(true);
             return;
         } else {
             setFirstLoad(false);
@@ -104,8 +106,8 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom }}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
-                    onEndReached={_loadMoreItems}
-                    onEndReachedThreshold={0.1}
+                    onEndReached={() => { console.log("onEndReached"); _loadMoreItems(); }}
+                    onEndReachedThreshold={0.3}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
                     ListFooterComponent={() => (
@@ -122,13 +124,14 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                 <FlatList
                     data={(request?.page?.content && request.page.content.length > 0) ? request.page.content : initialItems}
                     style={[styles.homeListContainer, { ...style }]}
-                    contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom }}
+                    contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom, minHeight: '100%' }}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
-                    onEndReached={_loadMoreItems}
-                    onEndReachedThreshold={0.1}
+                    onEndReached={() => { console.log("onEndReached2"); _loadMoreItems(); }}
+                    onEndReachedThreshold={0.3}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
+                    ListEmptyComponent={() => (<View style={{ height: '100%' }} />)}
                     ListFooterComponent={() => (
                         loadingMore && (
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>

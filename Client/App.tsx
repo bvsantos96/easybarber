@@ -9,7 +9,7 @@ import * as Location from 'expo-location';
 
 import { getToken } from './utils/ApiRequest';
 import { getDefaultCountryString } from './utils/Constants';
-import useLocationStore from './storage/stores/LocationStore';
+import usePermissionStore from './storage/stores/PermissionStore';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,10 +29,12 @@ import Constants from 'expo-constants';
 import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
 import { DEBUG_AUTO_LOGIN } from './utils/EnvVariables';
-import { setCountry } from './utils/Location';
 import { ALERT_TYPE, AlertNotificationRoot } from 'react-native-alert-notification';
 import CustomAlert from './components/Alert';
 import { Header } from '@screens/HomeNavigator';
+import { getSelectedLocation } from 'utils/Location';
+
+import { useReactNavigationDevTools } from '@dev-plugins/react-navigation';
 
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
@@ -45,7 +47,7 @@ export const resetNavigation = (navigation: NavigationProp<any, any>, route: str
     });
 }
 
-const OnBoarding = ({ navigation }) => {
+const OnBoarding = ({ navigation }: PropNavigation) => {
     const Onboarding1 = require("./screens/Onboarding1").default;
     const Onboarding2 = require("./screens/Onboarding2").default;
     const translateXAnimation = useRef(new Animated.Value(0)).current;
@@ -149,7 +151,7 @@ const Router = () => {
         requestingLocationPermission,
         setHasLocationPermission,
         hasLocationPermission
-    } = useLocationStore();
+    } = usePermissionStore();
 
     type StackParamList = {
         LocationRequest: undefined;
@@ -170,6 +172,8 @@ const Router = () => {
     const Stack = createNativeStackNavigator<StackParamList>();
     const navigationRef = useRef<NavigationContainerRef<StackParamList> | null>(null);
 
+    useReactNavigationDevTools(navigationRef);
+
     useEffect(() => {
         const loadInitialData = async () => {
             let defaultPage: keyof StackParamList = "OnBoarding";
@@ -185,14 +189,10 @@ const Router = () => {
                 await waitAndNavigate(defaultPage);
             } else {
                 defaultPage = await getToken() !== null ? "Tabs" : "OnBoarding";
-                try {
-                    await setCountry();
-                } catch (error) {
-                    console.error('Error setting country:', error);
-                }
             }
 
             setDefaultPage(defaultPage);
+            await waitAndResetNavigation(defaultPage);
 
             const { status } = await Location.getForegroundPermissionsAsync();
             if (status === 'granted') {
@@ -209,6 +209,18 @@ const Router = () => {
 
         loadInitialData();
     }, []);
+
+    const waitAndResetNavigation = async (page: keyof StackParamList) => {
+        if (navigationRef.current) {
+            navigationRef.current.reset({
+                index: 0,
+                routes: [{ name: page }],
+            });
+            return;
+        } else {
+            setTimeout(async () => await waitAndResetNavigation(page), 500);
+        }
+    }
 
     const waitAndNavigate = async (page: keyof StackParamList) => {
         if (navigationRef.current) {
@@ -239,6 +251,12 @@ const Router = () => {
                 setTimeout(navigateToLocationRequest, 500);
             }
         };
+
+        if (hasLocationPermission) {
+            getSelectedLocation();
+            navigationRef.current?.navigate(defaultPage);
+            return;
+        }
 
         if (!hasLocationPermission && requestingLocationPermission !== undefined) {
             navigateToLocationRequest();

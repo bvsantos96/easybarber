@@ -4,25 +4,26 @@ import { useTheme } from "../styles/ThemeContext";
 import React from "react";
 import Button from "../components/Button";
 import LogoSmall from "@assets/images/logoRounded.svg";
-import useLocationStore from "../storage/stores/LocationStore";
 import * as Location from 'expo-location';
+import usePermissionStore from "storage/stores/PermissionStore";
 
 export default function LocationRequest() {
     const {
         setRequestingLocationPermission,
         setHasLocationPermission
-    } = useLocationStore();
+    } = usePermissionStore();
     const texts = require("@lang/en.json");
     const styles = getStyles();
 
     const requestLocationPermission = async () => {
         const { status }: Location.PermissionResponse = await Location.requestForegroundPermissionsAsync();
-        setRequestingLocationPermission(false);
         if (status === "granted") {
             setHasLocationPermission(true);
+            setRequestingLocationPermission(false);
             return true;
         }
         setHasLocationPermission(false);
+        setRequestingLocationPermission(false);
     }
 
     return (

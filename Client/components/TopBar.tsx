@@ -60,7 +60,7 @@ export default function TopBar({ filter, setFilter, setName, location }: TopBarP
                     >
                         <ModalTextButton buttonText={currentSelectedAddress} style={{ maxWidth: "65%" }} />
                     </CustomModal>
-                    <Pressable onPress={() => {Banner({type: ALERT_TYPE.DANGER, title: "Implementation missing", message: "Notifications are not yet implemented"}) }} style={styles.bellContainer}>
+                    <Pressable onPress={() => { Banner({ type: ALERT_TYPE.DANGER, title: "Implementation missing", message: "Notifications are not yet implemented" }) }} style={styles.bellContainer}>
                         <BellIcon width={styles.bell.width} height={styles.bell.height} fill={"none"} />
                     </Pressable>
                     <ProfileImage />

@@ -3,14 +3,15 @@ package com.teamsantos.easybarber.services;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.BasePageDTO;
+import com.teamsantos.easybarber.DTO.appointment.AppointmentCountDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO;
@@ -23,6 +24,7 @@ import com.teamsantos.easybarber.utils.Pair;
 import com.teamsantos.easybarber.utils.Utils;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Tuple;
 
 @Service
 public class AppointmentService {
@@ -46,66 +48,59 @@ public class AppointmentService {
         this.messagingService = messagingService;
     }
 
-    public Pair<Long, String> create(AppointmentDTO appointmentDTO) {
-        Pair<Long, String> result = new Pair<>(null, "");
-        try {
-            if (appointmentDTO.getId() != null) {
-                appointmentDTO.setId(null);
-            }
-            // TODO: Is an establishment required? Or can employees be independent?
-            if (appointmentDTO.getEstablishmentId() == null) {
-                throw new IllegalArgumentException("An appointment must be associated with an establishment");
-            }
-            if (appointmentDTO.getDate() == null) {
-                throw new IllegalArgumentException("Appointment date must not be null");
-            }
-            if (appointmentDTO.getTime() == null) {
-                throw new IllegalArgumentException("Appointment time must not be null");
-            }
-            if (appointmentDTO.getDate().isBefore(LocalDate.now())) {
-                throw new IllegalArgumentException("Appointment date must be in the future");
-            } else if (appointmentDTO.getDate().isEqual(LocalDate.now())
-                    && appointmentDTO.getTime().isBefore(LocalTime.now())) {
-                throw new IllegalArgumentException("Appointment time must be in the future");
-            }
-            if (appointmentDTO.getEmployeeId() == null) {
-                throw new IllegalArgumentException("An appointment must be associated with an employee");
-            } else {
-                if (!establishmentService.isStaff(appointmentDTO.getEstablishmentId(),
-                        appointmentDTO.getEmployeeId())) {
-                    throw new IllegalArgumentException("Employee is not associated with the establishment");
-                }
-            }
-            if (appointmentDTO.getUserId() == null) {
-                if (appointmentDTO.getNonRegisteredUser() == null) {
-                    throw new IllegalArgumentException("An appointment must be associated with a user");
-                } else {
-                    if (employeeService.getUserId(appointmentDTO.getEmployeeId()) == UserContext.getUserId()) {
-                        appointmentDTO.setUserId(UserContext.getUserId());
-                    }
-                }
-            }
-            if (UserContext.getUserId() != appointmentDTO.getUserId()) {
-                throw new IllegalArgumentException(
-                        "You do not have permission to create an appointment for another user");
-            }
-            if (appointmentDTO.getServiceId() == null) {
-                throw new IllegalArgumentException("An appointment must be associated with a service");
-            }
-
-            Pair<Long, Integer> _establishmentService = establishmentService.getDurationOfService(
-                    appointmentDTO.getEstablishmentId(),
-                    appointmentDTO.getServiceId());
-            if (!scheduleService.isAppointmentDateTimeValid(appointmentDTO, _establishmentService.getSecond())) {
-                throw new IllegalArgumentException("Appointment date must be within the employee's schedule");
-            }
-            appointmentDTO.setServiceId(_establishmentService.getFirst());
-            result.setFirst(appointmentRepository.save(appointmentDTO.toEntity(entityManager))
-                    .getId());
-        } catch (Exception e) {
-            result.setSecond(e.getMessage());
+    public Long create(AppointmentDTO appointmentDTO) throws Exception {
+        if (appointmentDTO.getId() != null) {
+            appointmentDTO.setId(null);
         }
-        return result;
+        // TODO: Is an establishment required? Or can employees be independent?
+        if (appointmentDTO.getEstablishmentId() == null) {
+            throw new IllegalArgumentException("An appointment must be associated with an establishment");
+        }
+        if (appointmentDTO.getDate() == null) {
+            throw new IllegalArgumentException("Appointment date must not be null");
+        }
+        if (appointmentDTO.getTime() == null) {
+            throw new IllegalArgumentException("Appointment time must not be null");
+        }
+        if (appointmentDTO.getDate().isBefore(LocalDate.now())) {
+            throw new IllegalArgumentException("Appointment date must be in the future");
+        } else if (appointmentDTO.getDate().isEqual(LocalDate.now())
+                && appointmentDTO.getTime().isBefore(LocalTime.now())) {
+            throw new IllegalArgumentException("Appointment time must be in the future");
+        }
+        if (appointmentDTO.getEmployeeId() == null) {
+            throw new IllegalArgumentException("An appointment must be associated with an employee");
+        } else {
+            if (!establishmentService.isStaff(appointmentDTO.getEstablishmentId(),
+                    appointmentDTO.getEmployeeId())) {
+                throw new IllegalArgumentException("Employee is not associated with the establishment");
+            }
+        }
+        if (appointmentDTO.getUserId() == null) {
+            if (appointmentDTO.getNonRegisteredUser() == null) {
+                appointmentDTO.setUserId(UserContext.getUserId());
+            } else {
+                if (employeeService.getUserId(appointmentDTO.getEmployeeId()) == UserContext.getUserId()) {
+                    appointmentDTO.setUserId(UserContext.getUserId());
+                }
+            }
+        }
+        if (UserContext.getUserId() != appointmentDTO.getUserId()) {
+            throw new IllegalArgumentException(
+                    "You do not have permission to create an appointment for another user");
+        }
+        if (appointmentDTO.getServiceId() == null) {
+            throw new IllegalArgumentException("An appointment must be associated with a service");
+        }
+
+        Pair<Long, Integer> _establishmentService = establishmentService.getDurationOfService(
+                appointmentDTO.getEstablishmentId(),
+                appointmentDTO.getServiceId());
+        if (!scheduleService.isAppointmentDateTimeValid(appointmentDTO, _establishmentService.getSecond())) {
+            throw new IllegalArgumentException("Appointment date must be within the employee's schedule");
+        }
+        appointmentDTO.setServiceId(_establishmentService.getFirst());
+        return appointmentRepository.save(appointmentDTO.toEntity(entityManager)).getId();
     }
 
     @Transactional(readOnly = true)
@@ -125,7 +120,7 @@ public class AppointmentService {
     }
 
     @Transactional
-    public void cancel(CancelAppointmentDTO cancelAppointmentDTO) throws Exception{
+    public void cancel(CancelAppointmentDTO cancelAppointmentDTO) throws Exception {
         Appointment appointment = appointmentRepository.findById(cancelAppointmentDTO.getId())
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
 
@@ -162,5 +157,13 @@ public class AppointmentService {
 
         appointment.setReminded(true);
         appointmentRepository.save(appointment);
+    }
+
+    public AppointmentCountDTO countAppointments(boolean userView) {
+        Optional<Tuple> count = appointmentRepository.countAppointments(UserContext.getUserId(), userView);
+        if (count.isEmpty()) {
+            return new AppointmentCountDTO(0, 0);
+        }
+        return new AppointmentCountDTO(count.get());
     }
 }

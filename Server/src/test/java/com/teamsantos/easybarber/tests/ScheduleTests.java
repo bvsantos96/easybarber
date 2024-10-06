@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
+import com.teamsantos.easybarber.DTO.schedule.EmployeeScheduleDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.schedule.SchedulesDTO;
@@ -329,58 +330,57 @@ public class ScheduleTests {
 
     private void removeExceptionFromMap(List<ScheduleExceptionDTO> exceptions, long employeeId,
             Map<DAY_OF_WEEK, List<Pair<LocalTime, LocalTime>>> map, LocalDate from, LocalDate to) {
-        List<ScheduleDTO> schedules = new ArrayList<>();
+        List<EmployeeScheduleDTO> schedules = new ArrayList<>();
         for (ScheduleExceptionDTO exception : exceptions) {
-            schedules.addAll(exception.toDTOs(from, to));
+            schedules.addAll(exception.toEmployeeScheduleDTOs(from, to));
         }
         removeScheduleFromMap(schedules, employeeId, map);
     }
 
-    private void removeScheduleFromMap(List<ScheduleDTO> _schedules, long employeeId,
+    private void removeScheduleFromMap(List<EmployeeScheduleDTO> _schedules, long employeeId,
             Map<DAY_OF_WEEK, List<Pair<LocalTime, LocalTime>>> map) {
-        for (ScheduleDTO schedule : _schedules) {
+        for (EmployeeScheduleDTO schedule : _schedules) {
             if (schedule.getEmployeeId() != employeeId) {
                 throw new IllegalArgumentException("Invalid employeeId");
             }
-            for (DAY_OF_WEEK day : schedule.getDays()) {
-                if (!map.containsKey(day)) {
-                    throw new IllegalArgumentException("Invalid day");
+            DAY_OF_WEEK day = schedule.getDay();
+            if (!map.containsKey(day)) {
+                throw new IllegalArgumentException("Invalid day");
+            }
+            List<Pair<LocalTime, LocalTime>> list = map.get(day);
+            for (int i = 0; i < list.size(); i++) {
+                LocalTime start = schedule.getStartHour();
+                LocalTime end = schedule.getEndHour();
+                Pair<LocalTime, LocalTime> pair = list.get(i);
+                if ((Utils.afterOrEqual(pair.getFirst(), start) && Utils.afterOrEqual(pair.getFirst(), end)
+                        || (Utils.beforeOrEqual(pair.getSecond(), end)
+                                && Utils.beforeOrEqual(pair.getSecond(), start)))) {
+                    continue;
                 }
-                List<Pair<LocalTime, LocalTime>> list = map.get(day);
-                for (int i = 0; i < list.size(); i++) {
-                    LocalTime start = schedule.getStartHour();
-                    LocalTime end = schedule.getEndHour();
-                    Pair<LocalTime, LocalTime> pair = list.get(i);
-                    if ((Utils.afterOrEqual(pair.getFirst(), start) && Utils.afterOrEqual(pair.getFirst(), end)
-                            || (Utils.beforeOrEqual(pair.getSecond(), end)
-                                    && Utils.beforeOrEqual(pair.getSecond(), start)))) {
-                        continue;
+                if (Utils.afterOrEqual(pair.getFirst(), start)) {
+                    if (!pair.getFirst().equals(start)) {
+                        list.add(new Pair<LocalTime, LocalTime>(start, pair.getFirst()));
                     }
-                    if (Utils.afterOrEqual(pair.getFirst(), start)) {
-                        if (!pair.getFirst().equals(start)) {
-                            list.add(new Pair<LocalTime, LocalTime>(start, pair.getFirst()));
-                        }
-                        if (Utils.beforeOrEqual(pair.getSecond(), end)) {
-                            list.remove(pair);
-                            i--;
-                        } else {
-                            pair.setFirst(end);
-                        }
+                    if (Utils.beforeOrEqual(pair.getSecond(), end)) {
+                        list.remove(pair);
+                        i--;
                     } else {
-                        if (pair.getSecond().isBefore(end)) {
-                            list.add(new Pair<LocalTime, LocalTime>(pair.getSecond(), end));
-                            pair.setSecond(start);
-                        } else {
-                            if (!pair.getSecond().equals(end)) {
-                                list.add(new Pair<LocalTime, LocalTime>(end, pair.getSecond()));
-                            }
-                            pair.setSecond(start);
+                        pair.setFirst(end);
+                    }
+                } else {
+                    if (pair.getSecond().isBefore(end)) {
+                        list.add(new Pair<LocalTime, LocalTime>(pair.getSecond(), end));
+                        pair.setSecond(start);
+                    } else {
+                        if (!pair.getSecond().equals(end)) {
+                            list.add(new Pair<LocalTime, LocalTime>(end, pair.getSecond()));
                         }
+                        pair.setSecond(start);
                     }
                 }
-                if (list.size() == 0) {
-                    map.remove(day);
-                }
+            }
+            if (list.size() == 0) {
+                map.remove(day);
             }
         }
     }

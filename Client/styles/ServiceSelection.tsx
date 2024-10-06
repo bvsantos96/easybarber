@@ -3,30 +3,7 @@ import { useTheme } from './ThemeContext';
 
 export const getStyles = () => {
     const theme = useTheme();
-    const padding = (theme.dimensions.width - 356.11 * theme.dimensions.absoluteWidth) / 2;
     return StyleSheet.create({
-        container: {
-            flex: 1,
-            width: theme.dimensions.width,
-            height: theme.dimensions.height,
-        },
-        button: {
-            position: 'absolute',
-            bottom: 145 * theme.dimensions.absoluteHeight,
-            left: padding,
-            width: theme.dimensions.width - 2 * padding,
-        },
-        selectTextContainer: {
-            position: 'absolute',
-            top: 20 * theme.dimensions.absoluteHeight,
-            fontFamily: 'Poppins',
-            fontSize: theme.fonts.size._14,
-            fontWeight: 400,
-            lineHeight: 21 * theme.dimensions.absoluteHeight,
-            textAlign: 'center',
-            alignSelf: 'center',
-            justifyContent: 'center',
-        },
         textContainer: {
             position: 'absolute',
             top: 10 * theme.dimensions.absoluteHeight,
@@ -75,7 +52,7 @@ export const getStyles = () => {
         },
         listContainer: {
             position: 'absolute',
-            top: 50 * theme.dimensions.absoluteHeight,
+            top: 60 * theme.dimensions.absoluteHeight,
             width: 335 * theme.dimensions.absoluteWidth,
             height: 470 * theme.dimensions.absoluteHeight,
             left: 29 * theme.dimensions.absoluteWidth,

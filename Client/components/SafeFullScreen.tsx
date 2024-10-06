@@ -1,7 +1,7 @@
 import React from "react";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../styles/ThemeContext";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet/src";
 
 export default function SafeFullScreen({ children = <></> }) {
     const theme = useTheme();
