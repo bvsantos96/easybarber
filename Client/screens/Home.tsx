@@ -105,7 +105,6 @@ export default function Home({ navigation }: Props) {
                                         style={homeStyles.alignCenter}
                                         uri={category.imageURL} />}
                                 title={category.name}
-                                expanded={topCategoriesExpanded}
                                 select={setFilter}
                                 selectedCategory={
                                     filter && typeof filter === 'object'

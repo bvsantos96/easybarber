@@ -25,7 +25,7 @@ export const getStyles = () => {
             overflow: 'hidden',
         },
         topCategoriesHeights: {
-            maxHeight: 120 * theme.dimensions.absoluteHeight,
+            maxHeight: 100 * theme.dimensions.absoluteHeight,
         },
         nearByBarbersContainer: {
             width: 360 * theme.dimensions.absoluteWidth,
