@@ -33,6 +33,8 @@ import { ALERT_TYPE, AlertNotificationRoot } from 'react-native-alert-notificati
 import { Alert } from './components/Alert';
 import { getSelectedLocation } from 'utils/Location';
 
+import { useReactNavigationDevTools } from '@dev-plugins/react-navigation';
+
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
 };
@@ -163,6 +165,8 @@ const Router = () => {
     const Stack = createNativeStackNavigator<StackParamList>();
     const navigationRef = useRef<NavigationContainerRef<StackParamList> | null>(null);
 
+    useReactNavigationDevTools(navigationRef);
+
     useEffect(() => {
         const loadInitialData = async () => {
             let defaultPage: keyof StackParamList = "OnBoarding";
@@ -181,7 +185,7 @@ const Router = () => {
             }
 
             setDefaultPage(defaultPage);
-            await waitAndNavigate(defaultPage);
+            await waitAndResetNavigation(defaultPage);
 
             const { status } = await Location.getForegroundPermissionsAsync();
             if (status === 'granted') {
@@ -198,6 +202,18 @@ const Router = () => {
 
         loadInitialData();
     }, []);
+
+    const waitAndResetNavigation = async (page: keyof StackParamList) => {
+        if (navigationRef.current) {
+            navigationRef.current.reset({
+                index: 0,
+                routes: [{ name: page }],
+            });
+            return;
+        } else {
+            setTimeout(async () => await waitAndResetNavigation(page), 500);
+        }
+    }
 
     const waitAndNavigate = async (page: keyof StackParamList) => {
         if (navigationRef.current) {
