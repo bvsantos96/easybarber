@@ -57,11 +57,13 @@ export default function Home({ navigation }: Props) {
     }, []);
 
     useEffect(() => {
+        console.log("resetSearch");
         setResetSearch(!resetSearch);
     }, [selectedLocation]);
 
     const replaceFilter = (filter: IFilterRequest) => {
         let req: ITimedRequest<EstablishmentInfo> = new TimedRequest(createPageable<EstablishmentInfo>(), 0, filter);
+        console.log("replaceFilter");
         pageListRef?.current?.loadMoreItems(req);
         _setFilter(filter);
     }
