@@ -57,7 +57,7 @@ const getData = async (key: string): Promise<string | null> => {
     }
 };
 
-const removeData = async (key: string) => {
+export const removeData = async (key: string) => {
     try {
         await AsyncStorage.removeItem(key);
     } catch (e) {
