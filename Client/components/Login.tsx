@@ -93,7 +93,7 @@ export default function Login({ navigation, toggleNewUser }: SignInProps) {
                 />
             </View>
             <View style={styles.forgotPassContainer}>
-                <Text style={styles.forgotPass} onPress={() => alert("Goto forget password page")}>{texts.forgotPassword}</Text>
+                <Text style={styles.forgotPass} onPress={() => navigation.navigate(texts.tabs.forgotPwd)} >{texts.forgotPassword}</Text>
             </View>
             <View style={styles.buttonContainer}>
                 <Button title={texts.login.button} onPress={login} />

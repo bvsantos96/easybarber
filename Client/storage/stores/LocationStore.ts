@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { getLocation } from '../../utils/Location';
 import { getArrayFromPage } from '../StorageUtils';
 import { getLocationsRequest, setNewLocation } from '../../utils/ApiRequest';
+import { AlertProps, AlertType } from '@components/Alert';
 
 interface LocationState {
     requestingLocationPermission: boolean | undefined;
@@ -18,6 +19,9 @@ interface LocationState {
     getSelectedLocation: () => Promise<ILocation | undefined>;
     clearLocations: () => void;
     country: string;
+    alertProps:AlertProps;
+    alert: (alertProps:AlertProps) => void;
+    alertVisible:boolean;
 }
 
 const useLocationStore = create<LocationState>()(
@@ -85,6 +89,18 @@ const useLocationStore = create<LocationState>()(
             return state.selectedLocation;
         },
         clearLocations: () => set({ hasMoreLocations: true, locations: [] }),
+        alertProps: {
+            message: "message", 
+            onPress: ()=>{alert("Pressed")},
+            buttonText: "Btn text",
+            type: AlertType.Success
+        },
+        alert: (_alertProps:AlertProps) =>
+            set((state: LocationState) => {
+                return{ alertVisible: !state.alertVisible, alertProps: _alertProps };
+            }),
+        alertVisible:false
     }));
+    
 
 export default useLocationStore;
