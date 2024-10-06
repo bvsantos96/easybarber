@@ -9,8 +9,8 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class CancelAppointmentDTO {
-    Long id;
-    String reason;
+    private Long id;
+    private String reason;
 
     @Override
     public String toString() {
