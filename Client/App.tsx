@@ -33,8 +33,6 @@ import { ALERT_TYPE, AlertNotificationRoot } from 'react-native-alert-notificati
 import { Alert } from './components/Alert';
 import { getSelectedLocation } from 'utils/Location';
 
-import { useReactNavigationDevTools } from '@dev-plugins/react-navigation';
-
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
 };
@@ -164,8 +162,6 @@ const Router = () => {
 
     const Stack = createNativeStackNavigator<StackParamList>();
     const navigationRef = useRef<NavigationContainerRef<StackParamList> | null>(null);
-
-    useReactNavigationDevTools(navigationRef);
 
     useEffect(() => {
         const loadInitialData = async () => {
