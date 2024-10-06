@@ -3,6 +3,8 @@ package com.teamsantos.easybarber.repositories;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +17,11 @@ import org.springframework.stereotype.Repository;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
+import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.entities.Appointment;
+import com.teamsantos.easybarber.entities.ScheduleException;
+
+import jakarta.persistence.Tuple;
 
 @Repository
 public interface AppointmentRepository
@@ -76,7 +82,12 @@ public interface AppointmentRepository
                 and (:#{#filter.date} is null or s.date = :#{#filter.date})
                 and (:#{#filter.time} is null or s.time >= :#{#filter.time})
                 and (:#{#filter.endTime} is null or s.time <= :#{#filter.endTime})
-                and (:#{#filter.future} is null or (s.date > CURRENT_DATE or (s.date = current_date and s.time >= current_time)))
+                and (:#{#filter.future} is null OR (
+                        (:#{#filter.future} = true AND (s.date > CURRENT_DATE or (s.date = current_date and s.time >= current_time)))
+                    OR
+                        (:#{#filter.future} = false AND (s.date < CURRENT_DATE or (s.date = current_date and s.time < current_time)))
+                    )
+                )
                 and (:#{#filter.activeOnly} is null or s.active = :#{#filter.activeOnly})
             """)
     Page<AppointmentListDTO> findAllToUser(AppointmentFilter filter, Pageable pageable);
@@ -102,24 +113,95 @@ public interface AppointmentRepository
                 and (:#{#filter.date} is null or s.date = :#{#filter.date})
                 and (:#{#filter.time} is null or s.time >= :#{#filter.time})
                 and (:#{#filter.endTime} is null or s.time <= :#{#filter.endTime})
-                and (:#{#filter.future} is null or (s.date > CURRENT_DATE or (s.date = current_date and s.time >= current_time)))
+                and (:#{#filter.future} is null OR (
+                        (:#{#filter.future} = true AND (s.date > CURRENT_DATE or (s.date = current_date and s.time >= current_time)))
+                    OR
+                        (:#{#filter.future} = false AND (s.date < CURRENT_DATE or (s.date = current_date and s.time < current_time)))
+                    )
+                )
                 and (:#{#filter.activeOnly} is null or s.active = :#{#filter.activeOnly})
             """)
     Page<AppointmentListDTO> findAllToEmployee(AppointmentFilter filter, Pageable pageable);
 
     @Query("""
-                SELECT new com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO(
-                    s.id,
-                    s.user.name,
-                    s.user.mobileInformation,
-                    s.date,
-                    s.time,
-                    s.establishment.name,
-                    s.employee.user.name
-                )
-                FROM Appointment s
-                WHERE s.reminded = false
-                AND s.date = :date
-        """)
+                    SELECT new com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO(
+                        s.id,
+                        s.user.name,
+                        s.user.mobileInformation,
+                        s.date,
+                        s.time,
+                        s.establishment.name,
+                        s.employee.user.name
+                    )
+                    FROM Appointment s
+                    WHERE s.reminded = false
+                    AND s.date = :date
+            """)
     List<AppointmentReminderDTO> findNextDayAppointmentsNotReminded(@Param("date") LocalDate date);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.entities.ScheduleException(
+                s.employee.id,
+                s.establishment.id,
+                s.date,
+                s.time,
+                s.service.service.duration
+            )
+            FROM Appointment s
+            WHERE s.date = :from
+                AND (:employeeId = null OR s.employee.id = :employeeId)
+                AND s.establishment.id = :establishmentId
+                AND s.active = true
+            """)
+    List<ScheduleException> findAppointmentsByDateEmployeeEstablishment(LocalDate from, Long employeeId,
+            long establishmentId);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO(
+                s.id,
+                s.employee.id,
+                s.establishment.id,
+                s.date,
+                s.time,
+                s.service.service.duration
+            )
+            FROM Appointment s
+            WHERE s.date = :from
+                AND (:employeeId = null OR s.employee.id = :employeeId)
+                AND s.establishment.id = :establishmentId
+                AND s.active = true
+            """)
+    List<ScheduleExceptionDTO> findAppointmentsByDateEmployeeEstablishmentDTO(LocalDate from,
+            Long employeeId, Long establishmentId);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO(
+                s.id,
+                s.employee.id,
+                s.establishment.id,
+                s.date,
+                s.time,
+                s.service.service.duration
+            )
+            FROM Appointment s
+            WHERE s.date = :from
+                AND (:employeeIds IS NULL OR s.employee.id IN :employeeIds)
+                AND s.establishment.id = :establishmentId
+                AND s.active = true
+            """)
+    List<ScheduleExceptionDTO> findAppointmentsByDateEmployeesEstablishmentDTO(
+            @Param("from") LocalDate from,
+            @Param("employeeIds") Set<Long> employeeIds,
+            @Param("establishmentId") Long establishmentId);
+
+    @Query(value = """
+                SELECT
+                    SUM(CASE WHEN (a.date > CURRENT_DATE OR (a.date = CURRENT_DATE AND a.time >= CURRENT_TIME)) THEN 1 ELSE 0 END) AS future,
+                    SUM(CASE WHEN (a.date < CURRENT_DATE OR (a.date = CURRENT_DATE AND a.time < CURRENT_TIME)) THEN 1 ELSE 0 END) AS past
+                FROM appointment a
+                WHERE (:userView = true AND :userId = a.user_id OR :userView = false AND :userId = a.employee_id)
+                    AND a.active = true
+                    AND a.confirmed = true
+            """, nativeQuery = true)
+    Optional<Tuple> countAppointments(long userId, boolean userView);
 }

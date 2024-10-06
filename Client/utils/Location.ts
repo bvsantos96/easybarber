@@ -8,13 +8,14 @@ import { ALERT_TYPE } from 'react-native-alert-notification';
 import texts from '../langs/en.json';
 import { Linking, Platform } from 'react-native';
 import * as expoClipboard from 'expo-clipboard';
+import usePermissionStore from 'storage/stores/PermissionStore';
 
 export async function hasLocationPermission(): Promise<boolean> {
     try {
         const {
             hasLocationPermission,
             setRequestingLocationPermission,
-        } = useLocationStore.getState();
+        } = usePermissionStore.getState();
 
         if (hasLocationPermission) {
             return hasLocationPermission;
@@ -57,6 +58,7 @@ export async function getLocation(): Promise<ILocation | null> {
 export const setCountry = async (): Promise<void> => {
     const location: ILocation | null = await getLocation();
     if (location === null) {
+        useLocationStore.setState({ country: "" });
         return;
     }
     useLocationStore.setState({ country: location.country });
@@ -87,6 +89,7 @@ export const selectLocation = async (location: ILocation): Promise<void> => {
         }
         locations.unshift(location);
         await store(LOCATIONS_STORAGE_KEY, JSON.stringify(locations));
+        useLocationStore.setState({ locations: locations, selectedLocation: location });
     } catch (error) {
         Banner({ type: ALERT_TYPE.DANGER, title: "", message: texts.errors.selectLocationError });
         console.error('Error selecting location:', error);
@@ -135,15 +138,24 @@ export const getLocations = async (): Promise<ILocation[]> => {
     return locations;
 }
 
-export const getSelectedLocation = async (): Promise<ILocation> => {
+export const getSelectedLocation = async (): Promise<ILocation | undefined> => {
     const {
-        getSelectedLocation
+        selectedLocation
     } = useLocationStore.getState();
-    const location = await getSelectedLocation();
-    if (location === undefined) {
-        throw new Error('No location selected');
+    if (selectedLocation === undefined) {
+        let locations = getArrayFromPage(await getLocationsRequest());
+        if (locations.length <= 0) {
+            const location = await getLocation();
+            if (location === null) {
+                return undefined;
+            }
+            locations[0] = location;
+            locations[0].id = await setNewLocation(locations[0]);
+        }
+        useLocationStore.setState({ locations: locations, selectedLocation: locations[0] });
+        return locations[0];
     }
-    return location;
+    return selectedLocation;
 }
 
 const blacklist = [
@@ -200,10 +212,14 @@ export const fetchSuggestions = async (address: string): Promise<ILocation[]> =>
             country
         } = useLocationStore.getState();
 
+        if (country === undefined) {
+            await setCountry();
+        }
+
         let localSuggestions: IAddressSuggestion[] = [];
 
         const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(address)}&format=json&addressdetails=1`;
-        if (country) {
+        if (country !== undefined && country !== "") {
             const response = await fetch(
                 `${url}&countrycodes=${country}&limit=3`
             );

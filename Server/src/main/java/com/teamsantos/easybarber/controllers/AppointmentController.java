@@ -11,10 +11,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
+import com.teamsantos.easybarber.DTO.appointment.AppointmentCountDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.appointment.CancelAppointmentDTO;
@@ -51,6 +53,18 @@ public class AppointmentController {
             return ResponseEntity.ok(appointments);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/appointment/count")
+    public ResponseEntity<AppointmentCountDTO> countAppointments(@RequestParam(required = false) Boolean userView) {
+        try {
+            if (userView == null) {
+                userView = true;
+            }
+            return ResponseEntity.ok(appointmentService.countAppointments(userView));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new AppointmentCountDTO(e.getMessage()));
         }
     }
 

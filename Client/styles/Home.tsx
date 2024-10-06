@@ -12,7 +12,7 @@ export const getStyles = () => {
             textAlign: 'center',
         },
         categoryContainer: {
-            height: 128 * theme.dimensions.absoluteHeight,
+            height: 82 * theme.dimensions.absoluteHeight,
         },
         topCategoriesContainer: {
             width: "100%",
@@ -22,14 +22,15 @@ export const getStyles = () => {
             width: "100%",
             flexDirection: 'row',
             justifyContent: 'space-between',
-            overflow: 'hidden'
+            overflow: 'hidden',
         },
         topCategoriesHeights: {
-            maxHeight: 120 * theme.dimensions.absoluteHeight,
+            maxHeight: 100 * theme.dimensions.absoluteHeight,
         },
         nearByBarbersContainer: {
             width: 360 * theme.dimensions.absoluteWidth,
             alignItems: 'center',
+            flexGrow: 1,
         },
         nearByBarbersContainerHeights: {
             minHeight: theme.dimensions.height - topBarHeight - 200 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,

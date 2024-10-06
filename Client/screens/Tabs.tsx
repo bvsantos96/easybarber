@@ -9,6 +9,8 @@ import { useTheme } from '../styles/ThemeContext';
 import SafeFullScreen from '../components/SafeFullScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import HomeNavigator from './HomeNavigator';
+import Alerts from './Alerts';
+import Chat from './Chat';
 
 export default function Tabs() {
     const Tab = createBottomTabNavigator();
@@ -61,7 +63,7 @@ export default function Tabs() {
                 } >
                 {() => (<SafeFullScreen><Appointments /></SafeFullScreen>)}
             </Tab.Screen>
-            <Tab.Screen name={texts.tabs.alerts} component={Appointments}
+            <Tab.Screen name={texts.tabs.alerts} component={Alerts}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => !focused ? (
@@ -70,7 +72,7 @@ export default function Tabs() {
                         <AlertsIcon width={20 * theme.dimensions.absoluteWidth} height={20 * theme.dimensions.absoluteWidth} fill={theme.colors.mainColor} />
                     )
                 }} />
-            <Tab.Screen name={texts.tabs.chats} component={Appointments}
+            <Tab.Screen name={texts.tabs.chats} component={Chat}
                 options={{
                     headerShown: false,
                     tabBarIcon: ({ focused }) => !focused ? (

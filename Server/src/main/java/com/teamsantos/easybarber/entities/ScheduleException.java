@@ -18,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -25,6 +26,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
+@NoArgsConstructor
 @Table(indexes = { @Index(columnList = "employee_id"), @Index(columnList = "employee_id, date") })
 public class ScheduleException {
     @Id
@@ -46,6 +48,18 @@ public class ScheduleException {
     private Boolean active;
     @Column
     private DAY_OF_WEEK day;
+
+    public ScheduleException(long employeeId, long establishmentId, LocalDate date, LocalTime start, int duration) {
+        this.employee = new Employee();
+        this.employee.setId(employeeId);
+        this.establishment = new Establishment();
+        this.establishment.setId(establishmentId);
+        this.date = date;
+        this.startHour = start;
+        this.endHour = start.plusMinutes(duration);
+        this.active = true;
+        this.day = DAY_OF_WEEK.valueOf(date.getDayOfWeek().name());
+    }
 
     public ScheduleExceptionDTO toDTO() {
         return new ScheduleExceptionDTO(
