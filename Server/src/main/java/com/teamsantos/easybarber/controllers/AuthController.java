@@ -6,9 +6,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.user.ResetPwdDTO;
 import com.teamsantos.easybarber.DTO.user.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.user.UserDTO;
@@ -55,18 +57,18 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/pwd/reset")
-    public ResponseEntity<UserDTO> getUserLocations(@RequestBody ResetPwdDTO resetPwdDTO) {
+    @PutMapping("/pwd/reset")
+    public ResponseEntity<BaseResponseDTO> resetUserPwd(@RequestBody ResetPwdDTO resetPwdDTO) {
+        BaseResponseDTO response = new BaseResponseDTO();
         try {
             UserDTO userDTO = userService.getUserByMobileNr(resetPwdDTO.getPhoneNr());
             messagingService.verifyCode(resetPwdDTO.getPhoneNr(),
                     resetPwdDTO.getConfirmationCode());
             userService.changeUserPwd(userDTO, resetPwdDTO.getNewPassword());
-            return ResponseEntity.ok(userDTO);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            UserDTO userDTO = new UserDTO();
-            userDTO.setResponseMessage(e.getMessage());
-            return ResponseEntity.badRequest().body(userDTO);
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 

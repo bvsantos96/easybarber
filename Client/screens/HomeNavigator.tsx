@@ -16,7 +16,7 @@ interface HeaderProps {
     title: string;
 }
 
-const Header = ({ navigation, title }: HeaderProps) => {
+export const Header = ({ navigation, title }) => {
     const styles = getStyles();
     return (
         <View style={styles.header}>

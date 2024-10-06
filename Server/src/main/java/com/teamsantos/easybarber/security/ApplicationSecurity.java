@@ -53,7 +53,12 @@ public class ApplicationSecurity {
                                 "/registerAdmin",
                                 "/login",
                                 "/employee",
-                                "/sms/**")
+                                "/sms/**",
+                                "/pwd/reset")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.PUT,
+                                "/v3/api-docs/**",
+                                "/pwd/reset")
                         .permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/v3/api-docs/**",
