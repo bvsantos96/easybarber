@@ -432,7 +432,6 @@ export const getCategories = async (): Promise<ICategory[]> => {
 
 export const getApiVersion = async (): Promise<string> => {
     const response: string = await stringRequest("version", "GET", null, langs.apiMessages.success, langs.apiMessages.failed);
-    console.log(response);
     if (response.length > 0)
         return response;
     throw new Error(langs.apiMessages.failed);
