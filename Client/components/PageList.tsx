@@ -106,7 +106,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom }}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
-                    onEndReached={() => { console.log("onEndReached"); _loadMoreItems(); }}
+                    onEndReached={_loadMoreItems}
                     onEndReachedThreshold={0.3}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
@@ -127,7 +127,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom, minHeight: '100%' }}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
-                    onEndReached={() => { console.log("onEndReached2"); _loadMoreItems(); }}
+                    onEndReached={_loadMoreItems}
                     onEndReachedThreshold={0.3}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
