@@ -14,8 +14,6 @@ import BellIcon from '@assets/icons/bell.svg';
 import CustomModal, { CustomModalRef } from './Modal';
 import Filter from '../screens/Filter';
 import LocationModal from './LocationModal';
-import { Banner } from './Alert';
-import { ALERT_TYPE } from 'react-native-alert-notification';
 
 interface TopBarProps {
     name?: string;
@@ -60,9 +58,11 @@ export default function TopBar({ filter, setFilter, setName, location }: TopBarP
                     >
                         <ModalTextButton buttonText={currentSelectedAddress} style={{ maxWidth: "65%" }} />
                     </CustomModal>
-                    <Pressable onPress={() => { Banner({ type: ALERT_TYPE.DANGER, title: "Implementation missing", message: "Notifications are not yet implemented" }) }} style={styles.bellContainer}>
+                    {/*
+                    <Pressable onPress={() => { }} style={styles.bellContainer}>
                         <BellIcon width={styles.bell.width} height={styles.bell.height} fill={"none"} />
                     </Pressable>
+                    */}
                     <ProfileImage />
                 </View>
                 <View style={styles.searchContainer}>
