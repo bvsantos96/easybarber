@@ -1,7 +1,3 @@
-import { ALERT_TYPE } from "react-native-alert-notification";
-import { Banner } from "../components/Alert";
-import texts from "../langs/en.json";
-
 export class TimedRequest<T extends Identifiable> implements ITimedRequest<T> {
     page: IPage<T>;
     lastRequest: number;
@@ -62,7 +58,6 @@ export class TimedRequest<T extends Identifiable> implements ITimedRequest<T> {
         }
         catch (error) {
             this.lastRequest = Date.now();
-            Banner({ type: ALERT_TYPE.WARNING, title: texts.errors.loadingMoreItemsTitle, message: texts.errors.loadingMoreItems });
             console.error('Error loading more items:', error);
             return false;
         }
