@@ -5,8 +5,6 @@ import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
 import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
-import { Banner } from '../components/Alert';
-import { ALERT_TYPE } from 'react-native-alert-notification';
 import useLocationStore from '../storage/stores/LocationStore';
 
 import { ResponseType } from '../enums';
@@ -125,10 +123,10 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
                 if (data !== undefined && data !== null) {
                     try {
                         if (data.responseMessage) {
-                            Banner({ type: ALERT_TYPE.WARNING, message: data.responseMessage });
+                            console.log(data.responseMessage);
                             return { success: false, message: data.responseMessage };
                         }
-                        Banner({ type: ALERT_TYPE.WARNING, message: errorMessage });
+                        console.log(data.responseMessage);
                         return { success: false, message: errorMessage };
                     } catch (e) {
                         return { success: false, message: response }
@@ -214,7 +212,7 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
     if (result.success) {
         await storeData(TOKEN_STORAGE_KEY, result.message);
     } else {
-        Banner({ type: ALERT_TYPE.WARNING, title: "", message: result.message });
+        console.error(result.message);
     }
     return result;
 }

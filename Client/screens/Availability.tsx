@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getStyles } from "../styles/Availability";
 import Selection from "./Selection";
-import { ALERT_TYPE } from "react-native-alert-notification";
-import { Banner } from "@components/Alert";
 import { Calendar } from "react-native-calendars";
 import { View, Text } from "react-native";
 import { useTheme } from "@styles/ThemeContext";
@@ -14,6 +12,8 @@ import { RouteProp, useRoute } from "@react-navigation/native";
 import { getAvailability, getUnavailableDates, setAppointment } from "utils/ApiRequest";
 import { twoDigits } from "utils/Utils";
 import { Props } from "./Home";
+import useAlertStore from "storage/stores/AlertStore";
+import { AlertType } from "@components/Alert";
 
 type RouteParams = {
     appointment: {
@@ -155,9 +155,9 @@ export default function Availability({ navigation }: Props) {
                             time: time?.start || ""
                         })) {
                             navigation.navigate(texts.tabs.back);
-
                         } else {
-                            Banner({ type: ALERT_TYPE.DANGER, message: "Failed to Book Appointment" });
+                            const { alert } = useAlertStore();
+                            alert({ type: AlertType.Error, message: texts.appointments.failed });
                         }
                         return;
                     }
