@@ -3,6 +3,9 @@ import { View, Text, Animated } from 'react-native';
 import { getStyles } from '../styles/Alert';
 import Button from './Button';
 import Success from '@assets/images/success.svg';
+import Info from '@assets/images/info.svg';
+import Error from '@assets/images/error.svg';
+import texts from '@lang/en.json';
 
 export enum AlertType {
     Success = 'success',
@@ -34,6 +37,9 @@ export const CustomAlert: React.FC<Props> = ({
 }) => {
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const scaleAnim = useRef(new Animated.Value(0.8)).current;
+
+    const _type = type || AlertType.Success;
+    const _buttonText = buttonText || texts.dismiss;
 
     useEffect(() => {
         if (visible) {
@@ -94,12 +100,20 @@ export const CustomAlert: React.FC<Props> = ({
                             },
                         ]}
                     >
-                        <Success style={styles.image} />
+                        {_type === AlertType.Success &&
+                            <Success style={styles.image} />
+                        }
+                        {_type === AlertType.Error &&
+                            <Error style={styles.image} />
+                        }
+                        {_type === AlertType.Info &&
+                            <Info style={styles.image} />
+                        }
                         <View style={styles.messageContainer}>
                             <Text style={styles.message}>{message}</Text>
                         </View>
                         <Button
-                            title={buttonText}
+                            title={_buttonText}
                             onPress={handleClose}
                             stylesInput={styles.button}
                         />

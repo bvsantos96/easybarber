@@ -34,10 +34,6 @@ import { Header } from '@screens/HomeNavigator';
 import { getSelectedLocation } from 'utils/Location';
 import useAlertStore from 'storage/stores/AlertStore';
 
-export type PropNavigation = {
-    navigation: NavigationProp<any, any>
-};
-
 export const resetNavigation = (navigation: NavigationProp<any, any>, route: string) => {
     navigation.reset({
         index: 0,
@@ -183,6 +179,7 @@ const Router = () => {
                 console.log("DEBUG AUTO LOGIN");
                 defaultPage = "Sign";
                 await waitAndNavigate(defaultPage);
+                return;
             } else {
                 defaultPage = await getToken() !== null ? "Tabs" : "OnBoarding";
             }
