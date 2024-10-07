@@ -1,6 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Animated } from 'react-native';
-import { ALERT_TYPE, Dialog, Toast } from 'react-native-alert-notification';
 import { getStyles } from '../styles/Alert';
 import Button from './Button';
 import Success from '@assets/images/success.svg';
@@ -22,17 +21,6 @@ interface Props extends AlertProps {
     visible: boolean;
     setVisible: Function,
     children: React.ReactNode
-}
-
-export const Alert = ({ type, title, message, onPress, buttonText }: { type: ALERT_TYPE, title?: string, message: string, onPress?: () => void, buttonText?: string }) => {
-    const texts = require('../langs/en.json');
-    return Dialog.show({
-        type: type,
-        title: title || type,
-        textBody: message,
-        onPressButton: onPress || Dialog.hide,
-        button: buttonText || texts.close
-    })
 }
 
 export const CustomAlert: React.FC<Props> = ({
@@ -121,13 +109,5 @@ export const CustomAlert: React.FC<Props> = ({
         </>
     );
 };
-
-export const Banner = ({ type, title, message, onPress }: { type: ALERT_TYPE, title?: string, message: string, onPress?: () => void }) =>
-    Toast.show({
-        type: type,
-        title: title || type,
-        textBody: message,
-        onPress: onPress || Toast.hide,
-    });
 
 export default CustomAlert;

@@ -152,6 +152,7 @@
         "noSlots": "No slots available for the selected day",
         "upcomming": "Upcomming",
         "past": "Past",
+        "failed": "Failed to schedule appointment, please try again on a different date.",
     },
     "services" : {
         "title": "Services",

@@ -29,7 +29,6 @@ import Constants from 'expo-constants';
 import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
 import { DEBUG_AUTO_LOGIN } from './utils/EnvVariables';
-import { ALERT_TYPE } from 'react-native-alert-notification';
 import CustomAlert, { AlertType } from './components/Alert';
 import { Header } from '@screens/HomeNavigator';
 import { getSelectedLocation } from 'utils/Location';
