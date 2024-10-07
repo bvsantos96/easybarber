@@ -231,3 +231,8 @@ declare interface AppointmentCounts {
     upcomming: number;
     past: number;
 }
+
+declare type PropNavigation = {
+    navigation: NavigationProp<any, any>
+};
+

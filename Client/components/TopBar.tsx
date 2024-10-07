@@ -3,19 +3,17 @@ import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
 import ProfileImage from './ProfileImage';
 import SearchBar from './SearchBar';
-import Pressable from './Pressable';
 import { getStyles } from '../styles/TopBar';
 import { useTheme } from '../styles/ThemeContext';
 import ModalTextButton from './ModalTextButton';
 import { getAddressFromCoordinates } from '../utils/Location';
 
 import FilterIcon from '@assets/icons/filter.svg';
-import BellIcon from '@assets/icons/bell.svg';
 import CustomModal, { CustomModalRef } from './Modal';
 import Filter from '../screens/Filter';
 import LocationModal from './LocationModal';
 
-interface TopBarProps {
+interface TopBarProps extends PropNavigation {
     name?: string;
     setFilter: (_filter: IFilterRequest) => void;
     setName: (partialName: string) => void;
@@ -23,7 +21,7 @@ interface TopBarProps {
     filter?: IFilterRequest;
 }
 
-export default function TopBar({ filter, setFilter, setName, location }: TopBarProps) {
+export default function TopBar({ filter, setFilter, setName, location, navigation }: TopBarProps) {
     const styles = getStyles();
     const theme = useTheme();
     const texts = require('../langs/en.json');
@@ -63,7 +61,7 @@ export default function TopBar({ filter, setFilter, setName, location }: TopBarP
                         <BellIcon width={styles.bell.width} height={styles.bell.height} fill={"none"} />
                     </Pressable>
                     */}
-                    <ProfileImage />
+                    <ProfileImage navigation={navigation} />
                 </View>
                 <View style={styles.searchContainer}>
                     <View style={styles.searchBarContainer} >

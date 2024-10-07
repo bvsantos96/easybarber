@@ -20,7 +20,7 @@ const Input = ({
     onInputChange = (e: string) => { alert(`No onInputChange(${e}) passed in props`) },
     type = "text",
     password = false,
-    rightIcon= []
+    rightIcon = []
 }: InputProps) => {
     const theme = useTheme();
     const styles = getStyles();
@@ -37,7 +37,7 @@ const Input = ({
         }
     };
 
-    const handleShowPasswordPress= () => {
+    const handleShowPasswordPress = () => {
         setShowPassword(!showPassword);
     };
 
@@ -49,7 +49,7 @@ const Input = ({
                 </View>}
                 <TextInput
                     ref={textInputRef}
-                    style={rightIcon?styles.textInputWithShowPasswordIcon:styles.textInput}
+                    style={rightIcon ? styles.textInputWithShowPasswordIcon : styles.textInput}
                     placeholder={placeholder}
                     placeholderTextColor={theme.colors.text.lightBlack}
                     onChangeText={handleChangeText}
@@ -57,7 +57,7 @@ const Input = ({
                     clearTextOnFocus={false}
                     inputMode={type}
                 />
-                {rightIcon.length >= 0 &&(
+                {rightIcon.length >= 0 && (
                     <Pressable style={styles.showPasswordIcon} onPress={handleShowPasswordPress}>
                         {rightIcon[+showPassword]}
                     </Pressable>
