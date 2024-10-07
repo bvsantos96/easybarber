@@ -12,22 +12,17 @@ import ListItem from '../components/ListEstablishments';
 import ExpandableView from '../components/ExpandableView';
 import Divider from '../components/Divider';
 import Category from '../components/Category';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { createPageable } from '../utils/PageHandling';
 import { TimedRequest } from '../utils/TimedRequest';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
 import { SvgUri } from 'react-native-svg';
 import PageList, { PageListRef } from '../components/PageList';
 import useLocationStore from '../storage/stores/LocationStore';
-import { NavigationProp } from '@react-navigation/native';
 import { getSelectedLocation } from 'utils/Location';
 import Pressable from '@components/Pressable';
+import { PropNavigation } from 'App';
 
-export type Props = {
-    navigation: NavigationProp<any, any>,
-}
-
-export default function Home({ navigation }: Props) {
+export default function Home({ navigation }: PropNavigation) {
     const topBarStyles = topBarGetStyles();
     const homeStyles = getHomeGetStyles();
     const expandedStyles = getExpandedGetStyles();
@@ -83,7 +78,7 @@ export default function Home({ navigation }: Props) {
 
     return (
         <>
-            <TopBar location={selectedLocation} filter={filter} setFilter={setFilter} setName={setName} />
+            <TopBar navigation={navigation} location={selectedLocation} filter={filter} setFilter={setFilter} setName={setName} />
             <View style={topBarStyles.homeContainer}>
                 <Divider size={10} color="transparent" />
                 <ExpandableView

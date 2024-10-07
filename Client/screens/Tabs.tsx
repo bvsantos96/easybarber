@@ -3,14 +3,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Appointments from './Appointments';
 import HomeIcon from "@assets/icons/home.svg";
 import AppointmentsIcon from "@assets/icons/appointments.svg";
-import AlertsIcon from "@assets/icons/alerts.svg";
-import ChatsIcon from "@assets/icons/chats.svg";
 import { useTheme } from '../styles/ThemeContext';
 import SafeFullScreen from '../components/SafeFullScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import HomeNavigator from './HomeNavigator';
-import Alerts from './Alerts';
-import Chat from './Chat';
 
 export default function Tabs() {
     const Tab = createBottomTabNavigator();
@@ -63,24 +59,6 @@ export default function Tabs() {
                 } >
                 {() => (<SafeFullScreen><Appointments /></SafeFullScreen>)}
             </Tab.Screen>
-            <Tab.Screen name={texts.tabs.alerts} component={Alerts}
-                options={{
-                    headerShown: false,
-                    tabBarIcon: ({ focused }) => !focused ? (
-                        <AlertsIcon width={20 * theme.dimensions.absoluteWidth} height={20 * theme.dimensions.absoluteWidth} />
-                    ) : (
-                        <AlertsIcon width={20 * theme.dimensions.absoluteWidth} height={20 * theme.dimensions.absoluteWidth} fill={theme.colors.mainColor} />
-                    )
-                }} />
-            <Tab.Screen name={texts.tabs.chats} component={Chat}
-                options={{
-                    headerShown: false,
-                    tabBarIcon: ({ focused }) => !focused ? (
-                        <ChatsIcon width={20 * theme.dimensions.absoluteWidth} height={20 * theme.dimensions.absoluteWidth} />
-                    ) : (
-                        <ChatsIcon width={20 * theme.dimensions.absoluteWidth} height={20 * theme.dimensions.absoluteWidth} fill={theme.colors.mainColor} />
-                    )
-                }} />
         </Tab.Navigator>
     );
 }
