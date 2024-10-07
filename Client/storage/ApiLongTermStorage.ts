@@ -1,8 +1,6 @@
 import { getCategories } from "../utils/ApiRequest";
 import { getArray, store } from "./StorageUtils";
 import { CATEGORY_STORAGE_KEY } from "../utils/Constants";
-import { ALERT_TYPE } from "react-native-alert-notification";
-import { Alert } from "@components/Alert";
 
 // TODO: This function needs to validate if it gets a valid responses otherwise it needs to be retried
 // if after that it fails we need to show an error message to the user, this is a critical function
@@ -12,13 +10,13 @@ export const loadLongTermItems = async (): Promise<Boolean> => {
         return true;
     } catch (e) {
         if (e instanceof Error) {
-            Alert({ type: ALERT_TYPE.DANGER, title: "Long term Items failed", message: e.message });
+            console.error("Error loading long term items", e.message);
         } else if (typeof e === "string") {
-            Alert({ type: ALERT_TYPE.DANGER, title: "Long term Items failed", message: e });
+            console.error("Error loading long term items", e);
         } else if (typeof e === "object") {
-            Alert({ type: ALERT_TYPE.DANGER, title: "Long term Items failed", message: JSON.stringify(e) });
+            console.error("Error loading long term items", JSON.stringify(e));
         } else {
-            Alert({ type: ALERT_TYPE.DANGER, title: "Long term Items failed", message: "Unknown error" });
+            console.error("Error loading long term items.");
         }
         return false;
     }

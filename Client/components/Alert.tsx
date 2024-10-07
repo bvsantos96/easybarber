@@ -6,7 +6,9 @@ import Button from './Button';
 import Success from '@assets/images/success.svg';
 
 export enum AlertType {
-    Success = 'success'
+    Success = 'success',
+    Error = 'error',
+    Info = 'info',
 }
 
 export interface AlertProps {
