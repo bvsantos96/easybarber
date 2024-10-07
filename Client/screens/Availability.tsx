@@ -14,6 +14,7 @@ import { twoDigits } from "utils/Utils";
 import { Props } from "./Home";
 import useAlertStore from "storage/stores/AlertStore";
 import { AlertType } from "@components/Alert";
+import texts from "@lang/en.json";
 
 type RouteParams = {
     appointment: {
@@ -26,7 +27,6 @@ type RouteParams = {
 export default function Availability({ navigation }: Props) {
     const pagerRef = React.useRef<PagerView>(null);
     const theme = useTheme();
-    const texts = require('@lang/en.json');
     const styles = getStyles();
     const route = useRoute<RouteProp<RouteParams, 'appointment'>>();
     const { establishmentId, serviceId, employeeId } = route.params;
@@ -117,23 +117,6 @@ export default function Availability({ navigation }: Props) {
             getUnavailableDates(establishmentId, serviceId, employeeId, year, month, getStartingHour(new Date())).then(dates => {
                 const _disabledDates = { ...unSelectable, ...disableDates(dates) };
                 setUnSelectable(_disabledDates);
-                // select the first available date
-                // let day = 1;
-                // if (month === today.getMonth() + 1 && year === today.getFullYear()) {
-                //     day = today.getDate();
-                // }
-                // for (let _date = new Date(year, month - 1, day, 23, 59); _date.getMonth() <= month + 1; _date.setDate(_date.getDate() + 1)) {
-                //     const dateString = _date.toISOString().split('T')[0];
-                //     if (!_disabledDates[dateString]) {
-                //         if (_date.getMonth() != month - 1) {
-                //             setMonth(_date.getMonth() + 1);
-                //             setYear(_date.getFullYear());
-                //         }
-                //         setDate(dateString);
-                //         return;
-                //     }
-                // }
-                // setDate("");
             });
         }
     }, [month, year]);
@@ -154,7 +137,15 @@ export default function Availability({ navigation }: Props) {
                             date: date,
                             time: time?.start || ""
                         })) {
-                            navigation.navigate(texts.tabs.back);
+                            alert({
+                                type: AlertType.Success, message: texts.appointments.success, onPress: () => {
+                                    navigation.reset({
+                                        index: 0,
+                                        routes: [{ name: 'Appointments' }],
+                                    });
+                                }
+                            });
+                            return;
                         } else {
                             const { alert } = useAlertStore();
                             alert({ type: AlertType.Error, message: texts.appointments.failed });
