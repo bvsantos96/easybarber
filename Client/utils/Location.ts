@@ -4,7 +4,6 @@ import { getArrayFromPage, getArrayOrEmpty, store } from '../storage/StorageUtil
 import { LOCATIONS_STORAGE_KEY } from './Constants';
 import useLocationStore from '../storage/stores/LocationStore';
 import { AlertType } from '../components/Alert';
-import { ALERT_TYPE } from 'react-native-alert-notification';
 import texts from '../langs/en.json';
 import { Linking, Platform } from 'react-native';
 import * as expoClipboard from 'expo-clipboard';
