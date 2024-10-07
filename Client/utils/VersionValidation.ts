@@ -3,9 +3,9 @@ import Constants from 'expo-constants';
 import { getApiVersion } from './ApiRequest';
 import { loadLongTermItems } from '../storage/ApiLongTermStorage';
 import { UpdateType } from '../enums';
-import { Alert } from '../components/Alert';
-import { ALERT_TYPE } from 'react-native-alert-notification';
+import { AlertType } from '../components/Alert';
 import texts from '../langs/en.json';
+import useAlertStore from 'storage/stores/AlertStore';
 
 export const expoVersion = Constants.expoConfig?.version;
 
@@ -37,7 +37,8 @@ export const validateVersion = async () => {
     try {
         updateType = updateNeeded(await getLocalApiVersion(), await getApiVersion());
     } catch (e) {
-        Alert({ type: ALERT_TYPE.DANGER, title: texts.errors.versionCheckTitle, message: texts.errors.versionCheckFailed });
+        const { alert } = useAlertStore();
+        alert({ type: AlertType.Error, message: texts.errors.versionCheckFailed });
         console.error(e);
         return UpdateType.FAILED;
     }
