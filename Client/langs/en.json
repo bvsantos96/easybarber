@@ -154,6 +154,7 @@
         "upcomming": "Upcomming",
         "past": "Past",
         "failed": "Failed to schedule appointment, please try again on a different date.",
+        "success": "Your booking has been confirmed successfully.",
     },
     "services" : {
         "title": "Services",
