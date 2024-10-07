@@ -7,6 +7,7 @@ import { getStyles } from "../styles/ServiceSelection";
 import { Props } from "./EstablishmentDetails";
 import SelectionItem from "../components/SelectionItems";
 import Selection from "./Selection";
+import { AlertType } from "@components/Alert";
 
 type RouteParams = {
     appointment: {
@@ -54,7 +55,14 @@ export default function EmployeeSelection({ navigation }: Props) {
                             date,
                             time: startHour
                         })) {
-                            navigation.navigate(texts.tabs.back);
+                            alert({
+                                type: AlertType.Success, message: texts.appointments.success, onPress: () => {
+                                    navigation.reset({
+                                        index: 0,
+                                        routes: [{ name: 'Appointments' }],
+                                    });
+                                }
+                            });
                             return;
                         }
                     } else if (!(date && startHour)) {
