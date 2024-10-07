@@ -143,6 +143,7 @@
         "subTitle": "In order to show you nearby barbers, we\nneed to know your location."
     },
     "appointments": {
+        "seeAppointments": "See Appointments",
         "upcomming": "Upcoming Appointments",
         "book": "Book Appointment",
         "selectBarber": "Select Barber",
