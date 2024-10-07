@@ -32,6 +32,7 @@ export default function Availability({ navigation }: Props) {
     const { establishmentId, serviceId, employeeId } = route.params;
     const [date, setDate] = useState<string>("");
     const [time, setTime] = useState<TimeSlot>();
+    const { alert } = useAlertStore();
     const disableDates = (dates: string[]): MarkedDates => {
         let disabled: MarkedDates = {};
         dates.forEach(d => {
@@ -147,7 +148,6 @@ export default function Availability({ navigation }: Props) {
                             });
                             return;
                         } else {
-                            const { alert } = useAlertStore();
                             alert({ type: AlertType.Error, message: texts.appointments.failed });
                         }
                         return;

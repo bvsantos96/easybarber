@@ -8,6 +8,8 @@ import { Props } from "./EstablishmentDetails";
 import SelectionItem from "../components/SelectionItems";
 import Selection from "./Selection";
 import { AlertType } from "@components/Alert";
+import useAlertStore from "storage/stores/AlertStore";
+import texts from "@lang/en.json";
 
 type RouteParams = {
     appointment: {
@@ -20,12 +22,12 @@ type RouteParams = {
 };
 
 export default function EmployeeSelection({ navigation }: Props) {
-    const texts = require('@lang/en.json');
     const styles = getStyles();
     const route = useRoute<RouteProp<RouteParams, 'appointment'>>();
     const { establishmentId, serviceId, date, startHour, availableEmployees } = route.params;
     const [employees, setEmployees] = useState<ImageEntity[]>();
     const [selected, setSelected] = useState<number | string>(0);
+    const { alert } = useAlertStore();
 
     useEffect(() => {
         const fetchEmployees = async () => {
@@ -35,6 +37,9 @@ export default function EmployeeSelection({ navigation }: Props) {
             if (_employees.length == 1) {
                 setSelected(_employees[0].id);
             }
+        }
+        if (!availableEmployees || availableEmployees.length == 0) {
+            fetchEmployees();
         }
         fetchEmployees();
     }, [establishmentId]);
@@ -56,7 +61,7 @@ export default function EmployeeSelection({ navigation }: Props) {
                             time: startHour
                         })) {
                             alert({
-                                type: AlertType.Success, message: texts.appointments.success, onPress: () => {
+                                type: AlertType.Success, message: texts.appointments.success, buttonText: texts.appointments.seeAppointments, onPress: () => {
                                     navigation.reset({
                                         index: 0,
                                         routes: [{ name: 'Appointments' }],
