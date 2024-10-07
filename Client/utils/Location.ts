@@ -3,12 +3,13 @@ import { getLocationsRequest, setNewLocation } from './ApiRequest';
 import { getArrayFromPage, getArrayOrEmpty, store } from '../storage/StorageUtils';
 import { LOCATIONS_STORAGE_KEY } from './Constants';
 import useLocationStore from '../storage/stores/LocationStore';
-import { Alert, Banner } from '../components/Alert';
+import { AlertType, Banner } from '../components/Alert';
 import { ALERT_TYPE } from 'react-native-alert-notification';
 import texts from '../langs/en.json';
 import { Linking, Platform } from 'react-native';
 import * as expoClipboard from 'expo-clipboard';
 import usePermissionStore from 'storage/stores/PermissionStore';
+import useAlertStore from 'storage/stores/AlertStore';
 
 export async function hasLocationPermission(): Promise<boolean> {
     try {
@@ -24,7 +25,8 @@ export async function hasLocationPermission(): Promise<boolean> {
         setRequestingLocationPermission(true);
         return hasLocationPermission;
     } catch (error) {
-        Alert({ type: ALERT_TYPE.INFO, title: "", message: texts.errors.locationPermissionError });
+        const { alert } = useAlertStore();
+        alert({ type: AlertType.Info, message: texts.errors.locationPermissionError });
         console.error('Error getting location permission:', error);
         return false;
     }
@@ -273,6 +275,7 @@ export const gotoLocation = async (address: string, lat: number, lng: number): P
         Linking.openURL(url);
     } else {
         await expoClipboard.setStringAsync(address);
-        Alert({ type: ALERT_TYPE.INFO, title: "", message: texts.errors.openMapsError });
+        const { alert } = useAlertStore();
+        alert({ type: AlertType.Info, message: texts.errors.openMapsError });
     }
 }

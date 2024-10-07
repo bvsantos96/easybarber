@@ -19,9 +19,9 @@ import { SignInProps } from '../screens/SignIn';
 import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
 import { DEBUG_AUTO_LOGIN, DEBUG_AUTO_LOGIN_PASSWORD, DEBUG_AUTO_LOGIN_PHONE } from '../utils/EnvVariables';
-import { ALERT_TYPE } from 'react-native-alert-notification';
-import { Alert } from './Alert';
+import { AlertType } from './Alert';
 import texts from "../langs/en.json";
+import useAlertStore from 'storage/stores/AlertStore';
 
 export default function Login({ navigation, toggleNewUser }: SignInProps) {
     const styles = getStyles();
@@ -58,14 +58,16 @@ export default function Login({ navigation, toggleNewUser }: SignInProps) {
 
     const login = async () => {
         if (!nation) {
-            Alert({ type: ALERT_TYPE.WARNING, title: "", message: texts.apiMessages.invalidCountry });
+            const { alert } = useAlertStore();
+            alert({ type: AlertType.Info, message: texts.apiMessages.invalidCountry });
             return;
         }
         const result: IResult<IAPIResponse> = await doLogin(nation.callingCode[0], phone, password);
         if (result.success)
             resetNavigation(navigation, 'Tabs');
         else {
-            Alert({ type: ALERT_TYPE.DANGER, title: texts.apiMessages.login.failed, message: result.message });
+            const { alert } = useAlertStore();
+            alert({ type: AlertType.Error, message: `${texts.apiMessages.login.failed}\n${result.message}` });
         }
     }
 

@@ -5,11 +5,10 @@ import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
 import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
-import { Alert, Banner } from '../components/Alert';
+import { Banner } from '../components/Alert';
 import { ALERT_TYPE } from 'react-native-alert-notification';
 import useLocationStore from '../storage/stores/LocationStore';
 
-import texts from '../langs/en.json';
 import { ResponseType } from '../enums';
 
 export const getTimes = async ({ from, to }: { from?: string, to?: string }): Promise<PickerItem[]> => {
@@ -73,11 +72,8 @@ export const getToken = async (): Promise<string | null> => {
 export const apiUrlMaker = (url: string): string => {
     if (url.startsWith("/"))
         url = url.substring(1);
-    if (!API_URL) {
-        Alert({ type: ALERT_TYPE.DANGER, title: texts.errors.apiDownTitle, message: texts.errors.apiDown });
-        return "";
-    }
-    let separator = API_URL.endsWith("/") ? "" : "/";
+
+    let separator = API_URL?.endsWith("/") ? "" : "/";
     return `${API_URL}${separator}${url}`;
 }
 
@@ -438,7 +434,7 @@ export const getApiVersion = async (): Promise<string> => {
 }
 
 export const getMobileCode = async (phoneNr: string): Promise<boolean> => {
-    const response = await request("/sms/confirmation", "POST", { phoneNr: "+"+phoneNr }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+    const response = await request("/sms/confirmation", "POST", { phoneNr: "+" + phoneNr }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
@@ -446,7 +442,7 @@ export const getMobileCode = async (phoneNr: string): Promise<boolean> => {
 }
 
 export const confirmMobileCode = async (phoneNr: string, confirmationCode: string): Promise<boolean> => {
-    const response = await request("/sms/confirm", "POST", { phoneNr: "+"+phoneNr, confirmationCode: confirmationCode }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+    const response = await request("/sms/confirm", "POST", { phoneNr: "+" + phoneNr, confirmationCode: confirmationCode }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
@@ -454,18 +450,18 @@ export const confirmMobileCode = async (phoneNr: string, confirmationCode: strin
 }
 
 export const getMobileCodeResetPwd = async (phoneNr: string): Promise<boolean> => {
-    const response = await request("/sms/resetpwd", "POST", { phoneNr: "+"+phoneNr }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+    const response = await request("/sms/resetpwd", "POST", { phoneNr: "+" + phoneNr }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
     return false;
 }
 
-export const resetPwdRQ = async (phoneNr: string, confirmationCode: string, password:string, confirmPassword:string): Promise<boolean> => {
+export const resetPwdRQ = async (phoneNr: string, confirmationCode: string, password: string, confirmPassword: string): Promise<boolean> => {
     if (password != confirmPassword)
         return false;
-    
-    const response = await request("/pwd/reset", "PUT", { phoneNr: "+"+phoneNr, confirmationCode: confirmationCode, newPassword:password }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+
+    const response = await request("/pwd/reset", "PUT", { phoneNr: "+" + phoneNr, confirmationCode: confirmationCode, newPassword: password }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }

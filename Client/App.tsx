@@ -30,10 +30,10 @@ import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
 import { DEBUG_AUTO_LOGIN } from './utils/EnvVariables';
 import { ALERT_TYPE } from 'react-native-alert-notification';
-import CustomAlert, { Alert } from './components/Alert';
+import CustomAlert, { AlertType } from './components/Alert';
 import { Header } from '@screens/HomeNavigator';
 import { getSelectedLocation } from 'utils/Location';
-import useLocationStore from 'storage/stores/LocationStore';
+import useAlertStore from 'storage/stores/AlertStore';
 
 export type PropNavigation = {
     navigation: NavigationProp<any, any>
@@ -341,6 +341,13 @@ export default function App() {
         if (/defaultProps/.test(args[0])) return;
         error(...args);
     };
+
+    const {
+        alertVisible,
+        alert,
+        alertProps
+    } = useAlertStore();
+
     const handleMajorUpdate = () => {
         const texts = require('./langs/en.json');
         const redirectToStore = () => {
@@ -349,23 +356,16 @@ export default function App() {
             const url = Platform.OS === 'ios' ? `${texts.appStoreLink}${getDefaultCountryString().toLowerCase()}/${iosBundle}` : `${texts.playStoreLink}${androidBundle}`;
             Linking.openURL(url).catch((err) => console.error('An error occurred', err));
         };
-        Alert({
-            type: ALERT_TYPE.INFO,
-            title: texts.updateRequired,
-            message: texts.updateRequiredMessage,
-            onPress: () => { redirectToStore(); retryVersionCheck(); },
-            buttonText: texts.update
-        });
+        alert({ type: AlertType.Info, message: texts.updateRequiredMessage, onPress: () => { redirectToStore(); retryVersionCheck(); }, buttonText: texts.update });
     };
 
     const errorWhileUpdating = () => {
         const texts = require('./langs/en.json');
-        Alert({
-            type: ALERT_TYPE.DANGER,
-            title: texts.errorWhileUpdating,
+        alert({
             message: texts.errorWhileUpdatingMessage,
             onPress: retryVersionCheck,
-            buttonText: texts.retry
+            buttonText: texts.retry,
+            type: AlertType.Error
         });
     }
 
@@ -389,12 +389,6 @@ export default function App() {
     useEffect(() => {
         versionCheck();
     }, [versionCheck]);
-
-    const {
-        alertVisible,
-        alert,
-        alertProps
-    } = useLocationStore();
 
     return (
         <SafeAreaProvider style={{ flex: 1 }}>
