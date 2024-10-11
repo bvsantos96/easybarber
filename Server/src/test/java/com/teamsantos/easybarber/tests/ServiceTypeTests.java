@@ -98,4 +98,15 @@ public class ServiceTypeTests {
         }
         return null;
     }
+
+    static public Integer getServiceDurationById(long serviceId) {
+        try {
+            return ServiceData.services.stream().filter(e -> e.getId().equals(serviceId)).findFirst().get()
+                    .getDuration();
+        } catch (Exception e) {
+            e.printStackTrace();
+            org.junit.jupiter.api.Assertions.fail(e.getMessage());
+        }
+        return null;
+    }
 }

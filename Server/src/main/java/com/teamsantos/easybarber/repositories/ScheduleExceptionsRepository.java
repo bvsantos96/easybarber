@@ -97,6 +97,6 @@ public interface ScheduleExceptionsRepository
                 AND (:to IS NULL OR s.date <= :to)
                 AND s.active = true
             """)
-    List<ScheduleExceptionDTO> findAllByEstablishmentIdEmployeeSetFromAndToDTO(long establishmentId,
+    List<ScheduleExceptionDTO> findAllByEstablishmentIdEmployeeSetFromAndToDTO(Long establishmentId,
             Set<Long> employeeIds, LocalDate from, LocalDate to);
 }
