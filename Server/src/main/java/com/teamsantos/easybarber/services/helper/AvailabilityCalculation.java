@@ -41,7 +41,6 @@ public class AvailabilityCalculation {
     public AvailabilityCalculation(ScheduleFilter filter, EmployeeScheduleRepository employeeScheduleRepository,
             ScheduleExceptionsRepository scheduleExceptionRepository, AppointmentRepository appointmentRepository,
             ServiceRepository serviceRepository) {
-
         this.filter = filter;
         schedules = new HashMap<>();
         employees = new HashSet<>();
@@ -143,6 +142,7 @@ public class AvailabilityCalculation {
                 }
             }
 
+            boolean merged = false;
             for (EmployeeScheduleDTO s : dayDTO.getSchedules()) {
                 LocalTime start = s.getStartHour();
                 if (filter.getStartHour() != null) {
@@ -177,7 +177,10 @@ public class AvailabilityCalculation {
                         }
                         break;
                     case SCHEDULES_MERGED:
-                        schedulesMerged.add(dayDTO);
+                        if (!merged) {
+                            merged = true;
+                            schedulesMerged.add(dayDTO);
+                        }
                         break;
                 }
             }
