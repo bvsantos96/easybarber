@@ -26,6 +26,7 @@ import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.schedule.SchedulesDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
+import com.teamsantos.easybarber.testData.AppointmentData;
 import com.teamsantos.easybarber.testData.EmployeeData;
 import com.teamsantos.easybarber.testData.ScheduleData;
 import com.teamsantos.easybarber.utils.CreateTest;
@@ -241,12 +242,12 @@ public class ScheduleTests {
         List<LocalDate> dates = from.datesUntil(to).toList();
         int maxIdx = dates.size() % 7;
         for (int i = 0; i < maxIdx; i += 7) {
-            int toIdx = Math.min(dates.size() - 1, i + 7);
+            int toIdx = Math.min(dates.size() - 1, i + 6);
             ScheduleFilter filter = new ScheduleFilter();
             filter.setEmployeeId(employeeId);
             filter.setFrom(dates.get(i));
             filter.setTo(dates.get(toIdx));
-            filter.setDayOfWeek(Utils.getDaysOfWeek(dates.get(i), dates.get(toIdx)));
+            filter.setDayOfWeek(Utils.getDaysOfWeek(dates.get(i), dates.get(toIdx).plusDays(1)));
             filter.setActive(true);
             _validateSchedulesWRequest(filter, false, true);
         }
@@ -314,6 +315,16 @@ public class ScheduleTests {
             removeExceptionFromMap(
                     ScheduleData.scheduleExceptions.stream()
                             .filter(exception -> exception.getEmployeeId() == employeeId).collect(Collectors.toList()),
+                    employeeId, map, from, to);
+            removeExceptionFromMap(AppointmentData.appointments.stream()
+                    .filter(appointment -> appointment.getEmployeeId() == employeeId)
+                    .map(
+                            appointment -> new ScheduleExceptionDTO(appointment.getId(), appointment.getEmployeeId(),
+                                    appointment.getEstablishmentId(),
+                                    appointment.getDate(),
+                                    appointment.getTime(),
+                                    ServiceTypeTests.getServiceDurationById(appointment.getServiceId())))
+                    .collect(Collectors.toList()),
                     employeeId, map, from, to);
         }
 

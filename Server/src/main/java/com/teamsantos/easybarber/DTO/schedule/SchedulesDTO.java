@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 
 import lombok.AllArgsConstructor;
@@ -128,6 +129,7 @@ public class SchedulesDTO {
         schedulesMap.get(item.getEmployeeId()).add(item);
     }
 
+    @JsonIgnore
     public List<EmployeeScheduleDTO> getSchedules() {
         return schedulesMap.values().stream().flatMap(List::stream).toList();
     }
