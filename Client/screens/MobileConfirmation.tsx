@@ -11,14 +11,14 @@ import { RouteProp, useRoute } from '@react-navigation/native';
 import { confirmMobileCode } from 'utils/ApiRequest';
 
 type RouteParams = {
-    screenInformation: {    
+    screenInformation: {
         mobileInformation: string,
         nextScreen: string,
-        resetNavigationBoolean:boolean
+        resetNavigationBoolean: boolean
     }
 };
 
-export default function MobileConfirmation({ navigation }: PropNavigation ) {
+export default function MobileConfirmation({ navigation }: PropNavigation) {
     const styles = getStyles();
     const texts = require('@lang/en.json');
     const route = useRoute<RouteProp<RouteParams, 'screenInformation'>>();
@@ -31,7 +31,7 @@ export default function MobileConfirmation({ navigation }: PropNavigation ) {
 
     const handleCodeChange = (text: string, index: number): void => {
         const numericText = text.replace(/[^0-9]/g, '');
-        
+
         if (numericText.length <= 1) {
             const newCode = [...code];
             newCode[index] = numericText;
@@ -56,8 +56,6 @@ export default function MobileConfirmation({ navigation }: PropNavigation ) {
         }
     };
 
-    const{alert}=useLocationStore();
-
     const tiltScreen = () => {
         Animated.sequence([
             Animated.timing(tiltAnimation, { toValue: 0.1, duration: 100, useNativeDriver: true }),
@@ -66,41 +64,43 @@ export default function MobileConfirmation({ navigation }: PropNavigation ) {
             Animated.timing(tiltAnimation, { toValue: 0, duration: 100, useNativeDriver: true })
         ]).start();
     };
-    
+
     const handleConfirmCode = async () => {
         const confirmationCode = code.join('');
         const response = await confirmMobileCode(mobileInformation, confirmationCode);
-        
+
         if (response) {
             /**alert({
                 buttonText: texts.code.getStarted,
                 message: texts.code.successfullVerification
             });**/
-            if(resetNavigationBoolean){
+            if (resetNavigationBoolean) {
                 resetNavigation(navigation, nextScreen);
             }
-            else{
-                navigation.navigate(nextScreen, {mobileInformation: mobileInformation, confirmationCode: confirmationCode});
+            else {
+                navigation.navigate(nextScreen, { mobileInformation: mobileInformation, confirmationCode: confirmationCode });
             }
-        }else{
+        } else {
             setErrorMessage(texts.code.verificationFailed);
             tiltScreen();
         }
     };
 
     return (
-        <Animated.View 
+        <Animated.View
             style={[
                 styles.container,
                 {
-                    transform: [{ rotate: tiltAnimation.interpolate({
-                        inputRange: [-1, 1],
-                        outputRange: ['-5deg', '5deg']
-                    }) }]
+                    transform: [{
+                        rotate: tiltAnimation.interpolate({
+                            inputRange: [-1, 1],
+                            outputRange: ['-5deg', '5deg']
+                        })
+                    }]
                 }
             ]}
         >
-            <View style={styles.eclipse}/>
+            <View style={styles.eclipse} />
             <ChatImage style={styles.chatImage} />
             <KeyImage style={styles.keyImage} />
             <View style={styles.insertCodeContainer}>
@@ -112,7 +112,7 @@ export default function MobileConfirmation({ navigation }: PropNavigation ) {
                         key={index}
                         style={styles.codeInput}
                         keyboardType="numeric"
-                        maxLength={6-index}
+                        maxLength={6 - index}
                         value={code[index]}
                         onChangeText={(text) => handleCodeChange(text, index)}
                         onKeyPress={(event) => handleKeyPress(event, index)}
@@ -129,7 +129,7 @@ export default function MobileConfirmation({ navigation }: PropNavigation ) {
                 <Text style={styles.resendCodeRedText}>{texts.code.resendCode}</Text>
             </TouchableOpacity>
             <View style={styles.buttonContainer}>
-                <Button title={texts.code.verify} onPress={handleConfirmCode}/>
+                <Button title={texts.code.verify} onPress={handleConfirmCode} />
             </View>
         </Animated.View>
     );

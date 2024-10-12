@@ -20,7 +20,6 @@ import PageList, { PageListRef } from '../components/PageList';
 import useLocationStore from '../storage/stores/LocationStore';
 import { getSelectedLocation } from 'utils/Location';
 import Pressable from '@components/Pressable';
-import { PropNavigation } from 'App';
 
 export default function Home({ navigation }: PropNavigation) {
     const topBarStyles = topBarGetStyles();

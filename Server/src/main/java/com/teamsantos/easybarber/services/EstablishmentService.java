@@ -151,11 +151,9 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
                 establishment.setStaff(new HashSet<>());
             if (establishment.getStaff().stream().anyMatch((staff) -> staff.getEmployee().getId().equals(employeeId)))
                 throw new UserAlreadyExistsException("User is already an employee");
-            establishment.getStaff()
-                    .add(new EstablishmentStaff(false, true, false,
-                            entityManager.getReference(Employee.class, employeeId),
-                            establishment));
-            establishmentRepository.save(establishment);
+            establishmentStaffRepository.save(new EstablishmentStaff(false, true, false,
+                    entityManager.getReference(Employee.class, employeeId),
+                    establishment));
             // TODO: note that the we might want to start an employee approval process here,
             // so we might want to set approved to false
         } else {

@@ -132,8 +132,8 @@ CREATE TABLE `employee_schedule` (
   `establishment_id` bigint DEFAULT NULL,
   `id` bigint NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`id`),
+  KEY `idx_establishment_day_active_start_hour` (`establishment_id`,`day`,`active`,`start_hour`),
   KEY `FKopf7kqhml8g3efddqc6rki7jv` (`employee_id`),
-  KEY `FKdnicvgjeytvd7t7nf4yh9itj2` (`establishment_id`),
   CONSTRAINT `FKdnicvgjeytvd7t7nf4yh9itj2` FOREIGN KEY (`establishment_id`) REFERENCES `establishment` (`id`),
   CONSTRAINT `FKopf7kqhml8g3efddqc6rki7jv` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -145,7 +145,7 @@ CREATE TABLE `employee_schedule` (
 
 LOCK TABLES `employee_schedule` WRITE;
 /*!40000 ALTER TABLE `employee_schedule` DISABLE KEYS */;
-INSERT INTO `employee_schedule` VALUES (_binary '',5,'12:00:00.000000','08:00:00.000000',2,1,1),(_binary '',1,'12:00:00.000000','08:00:00.000000',2,1,2),(_binary '',2,'12:00:00.000000','08:00:00.000000',2,1,3),(_binary '',3,'12:00:00.000000','08:00:00.000000',2,1,4),(_binary '',4,'12:00:00.000000','08:00:00.000000',2,1,5),(_binary '',5,'17:00:00.000000','13:00:00.000000',2,2,6),(_binary '',1,'17:00:00.000000','13:00:00.000000',2,2,7),(_binary '',2,'17:00:00.000000','13:00:00.000000',2,2,8),(_binary '',3,'17:00:00.000000','13:00:00.000000',2,2,9),(_binary '',4,'17:00:00.000000','13:00:00.000000',2,2,10),(_binary '',1,'17:00:00.000000','08:00:00.000000',3,2,11),(_binary '',2,'17:00:00.000000','08:00:00.000000',3,2,12),(_binary '',3,'17:00:00.000000','08:00:00.000000',3,2,13),(_binary '',4,'17:00:00.000000','08:00:00.000000',3,2,14),(_binary '',5,'20:00:00.000000','09:00:00.000000',3,2,15),(_binary '',6,'20:00:00.000000','09:00:00.000000',3,2,16),(_binary '\0',5,'23:00:00.000000','21:00:00.000000',3,2,17),(_binary '\0',6,'23:00:00.000000','21:00:00.000000',3,2,18);
+INSERT INTO `employee_schedule` VALUES (_binary '',3,'12:00:00.000000','08:00:00.000000',2,1,1),(_binary '',5,'12:00:00.000000','08:00:00.000000',2,1,2),(_binary '',2,'12:00:00.000000','08:00:00.000000',2,1,3),(_binary '',4,'12:00:00.000000','08:00:00.000000',2,1,4),(_binary '',1,'12:00:00.000000','08:00:00.000000',2,1,5),(_binary '',3,'17:00:00.000000','13:00:00.000000',2,2,6),(_binary '',5,'17:00:00.000000','13:00:00.000000',2,2,7),(_binary '',2,'17:00:00.000000','13:00:00.000000',2,2,8),(_binary '',4,'17:00:00.000000','13:00:00.000000',2,2,9),(_binary '',1,'17:00:00.000000','13:00:00.000000',2,2,10),(_binary '',3,'17:00:00.000000','08:00:00.000000',3,2,11),(_binary '',2,'17:00:00.000000','08:00:00.000000',3,2,12),(_binary '',4,'17:00:00.000000','08:00:00.000000',3,2,13),(_binary '',1,'17:00:00.000000','08:00:00.000000',3,2,14),(_binary '',5,'20:00:00.000000','09:00:00.000000',3,2,15),(_binary '',6,'20:00:00.000000','09:00:00.000000',3,2,16),(_binary '\0',5,'23:00:00.000000','21:00:00.000000',3,2,17),(_binary '\0',6,'23:00:00.000000','21:00:00.000000',3,2,18);
 /*!40000 ALTER TABLE `employee_schedule` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -485,7 +485,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,NULL,'+1',NULL,'999999999','+1999999999','System Admin','$argon2id$v=19$m=16384,t=2,p=1$fTImAl+bHJpoOAaNlwgmzQ$mg80zQ5N4jLEPLM95aX1OuSQz6gVxfawX4b9T2euCYw'),(2,NULL,'+351',NULL,'999999999','+351999999999','Henrique','$argon2id$v=19$m=16384,t=2,p=1$p/LcRIbjuH7hHzI7QMSRQQ$Oe/M+20aigE9WgXnMgELk+nqjDfTuPzFxwHS/upT+QY'),(3,NULL,'+351',NULL,'900000000','+351900000000','Amigo do Joao','$argon2id$v=19$m=16384,t=2,p=1$MeU5HqqwXI81qEedRx7h6A$YjK91M4Kw3suwYkm1xNEVOpIAmiJ1K1uyepf4MMu1bA'),(4,NULL,'+351',NULL,'962844407','+351962844407','Filipe Miguel Pinho Santos','$argon2id$v=19$m=16384,t=2,p=1$KVrtsrnd0Quf2BgPNjmB7g$VI21kXjQSh4s8LfC0z6wNfCgmcijlmSF01NopnG7Y6c'),(5,NULL,'+351',NULL,'927030780','+351927030780','Bruno Santos','$argon2id$v=19$m=16384,t=2,p=1$p8dS2lngCd9J0BmZFGX4Lw$GeWqZmfW7e3xhOG1aTnxfK2/LGWplZBRKUnstKzcmIQ');
+INSERT INTO `user` VALUES (1,NULL,'+1',NULL,'999999999','+1999999999','System Admin','$argon2id$v=19$m=16384,t=2,p=1$VqPYWVNPgMHmb43x/18VVQ$+xUdw8QnqY+W6KLXK6ymANNuwblDl1Coz7erv2op/0Y'),(2,NULL,'+351',NULL,'999999999','+351999999999','Henrique','$argon2id$v=19$m=16384,t=2,p=1$XrMb+XRBU5WB4A2T5jzAhQ$5yAWHzYLAekEDHrhGArT1mB5UDkW+A6mrALv/rp26EU'),(3,NULL,'+351',NULL,'900000000','+351900000000','Amigo do Joao','$argon2id$v=19$m=16384,t=2,p=1$86uZI3SKOkRLf2s0Y/Cnxg$W2KVAyHHnNsyrYRpjZ7PUgGz05Gi7FQ/7fdQo45Iu2Q'),(4,NULL,'+351',NULL,'962844407','+351962844407','Filipe Miguel Pinho Santos','$argon2id$v=19$m=16384,t=2,p=1$lS3tgKd8fpesZKTy9c0iyA$8sIwXg5MABQ0iw2rhNzrGn6LJRFmSJxLiHQdrB3P0/k'),(5,NULL,'+351',NULL,'927030780','+351927030780','Bruno Santos','$argon2id$v=19$m=16384,t=2,p=1$pqe6XZWhGZ7xXi0yFQ2y+A$WtLd5r8kpq1kzbMwCd3dldh9BabdGlWsTR4ZkL+6ml4');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -575,4 +575,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-09-29 21:57:12
+-- Dump completed on 2024-10-12 20:15:02
