@@ -123,10 +123,8 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
                 if (data !== undefined && data !== null) {
                     try {
                         if (data.responseMessage) {
-                            console.log(data.responseMessage);
                             return { success: false, message: data.responseMessage };
                         }
-                        console.log(data.responseMessage);
                         return { success: false, message: errorMessage };
                     } catch (e) {
                         return { success: false, message: response }
@@ -172,7 +170,6 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
         }
         return { success: true, message: successMessage };
     }).catch(error => {
-        console.log(error);
         console.error(error);
         return { success: false, message: errorMessage };
     });
@@ -322,8 +319,8 @@ export const getEstablishmentCats = async (id: number): Promise<number[] | undef
 export const getUnavailableDates = async (establishmentId: number, serviceId: number, employeeId: number, year: number, month: number, startHour: string): Promise<string[]> => {
     const params = {
         establishmentId: establishmentId,
-        serviceId: serviceId,
-        ...(employeeId == 0 ? {} : { employeeId: employeeId }),
+        establishmentServiceId: serviceId,
+        ...(employeeId == 0 ? {} : { establishmentStaffId: employeeId }),
         available: false,
         startHour: startHour,
     };
@@ -345,10 +342,10 @@ export const setAppointment = async (appointment: Appointment): Promise<boolean>
 export const getAvailability = async (establishmentId: number, serviceId: number, employeeId: number, date: string, startHour: string): Promise<TimeSlots> => {
     const params = {
         establishmentId: establishmentId,
-        serviceId: serviceId,
+        establishmentServiceId: serviceId,
         from: date,
         startHour: startHour,
-        ...(employeeId == 0 ? {} : { employeeId: employeeId }),
+        ...(employeeId == 0 ? {} : { establishmentStaffId: employeeId }),
     };
     const url = parsePathParams("schedules/day", params);
     const result = await request<TimeSlots>(url, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);

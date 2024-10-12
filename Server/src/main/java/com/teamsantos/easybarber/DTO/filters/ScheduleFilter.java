@@ -28,6 +28,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class ScheduleFilter {
     private Long employeeId;
+    private Long establishmentStaffId;
+    private Long establishmentServiceId;
     private Long establishmentId;
     private Long serviceId;
     private Set<DAY_OF_WEEK> dayOfWeek;

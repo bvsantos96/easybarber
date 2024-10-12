@@ -214,13 +214,13 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         }
     }
 
-    @PostMapping("/{establishmentId}/service/{serviceId}/employee")
+    @PostMapping("/{establishmentId}/service/{establishmentServiceId}/employee")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> addEmployeeToService(@PathVariable Long establishmentId,
-            @PathVariable Long serviceId, @RequestBody Set<Long> employees) {
+            @PathVariable Long establishmentServiceId, @RequestBody Set<Long> employees) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.addEmployeesToService(establishmentId, serviceId, employees);
+            establishmentService.addEmployeesToService(establishmentId, establishmentServiceId, employees);
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());
@@ -228,13 +228,14 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         }
     }
 
-    @DeleteMapping("/{establishmentId}/service/{serviceId}/employee/{employeeId}")
+    @DeleteMapping("/{establishmentId}/service/{establishmentServiceId}/employee/{establishmentStaffId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> removeEmployeeFromService(@PathVariable Long establishmentId,
-            @PathVariable Long serviceId, @PathVariable Long employee) {
+            @PathVariable Long establishmentServiceId, @PathVariable Long establishmentStaffId) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.removeEmployeeFromService(establishmentId, serviceId, employee);
+            establishmentService.removeEmployeeFromService(establishmentId, establishmentServiceId,
+                    establishmentStaffId);
             return ResponseEntity.ok(responseDTO);
         } catch (Exception e) {
             responseDTO.setResponseMessage(e.getMessage());
@@ -256,12 +257,19 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         }
     }
 
-    @GetMapping("/{establishmentId}/service/{serviceId}/employees")
+    /**
+     * @param establishmentId
+     * @param establishmentServiceId
+     * @return List of employees of the establishment service, note that the id
+     *         returned is the establishmentStaffId and not the employee id.
+     */
+    @GetMapping("/{establishmentId}/service/{establishmentServiceId}/employees")
     public ResponseEntity<BaseListDTO<NameIdImageDTO>> listEmployeesOfEstablishmentService(
-            @PathVariable Long establishmentId, @PathVariable Long serviceId) {
+            @PathVariable Long establishmentId, @PathVariable Long establishmentServiceId) {
         BaseListDTO<NameIdImageDTO> response = new BaseListDTO<>();
         try {
-            response.setItems(establishmentService.listEmployeesOfEstablishmentService(establishmentId, serviceId));
+            response.setItems(
+                    establishmentService.listEmployeesOfEstablishmentService(establishmentId, establishmentServiceId));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.setResponseMessage(e.getMessage());

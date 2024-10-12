@@ -214,4 +214,12 @@ public interface EstablishmentServiceRepository
                     AND es.service.id = :serviceId
             """)
     Optional<Long> findIdByEstablishmentAndService(long establishmentId, long serviceId);
+
+    @Query("""
+                SELECT es.service.id
+                FROM EstablishmentService es
+                WHERE
+                    es.id = :establishmentServiceId
+            """)
+    Long getServiceId(Long establishmentServiceId);
 }
