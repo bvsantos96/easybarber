@@ -27,7 +27,9 @@ import com.teamsantos.easybarber.entities.EmployeeSchedule;
 import com.teamsantos.easybarber.entities.ScheduleException;
 import com.teamsantos.easybarber.repositories.AppointmentRepository;
 import com.teamsantos.easybarber.repositories.EmployeeScheduleRepository;
+import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.ScheduleExceptionsRepository;
+import com.teamsantos.easybarber.repositories.establishmentServices.EstablishmentServiceRepository;
 import com.teamsantos.easybarber.repositories.services.ServiceRepository;
 import com.teamsantos.easybarber.services.helper.AvailabilityCalculation;
 import com.teamsantos.easybarber.utils.PageDTO;
@@ -43,6 +45,8 @@ public class SchedulesService {
     private final ServiceRepository serviceRepository;
     private final EstablishmentService establishmentService;
     private final ScheduleExceptionsRepository scheduleExceptionRepository;
+    private final EstablishmentStaffRepository establishmentStaffRepository;
+    private final EstablishmentServiceRepository establishmentServiceRepository;
     private final ModelMapper modelMapper;
     private final EntityManager entityManager;
 
@@ -51,11 +55,15 @@ public class SchedulesService {
             AppointmentRepository appointmentRepository,
             ServiceRepository serviceRepository,
             ScheduleExceptionsRepository scheduleExceptionRepository,
+            EstablishmentStaffRepository establishmentStaffRepository,
+            EstablishmentServiceRepository establishmentServiceRepository,
             EstablishmentService establishmentService,
             ModelMapper modelMapper, EntityManager entityManager) {
         this.employeeScheduleRepository = employeeScheduleRepository;
         this.establishmentService = establishmentService;
         this.scheduleExceptionRepository = scheduleExceptionRepository;
+        this.establishmentStaffRepository = establishmentStaffRepository;
+        this.establishmentServiceRepository = establishmentServiceRepository;
         this.appointmentRepository = appointmentRepository;
         this.serviceRepository = serviceRepository;
         this.modelMapper = modelMapper;
@@ -157,8 +165,18 @@ public class SchedulesService {
                 .collect(Collectors.groupingBy(ScheduleException::getDate));
     }
 
+    private void convertEstablishmentStaffAndServiceIds(ScheduleFilter filter) {
+        if (filter.getEstablishmentStaffId() != null) {
+            filter.setEmployeeId(establishmentStaffRepository.getEmployeeId(filter.getEstablishmentStaffId()));
+        }
+        if (filter.getEstablishmentServiceId() != null) {
+            filter.setServiceId(establishmentServiceRepository.getServiceId(filter.getEstablishmentServiceId()));
+        }
+    }
+
     @Transactional(readOnly = true)
     public BasePageDTO<SchedulesDTO> getSchedulesMerged(ScheduleFilter filter, Pageable pageable) throws Exception {
+        convertEstablishmentStaffAndServiceIds(filter);
         filter.parseDate(pageable);
         AvailabilityCalculation availability = new AvailabilityCalculation(filter, employeeScheduleRepository,
                 scheduleExceptionRepository, appointmentRepository, serviceRepository);
@@ -167,6 +185,7 @@ public class SchedulesService {
 
     @Transactional(readOnly = true)
     public TimeSlotsDTO getSchedulesByDay(ScheduleFilter filter) throws Exception {
+        convertEstablishmentStaffAndServiceIds(filter);
         filter.parseDate();
         AvailabilityCalculation availability = new AvailabilityCalculation(filter, employeeScheduleRepository,
                 scheduleExceptionRepository, appointmentRepository, serviceRepository);
@@ -175,6 +194,7 @@ public class SchedulesService {
 
     @Transactional(readOnly = true)
     public List<String> getDaysByAvailability(ScheduleFilter filter) throws Exception {
+        convertEstablishmentStaffAndServiceIds(filter);
         filter.parseDate();
         AvailabilityCalculation availability = new AvailabilityCalculation(filter, employeeScheduleRepository,
                 scheduleExceptionRepository, appointmentRepository, serviceRepository);

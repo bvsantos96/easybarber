@@ -75,4 +75,11 @@ public interface EstablishmentStaffRepository extends JpaRepository<Establishmen
                     AND es.establishment.id = :establishmentId
             """)
     Optional<Long> findIdByEstablishmentAndEmployee(long establishmentId, long employeeId);
+
+    @Query("""
+                SELECT es.employee.id
+                FROM EstablishmentStaff es
+                WHERE es.id = :establishmentStaffId
+            """)
+    Long getEmployeeId(long establishmentStaffId);
 }
