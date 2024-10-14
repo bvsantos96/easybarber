@@ -29,6 +29,8 @@ export default function Login({ navigation, toggleNewUser }: SignInProps) {
     const [nation, setNation] = useState<Country | null>();
     const [password, setPassword] = useState("");
 
+    const { alert } = useAlertStore();
+
     useEffect(() => {
         const fakeLogin = async () => {
             const result: IResult<IAPIResponse> = await doLogin("351", DEBUG_AUTO_LOGIN_PHONE, DEBUG_AUTO_LOGIN_PASSWORD);
@@ -58,7 +60,6 @@ export default function Login({ navigation, toggleNewUser }: SignInProps) {
 
     const login = async () => {
         if (!nation) {
-            const { alert } = useAlertStore();
             alert({ type: AlertType.Info, message: texts.apiMessages.invalidCountry });
             return;
         }
@@ -66,7 +67,6 @@ export default function Login({ navigation, toggleNewUser }: SignInProps) {
         if (result.success)
             resetNavigation(navigation, 'Tabs');
         else {
-            const { alert } = useAlertStore();
             alert({ type: AlertType.Error, message: `${texts.apiMessages.login.failed}\n${result.message}` });
         }
     }
