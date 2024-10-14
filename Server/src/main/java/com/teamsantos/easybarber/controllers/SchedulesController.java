@@ -89,7 +89,7 @@ public class SchedulesController {
             @PathVariable Integer year,
             @PathVariable Integer month,
             @RequestParam(required = true) long establishmentId,
-            @RequestParam(required = true) long serviceId,
+            @RequestParam(required = true) long establishmentServiceId,
             @RequestParam(required = false) Long establishmentStaffId) {
         try {
             ScheduleFilter filter = new ScheduleFilter();
@@ -97,7 +97,7 @@ public class SchedulesController {
             filter.setTo(filter.getFrom().plusMonths(1));
             filter.setActive(true);
             filter.setEstablishmentId(establishmentId);
-            filter.setServiceId(serviceId);
+            filter.setEstablishmentServiceId(establishmentServiceId);
             filter.setEstablishmentStaffId(establishmentStaffId);
             return ResponseEntity.ok(schedulesService.getDaysByAvailability(filter));
         } catch (Exception e) {
