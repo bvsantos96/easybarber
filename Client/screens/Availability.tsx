@@ -93,6 +93,9 @@ export default function Availability({ navigation }: Props) {
         const today = new Date();
         const fetchAvailability = async () => {
             let availability: TimeSlots = await getAvailability(establishmentId, serviceId, employeeId, date, getStartingHour(today));
+            if (availability?.slots === null || availability?.slots === undefined) {
+                availability.slots = [];
+            }
             setTimeSlots(buildTimeSlotViews(availability.slots));
         }
 
