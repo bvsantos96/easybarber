@@ -208,9 +208,8 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
 
     if (result.success) {
         await storeData(TOKEN_STORAGE_KEY, result.message);
-    } else {
-        console.error(result.message);
     }
+
     return result;
 }
 
@@ -349,7 +348,13 @@ export const getAvailability = async (establishmentId: number, serviceId: number
     };
     const url = parsePathParams("schedules/day", params);
     const result = await request<TimeSlots>(url, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
-    return getItemsFromRequest<TimeSlots>(result);
+    try {
+        return getItemsFromRequest<TimeSlots>(result);
+    } catch (e) {
+        return {
+            slots: []
+        };
+    }
 }
 
 export const getEstablishmentServiceEmployees = async (establishmentId: number, serviceId: number): Promise<ImageEntity[]> => {
