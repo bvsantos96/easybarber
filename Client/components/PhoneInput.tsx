@@ -20,6 +20,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({ setPhone, setNation, nation }) 
             leftIcon={<NationPicker {...{ setNation, nation }} />}
             placeholder={texts.phoneNumber}
             type="tel"
+            autoComplete="tel"
             onInputChange={setPhone}
         />
     );
