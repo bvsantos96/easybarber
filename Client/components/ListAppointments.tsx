@@ -10,7 +10,7 @@ import Pressable from "../components/Pressable";
 
 import { getDateAsString, getTimeAsString } from "../utils/Utils";
 
-export default function ListAppointments({ appointment }: { appointment: AppointmentInfo }) {
+export default function AppointmentItem({ appointment }: { appointment: AppointmentInfo }) {
     const texts = require("@lang/en.json");
     const styles = getStyles();
     const date = new Date(`${appointment.date}T${appointment.time}`);
