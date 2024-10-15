@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useImperativeHandle, useState } from "react";
+import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { FlatList, View, Text, ViewStyle, NativeSyntheticEvent } from "react-native";
 import PagerView from "react-native-pager-view";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet/src";
@@ -7,6 +7,7 @@ import { getStyles } from "../styles/Home";
 import { TimedRequest } from "../utils/TimedRequest";
 import { createPageable } from "../utils/PageHandling";
 import { PageListType } from "../enums";
+import { debounce } from "lodash";
 
 interface PageListProps<T extends Identifiable> {
     renderItem: (item: { item: T, index: number }) => React.JSX.Element;
@@ -18,6 +19,7 @@ interface PageListProps<T extends Identifiable> {
     style?: ViewStyle;
     initialItems?: T[];
     pageSize?: number;
+    test?: boolean;
 }
 
 interface PageSwipeEvent {
@@ -32,26 +34,20 @@ export interface PageListRef<T extends Identifiable> {
 }
 
 const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Ref<PageListRef<T>>) => {
-    const { renderItem, requestFunction, loadCache, saveCache, style } = props;
+    const { renderItem, requestFunction, loadCache, saveCache, style, test } = props;
     const type = props.type || PageListType.FLAT;
     const initialItems = props.initialItems || [];
     const pageSize = props.pageSize || 10;
     const texts = require("@lang/en.json");
     const styles = getStyles();
-    const [loadingMore, setLoadingMore] = useState(false);
     const [request, setRequest] = useState<ITimedRequest<T>>(new TimedRequest(createPageable<T>(pageSize), 0));
     const [firstLoad, setFirstLoad] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
 
     const pagerViewRef = React.useRef<PagerView>(null);
 
-    useImperativeHandle(ref, () => ({
-        _loadMoreItems,
-        loadMoreItems,
-        request,
-        setRequest
-    }));
-
     const loadMoreItems = async (req = request) => {
+        setLoadingMore(true);
         const reqElements = req.page.content.length;
         const result = await req.request(requestFunction);
         if (result) {
@@ -60,32 +56,17 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
             }
             setRequest(new TimedRequest(req.page, req.lastRequest, req.pathParams));
         }
-
         setLoadingMore(false);
     };
 
+    const _loadMoreItems = useRef(debounce(loadMoreItems, 300)).current;
 
-    const _loadMoreItems = useCallback(async () => {
-        if (loadingMore) return;
-
-        try {
-            setLoadingMore(true);
-            await loadMoreItems();
-        } finally {
-            setLoadingMore(false);
-        }
-    }, [loadingMore]);
-
-    useEffect(() => {
-        if (!firstLoad) {
-            setRequest(new TimedRequest(createPageable<T>(pageSize), 0));
-            saveCache && saveCache([]);
-            setLoadingMore(true);
-            return;
-        } else {
-            setFirstLoad(false);
-        }
-    }, [props.reset]);
+    useImperativeHandle(ref, () => ({
+        _loadMoreItems,
+        loadMoreItems,
+        request,
+        setRequest
+    }));
 
     useEffect(() => {
         if (loadCache && request) {
@@ -94,8 +75,20 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
             request.page.currentPage = 1;
             setRequest(new TimedRequest(request.page, 0, request.pathParams));
         }
+
         _loadMoreItems();
     }, []);
+
+    useEffect(() => {
+        if (!firstLoad) {
+            setRequest(new TimedRequest(createPageable<T>(pageSize), 0));
+            saveCache && saveCache([]);
+            _loadMoreItems(new TimedRequest(createPageable<T>(pageSize), 0));
+            return;
+        } else {
+            setFirstLoad(false);
+        }
+    }, [props.reset]);
 
     switch (type) {
         case PageListType.BOTTOM_SHEET:
@@ -106,7 +99,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom }}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
-                    onEndReached={_loadMoreItems}
+                    onEndReached={() => { _loadMoreItems() }}
                     onEndReachedThreshold={0.3}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
@@ -127,7 +120,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom, minHeight: '100%' }}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
-                    onEndReached={_loadMoreItems}
+                    onEndReached={() => { _loadMoreItems() }}
                     onEndReachedThreshold={0.3}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}

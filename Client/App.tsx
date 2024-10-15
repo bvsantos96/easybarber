@@ -162,7 +162,6 @@ const Router = () => {
 
     const [isLoading, setIsLoading] = useState(true);
     const [defaultPage, setDefaultPage] = useState<keyof StackParamList>("Tabs");
-    const [navigationReady, setNavigationReady] = useState(false);
 
     const Stack = createNativeStackNavigator<StackParamList>();
     const navigationRef = useRef<NavigationContainerRef<StackParamList> | null>(null);
@@ -179,8 +178,6 @@ const Router = () => {
             if (DEBUG_AUTO_LOGIN) {
                 console.log("DEBUG AUTO LOGIN");
                 defaultPage = "Sign";
-                await waitAndNavigate(defaultPage);
-                return;
             } else {
                 defaultPage = await getToken() !== null ? "Tabs" : "OnBoarding";
             }
@@ -194,7 +191,9 @@ const Router = () => {
                 setHasLocationPermission(false);
             }
 
-            await waitAndResetNavigation(defaultPage);
+            if (defaultPage !== "OnBoarding") {
+                await waitAndResetNavigation(defaultPage);
+            }
             setIsLoading(false);
             await SplashScreen.hideAsync();
         };
@@ -203,7 +202,7 @@ const Router = () => {
     }, []);
 
     const waitAndResetNavigation = async (page: keyof StackParamList) => {
-        if (navigationReady && navigationRef.current) {
+        if (navigationRef.current) {
             navigationRef.current.reset({
                 index: 0,
                 routes: [{ name: page }],
@@ -215,7 +214,7 @@ const Router = () => {
     }
 
     const waitAndNavigate = async (page: keyof StackParamList) => {
-        if (navigationReady && navigationRef.current) {
+        if (navigationRef.current) {
             navigationRef.current?.navigate(page);
             return;
         } else {
@@ -229,7 +228,7 @@ const Router = () => {
             if (status == "granted" || status == "denied") {
                 return;
             }
-            if (navigationReady && navigationRef.current) {
+            if (navigationRef.current) {
                 if (requestingLocationPermission) {
                     const currentPage = navigationRef.current.getCurrentRoute()?.name as keyof StackParamList;
                     if (currentPage !== "Home" as keyof StackParamList && currentPage !== "Loading" as keyof StackParamList && currentPage !== "LocationRequest" as keyof StackParamList) {
@@ -245,7 +244,6 @@ const Router = () => {
         };
 
         if (hasLocationPermission) {
-            getSelectedLocation();
             waitAndNavigate(defaultPage);
             return;
         }
@@ -280,7 +278,7 @@ const Router = () => {
 
     return (
         <GestureHandlerRootView style={{ flex: 1 }} >
-            <NavigationContainer ref={navigationRef} onReady={() => { setNavigationReady(true) }}>
+            <NavigationContainer ref={navigationRef}>
                 <Stack.Navigator>
                     <Stack.Screen name="OnBoarding" options={{ headerShown: false }}>
                         {props => containerizedComponent(<OnBoarding {...props} />)}
