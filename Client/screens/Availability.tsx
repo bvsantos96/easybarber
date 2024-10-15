@@ -11,7 +11,6 @@ import PagerView from "react-native-pager-view";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { getAvailability, getUnavailableDates, setAppointment } from "utils/ApiRequest";
 import { twoDigits } from "utils/Utils";
-import { Props } from "./Home";
 import useAlertStore from "storage/stores/AlertStore";
 import { AlertType } from "@components/Alert";
 import texts from "@lang/en.json";
@@ -24,7 +23,7 @@ type RouteParams = {
     };
 };
 
-export default function Availability({ navigation }: Props) {
+export default function Availability({ navigation }: PropNavigation) {
     const pagerRef = React.useRef<PagerView>(null);
     const theme = useTheme();
     const styles = getStyles();
@@ -163,6 +162,7 @@ export default function Availability({ navigation }: Props) {
         >
             <View style={styles.calendar}>
                 <Calendar
+                    enableSwipeMonths={true}
                     onMonthChange={date => { setYear(date.year); setMonth(date.month); }}
                     onDayPress={day => {
                         if (day.dateString !== date) {
