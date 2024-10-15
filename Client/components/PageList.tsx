@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
 import { FlatList, View, Text, ViewStyle, NativeSyntheticEvent } from "react-native";
 import PagerView from "react-native-pager-view";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet/src";
@@ -19,7 +19,6 @@ interface PageListProps<T extends Identifiable> {
     style?: ViewStyle;
     initialItems?: T[];
     pageSize?: number;
-    test?: boolean;
 }
 
 interface PageSwipeEvent {
@@ -34,7 +33,7 @@ export interface PageListRef<T extends Identifiable> {
 }
 
 const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Ref<PageListRef<T>>) => {
-    const { renderItem, requestFunction, loadCache, saveCache, style, test } = props;
+    const { renderItem, requestFunction, loadCache, saveCache, style } = props;
     const type = props.type || PageListType.FLAT;
     const initialItems = props.initialItems || [];
     const pageSize = props.pageSize || 10;
@@ -79,7 +78,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
         _loadMoreItems();
     }, []);
 
-    useEffect(() => {
+    const resetList = () => {
         if (!firstLoad) {
             setRequest(new TimedRequest(createPageable<T>(pageSize), 0));
             saveCache && saveCache([]);
@@ -88,6 +87,11 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
         } else {
             setFirstLoad(false);
         }
+    }
+    const _resetList = useRef(debounce(resetList, 300)).current;
+
+    useEffect(() => {
+        _resetList();
     }, [props.reset]);
 
     switch (type) {
@@ -115,6 +119,8 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
         case PageListType.FLAT:
             return (
                 <FlatList
+                    refreshing={loadingMore}
+                    onRefresh={_resetList}
                     data={(request?.page?.content && request.page.content.length > 0) ? request.page.content : initialItems}
                     style={[styles.homeListContainer, { ...style }]}
                     contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom, minHeight: '100%' }}
@@ -135,7 +141,6 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                 />);
         case PageListType.PAGERVIEW:
             return (
-
                 <PagerView
                     ref={pagerViewRef}
                     scrollEnabled={true}
