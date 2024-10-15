@@ -119,7 +119,6 @@ export default function Home({ navigation }: PropNavigation) {
                 <View style={[homeStyles.nearByBarbersContainer]}>
                     <Divider size={10} />
                     <PageList<EstablishmentInfo>
-                        test={true}
                         reset={resetSearch}
                         ref={pageListRef}
                         renderItem={({ item }: { item: EstablishmentInfo }) =>
