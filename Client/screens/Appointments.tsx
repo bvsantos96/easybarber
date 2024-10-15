@@ -3,14 +3,14 @@ import { View } from 'react-native';
 import { getStyles } from '../styles/Appointments';
 import { useState } from 'react';
 import { getAppointmentCount, getAppointments } from '../utils/ApiRequest';
-import ListAppointments from '../components/ListAppointments';
+import AppointmentItem from '../components/ListAppointments';
 import PageList, { PageListRef } from '../components/PageList';
 import AnimatedSwitch from '@components/AnimatedSwitch';
 
 export default function Appointments() {
     const texts = require("@lang/en.json");
     const styles = getStyles();
-    const [resetSearch, setResetSearch] = useState(false);
+    const [resetSearch, _] = useState(false);
     const pageListRef = useRef<PageListRef<AppointmentInfo>>(null);
     const [upComming, setUpComming] = useState(true);
     const [nUpcomming, setNUpcomming] = useState(0);
@@ -46,7 +46,7 @@ export default function Appointments() {
                     reset={resetSearch}
                     ref={pageListRef}
                     renderItem={({ item }: { item: AppointmentInfo }) =>
-                        <ListAppointments key={item.id} appointment={item} />
+                        <AppointmentItem key={item.id} appointment={item} />
                     }
                     requestFunction={loadUpcomming} />
                 <PageList<AppointmentInfo>
@@ -55,7 +55,7 @@ export default function Appointments() {
                     reset={resetSearch}
                     ref={pageListRef}
                     renderItem={({ item }: { item: AppointmentInfo }) =>
-                        <ListAppointments key={item.id} appointment={item} />
+                        <AppointmentItem key={item.id} appointment={item} />
                     }
                     requestFunction={loadPast} />
             </View>
