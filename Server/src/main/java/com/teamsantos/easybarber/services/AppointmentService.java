@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.services;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -164,6 +165,16 @@ public class AppointmentService {
         if (count.isEmpty()) {
             return new AppointmentCountDTO(0, 0);
         }
-        return new AppointmentCountDTO(count.get());
+        int upcomming = 0;
+        int past = 0;
+        try {
+            upcomming = count.get().get(0, BigDecimal.class).intValue();
+        } catch (Exception e) {
+        }
+        try {
+            past = count.get().get(1, BigDecimal.class).intValue();
+        } catch (Exception e) {
+        }
+        return new AppointmentCountDTO(upcomming, past);
     }
 }
