@@ -72,7 +72,7 @@ export default function Home({ navigation }: PropNavigation) {
         if (selectedLocation === undefined) {
             _selectedLocation = await getSelectedLocation();
         }
-        return await getNearByBarbers(page, params, selectedLocation);
+        return await getNearByBarbers(page, params, _selectedLocation);
     }
 
     return (
@@ -119,6 +119,7 @@ export default function Home({ navigation }: PropNavigation) {
                 <View style={[homeStyles.nearByBarbersContainer]}>
                     <Divider size={10} />
                     <PageList<EstablishmentInfo>
+                        test={true}
                         reset={resetSearch}
                         ref={pageListRef}
                         renderItem={({ item }: { item: EstablishmentInfo }) =>
