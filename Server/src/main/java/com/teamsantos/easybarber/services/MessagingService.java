@@ -29,7 +29,7 @@ public class MessagingService {
 
     private final MessageLoader messageLoader;
 
-    public MessagingService(MessageLoader messageLoader){
+    public MessagingService(MessageLoader messageLoader) {
         this.messageLoader = messageLoader;
     }
 
@@ -59,43 +59,44 @@ public class MessagingService {
         }
     }
 
-    public void verificationCodeMessage(String code, RequestConfirmationCode sms) throws Exception{
-        Map<String, String> messages = messageLoader.getMessagesMap().getOrDefault(sms.getPhoneCountryCode(), messageLoader.getMessagesMap().get("en"));
-    
+    public void verificationCodeMessage(String code, RequestConfirmationCode sms) throws Exception {
+        Map<String, String> messages = messageLoader.getMessagesMap().getOrDefault(sms.getPhoneCountryCode(),
+                messageLoader.getMessagesMap().get("en"));
+
         String messageTemplate = messages.get("welcome.message");
-    
+
         if (messageTemplate != null) {
             messageTemplate = messageTemplate.replace("{code}", code);
         }
 
-        sendMessage(sms.getPhoneNr(), messageTemplate);
+        sendMessage(String.format("%s%s", sms.getPhoneCountryCode(), sms.getPhoneNr()), messageTemplate);
     }
 
-    public void pwdRecoveryCodeMessage(String code, RequestConfirmationCode sms) throws Exception{
-        Map<String, String> messages = messageLoader.getMessagesMap().getOrDefault(sms.getPhoneCountryCode(), messageLoader.getMessagesMap().get("en"));
-    
+    public void pwdRecoveryCodeMessage(String code, RequestConfirmationCode sms) throws Exception {
+        Map<String, String> messages = messageLoader.getMessagesMap().getOrDefault(sms.getPhoneCountryCode(),
+                messageLoader.getMessagesMap().get("en"));
+
         String messageTemplate = messages.get("password.recovery");
-    
+
         if (messageTemplate != null) {
             messageTemplate = messageTemplate.replace("{code}", code);
         }
 
-        sendMessage(sms.getPhoneNr(), messageTemplate);
+        sendMessage(String.format("%s%s", sms.getPhoneCountryCode(), sms.getPhoneNr()), messageTemplate);
     }
 
     public void appointmentCancelationMessage(Appointment appointment, String reason) throws Exception {
         Map<String, String> messages = messageLoader.getMessagesMap()
-            .getOrDefault(appointment.getUser().getCountryMobile(), messageLoader.getMessagesMap().get("en"));
-    
-        String messageTemplate = reason == null || reason.isBlank() ? 
-            messages.get("appointment.cancel.noReason") : 
-            messages.get("appointment.cancel.withReason");
-    
+                .getOrDefault(appointment.getUser().getCountryMobile(), messageLoader.getMessagesMap().get("en"));
+
+        String messageTemplate = reason == null || reason.isBlank() ? messages.get("appointment.cancel.noReason")
+                : messages.get("appointment.cancel.withReason");
+
         if (messageTemplate != null) {
             messageTemplate = messageTemplate.replace("{date}", appointment.getDate().toString())
-                                             .replace("{time}", appointment.getTime().toString())
-                                             .replace("{establishment}", appointment.getEstablishment().getName())
-                                             .replace("{employee}", appointment.getEmployee().getUser().getName());
+                    .replace("{time}", appointment.getTime().toString())
+                    .replace("{establishment}", appointment.getEstablishment().getName())
+                    .replace("{employee}", appointment.getEmployee().getUser().getName());
 
             if (reason != null && !reason.trim().isEmpty()) {
                 messageTemplate = messageTemplate.replace("{reason}", reason);
