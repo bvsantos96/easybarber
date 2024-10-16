@@ -61,7 +61,6 @@ export default function AnimatedSwitch({ text1, text2, setSelected }: { text1: s
             <Pressable style={styles.box} onPress={() => handleSelection()} />
             <Animated.View
                 onLayout={(event) => {
-                    // Capture moving box width in ref
                     const { width } = event.nativeEvent.layout;
                     movingRef.current = width;
                 }}
