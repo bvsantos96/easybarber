@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +31,7 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody UserCreateDTO userDTO) {
         try {
+            userDTO.setMobile(userDTO.getMobile().replace(" ", ""));
             return ResponseEntity.ok(userService.loginUser(userDTO));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
@@ -42,6 +42,7 @@ public class AuthController {
     public ResponseEntity<UserDTO> createUser(@RequestBody UserCreateDTO userDTO) {
         HttpStatus status = HttpStatus.CREATED;
         try {
+            userDTO.setMobile(userDTO.getMobile().replace(" ", ""));
             return ResponseEntity.status(status).body(userService.createUser(userDTO));
         } catch (Exception e) {
             UserDTO response = new UserDTO();
