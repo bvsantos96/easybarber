@@ -75,7 +75,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
             setRequest(new TimedRequest(request.page, 0, request.pathParams));
         }
 
-        _loadMoreItems();
+        loadMoreItems();
     }, []);
 
     const resetList = () => {
