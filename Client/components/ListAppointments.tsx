@@ -1,12 +1,10 @@
-import React from "react";
-import { View, Text } from "react-native";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { View, Text, Animated, PanResponder } from "react-native";
 import { Image } from "expo-image";
-
 
 import { getStyles } from "../styles/Appointments";
 
 import ClockIcon from "@assets/icons/clock.svg";
-import Pressable from "../components/Pressable";
 
 import { getDateAsString, getTimeAsString } from "../utils/Utils";
 
@@ -16,26 +14,98 @@ export default function AppointmentItem({ appointment }: { appointment: Appointm
     const date = new Date(`${appointment.date}T${appointment.time}`);
     const dateString = getDateAsString(date);
     const timeString = getTimeAsString(date);
+    const movingRef = useRef(0);
+    const position = useRef(new Animated.Value(0)).current;
+    const [isMoving, setIsMoving] = React.useState(false);
+    const value = useRef(0);
+    const setValue = (newValue: number) => {
+        value.current = newValue;
+    };
+    const minVal = -150;
+
+    const move = (val = value.current) => {
+        Animated.timing(position, {
+            toValue: val,
+            duration: 250,
+            useNativeDriver: true,
+        }).start(() => { setIsMoving(false); });
+    }
+
+    useEffect(() => {
+        move();
+    }, [value.current]);
+
+    const handleSelection = useCallback((flip = true, left?: boolean) => {
+        if (isMoving) return;
+        setIsMoving(true);
+        let newValue = flip ? (minVal - value.current) : left ? 0 : minVal;
+        if (value.current === newValue) {
+            move(value.current);
+            return;
+        }
+        setValue(newValue);
+
+    }, [isMoving, minVal]);
+
+    const panResponder = React.useRef(
+        PanResponder.create({
+            onStartShouldSetPanResponder: () => true,
+            onStartShouldSetPanResponderCapture: () => true,
+            onMoveShouldSetPanResponder: () => true,
+            onMoveShouldSetPanResponderCapture: () => true,
+            onPanResponderMove: (evt, gestureState) => {
+                let p = gestureState.x0 > movingRef.current ? gestureState.x0 - movingRef.current : gestureState.x0;
+                let x = value.current + evt.nativeEvent.pageX - p;
+                if (x > 0) {
+                    x = 0;
+                } else
+                    if (x < minVal) {
+                        x = minVal;
+                    }
+                position.setValue(x);
+            },
+            onPanResponderTerminationRequest: () => true,
+            onPanResponderRelease: (evt, gestureState) => {
+                let p = gestureState.x0 > movingRef.current ? gestureState.x0 - movingRef.current : gestureState.x0;
+                let x = evt.nativeEvent.pageX - p;
+                if (x <= minVal / 2) {
+                    handleSelection((gestureState.vx === 0 && gestureState.vy === 0), false);
+                } else {
+                    handleSelection((gestureState.vx === 0 && gestureState.vy === 0), true);
+                }
+            },
+            onPanResponderTerminate: () => { },
+            onShouldBlockNativeResponder: () => true
+        }),
+    ).current;
 
     return (
-        <Pressable onPress={() => { alert(`Open barber ${appointment.establishmentName}`); }} style={[styles.itemContainer, styles.shadow]}>
-            <View style={styles.imageContainer}>
-                <Image
-                    cachePolicy="memory"
-                    source={{ uri: appointment.photo }} style={styles.imageStyle} />
-            </View>
-            <View style={styles.textContainer}>
-                <Text numberOfLines={1} style={styles.title}>{appointment.establishmentName}</Text>
-                <View style={styles.subTitleContainer}>
-                    <Text numberOfLines={1} style={styles.locationText}>{appointment.entityName}</Text>
+        <View style={{ width: "150%" }}>
+            <Animated.View
+                onLayout={(event) => {
+                    const { width } = event.nativeEvent.layout;
+                    movingRef.current = width;
+                }}
+                style={[styles.itemContainer, styles.shadow, { transform: [{ translateX: position }] }]}
+                {...panResponder.panHandlers} >
+                <View style={styles.imageContainer}>
+                    <Image
+                        cachePolicy="memory"
+                        source={{ uri: appointment.photo }} style={styles.imageStyle} />
                 </View>
-                <View style={styles.infoContainer}>
-                    <View style={styles.locationContainer}>
-                        <ClockIcon width={styles.locationIcon.width} height={styles.locationIcon.height} style={styles.locationIcon} />
+                <View style={styles.textContainer}>
+                    <Text numberOfLines={1} style={styles.title}>{appointment.establishmentName}</Text>
+                    <View style={styles.subTitleContainer}>
+                        <Text numberOfLines={1} style={styles.locationText}>{appointment.entityName}</Text>
                     </View>
-                    <Text style={styles.locationText}>{dateString} {texts.at} {timeString}</Text>
+                    <View style={styles.infoContainer}>
+                        <View style={styles.locationContainer}>
+                            <ClockIcon width={styles.locationIcon.width} height={styles.locationIcon.height} style={styles.locationIcon} />
+                        </View>
+                        <Text style={styles.locationText}>{dateString} {texts.at} {timeString}</Text>
+                    </View>
                 </View>
-            </View>
-        </Pressable >
+            </Animated.View>
+        </View >
     );
 }
