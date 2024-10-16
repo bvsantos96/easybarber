@@ -19,13 +19,13 @@ public class UserCreateDTO extends BaseDTO {
     private String name;
 
     public String getMobileInformation() {
-        return countryMobile + mobile;
+        return countryMobile + mobile.replace(" ", "");
     }
 
     public UserCreateDTO(Long id, String countryMobile, String mobile, String password, String name) {
         super(id);
         this.countryMobile = countryMobile;
-        this.mobile = mobile;
+        this.mobile = mobile.replace(" ", "");
         this.password = password;
         this.name = name;
     }
