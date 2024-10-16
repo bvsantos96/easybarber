@@ -12,6 +12,7 @@ export default function Appointments() {
     const styles = getStyles();
     const [resetSearch, _] = useState(false);
     const pageListRef = useRef<PageListRef<AppointmentInfo>>(null);
+    const pageListUpcommingRef = useRef<PageListRef<AppointmentInfo>>(null);
     const [upComming, setUpComming] = useState(true);
     const [nUpcomming, setNUpcomming] = useState(0);
     const [nPast, setNPast] = useState(0);
@@ -31,6 +32,11 @@ export default function Appointments() {
         });
     }, [resetSearch]);
 
+    const cancelAppointment = async (id: number) => {
+        pageListUpcommingRef.current?.deleteItem(id);
+        setNUpcomming(nUpcomming - 1);
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -44,9 +50,9 @@ export default function Appointments() {
                     key="upcomming"
                     style={upComming ? {} : { display: 'none' }}
                     reset={resetSearch}
-                    ref={pageListRef}
+                    ref={pageListUpcommingRef}
                     renderItem={({ item }: { item: AppointmentInfo }) =>
-                        <AppointmentItem key={item.id} appointment={item} />
+                        <AppointmentItem cancel={cancelAppointment} key={item.id} appointment={item} />
                     }
                     requestFunction={loadUpcomming} />
                 <PageList<AppointmentInfo>

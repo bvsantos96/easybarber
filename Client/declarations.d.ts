@@ -100,6 +100,7 @@ declare interface AppointmentInfo extends Identifiable {
     serviceName: string;
     entityName: string;
     establishmentName: string;
+    establishmentAddress: string;
     latitude: number;
     longitude: number;
     date: string;

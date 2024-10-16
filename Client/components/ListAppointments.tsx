@@ -1,14 +1,18 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef } from "react";
 import { View, Text, Animated, PanResponder } from "react-native";
 import { Image } from "expo-image";
 
-import { getStyles } from "../styles/Appointments";
-
 import ClockIcon from "@assets/icons/clock.svg";
-
+import { getStyles } from "../styles/Appointments";
 import { getDateAsString, getTimeAsString } from "../utils/Utils";
+import Fontisto from '@expo/vector-icons/Fontisto';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import Divider from "./Divider";
+import Pressable from "./Pressable";
+import { gotoLocation } from "utils/Location";
+import { cancelAppointment } from "utils/ApiRequest";
 
-export default function AppointmentItem({ appointment }: { appointment: AppointmentInfo }) {
+export default function AppointmentItem({ appointment, cancel }: { appointment: AppointmentInfo, cancel?: (id: number) => void }) {
     const texts = require("@lang/en.json");
     const styles = getStyles();
     const date = new Date(`${appointment.date}T${appointment.time}`);
@@ -21,7 +25,7 @@ export default function AppointmentItem({ appointment }: { appointment: Appointm
     const setValue = (newValue: number) => {
         value.current = newValue;
     };
-    const minVal = -150;
+    const minVal = cancel === undefined ? -75 : -150;
 
     const move = (val = value.current) => {
         Animated.timing(position, {
@@ -44,7 +48,6 @@ export default function AppointmentItem({ appointment }: { appointment: Appointm
             return;
         }
         setValue(newValue);
-
     }, [isMoving, minVal]);
 
     const panResponder = React.useRef(
@@ -80,13 +83,13 @@ export default function AppointmentItem({ appointment }: { appointment: Appointm
     ).current;
 
     return (
-        <View style={{ width: "150%" }}>
+        <>
             <Animated.View
                 onLayout={(event) => {
                     const { width } = event.nativeEvent.layout;
                     movingRef.current = width;
                 }}
-                style={[styles.itemContainer, styles.shadow, { transform: [{ translateX: position }] }]}
+                style={[styles.itemContainer, styles.shadow, styles.movingContainer, { transform: [{ translateX: position }] }]}
                 {...panResponder.panHandlers} >
                 <View style={styles.imageContainer}>
                     <Image
@@ -106,6 +109,25 @@ export default function AppointmentItem({ appointment }: { appointment: Appointm
                     </View>
                 </View>
             </Animated.View>
-        </View >
+            <View style={[styles.itemContainer, styles.shadow, styles.backContainer, { flexDirection: "row" }]} >
+                {cancel !== undefined &&
+                    <>
+                        <Pressable onPress={async () => {
+                            if (await cancelAppointment(appointment.id)) {
+                                cancel(appointment.id);
+                            }
+                        }
+                        } style={[styles.icon, styles.redIcon]}>
+                            <Fontisto name="trash" size={styles.icon.fontSize} color="white" />
+                        </Pressable>
+                        <Divider size={15} horizontal={true} />
+                    </>
+                }
+                <Pressable onPress={() => gotoLocation(appointment.establishmentName, appointment.establishmentAddress, appointment.latitude, appointment.longitude)} style={[styles.icon, styles.maps]}>
+                    <MaterialCommunityIcons name="google-maps" size={styles.icon.fontSize} color="white" />
+                </Pressable>
+                <Divider size={15} horizontal={true} />
+            </View >
+        </>
     );
 }
