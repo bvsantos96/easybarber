@@ -12,15 +12,23 @@ export const getStyles = () => {
         listContainer: {
             position: "absolute",
             top: 70 * theme.dimensions.absoluteHeight,
-            left: 25 * theme.dimensions.absoluteWidth,
             height: theme.dimensions.height - 142 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,
-            width: theme.dimensions.width,
+            width: theme.dimensions.width - 25 * theme.dimensions.absoluteWidth,
             bottom: 0,
             alignItems: "center",
         },
-        itemContainer: {
+        movingContainer: {
             elevation: 2,
             zIndex: 2,
+        },
+        backContainer: {
+            backgroundColor: theme.colors.text.lightGray,
+            justifyContent: "flex-end",
+            alignItems: "center",
+        },
+        itemContainer: {
+            position: "absolute",
+            left: 25 * theme.dimensions.absoluteWidth,
             width: theme.dimensions.width * 0.85,
             height: 110 * theme.dimensions.absoluteHeight,
             backgroundColor: theme.colors.backgroundColor,
@@ -111,6 +119,26 @@ export const getStyles = () => {
             lineHeight: theme.fonts.size._34,
             letterSpacing: 1,
             textAlign: 'left',
+        },
+        icon: {
+            zIndex: 3,
+            elevation: 2,
+            borderWidth: 1,
+            borderRadius: 50 * theme.dimensions.absoluteWidth,
+            padding: 10 * theme.dimensions.absoluteWidth,
+            height: 50 * theme.dimensions.absoluteWidth,
+            width: 50 * theme.dimensions.absoluteWidth,
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 24 * theme.dimensions.absoluteWidth,
+        },
+        redIcon: {
+            backgroundColor: theme.colors.mainColor,
+            borderColor: theme.colors.mainColor,
+        },
+        maps: {
+            backgroundColor: theme.colors.text.darkBlueGray,
+            borderColor: theme.colors.text.darkBlueGray,
         },
     });
 }

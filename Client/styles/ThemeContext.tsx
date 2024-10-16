@@ -120,7 +120,7 @@ const defaultTheme: Theme = {
             link: '#DF2238',
             black: 'black',
             lightBlack: 'rgba(0, 0, 0, 0.66)',
-            lightGray: 'rgba(0, 0, 0, 0.4)',
+            lightGray: 'rgba(0, 0, 0, 0.2)',
             darkBlueGray: '#263238'
         },
         button: {

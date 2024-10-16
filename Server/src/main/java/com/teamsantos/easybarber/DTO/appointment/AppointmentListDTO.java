@@ -20,6 +20,7 @@ public class AppointmentListDTO extends BaseDTO {
     private String serviceName;
     private String entityName;
     private String establishmentName;
+    private String establishmentAddress;
     private Double latitude;
     private Double longitude;
     private String photo;
@@ -28,12 +29,13 @@ public class AppointmentListDTO extends BaseDTO {
     private boolean confirmed;
 
     public AppointmentListDTO(Long id, String serviceName, String entityName, String establishmentName, Point location,
-            String image,
+            String address, String image,
             LocalDate date, LocalTime time, boolean confirmed) {
         super(id);
         this.serviceName = serviceName;
         this.entityName = entityName;
         this.establishmentName = establishmentName;
+        this.establishmentAddress = address;
         setLocation(location);
         this.photo = image;
         this.date = date;
