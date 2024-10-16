@@ -1,29 +1,41 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { Animated, View, Text, Pressable, PanResponder } from 'react-native';
 import { getStyles } from '../styles/AnimatedSwitch';
 
 export default function AnimatedSwitch({ text1, text2, setSelected }: { text1: string, text2: string, setSelected: (selected: boolean) => void }) {
     const maxVal = 150;
     const position = useRef(new Animated.Value(0)).current;
-    const [value, setValue] = React.useState(0);
+    const value = useRef(0);
+    const setValue = (newValue: number) => {
+        value.current = newValue;
+    };
     const styles = getStyles();
     const [selected, setSelectedState] = React.useState(true);
     const [isMoving, setIsMoving] = React.useState(false);
     const movingRef = useRef(0);
 
-    const handleSelection = (flip = true, left?: boolean) => {
-        if (isMoving) return;
-        setIsMoving(true);
-        setValue(flip ? Math.abs(value - maxVal) : left ? 0 : maxVal);
-    }
-
-    useEffect(() => {
+    const move = (val = value.current) => {
         Animated.timing(position, {
-            toValue: value,
+            toValue: val,
             duration: 250,
             useNativeDriver: true,
-        }).start(() => { setIsMoving(false); setSelectedState(value === 0); setSelected(value === 0); });
-    }, [value]);
+        }).start(() => { setIsMoving(false); setSelectedState(value.current === 0); setSelected(value.current === 0); });
+    }
+
+    const handleSelection = useCallback((flip = true, left?: boolean) => {
+        if (isMoving) return;
+        setIsMoving(true);
+        let newValue = flip ? Math.abs(value.current - maxVal) : left ? 0 : maxVal;
+        if (value.current === newValue) {
+            move(value.current);
+            return;
+        }
+        setValue(newValue);
+    }, [isMoving, maxVal]);
+
+    useEffect(() => {
+        move();
+    }, [value.current]);
 
     const panResponder = React.useRef(
         PanResponder.create({
@@ -45,10 +57,10 @@ export default function AnimatedSwitch({ text1, text2, setSelected }: { text1: s
             onPanResponderRelease: (evt, gestureState) => {
                 let p = gestureState.x0 > movingRef.current ? gestureState.x0 - movingRef.current : gestureState.x0;
                 let x = evt.nativeEvent.pageX - p;
-                if (x >= movingRef.current / 2) {
-                    handleSelection(false, false);
+                if (x >= maxVal / 2) {
+                    handleSelection((gestureState.vx === 0 && gestureState.vy === 0), false);
                 } else {
-                    handleSelection(false, true);
+                    handleSelection((gestureState.vx === 0 && gestureState.vy === 0), true);
                 }
             },
             onPanResponderTerminate: () => { },

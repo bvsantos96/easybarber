@@ -468,3 +468,10 @@ export const resetPwdRQ = async (phoneNr: string, confirmationCode: string, pass
     return false;
 }
 
+export const cancelAppointment = async (id: number, reason = ""): Promise<boolean> => {
+    const response = await request('/appointment/cancel', "PUT", { id, reason }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    if (response.success) {
+        return true;
+    }
+    return false;
+}
