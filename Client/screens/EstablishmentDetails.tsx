@@ -81,7 +81,7 @@ export default function EstablishmentDetails({ navigation }: Props) {
                     right
                 />
             </View>
-            <TouchableOpacity style={styles.nameContainer} onPress={() => { if (establishment) gotoLocation(establishment?.address, establishment?.latitude, establishment.longitude) }}>
+            <TouchableOpacity style={styles.nameContainer} onPress={() => { if (establishment) gotoLocation(establishment?.name, establishment?.address, establishment?.latitude, establishment.longitude) }}>
                 <Text style={styles.name}>{establishment?.name}</Text>
                 <Text style={styles.address}>{establishment?.address}</Text>
             </TouchableOpacity>

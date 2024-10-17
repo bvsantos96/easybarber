@@ -55,8 +55,8 @@ export default function EmployeeSelection({ navigation }: Props) {
                         if (await setAppointment({
                             id: 0,
                             establishmentId,
-                            serviceId,
-                            employeeId: Number.parseInt(`${selected}`),
+                            establishmentServiceId: serviceId,
+                            establishmentStaffId: Number.parseInt(`${selected}`),
                             date,
                             time: startHour
                         })) {

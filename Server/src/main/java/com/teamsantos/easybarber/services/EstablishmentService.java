@@ -402,4 +402,8 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     public void removeEmployee(Long establishmentId, Long employeeId) {
         establishmentStaffRepository.deletebyEstablishmentIdAndEmployeeId(establishmentId, employeeId);
     }
+
+    public Long getServiceId(Long establishmentServiceId) {
+        return establishmentServiceRepository.getServiceId(establishmentServiceId);
+    }
 }
