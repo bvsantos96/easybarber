@@ -22,12 +22,12 @@ export const getStyles = () => {
             zIndex: 2,
         },
         backContainer: {
+            position: "absolute",
             backgroundColor: theme.colors.text.lightGray,
             justifyContent: "flex-end",
             alignItems: "center",
         },
         itemContainer: {
-            position: "absolute",
             left: 25 * theme.dimensions.absoluteWidth,
             width: theme.dimensions.width * 0.85,
             height: 110 * theme.dimensions.absoluteHeight,
