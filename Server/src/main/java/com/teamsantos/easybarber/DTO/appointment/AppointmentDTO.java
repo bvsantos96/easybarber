@@ -39,6 +39,43 @@ public class AppointmentDTO extends BaseDTO {
     private LocalDate date;
     private LocalTime time;
 
+    public AppointmentDTO(Long userId, Long employeeId, Long establishmentId, Long serviceId,
+            String description, String nonRegisteredUser, LocalDate date, LocalTime time) {
+        this.userId = userId;
+        this.employeeId = employeeId;
+        this.establishmentId = establishmentId;
+        this.serviceId = serviceId;
+        this.description = description;
+        this.nonRegisteredUser = nonRegisteredUser;
+        this.date = date;
+        this.time = time;
+    }
+
+    public AppointmentDTO(Long id, Long userId, Long employeeId, Long establishmentId, Long serviceId,
+            String description, String nonRegisteredUser, LocalDate date, LocalTime time) {
+        super(id);
+        this.userId = userId;
+        this.employeeId = employeeId;
+        this.establishmentId = establishmentId;
+        this.serviceId = serviceId;
+        this.description = description;
+        this.nonRegisteredUser = nonRegisteredUser;
+        this.date = date;
+        this.time = time;
+    }
+
+    public AppointmentDTO(Appointment appointment) {
+        super(appointment.getId());
+        this.userId = appointment.getUser().getId();
+        this.employeeId = appointment.getEmployee().getId();
+        this.establishmentId = appointment.getEstablishment().getId();
+        this.serviceId = appointment.getService().getId();
+        this.description = appointment.getDescription();
+        this.nonRegisteredUser = appointment.getNonRegisteredUser();
+        this.date = appointment.getDate();
+        this.time = appointment.getTime();
+    }
+
     public Appointment toEntity(EntityManager entityManager) {
         Appointment appointment = new Appointment();
         appointment.setUser(entityManager.getReference(User.class, userId));
