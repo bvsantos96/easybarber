@@ -91,8 +91,7 @@ public class AppointmentService {
             }
         }
         if (UserContext.getUserId() != appointmentDTO.getUserId()) {
-            throw new IllegalArgumentException(
-                    "You do not have permission to create an appointment for another user");
+            throw new IllegalArgumentException("You do not have permission to create an appointment for another user");
         }
 
         if (appointmentDTO.getEstablishmentServiceId() != null) {
