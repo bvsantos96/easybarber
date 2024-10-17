@@ -33,9 +33,16 @@ export default function Home({ navigation }: PropNavigation) {
     const [resetSearch, setResetSearch] = useState(false);
     const [filter, _setFilter] = useState<IFilterRequest | undefined>({});
 
-    const {
-        selectedLocation,
-    } = useLocationStore();
+    const { selectedLocation } = useLocationStore();
+    const previousLocationRef = useRef<typeof selectedLocation | undefined>(undefined);
+
+    useEffect(() => {
+        if (previousLocationRef.current !== undefined || selectedLocation !== undefined) {
+            setResetSearch(!resetSearch);
+        }
+
+        previousLocationRef.current = selectedLocation;
+    }, [selectedLocation]);
 
     const loadCategories = async () => {
         setCategories(await retrieveCategories());
@@ -48,10 +55,6 @@ export default function Home({ navigation }: PropNavigation) {
         _getSelectedLocation();
         loadCategories();
     }, []);
-
-    useEffect(() => {
-        setResetSearch(!resetSearch);
-    }, [selectedLocation]);
 
     const replaceFilter = (filter: IFilterRequest) => {
         let req: ITimedRequest<EstablishmentInfo> = new TimedRequest(createPageable<EstablishmentInfo>(), 0, filter);
@@ -119,6 +122,8 @@ export default function Home({ navigation }: PropNavigation) {
                 <View style={[homeStyles.nearByBarbersContainer]}>
                     <Divider size={10} />
                     <PageList<EstablishmentInfo>
+                        test={true}
+                        preload={false}
                         reset={resetSearch}
                         ref={pageListRef}
                         renderItem={({ item }: { item: EstablishmentInfo }) =>
