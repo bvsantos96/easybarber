@@ -22,8 +22,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AppointmentDTO extends BaseDTO {
     private Long userId;
+    private Long establishmentStaffId;
     private Long employeeId;
     private Long establishmentId;
+    private Long establishmentServiceId;
     private Long serviceId;
     private String description;
     // TODO: apagar dps de explicar
