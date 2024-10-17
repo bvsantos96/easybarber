@@ -135,8 +135,8 @@ export default function Availability({ navigation }: PropNavigation) {
                         if (await setAppointment({
                             id: 0,
                             establishmentId: establishmentId,
-                            serviceId: serviceId,
-                            employeeId: _employeeId,
+                            establishmentServiceId: serviceId,
+                            establishmentStaffId: _employeeId,
                             date: date,
                             time: time?.start || ""
                         })) {

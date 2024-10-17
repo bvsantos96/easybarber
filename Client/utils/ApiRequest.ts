@@ -328,7 +328,7 @@ export const getUnavailableDates = async (establishmentId: number, serviceId: nu
     return getItemsFromRequest<string[]>(result);
 }
 
-export const setAppointment = async (appointment: Appointment): Promise<boolean> => {
+export const setAppointment = async (appointment: AppointmentCreate): Promise<boolean> => {
     const result = await request<number>("appointment", "POST", appointment, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
     try {
         getItemsFromRequest<number>(result);
