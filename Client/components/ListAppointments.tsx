@@ -83,7 +83,7 @@ export default function AppointmentItem({ appointment, cancel }: { appointment: 
     ).current;
 
     return (
-        <>
+        <View style={{ position: "relative" }}>
             <Animated.View
                 onLayout={(event) => {
                     const { width } = event.nativeEvent.layout;
@@ -127,7 +127,7 @@ export default function AppointmentItem({ appointment, cancel }: { appointment: 
                     <MaterialCommunityIcons name="google-maps" size={styles.icon.fontSize} color="white" />
                 </Pressable>
                 <Divider size={15} horizontal={true} />
-            </View >
-        </>
+            </View>
+        </View>
     );
 }
