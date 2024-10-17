@@ -244,6 +244,7 @@ const Router = () => {
         };
 
         if (hasLocationPermission) {
+            getSelectedLocation();
             waitAndNavigate(defaultPage);
             return;
         }

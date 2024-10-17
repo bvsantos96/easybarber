@@ -19,6 +19,7 @@ interface PageListProps<T extends Identifiable> {
     style?: ViewStyle;
     initialItems?: T[];
     pageSize?: number;
+    preload?: boolean;
 }
 
 interface PageSwipeEvent {
@@ -34,15 +35,18 @@ export interface PageListRef<T extends Identifiable> {
 }
 
 const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Ref<PageListRef<T>>) => {
-    const { renderItem, requestFunction, loadCache, saveCache, style } = props;
+    const { renderItem, requestFunction, loadCache, saveCache, style, preload } = props;
     const type = props.type || PageListType.FLAT;
     const initialItems = props.initialItems || [];
     const pageSize = props.pageSize || 10;
     const texts = require("@lang/en.json");
     const styles = getStyles();
     const [request, setRequest] = useState<ITimedRequest<T>>(new TimedRequest(createPageable<T>(pageSize), 0));
-    const [firstLoad, setFirstLoad] = useState(true);
     const [loadingMore, setLoadingMore] = useState(false);
+    const firstLoad = useRef(true);
+    const setFirstLoad = (value: boolean) => {
+        firstLoad.current = value;
+    }
 
     const pagerViewRef = React.useRef<PagerView>(null);
 
@@ -83,23 +87,26 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
             setRequest(new TimedRequest(request.page, 0, request.pathParams));
         }
 
-        loadMoreItems();
+        if (preload) {
+            loadMoreItems();
+        }
     }, []);
 
     const resetList = () => {
-        if (!firstLoad) {
-            setRequest(new TimedRequest(createPageable<T>(pageSize), 0));
-            saveCache && saveCache([]);
-            _loadMoreItems(new TimedRequest(createPageable<T>(pageSize), 0));
-            return;
-        } else {
-            setFirstLoad(false);
-        }
+        setRequest(new TimedRequest(createPageable<T>(pageSize), 0));
+        saveCache && saveCache([]);
+        _loadMoreItems(new TimedRequest(createPageable<T>(pageSize), 0));
+        return;
     }
+
     const _resetList = useRef(debounce(resetList, 300)).current;
 
     useEffect(() => {
-        _resetList();
+        if (!firstLoad.current) {
+            _resetList();
+        } else {
+            setFirstLoad(false);
+        }
     }, [props.reset]);
 
     switch (type) {
