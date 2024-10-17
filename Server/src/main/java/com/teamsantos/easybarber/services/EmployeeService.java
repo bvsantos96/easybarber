@@ -63,4 +63,9 @@ public class EmployeeService extends ServiceWithImages<Employee, EmployeeImage> 
         }
         return userId;
     }
+
+    @Transactional(readOnly = true)
+    public Long getEmployeeId(Long establishmentStaffId) {
+        return establishmentStaffRepository.getEmployeeId(establishmentStaffId);
+    }
 }

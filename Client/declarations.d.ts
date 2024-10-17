@@ -220,6 +220,14 @@ declare interface TimeSlot {
     employeeIds: number[];
 }
 
+declare interface AppointmentCreate extends Identifiable {
+    establishmentStaffId: number;
+    establishmentId: number;
+    establishmentServiceId: number;
+    date: string;
+    time: string;
+}
+
 declare interface Appointment extends Identifiable {
     employeeId: number;
     establishmentId: number;

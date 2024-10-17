@@ -69,12 +69,16 @@ public class AppointmentService {
                 && appointmentDTO.getTime().isBefore(LocalTime.now())) {
             throw new IllegalArgumentException("Appointment time must be in the future");
         }
-        if (appointmentDTO.getEmployeeId() == null) {
+        if (appointmentDTO.getEmployeeId() == null && appointmentDTO.getEstablishmentStaffId() == null) {
             throw new IllegalArgumentException("An appointment must be associated with an employee");
         } else {
-            if (!establishmentService.isStaff(appointmentDTO.getEstablishmentId(),
-                    appointmentDTO.getEmployeeId())) {
-                throw new IllegalArgumentException("Employee is not associated with the establishment");
+            if (appointmentDTO.getEstablishmentStaffId() == null) {
+                if (!establishmentService.isStaff(appointmentDTO.getEstablishmentId(),
+                        appointmentDTO.getEmployeeId())) {
+                    throw new IllegalArgumentException("Employee is not associated with the establishment");
+                }
+            } else {
+                appointmentDTO.setEmployeeId(employeeService.getEmployeeId(appointmentDTO.getEstablishmentStaffId()));
             }
         }
         if (appointmentDTO.getUserId() == null) {
@@ -90,6 +94,11 @@ public class AppointmentService {
             throw new IllegalArgumentException(
                     "You do not have permission to create an appointment for another user");
         }
+
+        if (appointmentDTO.getEstablishmentServiceId() != null) {
+            appointmentDTO.setServiceId(establishmentService.getServiceId(appointmentDTO.getEstablishmentServiceId()));
+        }
+
         if (appointmentDTO.getServiceId() == null) {
             throw new IllegalArgumentException("An appointment must be associated with a service");
         }
