@@ -357,8 +357,8 @@ export const getAvailability = async (establishmentId: number, serviceId: number
     }
 }
 
-export const getEstablishmentServiceEmployees = async (establishmentId: number, serviceId: number): Promise<ImageEntity[]> => {
-    const result = await request<ImageEntity[]>(`establishment/${establishmentId}/service/${serviceId}/employees`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
+export const getEstablishmentServiceEmployees = async (establishmentId: number, establishmentServiceId: number): Promise<ImageEntity[]> => {
+    const result = await request<ImageEntity[]>(`establishment/${establishmentId}/service/${establishmentServiceId}/employees`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
     return getItemsFromRequest<ImageEntity[]>(result);
 }
 
