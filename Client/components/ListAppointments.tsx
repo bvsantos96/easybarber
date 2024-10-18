@@ -50,6 +50,16 @@ export default function AppointmentItem({ appointment, cancel }: { appointment: 
         setValue(newValue);
     }, [isMoving, minVal]);
 
+    const release = (evt: any, gestureState: any) => {
+        let p = gestureState.x0 > movingRef.current ? gestureState.x0 - movingRef.current : gestureState.x0;
+        let x = evt.nativeEvent.pageX - p;
+        if (x <= minVal / 2) {
+            handleSelection((gestureState.vx === 0 && gestureState.vy === 0), false);
+        } else {
+            handleSelection((gestureState.vx === 0 && gestureState.vy === 0), true);
+        }
+    }
+
     const panResponder = React.useRef(
         PanResponder.create({
             onStartShouldSetPanResponder: () => true,
@@ -61,23 +71,14 @@ export default function AppointmentItem({ appointment, cancel }: { appointment: 
                 let x = value.current + evt.nativeEvent.pageX - p;
                 if (x > 0) {
                     x = 0;
-                } else
-                    if (x < minVal) {
-                        x = minVal;
-                    }
+                } else if (x < minVal) {
+                    x = minVal;
+                }
                 position.setValue(x);
             },
             onPanResponderTerminationRequest: () => true,
-            onPanResponderRelease: (evt, gestureState) => {
-                let p = gestureState.x0 > movingRef.current ? gestureState.x0 - movingRef.current : gestureState.x0;
-                let x = evt.nativeEvent.pageX - p;
-                if (x <= minVal / 2) {
-                    handleSelection((gestureState.vx === 0 && gestureState.vy === 0), false);
-                } else {
-                    handleSelection((gestureState.vx === 0 && gestureState.vy === 0), true);
-                }
-            },
-            onPanResponderTerminate: () => { },
+            onPanResponderRelease: release,
+            onPanResponderTerminate: release,
             onShouldBlockNativeResponder: () => true
         }),
     ).current;
