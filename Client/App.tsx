@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Platform, Linking, PanResponder } from 'react-native';
 import { NavigationContainer, NavigationContainerRef, NavigationProp } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -330,6 +331,7 @@ const Router = () => {
 }
 
 export default function App() {
+    const queryClient = new QueryClient();
     const error = console.error;
     console.error = (...args: any) => {
         if (/defaultProps/.test(args[0])) return;
@@ -385,18 +387,20 @@ export default function App() {
     }, [versionCheck]);
 
     return (
-        <SafeAreaProvider style={{ flex: 1 }}>
-            <ThemeProvider>
-                <DismissKeyboard>
-                    <CustomAlert
-                        {...alertProps}
-                        visible={alertVisible}
-                        setVisible={alert}
-                    >
-                        <Router />
-                    </CustomAlert>
-                </DismissKeyboard>
-            </ThemeProvider>
-        </SafeAreaProvider>
+        <QueryClientProvider client={queryClient}>
+            <SafeAreaProvider style={{ flex: 1 }}>
+                <ThemeProvider>
+                    <DismissKeyboard>
+                        <CustomAlert
+                            {...alertProps}
+                            visible={alertVisible}
+                            setVisible={alert}
+                        >
+                            <Router />
+                        </CustomAlert>
+                    </DismissKeyboard>
+                </ThemeProvider>
+            </SafeAreaProvider>
+        </QueryClientProvider>
     );
 }

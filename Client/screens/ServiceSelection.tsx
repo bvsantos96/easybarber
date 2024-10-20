@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { View, Text, FlatList } from "react-native";
+import { useQuery } from "@tanstack/react-query";
 
-import { getEstablishmentServices } from "../utils/ApiRequest";
+import { getEstablishmentServiceEmployees, getEstablishmentServices } from "../utils/ApiRequest";
 import { getStyles } from "../styles/ServiceSelection";
 import { Props } from "./EstablishmentDetails";
 import SelectionItem from "../components/SelectionItems";
@@ -17,20 +18,21 @@ export default function ServiceSelection({ navigation }: Props) {
     const texts = require('@lang/en.json');
     const route = useRoute<RouteProp<RouteParams, 'establishment'>>();
     const { establishmentId } = route.params;
-    const [services, setServices] = useState<ServiceInfo[]>();
     const [selected, setSelected] = useState<number | string>(0);
+    const { data } = useQuery({
+        queryKey: [`/establishment/${establishmentId}/services/list`],
+        queryFn: async () => await getEstablishmentServices(establishmentId),
+        networkMode: 'offlineFirst',
+        staleTime: 6000
+    });
 
-    useEffect(() => {
-        const fetchService = async () => {
-            setSelected(0);
-            let _services = await getEstablishmentServices(establishmentId);
-            setServices(_services);
-            if (_services.length == 1) {
-                setSelected(_services[0].id);
-            }
-        }
-        fetchService();
-    }, [establishmentId]);
+    useQuery({
+        queryKey: [`establishment/${establishmentId}/service/${selected}/employees`, selected],
+        queryFn: async () => getEstablishmentServiceEmployees(establishmentId, Number.parseInt(`${selected}`)),
+        enabled: (!!selected && selected !== 0 && selected !== ''),
+        networkMode: 'offlineFirst',
+        staleTime: 60000,
+    });
 
     return (
         <Selection
@@ -43,9 +45,9 @@ export default function ServiceSelection({ navigation }: Props) {
                 }
             }>
             <View style={styles.listContainer}>
-                {services && services.length > 0 && (
+                {data && data.length > 0 && (
                     <FlatList
-                        data={services || []}
+                        data={data || []}
                         renderItem={
                             ({ item }: { item: ServiceInfo }) =>
                                 <SelectionItem key={item.id} image={item.image.data} selected={item.id == selected} onPress={() => { setSelected(item.id) }}>

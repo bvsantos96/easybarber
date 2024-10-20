@@ -8,6 +8,7 @@ import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
 import useLocationStore from '../storage/stores/LocationStore';
 
 import { ResponseType } from '../enums';
+import { twoDigits } from './Utils';
 
 export const getTimes = async ({ from, to }: { from?: string, to?: string }): Promise<PickerItem[]> => {
     from = from || "08:00";
@@ -475,3 +476,14 @@ export const cancelAppointment = async (id: number, reason = ""): Promise<boolea
     }
     return false;
 }
+
+export const getNowHourAndMinutes = () => {
+    const today = new Date();
+    return twoDigits(today.getHours()) + ":" + twoDigits(today.getMinutes());
+}
+
+export const getStartingHour = (today: Date, date: string): string => {
+    const todayHourAndMinute = getNowHourAndMinutes();
+    return date == today.toISOString().split('T')[0] ? todayHourAndMinute : "00:01";
+}
+
