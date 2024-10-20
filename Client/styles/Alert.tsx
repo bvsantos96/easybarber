@@ -46,20 +46,38 @@ export const getStyles = () => {
             lineHeight: 25.2 * theme.dimensions.absoluteHeight,
             textAlign: 'center'
         },
-        button: {
+        buttonWrapperRight: {
+            flex: 1,
+            marginLeft: 2.5,
+        },
+        buttonWrapperLeft: {
+            flex: 1,
+            marginRight: 2.5,
+        },
+        buttonContainer: {
             position: 'absolute',
             top: 309.62 * theme.dimensions.absoluteHeight,
             left: 35.25 * theme.dimensions.absoluteWidth,
             width: 249.5 * theme.dimensions.absoluteWidth,
-            height: 58.75 * theme.dimensions.absoluteHeight
+            height: 58.75 * theme.dimensions.absoluteHeight,
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+        },
+        button: {
+            width: "100%",
+            height: "100%",
+        },
+        button2: {
+            backgroundColor: theme.colors.button.alt,
+            color: theme.colors.mainColor
         },
         image: {
             position: 'absolute',
-            width: 182.97*theme.dimensions.absoluteWidth,
-            height: 133.54*theme.dimensions.absoluteHeight,
-            left: 69.00*theme.dimensions.absoluteWidth,
-            top: 39.08*theme.dimensions.absoluteHeight,
-            zIndex:9999999
+            width: 182.97 * theme.dimensions.absoluteWidth,
+            height: 133.54 * theme.dimensions.absoluteHeight,
+            left: 69.00 * theme.dimensions.absoluteWidth,
+            top: 39.08 * theme.dimensions.absoluteHeight,
+            zIndex: 9999999
         }
     })
 };
