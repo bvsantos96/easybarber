@@ -18,6 +18,8 @@ export interface AlertProps {
     onPress?: () => void;
     buttonText?: string;
     type?: AlertType;
+    onPress2?: () => void;
+    buttonText2?: string;
 }
 
 interface Props extends AlertProps {
@@ -33,6 +35,8 @@ export const CustomAlert: React.FC<Props> = ({
     message,
     onPress,
     buttonText,
+    onPress2,
+    buttonText2,
     type
 }) => {
     const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -40,6 +44,7 @@ export const CustomAlert: React.FC<Props> = ({
 
     const _type = type || AlertType.Success;
     const _buttonText = buttonText || texts.dismiss;
+    const _buttonText2 = buttonText2 || texts.dismiss;
 
     useEffect(() => {
         if (visible) {
@@ -73,9 +78,9 @@ export const CustomAlert: React.FC<Props> = ({
         }
     }, [visible, fadeAnim, scaleAnim]);
 
-    const handleClose = () => {
+    const handleClose = (func?: () => void) => {
         setVisible(false);
-        if (onPress) onPress();
+        if (func) func();
     };
 
     const styles = getStyles();
@@ -112,11 +117,26 @@ export const CustomAlert: React.FC<Props> = ({
                         <View style={styles.messageContainer}>
                             <Text style={styles.message}>{message}</Text>
                         </View>
-                        <Button
-                            title={_buttonText}
-                            onPress={handleClose}
-                            stylesInput={styles.button}
-                        />
+                        <View style={styles.buttonContainer}>
+                            <View style={styles.buttonWrapperLeft} >
+                                <Button
+                                    title={_buttonText}
+                                    onPress={() => handleClose(onPress)}
+                                    stylesInput={styles.button}
+                                />
+                            </View>
+                            {onPress2 &&
+                                <View style={styles.buttonWrapperRight} >
+                                    <Button
+                                        buttonTextColor={styles.button2.color}
+                                        backgroundColor={styles.button2.backgroundColor}
+                                        title={_buttonText2}
+                                        onPress={() => handleClose(onPress2)}
+                                        stylesInput={styles.button}
+                                    />
+                                </View>
+                            }
+                        </View>
                     </Animated.View>
                 </Animated.View>
             )}

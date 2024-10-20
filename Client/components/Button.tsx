@@ -17,7 +17,7 @@ export default function Button({
     const theme = useTheme();
     const _backgroundColor = backgroundColor === "" ? theme.colors.mainColor : backgroundColor;
     const _borderColor = borderColor === "" ? theme.colors.mainColor : borderColor;
-    const _buttonTextColor = buttonTextColor === "" ? theme.colors.backgroundColor : borderColor;
+    const _buttonTextColor = buttonTextColor === "" ? theme.colors.backgroundColor : buttonTextColor;
     const styles = getStyles();
 
     return (
