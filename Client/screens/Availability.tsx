@@ -9,11 +9,12 @@ import { Underline } from "@components/Underline";
 import TimeSlotView from "@components/TimeSlotView";
 import PagerView from "react-native-pager-view";
 import { RouteProp, useRoute } from "@react-navigation/native";
-import { getAvailability, getUnavailableDates, setAppointment } from "utils/ApiRequest";
+import { getAvailability, getStartingHour, getUnavailableDates, setAppointment } from "utils/ApiRequest";
 import { twoDigits } from "utils/Utils";
 import useAlertStore from "storage/stores/AlertStore";
 import { AlertType } from "@components/Alert";
 import texts from "@lang/en.json";
+import { useQuery } from "@tanstack/react-query";
 
 type RouteParams = {
     appointment: {
@@ -83,15 +84,10 @@ export default function Availability({ navigation }: PropNavigation) {
     }
     const [timeSlots, setTimeSlots] = useState<TimeSlot[][][]>([]);
 
-    const getStartingHour = (today: Date): string => {
-        const todayHourAndMinute = twoDigits(today.getHours()) + ":" + twoDigits(today.getMinutes());
-        return date == today.toISOString().split('T')[0] ? todayHourAndMinute : "00:01";
-    }
-
     useEffect(() => {
         const today = new Date();
         const fetchAvailability = async () => {
-            let availability: TimeSlots = await getAvailability(establishmentId, serviceId, employeeId, date, getStartingHour(today));
+            let availability: TimeSlots = await getAvailability(establishmentId, serviceId, employeeId, date, getStartingHour(today, date));
             if (availability?.slots === null || availability?.slots === undefined) {
                 availability.slots = [];
             }
@@ -107,6 +103,20 @@ export default function Availability({ navigation }: PropNavigation) {
         pagerRef?.current?.forceUpdate();
     }, [timeSlots]);
 
+    const { data } = useQuery({
+        queryKey: [`getUnavailableDates`, establishmentId, serviceId, employeeId, year, month],
+        queryFn: async () => await getUnavailableDates(establishmentId, serviceId, employeeId, year, month, getStartingHour(new Date(), new Date().toISOString().split('T')[0])),
+        enabled: month > 0 && year > 0 && !calculatedMonth.has(`${month}-${year}`),
+        staleTime: 6000
+    });
+
+    useEffect(() => {
+        if (!!data) {
+            const _disabledDates = { ...unSelectable, ...disableDates(data) };
+            setUnSelectable(_disabledDates);
+        }
+    }, [data]);
+
     useEffect(() => {
         const today = new Date();
         if (month === 0 || year === 0) {
@@ -117,10 +127,6 @@ export default function Availability({ navigation }: PropNavigation) {
         const monthYearStr = `${month}-${year}`;
         if (month > 0 && year > 0 && !calculatedMonth.has(monthYearStr)) {
             setCalculatedMonth(new Set([...calculatedMonth, monthYearStr]));
-            getUnavailableDates(establishmentId, serviceId, employeeId, year, month, getStartingHour(new Date())).then(dates => {
-                const _disabledDates = { ...unSelectable, ...disableDates(dates) };
-                setUnSelectable(_disabledDates);
-            });
         }
     }, [month, year]);
 

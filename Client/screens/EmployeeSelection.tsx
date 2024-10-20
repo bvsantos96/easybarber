@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { View, Text, FlatList } from "react-native";
 
-import { getEstablishmentServiceEmployees, setAppointment } from "../utils/ApiRequest";
+import { getEstablishmentServiceEmployees, getNowHourAndMinutes, getStartingHour, getUnavailableDates, setAppointment } from "../utils/ApiRequest";
 import { getStyles } from "../styles/ServiceSelection";
 import { Props } from "./EstablishmentDetails";
 import SelectionItem from "../components/SelectionItems";
@@ -10,6 +10,7 @@ import Selection from "./Selection";
 import { AlertType } from "@components/Alert";
 import useAlertStore from "storage/stores/AlertStore";
 import texts from "@lang/en.json";
+import { useQuery } from "@tanstack/react-query";
 
 type RouteParams = {
     appointment: {
@@ -25,24 +26,29 @@ export default function EmployeeSelection({ navigation }: Props) {
     const styles = getStyles();
     const route = useRoute<RouteProp<RouteParams, 'appointment'>>();
     const { establishmentId, serviceId, date, startHour, availableEmployees } = route.params;
-    const [employees, setEmployees] = useState<ImageEntity[]>();
     const [selected, setSelected] = useState<number | string>(0);
     const { alert } = useAlertStore();
+    const { data } = useQuery({
+        queryKey: [`establishment/${establishmentId}/service/${serviceId}/employees`, serviceId],
+        queryFn: async () => getEstablishmentServiceEmployees(establishmentId, serviceId),
+        enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0 && (availableEmployees == undefined || availableEmployees == null || availableEmployees.length == 0),
+        networkMode: 'offlineFirst',
+        staleTime: 6000
+    });
 
-    useEffect(() => {
-        const fetchEmployees = async () => {
-            setSelected(0);
-            let _employees = await getEstablishmentServiceEmployees(establishmentId, serviceId);
-            setEmployees(_employees);
-            if (_employees.length == 1) {
-                setSelected(_employees[0].id);
-            }
-        }
-        if (!availableEmployees || availableEmployees.length == 0) {
-            fetchEmployees();
-        }
-        fetchEmployees();
-    }, [establishmentId]);
+    const today = new Date();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+
+
+    useQuery({
+        queryKey: [`getUnavailableDates`, establishmentId, serviceId, selected, year, month],
+        queryFn: async () =>
+            await getUnavailableDates(establishmentId, serviceId, Number.parseInt(`${selected}`), year, month, getStartingHour(new Date(), getNowHourAndMinutes())),
+        enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0 && (availableEmployees == undefined || availableEmployees == null || availableEmployees.length == 0),
+        networkMode: 'offlineFirst',
+        staleTime: 6000
+    });
 
     return (
         <Selection
@@ -76,9 +82,9 @@ export default function EmployeeSelection({ navigation }: Props) {
                 }
             }>
             <View style={styles.listContainer}>
-                {employees && employees.length > 0 && (
+                {data && data.length > 0 && (
                     <FlatList
-                        data={employees.filter((e) => {
+                        data={data.filter((e) => {
                             if (availableEmployees == undefined) return true;
                             availableEmployees.includes(Number.parseInt("" + e.id))
                         }) || []}

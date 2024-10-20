@@ -2,12 +2,13 @@ import { NavigationProp, RouteProp, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
+import { useQuery } from '@tanstack/react-query';
 
 import { getStyles } from '../styles/EstablishmentDetails';
 import { getStyles as getListStyles } from '../styles/List';
 import { getStyles as getSelectionStyles } from "../styles/Selection";
 
-import { getEstablishmentCats, getImageList } from '../utils/ApiRequest';
+import { getEstablishmentCats, getEstablishmentServices, getImageList } from '../utils/ApiRequest';
 import { gotoLocation } from '../utils/Location';
 import { Underline } from '../components/Underline';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
@@ -36,6 +37,15 @@ export default function EstablishmentDetails({ navigation }: Props) {
     const route = useRoute<RouteProp<RouteParams, 'establishment'>>();
     const establishment: EstablishmentInfo = route.params;
     const [categories, setCategories] = useState<ICategory[]>([]);
+
+    useQuery({
+        queryKey: [`/establishment/${establishment?.id}/services/list`],
+        queryFn: async () => await getEstablishmentServices(establishment.id),
+        enabled: !!establishment?.id,
+        networkMode: 'offlineFirst',
+        staleTime: 60000,
+    });
+
 
     useEffect(() => {
         const fetchEstablishmentServices = async () => {
