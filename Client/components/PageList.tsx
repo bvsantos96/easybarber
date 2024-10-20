@@ -43,6 +43,10 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     const styles = getStyles();
     const [request, setRequest] = useState<ITimedRequest<T>>(new TimedRequest(createPageable<T>(pageSize), 0));
     const [loadingMore, setLoadingMore] = useState(false);
+    const firstEndReached = useRef(true);
+    const setFirstEndReached = (value: boolean) => {
+        firstEndReached.current = value;
+    }
     const firstLoad = useRef(true);
     const setFirstLoad = (value: boolean) => {
         firstLoad.current = value;
@@ -118,7 +122,13 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom }}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
-                    onEndReached={() => { _loadMoreItems() }}
+                    onEndReached={() => {
+                        if (preload || (!preload && !firstEndReached.current)) {
+                            _loadMoreItems();
+                        } else {
+                            setFirstEndReached(false);
+                        }
+                    }}
                     onEndReachedThreshold={0.3}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
@@ -141,7 +151,13 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom, minHeight: '100%' }}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
-                    onEndReached={() => { _loadMoreItems() }}
+                    onEndReached={() => {
+                        if (preload || (!preload && !firstEndReached.current)) {
+                            _loadMoreItems();
+                        } else {
+                            setFirstEndReached(false);
+                        }
+                    }}
                     onEndReachedThreshold={0.3}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
@@ -164,6 +180,8 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                         const { position } = event.nativeEvent;
                         if (position >= request.page.content.length - 3) {
                             _loadMoreItems();
+                        } else {
+                            setFirstLoad(false);
                         }
                     }}
                     style={{ flex: 1 }} >
