@@ -50,7 +50,9 @@ export default function Home({ navigation }: PropNavigation) {
 
     useEffect(() => {
         const _getSelectedLocation = async () => {
-            await getSelectedLocation();
+            if (await getSelectedLocation() === undefined) {
+                setResetSearch(!resetSearch);
+            }
         };
         _getSelectedLocation();
         loadCategories();
