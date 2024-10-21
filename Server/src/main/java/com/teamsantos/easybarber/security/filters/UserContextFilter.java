@@ -38,6 +38,7 @@ public class UserContextFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
+
             String token = extractTokenFromRequest(request);
             if (token != null) {
                 Claims claims = jwtUtils.validateToken(token);
