@@ -33,11 +33,14 @@ const getLocalApiVersion = async (): Promise<string> => {
 }
 
 export const validateVersion = async () => {
+    const {
+        alert
+    } = useAlertStore.getState();
+
     let updateType: UpdateType;
     try {
         updateType = updateNeeded(await getLocalApiVersion(), await getApiVersion());
     } catch (e) {
-        const { alert } = useAlertStore();
         alert({ type: AlertType.Error, message: texts.errors.versionCheckFailed });
         console.error(e);
         return UpdateType.FAILED;
