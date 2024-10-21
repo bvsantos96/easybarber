@@ -52,16 +52,15 @@ public class JwtUtils {
     public UserPrincipal parseToken(Claims claims) throws InvalidTokenException, IllegalArgumentException {
         String[] split = claims.getSubject().split(";");
         try {
-            if (claims.containsKey("exp")) {
-                long exp = (long) claims.get("exp");
-                if (exp < System.currentTimeMillis())
-                    throw new InvalidTokenException();
-            } else {
+            if (claims.getExpiration() == null) {
+                throw new InvalidTokenException();
+            } else if (claims.getExpiration().before(new Date())) {
                 throw new InvalidTokenException();
             }
-            if (claims.containsKey("roles"))
+            if (claims.containsKey("roles")) {
                 return new UserPrincipal(Long.parseLong(split[0]), split.length > 1 ? Long.parseLong(split[1]) : null,
                         (List<String>) claims.get("roles", List.class));
+            }
         } catch (Exception e) {
             System.out.println("Error: " + e.getMessage());
             throw new IllegalArgumentException("Token does not contain roles");
