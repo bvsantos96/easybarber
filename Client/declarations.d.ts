@@ -245,3 +245,8 @@ declare type PropNavigation = {
     navigation: NavigationProp<any, any>
 };
 
+declare interface LoginInfo {
+    countryCode: string;
+    phone: string;
+    password: string;
+}

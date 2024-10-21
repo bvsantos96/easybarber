@@ -7,6 +7,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.teamsantos.easybarber.exceptions.InvalidTokenException;
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.security.utils.UserPrincipal;
@@ -25,7 +26,8 @@ public class UserContextFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain)
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain)
             throws ServletException, IOException {
         try {
             String token = extractTokenFromRequest(request);
@@ -36,9 +38,17 @@ public class UserContextFilter extends OncePerRequestFilter {
                     UserContext.setCurrentUser(userDetails);
                     SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(
                             userDetails, null, userDetails.getUserDetails().getAuthorities()));
+                    if (jwtUtils.isTokenExpiringSoon(claims)) {
+                        response.setHeader("Authorization", "Bearer " + jwtUtils.generateToken(userDetails));
+                    }
                 }
             }
             filterChain.doFilter(request, response);
+        } catch (InvalidTokenException e) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Invalid token\", \"message\": \"" + e.getMessage() + "\"}");
+            response.getWriter().flush();
         } finally {
             UserContext.clear();
         }
