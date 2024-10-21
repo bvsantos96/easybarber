@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.security;
 
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,45 +43,51 @@ public class ApplicationSecurity {
         this.prePermissionEvaluator = establishmentPermissionEvaluator;
     }
 
+    public static final List<String> ALLOWED_POST_PATHS = List.of(
+            "/v3/api-docs/**",
+            "/register",
+            "/registerAdmin",
+            "/login",
+            "/employee",
+            "/sms/**",
+            "/pwd/reset");
+
+    public static final List<String> ALLOWED_PUT_PATHS = List.of(
+            "/v3/api-docs/**",
+            "/pwd/reset");
+
+    public static final List<String> ALLOWED_GET_PATHS = List.of(
+            "/v3/api-docs/**",
+            "/swagger-ui/**",
+            "/swagger-ui.html",
+            "/version",
+            "/establishment/list",
+            "/employee/services",
+            "/employee/establishments",
+            "/employee/{id}/establishments",
+            "/establishment/{id}",
+            "/establishment/list",
+            "/establishment/{id}/servicetypes",
+            "/establishment/{id}/services",
+            "/establishment/{id}/services/list",
+            "/establishment/{id}/employees",
+            "/establishment/{establishmentId}/service/{serviceId}/employees",
+            "/service/list",
+            "/service/types",
+            "/icons/**",
+            "/schedules/**",
+            "/sms/**");
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable) // TODO: See what this is and configure it properly
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST,
-                                "/v3/api-docs/**",
-                                "/register",
-                                "/registerAdmin",
-                                "/login",
-                                "/employee",
-                                "/sms/**",
-                                "/pwd/reset")
+                        .requestMatchers(HttpMethod.POST, ALLOWED_POST_PATHS.toArray(String[]::new))
                         .permitAll()
-                        .requestMatchers(HttpMethod.PUT,
-                                "/v3/api-docs/**",
-                                "/pwd/reset")
+                        .requestMatchers(HttpMethod.PUT, ALLOWED_PUT_PATHS.toArray(String[]::new))
                         .permitAll()
-                        .requestMatchers(HttpMethod.GET,
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html",
-                                "/version",
-                                "/establishment/list",
-                                "/employee/services",
-                                "/employee/establishments",
-                                "/employee/{id}/establishments",
-                                "/establishment/{id}",
-                                "/establishment/list",
-                                "/establishment/{id}/servicetypes",
-                                "/establishment/{id}/services",
-                                "/establishment/{id}/services/list",
-                                "/establishment/{id}/employees",
-                                "/establishment/{establishmentId}/service/{serviceId}/employees",
-                                "/service/list",
-                                "/service/types",
-                                "/icons/**",
-                                "/schedules/**",
-                                "/sms/**")
+                        .requestMatchers(HttpMethod.GET, ALLOWED_GET_PATHS.toArray(String[]::new))
                         .permitAll()
                         .anyRequest().authenticated())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
