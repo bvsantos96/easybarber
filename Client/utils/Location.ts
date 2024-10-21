@@ -136,29 +136,23 @@ export const getLocations = async (): Promise<ILocation[]> => {
 }
 
 export const getSelectedLocation = async (): Promise<ILocation | undefined> => {
-    // return undefined after 500ms
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(undefined);
-        }, 500);
-    });
-    // const {
-    //     selectedLocation
-    // } = useLocationStore.getState();
-    // if (selectedLocation === undefined) {
-    //     let locations = getArrayFromPage(await getLocationsRequest());
-    //     if (locations.length <= 0) {
-    //         const location = await getLocation();
-    //         if (location === null) {
-    //             return undefined;
-    //         }
-    //         locations[0] = location;
-    //         locations[0].id = await setNewLocation(locations[0]);
-    //     }
-    //     useLocationStore.setState({ locations: locations, selectedLocation: locations[0] });
-    //     return locations[0];
-    // }
-    // return selectedLocation;
+    const {
+        selectedLocation
+    } = useLocationStore.getState();
+    if (selectedLocation === undefined) {
+        let locations = getArrayFromPage(await getLocationsRequest());
+        if (locations.length <= 0) {
+            const location = await getLocation();
+            if (location === null) {
+                return undefined;
+            }
+            locations[0] = location;
+            locations[0].id = await setNewLocation(locations[0]);
+        }
+        useLocationStore.setState({ locations: locations, selectedLocation: locations[0] });
+        return locations[0];
+    }
+    return selectedLocation;
 }
 
 const blacklist = [
