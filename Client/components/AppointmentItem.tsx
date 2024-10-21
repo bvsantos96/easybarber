@@ -11,9 +11,12 @@ import Divider from "./Divider";
 import Pressable from "./Pressable";
 import { gotoLocation } from "utils/Location";
 import { cancelAppointment } from "utils/ApiRequest";
+import texts from "@lang/en.json";
+import useAlertStore from "storage/stores/AlertStore";
+import { AlertType } from "./Alert";
 
 export default function AppointmentItem({ appointment, cancel }: { appointment: AppointmentInfo, cancel?: (id: number) => void }) {
-    const texts = require("@lang/en.json");
+    const { alert } = useAlertStore();
     const styles = getStyles();
     const date = new Date(`${appointment.date}T${appointment.time}`);
     const dateString = getDateAsString(date);
@@ -114,9 +117,17 @@ export default function AppointmentItem({ appointment, cancel }: { appointment: 
                 {cancel !== undefined &&
                     <>
                         <Pressable onPress={async () => {
-                            if (await cancelAppointment(appointment.id)) {
-                                cancel(appointment.id);
-                            }
+                            alert({
+                                type: AlertType.Info,
+                                message: texts.appointments.cancel,
+                                buttonText: texts.yes,
+                                onPress: async () => {
+                                    if (await cancelAppointment(appointment.id)) {
+                                        cancel(appointment.id);
+                                    }
+                                },
+                                buttonText2: texts.no
+                            });
                         }
                         } style={[styles.icon, styles.redIcon]}>
                             <Fontisto name="trash" size={styles.icon.fontSize} color="white" />
