@@ -5,9 +5,11 @@ import java.io.IOException;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.teamsantos.easybarber.exceptions.InvalidTokenException;
+import com.teamsantos.easybarber.security.ApplicationSecurity;
 import com.teamsantos.easybarber.security.utils.JwtUtils;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.security.utils.UserPrincipal;
@@ -30,8 +32,9 @@ public class UserContextFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
         try {
-            var authentication = SecurityContextHolder.getContext().getAuthentication();
-            if (authentication == null || !authentication.isAuthenticated()) {
+            if (("GET".equals(request.getMethod()) && isPermittedGetRequest(request))
+                    || ("POST".equals(request.getMethod()) && isPermittedPostRequest(request))
+                    || ("PUT".equals(request.getMethod()) && isPermittedPutRequest(request))) {
                 filterChain.doFilter(request, response);
                 return;
             }
@@ -57,6 +60,36 @@ public class UserContextFilter extends OncePerRequestFilter {
         } finally {
             UserContext.clear();
         }
+    }
+
+    private boolean isPermittedPostRequest(HttpServletRequest request) {
+        for (String permittedPath : ApplicationSecurity.ALLOWED_POST_PATHS) {
+            AntPathRequestMatcher matcher = new AntPathRequestMatcher(permittedPath);
+            if (matcher.matches(request)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isPermittedPutRequest(HttpServletRequest request) {
+        for (String permittedPath : ApplicationSecurity.ALLOWED_PUT_PATHS) {
+            AntPathRequestMatcher matcher = new AntPathRequestMatcher(permittedPath);
+            if (matcher.matches(request)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isPermittedGetRequest(HttpServletRequest request) {
+        for (String permittedPath : ApplicationSecurity.ALLOWED_GET_PATHS) {
+            AntPathRequestMatcher matcher = new AntPathRequestMatcher(permittedPath);
+            if (matcher.matches(request)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String extractTokenFromRequest(HttpServletRequest request) {
