@@ -2,6 +2,7 @@ import React from 'react';
 import { SetStateAction, Dispatch } from 'react';
 import Input from '../components/Input';
 import CountryPicker, { Country } from 'react-native-country-picker-modal';
+import texts from '@lang/en.json';
 
 interface NationSelectionProps {
     setNation: Dispatch<SetStateAction<Country | null | undefined>>;
@@ -13,7 +14,6 @@ interface PhoneInputProps extends NationSelectionProps {
 }
 
 const PhoneInput: React.FC<PhoneInputProps> = ({ setPhone, setNation, nation }) => {
-    const texts = require("@lang/en.json");
 
     return (
         <Input
