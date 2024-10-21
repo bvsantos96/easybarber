@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, InputModeOptions } from 'react-native';
-import Pressable from '../components/Pressable';
+import { Pressable, View, TextInput, InputModeOptions } from 'react-native';
 import { getStyles } from '../styles/Input';
 import { useTheme } from '../styles/ThemeContext';
 
@@ -118,7 +117,7 @@ const Input = ({
                     autoComplete={autoComplete}
                     inputMode={type}
                 />
-                {rightIcon.length >= 0 && (
+                {rightIcon && rightIcon.length >= 0 && (
                     <Pressable style={styles.showPasswordIcon} onPress={handleShowPasswordPress}>
                         {rightIcon[+showPassword]}
                     </Pressable>

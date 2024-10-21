@@ -239,6 +239,7 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
     } = useAlertStore.getState();
 
     phone = phone.trim();
+    phone = phone.replace(/\s/g, '');
     const _countryCode = countryCode.startsWith('+') ? countryCode : `+${countryCode}`;
     if (!isValidNumberString(`${_countryCode}${phone}`)) {
         return { success: false, message: langs.apiMessages.invalidPhone };
