@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as SecureStore from 'expo-secure-store';
+import * as LocalAuthentication from 'expo-local-authentication';
 
 import langs from '../langs/en.json';
 import { PickerItem } from '../components/Picker';
@@ -67,6 +68,12 @@ export const removeData = async (key: string) => {
     }
 }
 
+const setToken = async (token: string | null | undefined) => {
+    if (token !== null && token !== undefined) {
+        await storeData(TOKEN_STORAGE_KEY, token);
+    }
+}
+
 export const getToken = async (): Promise<string | null> => {
     return await getData(TOKEN_STORAGE_KEY);
 }
@@ -85,6 +92,10 @@ const stringRequest = async (url: string, method: string, body: any, successMess
 }
 
 const request = async<T>(url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed, responseType: ResponseType): Promise<IResult<T>> => {
+    return _request<T>(url, method, body, successMessage, errorMessage, responseType, true);
+}
+
+const _request = async<T>(url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed, responseType: ResponseType, first: boolean): Promise<IResult<T>> => {
     let _url = apiUrlMaker(url);
     if (_url.length <= 0)
         return { success: false, message: langs.apiMessages.failed };
@@ -124,9 +135,9 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
 
         if (response.status != 200 && response.status != 201) {
             try {
-                if (response.status == 401) {
-                    if (refreshToken()) {
-                        return request(url, method, body, successMessage, errorMessage, responseType);
+                if (response.status == 401 && first) {
+                    if (await refreshToken()) {
+                        return _request<T>(url, method, body, successMessage, errorMessage, responseType, false);
                     } else {
                         return { success: false, message: langs.apiMessages.unauthorized };
                     }
@@ -177,6 +188,7 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
                 console.log(_response);
             }
 
+            setToken(response?.headers?.get("Authorization")?.split(" ")[1]);
             return _response;
         }
         return { success: true, message: successMessage };
@@ -205,8 +217,27 @@ const isValidPassword = (password: string): boolean => {
     return hasMinLength && hasUppercase && hasLowercase && hasDigit;
 }
 
+const validateBiometricUser = async (): Promise<boolean> => {
+    const hasHardware = await LocalAuthentication.hasHardwareAsync();
+    const isEnrolled = await LocalAuthentication.isEnrolledAsync();
+
+    if (!hasHardware || !isEnrolled) {
+        return false;
+    }
+
+    const authResult = await LocalAuthentication.authenticateAsync({
+        promptMessage: langs.saveLogin,
+        fallbackLabel: langs.usePasscode,
+    });
+
+    return authResult.success;
+}
+
 export const doLogin = async (countryCode: string, phone: string, password: string): Promise<IResult<any>> => {
-    const { alert } = useAlertStore();
+    const {
+        alert
+    } = useAlertStore.getState();
+
     phone = phone.trim();
     const _countryCode = countryCode.startsWith('+') ? countryCode : `+${countryCode}`;
     if (!isValidNumberString(`${_countryCode}${phone}`)) {
@@ -221,15 +252,17 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
     if (result.success) {
         alert({
             type: AlertType.Info,
-            message: langs.apiMessages.login.success,
-            onPress: () => {
-                SecureStore.setItemAsync(SECURE_STORAGE_LOGIN_KEY, createSecureToken(countryCode, phone, password));
+            message: langs.saveLogin,
+            onPress: async () => {
+                if (await validateBiometricUser()) {
+                    SecureStore.setItemAsync(SECURE_STORAGE_LOGIN_KEY, createSecureToken(countryCode, phone, password));
+                }
             },
-            buttonText: langs.saveLogin,
+            buttonText: langs.yes,
             onPress2: () => { },
-            buttonText2: langs.dismiss
+            buttonText2: langs.no
         });
-        await storeData(TOKEN_STORAGE_KEY, result.message);
+        setToken(result.message);
     }
 
     return result;
@@ -517,8 +550,11 @@ const loadSecureToken = (token: string) => {
     return loginInfo;
 }
 
-const refreshToken = async () => {
+const refreshToken = async (): Promise<boolean> => {
     try {
+        if (!(await validateBiometricUser())) {
+            return false;
+        }
         const secureLoginString = await SecureStore.getItemAsync(SECURE_STORAGE_LOGIN_KEY);
         if (secureLoginString === null)
             return false;

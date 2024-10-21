@@ -56,7 +56,8 @@
     "react-native-web": "~0.19.6",
     "react-native-webview": "13.8.6",
     "zustand": "^4.5.4",
-    "expo-secure-store": "~13.0.2"
+    "expo-secure-store": "~13.0.2",
+    "expo-local-authentication": "~14.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.24.5",
