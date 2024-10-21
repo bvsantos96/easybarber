@@ -1,14 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as SecureStore from 'expo-secure-store';
+
 import langs from '../langs/en.json';
 import { PickerItem } from '../components/Picker';
 import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
-import { LOCATIONS_STORAGE_KEY, TOKEN_STORAGE_KEY } from './Constants';
+import { LOCATIONS_STORAGE_KEY, SECURE_STORAGE_LOGIN_KEY, TOKEN_STORAGE_KEY } from './Constants';
 import useLocationStore from '../storage/stores/LocationStore';
-
 import { ResponseType } from '../enums';
 import { twoDigits } from './Utils';
+import useAlertStore from 'storage/stores/AlertStore';
+import { AlertType } from '@components/Alert';
 
 export const getTimes = async ({ from, to }: { from?: string, to?: string }): Promise<PickerItem[]> => {
     from = from || "08:00";
@@ -121,6 +124,13 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
 
         if (response.status != 200 && response.status != 201) {
             try {
+                if (response.status == 401) {
+                    if (refreshToken()) {
+                        return request(url, method, body, successMessage, errorMessage, responseType);
+                    } else {
+                        return { success: false, message: langs.apiMessages.unauthorized };
+                    }
+                }
                 if (data !== undefined && data !== null) {
                     try {
                         if (data.responseMessage) {
@@ -196,6 +206,7 @@ const isValidPassword = (password: string): boolean => {
 }
 
 export const doLogin = async (countryCode: string, phone: string, password: string): Promise<IResult<any>> => {
+    const { alert } = useAlertStore();
     phone = phone.trim();
     const _countryCode = countryCode.startsWith('+') ? countryCode : `+${countryCode}`;
     if (!isValidNumberString(`${_countryCode}${phone}`)) {
@@ -208,6 +219,16 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
     const result = await request("login", "POST", { countryMobile: _countryCode, mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed, ResponseType.STRING);
 
     if (result.success) {
+        alert({
+            type: AlertType.Info,
+            message: langs.apiMessages.login.success,
+            onPress: () => {
+                SecureStore.setItemAsync(SECURE_STORAGE_LOGIN_KEY, createSecureToken(countryCode, phone, password));
+            },
+            buttonText: langs.saveLogin,
+            onPress2: () => { },
+            buttonText2: langs.dismiss
+        });
         await storeData(TOKEN_STORAGE_KEY, result.message);
     }
 
@@ -485,5 +506,28 @@ export const getNowHourAndMinutes = () => {
 export const getStartingHour = (today: Date, date: string): string => {
     const todayHourAndMinute = getNowHourAndMinutes();
     return date == today.toISOString().split('T')[0] ? todayHourAndMinute : "00:01";
+}
+
+const createSecureToken = (countryCode: string, phone: string, password: string) => {
+    return JSON.stringify({ countryCode, phone, password });
+}
+
+const loadSecureToken = (token: string) => {
+    const loginInfo: LoginInfo = JSON.parse(token);
+    return loginInfo;
+}
+
+const refreshToken = async () => {
+    try {
+        const secureLoginString = await SecureStore.getItemAsync(SECURE_STORAGE_LOGIN_KEY);
+        if (secureLoginString === null)
+            return false;
+        const secureLoginInfo = loadSecureToken(secureLoginString);
+        doLogin(secureLoginInfo.countryCode, secureLoginInfo.phone, secureLoginInfo.password);
+        return true;
+    } catch (error) {
+        console.error('Failed to refresh token:', error);
+        return false;
+    }
 }
 

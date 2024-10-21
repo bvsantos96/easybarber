@@ -3,10 +3,13 @@ package com.teamsantos.easybarber.security.utils;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
+
+import com.teamsantos.easybarber.exceptions.InvalidTokenException;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -46,9 +49,16 @@ public class JwtUtils {
         }
     }
 
-    public UserPrincipal parseToken(Claims claims) {
+    public UserPrincipal parseToken(Claims claims) throws InvalidTokenException, IllegalArgumentException {
         String[] split = claims.getSubject().split(";");
         try {
+            if (claims.containsKey("exp")) {
+                long exp = (long) claims.get("exp");
+                if (exp < System.currentTimeMillis())
+                    throw new InvalidTokenException();
+            } else {
+                throw new InvalidTokenException();
+            }
             if (claims.containsKey("roles"))
                 return new UserPrincipal(Long.parseLong(split[0]), split.length > 1 ? Long.parseLong(split[1]) : null,
                         (List<String>) claims.get("roles", List.class));
@@ -70,5 +80,16 @@ public class JwtUtils {
                 .expiration(new Date(System.currentTimeMillis() + getExpirationTime()))
                 .signWith(getSecretKey())
                 .compact();
+    }
+
+    public String generateToken(UserPrincipal userDetails) {
+        return generateToken(userDetails.getId(), userDetails.getEmployeeId(), Set.of(
+                userDetails.getRoles().stream().map(a -> a.getAuthority().substring(5)).toArray(String[]::new)));
+    }
+
+    public boolean isTokenExpiringSoon(Claims claims) {
+        Date expiration = claims.getExpiration();
+        long timeToExpire = expiration.getTime() - System.currentTimeMillis();
+        return timeToExpire < TimeUnit.MINUTES.toMillis(5);
     }
 }

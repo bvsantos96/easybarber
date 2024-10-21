@@ -3,8 +3,10 @@
     "yes": "Yes",
     "no": "No",
     "dismiss": "Dismiss",
+    "logout": "Logout",
     "at": "at",
     "allow": "Allow",
+    "saveLogin": "Remember me",
     "loadingMore": "Loading More...",
     "updateAvailable": "Update Available",
     "updateAvailableMessage": "A minor update is available. Updating local data.",
@@ -105,6 +107,7 @@
     "apiMessages": {
         "success": "Success in processing the request",
         "failed": "Failed to process the request",
+        "unauthorized": "Unauthorized access",
         "connectionError": "Cannot connect to the server",
         "invalidCountry": "Country needs to be selected",
         "invalidPhone": "Invalid Phone Number",
@@ -173,5 +176,8 @@
         "title": "About"
     },
     "checkAvailability": "Check Availability",
-    "currency": "€"
+    "currency": "€",
+    "settings": {
+        "title": "Settings",
+    }
 }
