@@ -35,7 +35,7 @@ export interface PageListRef<T extends Identifiable> {
 }
 
 const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Ref<PageListRef<T>>) => {
-    const { renderItem, requestFunction, loadCache, saveCache, style, preload } = props;
+    const { renderItem, requestFunction, loadCache, saveCache, style, preload = true } = props;
     const type = props.type || PageListType.FLAT;
     const initialItems = props.initialItems || [];
     const pageSize = props.pageSize || 10;

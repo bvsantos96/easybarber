@@ -1,5 +1,7 @@
 {
     "appName": "EasyBarbers",
+    "yes": "Yes",
+    "no": "No",
     "dismiss": "Dismiss",
     "at": "at",
     "allow": "Allow",
@@ -156,6 +158,7 @@
         "past": "Past",
         "failed": "Failed to schedule appointment, please try again on a different date.",
         "success": "Your booking has been confirmed successfully.",
+        "cancel": "Are you sure you want to cancel this appointment?",
     },
     "services" : {
         "title": "Services",

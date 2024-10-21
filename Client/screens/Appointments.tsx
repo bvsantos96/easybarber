@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { getStyles } from '../styles/Appointments';
 import { useState } from 'react';
 import { getAppointmentCount, getAppointments } from '../utils/ApiRequest';
-import AppointmentItem from '../components/ListAppointments';
+import AppointmentItem from '../components/AppointmentItem';
 import PageList, { PageListRef } from '../components/PageList';
 import AnimatedSwitch from '@components/AnimatedSwitch';
 
