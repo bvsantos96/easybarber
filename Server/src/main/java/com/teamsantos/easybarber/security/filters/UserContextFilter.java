@@ -30,6 +30,11 @@ public class UserContextFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
         try {
+            var authentication = SecurityContextHolder.getContext().getAuthentication();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                filterChain.doFilter(request, response);
+                return;
+            }
             String token = extractTokenFromRequest(request);
             if (token != null) {
                 Claims claims = jwtUtils.validateToken(token);
