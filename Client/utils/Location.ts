@@ -11,6 +11,9 @@ import usePermissionStore from 'storage/stores/PermissionStore';
 import useAlertStore from 'storage/stores/AlertStore';
 
 export async function hasLocationPermission(): Promise<boolean> {
+    const {
+        alert
+    } = useAlertStore.getState();
     try {
         const {
             hasLocationPermission,
@@ -24,7 +27,6 @@ export async function hasLocationPermission(): Promise<boolean> {
         setRequestingLocationPermission(true);
         return hasLocationPermission;
     } catch (error) {
-        const { alert } = useAlertStore();
         alert({ type: AlertType.Info, message: texts.errors.locationPermissionError });
         console.error('Error getting location permission:', error);
         return false;
@@ -258,6 +260,10 @@ const appendUniqueSuggestions = async (suggestions: ILocation[], newSuggestions:
 }
 
 export const gotoLocation = async (label: string, address: string, lat: number, lng: number): Promise<void> => {
+    const {
+        alert
+    } = useAlertStore.getState();
+
     const scheme = Platform.select({ ios: 'maps://0,0?q=', android: 'geo:0,0?q=' });
     const latLng = `${lat},${lng}`;
     const url = Platform.select({
@@ -268,7 +274,6 @@ export const gotoLocation = async (label: string, address: string, lat: number, 
         Linking.openURL(url);
     } else {
         await expoClipboard.setStringAsync(address);
-        const { alert } = useAlertStore();
         alert({ type: AlertType.Info, message: texts.errors.openMapsError });
     }
 }
