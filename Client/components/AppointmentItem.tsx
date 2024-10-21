@@ -118,7 +118,7 @@ export default function AppointmentItem({ appointment, cancel }: { appointment: 
                     <>
                         <Pressable onPress={async () => {
                             alert({
-                                type: AlertType.Info,
+                                type: AlertType.Error,
                                 message: texts.appointments.cancel,
                                 buttonText: texts.yes,
                                 onPress: async () => {
@@ -126,6 +126,7 @@ export default function AppointmentItem({ appointment, cancel }: { appointment: 
                                         cancel(appointment.id);
                                     }
                                 },
+                                onPress2: () => { },
                                 buttonText2: texts.no
                             });
                         }
