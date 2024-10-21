@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Entypo from '@expo/vector-icons/Entypo';
 
+import texts from '@lang/en.json';
 import Home from './Home';
 import ServiceSelection from './ServiceSelection';
 import EstablishmentDetails from './EstablishmentDetails';
@@ -10,6 +11,7 @@ import { getStyles } from '../styles/HomeNavigator';
 import EmployeeSelection from './EmployeeSelection';
 import Availability from './Availability';
 import { NavigationProp } from '@react-navigation/native';
+import Settings from './Settings';
 
 interface HeaderProps {
     navigation: NavigationProp<any, any>
@@ -34,7 +36,6 @@ export const Header = ({ navigation, title }: HeaderProps) => {
 
 export default function HomeNavigator() {
     const styles = getStyles();
-    const texts = require('@lang/en.json');
     const Stack = createNativeStackNavigator();
     return (
         <View style={styles.container}>
@@ -70,6 +71,13 @@ export default function HomeNavigator() {
                         ),
                     }}
                     name={texts.appointments.schedule} component={Availability} />
+                <Stack.Screen
+                    options={{
+                        header: ({ navigation }) => (
+                            <Header navigation={navigation} title={texts.settings.title} />
+                        ),
+                    }}
+                    name={texts.settings.title} component={Settings} />
             </Stack.Navigator>
         </View>
     );

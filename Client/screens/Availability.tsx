@@ -10,7 +10,6 @@ import TimeSlotView from "@components/TimeSlotView";
 import PagerView from "react-native-pager-view";
 import { RouteProp, useRoute } from "@react-navigation/native";
 import { getAvailability, getStartingHour, getUnavailableDates, setAppointment } from "utils/ApiRequest";
-import { twoDigits } from "utils/Utils";
 import useAlertStore from "storage/stores/AlertStore";
 import { AlertType } from "@components/Alert";
 import texts from "@lang/en.json";
