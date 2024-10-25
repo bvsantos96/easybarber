@@ -3,15 +3,10 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Entypo from '@expo/vector-icons/Entypo';
 
-import texts from '@lang/en.json';
-import Home from './Home';
-import ServiceSelection from './ServiceSelection';
-import EstablishmentDetails from './EstablishmentDetails';
 import { getStyles } from '../styles/HomeNavigator';
-import EmployeeSelection from './EmployeeSelection';
-import Availability from './Availability';
 import { NavigationProp } from '@react-navigation/native';
-import Settings from './Settings';
+import HomeNav from '@navigation/HomeNavigator';
+import { Params, Routes } from '@navigation/Router';
 
 interface HeaderProps {
     navigation: NavigationProp<any, any>
@@ -36,48 +31,35 @@ export const Header = ({ navigation, title }: HeaderProps) => {
 
 export default function HomeNavigator() {
     const styles = getStyles();
-    const Stack = createNativeStackNavigator();
+    const Stack = createNativeStackNavigator<typeof Params>();
+
     return (
         <View style={styles.container}>
-            <Stack.Navigator initialRouteName={texts.tabs.back} >
-                <Stack.Screen name={texts.tabs.back} options={{
-                    headerShown: false
-                }} component={Home} />
-                <Stack.Screen
-                    options={{
-                        header: ({ navigation }) => (
-                            <Header navigation={navigation} title={texts.tabs.establishmentDetails} />
-                        ),
-                    }}
-                    name={texts.tabs.establishmentDetails} component={EstablishmentDetails} />
-                <Stack.Screen
-                    options={{
-                        header: ({ navigation }) => (
-                            <Header navigation={navigation} title={texts.services.title} />
-                        ),
-                    }}
-                    name={texts.services.title} component={ServiceSelection} />
-                <Stack.Screen
-                    options={{
-                        header: ({ navigation }) => (
-                            <Header navigation={navigation} title={texts.employees.title} />
-                        ),
-                    }}
-                    name={texts.employees.title} component={EmployeeSelection} />
-                <Stack.Screen
-                    options={{
-                        header: ({ navigation }) => (
-                            <Header navigation={navigation} title={texts.appointments.schedule} />
-                        ),
-                    }}
-                    name={texts.appointments.schedule} component={Availability} />
-                <Stack.Screen
-                    options={{
-                        header: ({ navigation }) => (
-                            <Header navigation={navigation} title={texts.settings.title} />
-                        ),
-                    }}
-                    name={texts.settings.title} component={Settings} />
+            <Stack.Navigator initialRouteName={Routes.Home} >
+                {HomeNav && Object.keys(HomeNav).map((key) => {
+                    const _key = key as keyof typeof Params;
+                    const nav = HomeNav[_key];
+                    if (!nav) return null;
+                    return (
+                        <Stack.Screen
+                            key={_key}
+                            name={_key}
+                            options={nav.hasHeader ?
+                                {
+                                    header: ({ navigation }) => (
+                                        <Header navigation={navigation} title={nav.title} />
+                                    ),
+                                }
+                                :
+                                {
+                                    headerShown: false
+                                }
+                            }
+                        >
+                            {props => <nav.component {...props} />}
+                        </Stack.Screen>
+                    );
+                })}
             </Stack.Navigator>
         </View>
     );

@@ -1,3 +1,17 @@
+declare type StackInfo = {
+    title: string;
+    hasHeader: boolean;
+    component: React.FC<any>;
+    containerizedComponent: boolean;
+}
+
+declare type TabsInfo = {
+    title: string;
+    hasHeader: boolean;
+    component: React.FC<any>;
+    tabicon: React.FC<any>;
+}
+
 declare interface Pageable<T> {
     content: T[];
     pageable: {

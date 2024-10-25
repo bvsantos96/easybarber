@@ -14,7 +14,6 @@ import { AppleLoginButton, GoogleLoginButton } from '../components/LoginBrandBut
 import { doLogin } from '../utils/ApiRequest';
 
 import { getStyles } from '../styles/Sign';
-import { resetNavigation } from '../App';
 import { SignInProps } from '../screens/SignIn';
 import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
@@ -22,6 +21,8 @@ import { DEBUG_AUTO_LOGIN, DEBUG_AUTO_LOGIN_PASSWORD, DEBUG_AUTO_LOGIN_PHONE } f
 import { AlertType } from './Alert';
 import texts from "../langs/en.json";
 import useAlertStore from 'storage/stores/AlertStore';
+import { Routes } from '@navigation/Router';
+import { resetNavigation } from 'utils/Utils';
 
 export default function Login({ navigation, toggleNewUser }: SignInProps) {
     const styles = getStyles();
@@ -35,7 +36,7 @@ export default function Login({ navigation, toggleNewUser }: SignInProps) {
         const fakeLogin = async () => {
             const result: IResult<IAPIResponse> = await doLogin("351", DEBUG_AUTO_LOGIN_PHONE, DEBUG_AUTO_LOGIN_PASSWORD);
             if (result.success)
-                resetNavigation(navigation, 'Tabs');
+                resetNavigation(navigation, Routes.Tabs);
             else {
                 console.error(result.message);
             }
@@ -65,7 +66,7 @@ export default function Login({ navigation, toggleNewUser }: SignInProps) {
         }
         const result: IResult<IAPIResponse> = await doLogin(nation.callingCode[0], phone, password);
         if (result.success)
-            resetNavigation(navigation, 'Tabs');
+            resetNavigation(navigation, Routes.Tabs);
         else {
             alert({ type: AlertType.Error, message: `${texts.apiMessages.login.failed}\n${result.message}` });
         }
@@ -95,7 +96,7 @@ export default function Login({ navigation, toggleNewUser }: SignInProps) {
                 />
             </View>
             <View style={styles.forgotPassContainer}>
-                <Text style={styles.forgotPass} onPress={() => navigation.navigate(texts.tabs.forgotPwd)} >{texts.forgotPassword}</Text>
+                <Text style={styles.forgotPass} onPress={() => navigation.navigate(Routes.ForgotPwd)} >{texts.forgotPassword}</Text>
             </View>
             <View style={styles.buttonContainer}>
                 <Button title={texts.login.button} onPress={login} />

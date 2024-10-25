@@ -21,7 +21,10 @@
       ],
       "@lang/*": [
         "./langs/*"
-      ]
+      ],
+      "@navigation/*": [
+        "./navigation/*"
+      ],
     },
     "jsx": "react-native"
   },
