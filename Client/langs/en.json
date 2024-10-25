@@ -24,6 +24,59 @@
     "playStoreLink": "https://play.google.com/store/apps/details?id=",
     "retry": "Retry",
     "getStarted": "Get Started",
+    "navigation": {
+        "locationRequest": {
+            "name": "Location Request"
+        },
+        "onBoarding": {
+            "name": "Onboarding"
+        },
+        "accountTypeSelection": {
+            "name": "Account Type Selection"
+        },
+        "sign": {
+            "name": "Sign"
+        },
+        "tabs": {
+            "name": "Tabs",
+            "homeNavigator": {
+                "name": "Home",
+                "home": {
+                    "name": "Home"
+                },
+                "establishmentDetails": {
+                    "name": "Establishment Details"
+                },
+                "employeeSelection": {
+                    "name": "Employees"
+                },
+                "serviceSelection": {
+                    "name": "Services"
+                },
+                "schedule": {
+                    "name": "Schedule"
+                },
+                "settings": {
+                    "name": "Settings"
+                }
+            },
+            "appointments": {
+                "name": "Appointments"
+            }
+        },
+        "loading": {
+            "name": "Loading"
+        },
+        "mobileConfirmation": {
+            "name": "Mobile Confirmation"
+        },
+        "forgotPwd": {
+            "name": "Forgot Password"
+        },
+        "resetPwd": {
+            "name": "Reset Password"
+        }
+    },
     "firstPage": {
         "title1": "Schedule appointment",
         "title1_1": "with nearby ",
@@ -52,8 +105,8 @@
     "code": {
         "verifyPhone": "Verify Phone",
         "resendCode": "Resend Code",
-        "codeNotReceived" : "Not received yet?",
-        "enterCode" :"Please enter the code sent to",
+        "codeNotReceived": "Not received yet?",
+        "enterCode": "Please enter the code sent to",
         "verify": "Verify",
         "successfullVerification": "Your phone has been verified successfully",
         "getStarted": "Get Started",
@@ -63,7 +116,7 @@
         "enterPhone": "Please enter your phone number on which your account registered.",
         "forgotPwd": "Forgot Password",
         "setNewPed": "Set a new password",
-        "set": "set",
+        "set": "set"
     },
     "phoneNumber": "Phone Number",
     "password": "Password",
@@ -75,7 +128,7 @@
     "searchAddress": "Search address here",
     "tabs": {
         "back": "Back",
-        "homeNavigator" : "HomeNavigator",
+        "homeNavigator": "HomeNavigator",
         "employeeDetails": "Employee Details",
         "establishmentDetails": "Establishment Details",
         "home": "Home",
@@ -144,14 +197,14 @@
     },
     "recentAddresses": "Recent addresses",
     "savedAddresses": "Saved addresses",
-    "location" : {
+    "location": {
         "title1": " wants to fetch",
         "title2": "your exact location.",
         "subTitle": "In order to show you nearby barbers, we\nneed to know your location."
     },
     "appointments": {
         "seeAppointments": "See Appointments",
-        "upcomming": "Upcoming Appointments",
+        "upcomming": "Upcomming",
         "book": "Book Appointment",
         "selectBarber": "Select Barber",
         "selectService": "Select service",
@@ -159,27 +212,26 @@
         "scheduleSelection": "Click on any date and check available slots.",
         "slotsAvailable": "Slots Avalilable",
         "noSlots": "No slots available for the selected day",
-        "upcomming": "Upcomming",
         "past": "Past",
         "failed": "Failed to schedule appointment, please try again on a different date.",
         "success": "Your booking has been confirmed successfully.",
-        "cancel": "Are you sure you want to cancel this appointment?",
+        "cancel": "Are you sure you want to cancel this appointment?"
     },
-    "services" : {
+    "services": {
         "title": "Services",
         "select": "Select service you want"
     },
-    "employees" : {
+    "employees": {
         "title": "Employees",
         "select": "Select the employee you want\n(or skip and choose the appointment date first)",
-        "selectNot": "Select the employee you want",
+        "selectNot": "Select the employee you want"
     },
-    "about" : {
+    "about": {
         "title": "About"
     },
     "checkAvailability": "Check Availability",
     "currency": "€",
     "settings": {
-        "title": "Settings",
+        "title": "Settings"
     }
 }

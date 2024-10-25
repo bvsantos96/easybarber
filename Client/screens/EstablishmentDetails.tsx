@@ -1,4 +1,3 @@
-import { NavigationProp, RouteProp, useRoute } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
@@ -19,22 +18,18 @@ import { ImageRating } from '../components/ImageRating';
 import PageList from '../components/PageList';
 import { defaultBarberImage } from '../utils/Constants';
 import { PageListType } from '../enums';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Params, Routes } from '@navigation/Router';
 
-export type Props = {
-    navigation: NavigationProp<any, any>
-}
+export type Route = EstablishmentInfo;
 
-type RouteParams = {
-    establishment: EstablishmentInfo
-};
+type Props = NativeStackScreenProps<typeof Params, 'EstablishmentDetails'>;
 
-export default function EstablishmentDetails({ navigation }: Props) {
+export default function EstablishmentDetails({ route, navigation }: Props) {
     const texts = require("@lang/en.json");
     const styles = getStyles();
     const selectionStyles = getSelectionStyles();
     const listStyles = getListStyles();
-
-    const route = useRoute<RouteProp<RouteParams, 'establishment'>>();
     const establishment: EstablishmentInfo = route.params;
     const [categories, setCategories] = useState<ICategory[]>([]);
 
@@ -126,7 +121,7 @@ export default function EstablishmentDetails({ navigation }: Props) {
                     stylesInput={{ width: '100%' }}
                     onPress={
                         () => {
-                            navigation.navigate(texts.services.title, { establishmentId: establishment.id });
+                            navigation.navigate(Routes.ServiceSelection, { establishmentId: establishment.id });
                         }
                     } title={texts.appointments.book} />
             </View>

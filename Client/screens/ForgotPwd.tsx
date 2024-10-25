@@ -1,16 +1,15 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, NativeSyntheticEvent, TextInputKeyPressEventData, Animated } from 'react-native';
-import { PropNavigation, resetNavigation } from '../App';
+import React, { useEffect, useState } from 'react';
+import { View, Text } from 'react-native';
 import LockImage from '@assets/images/lock.svg';
 import Button from '@components/Button';
 import { getStyles } from '../styles/InsertPhone';
 import PhoneInput from '@components/PhoneInput';
 import { Country } from 'react-native-country-picker-modal';
 import { getDefaultCountryAsync } from 'utils/Constants';
-import { getMobileCodeResetPwd } from 'utils/ApiRequest';
+import RootNav from '@navigation/HomeNavigator';
+import { Routes } from '@navigation/Router';
 
-
-export default function ForgotPwd({ navigation }: PropNavigation ) {
+export default function ForgotPwd({ navigation }: PropNavigation) {
     const styles = getStyles();
     const texts = require('@lang/en.json');
     const [nation, setNation] = useState<Country | null | undefined>();
@@ -28,20 +27,20 @@ export default function ForgotPwd({ navigation }: PropNavigation ) {
 
         fetchDefaultCountry();
     }, []);
-    
+
     const forgotPwd = async () => {
-        const mobileInformation=(nation?nation.callingCode[0]:"")+phone;
+        const mobileInformation = (nation ? nation.callingCode[0] : "") + phone;
         /*const success = await getMobileCodeResetPwd(mobileInformation);
 
         if(success){
-            navigation.navigate('MobileConfirmation', {mobileInformation: mobileInformation});
+            navigation.navigate(RootNav.MobileConfirmation.name, {mobileInformation: mobileInformation});
         }*/
-        navigation.navigate('MobileConfirmation', {mobileInformation: mobileInformation, nextScreen: "ResetPwd", resetNavigationBoolean:false});
+        navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: "ResetPwd", resetNavigationBoolean: false });
     };
 
     return (
         <View style={styles.container}>
-            <View style={styles.eclipse}/>
+            <View style={styles.eclipse} />
             <LockImage style={styles.lockImage} />
             <View style={styles.enterPhoneContainer}>
                 <Text style={styles.enterPhone}>{texts.pwdRecovery.enterPhone}</Text>
@@ -56,7 +55,7 @@ export default function ForgotPwd({ navigation }: PropNavigation ) {
                 />
             </View>
             <View style={styles.buttonContainer}>
-                <Button title={texts.pwdRecovery.forgotPwd} onPress={forgotPwd}/>
+                <Button title={texts.pwdRecovery.forgotPwd} onPress={forgotPwd} />
             </View>
         </View>
     );

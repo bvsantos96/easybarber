@@ -1,33 +1,34 @@
 import React, { useEffect, useState } from "react";
-import { getStyles } from "../styles/Availability";
-import Selection from "./Selection";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Calendar } from "react-native-calendars";
 import { View, Text } from "react-native";
+import { useQuery } from "@tanstack/react-query";
+import PagerView from "react-native-pager-view";
+
+import { getStyles } from "../styles/Availability";
+import Selection from "./Selection";
 import { useTheme } from "@styles/ThemeContext";
 import { MarkedDates } from "react-native-calendars/src/types";
 import { Underline } from "@components/Underline";
 import TimeSlotView from "@components/TimeSlotView";
-import PagerView from "react-native-pager-view";
-import { RouteProp, useRoute } from "@react-navigation/native";
 import { getAvailability, getStartingHour, getUnavailableDates, setAppointment } from "utils/ApiRequest";
 import useAlertStore from "storage/stores/AlertStore";
 import { AlertType } from "@components/Alert";
 import texts from "@lang/en.json";
-import { useQuery } from "@tanstack/react-query";
+import { Params, Routes } from "@navigation/Router";
 
-type RouteParams = {
-    appointment: {
-        establishmentId: number;
-        serviceId: number;
-        employeeId: number;
-    };
+export type Route = {
+    establishmentId: number;
+    serviceId: number;
+    employeeId: number;
 };
 
-export default function Availability({ navigation }: PropNavigation) {
+type Props = NativeStackScreenProps<typeof Params, 'Availability'>;
+
+export default function Availability({ route, navigation }: Props) {
     const pagerRef = React.useRef<PagerView>(null);
     const theme = useTheme();
     const styles = getStyles();
-    const route = useRoute<RouteProp<RouteParams, 'appointment'>>();
     const { establishmentId, serviceId, employeeId } = route.params;
     const [date, setDate] = useState<string>("");
     const [time, setTime] = useState<TimeSlot>();
@@ -159,7 +160,7 @@ export default function Availability({ navigation }: PropNavigation) {
                         }
                         return;
                     }
-                    navigation.navigate(texts.employees.title, { establishmentId, serviceId, date, startHour: time?.start, availableEmployees: time?.employeeIds });
+                    navigation.navigate(Routes.EmployeeSelection, { establishmentId, serviceId, date, startHour: time?.start, availableEmployees: time?.employeeIds });
                     return;
                 }
             }

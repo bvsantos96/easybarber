@@ -3,7 +3,7 @@ import Pressable from '../components/Pressable';
 import { getStyles } from '../styles/TopBar';
 import { AntDesign } from '@expo/vector-icons';
 import { useTheme } from "../styles/ThemeContext";
-import texts from "@lang/en.json";
+import { Routes } from "@navigation/Router";
 
 interface Props extends PropNavigation {
     uri?: string;
@@ -15,7 +15,7 @@ export default function ProfileImage({ navigation, uri = "" }: Props) {
 
     return (
         <Pressable onPress={() => {
-            navigation.navigate(texts.settings.title);
+            navigation.navigate(Routes.Settings);
         }} style={styles.profileImageContainer}>
             {uri && uri.length > 0 ?
                 (<Image
