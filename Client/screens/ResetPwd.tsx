@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, TextInput, NativeSyntheticEvent, TextInputKeyPressEventData, Animated } from 'react-native';
-import { PropNavigation, resetNavigation } from '../App';
+import React, { useState } from 'react';
+import { View, Text } from 'react-native';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 import LockImage from '@assets/images/changeLock.svg';
 import Button from '@components/Button';
 import { getStyles } from '../styles/ResetPwd';
@@ -8,36 +9,35 @@ import { HidePasswordIcon, PasswordIcon, ShowPasswordIcon } from '@components/Ic
 import Input from '@components/Input';
 import Divider from '@components/Divider';
 import { resetPwdRQ } from 'utils/ApiRequest';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { Params } from '@navigation/Router';
 
-type RouteParams = {
-    screenInformation: {    
-        mobileInformation: string,
-        confirmationCode: string
-    }
+export type Route = {
+    mobileInformation: string,
+    confirmationCode: string
 };
 
-export default function ForgotPwd({ navigation }: PropNavigation ) {
+type Props = NativeStackScreenProps<typeof Params, 'ResetPwd'>;
+
+export default function ResetPwd({ route, navigation }: Props) {
     const styles = getStyles();
     const texts = require('@lang/en.json');
-    
+
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
-    
-    const route = useRoute<RouteProp<RouteParams, 'screenInformation'>>();
+
     const { mobileInformation, confirmationCode } = route.params;
 
     const resetPwd = async () => {
         const result = await resetPwdRQ(mobileInformation, confirmationCode, password, confirmPassword);
 
-        if(result){
+        if (result) {
             alert("success");
         }
     };
 
     return (
         <View style={styles.container}>
-            <View style={styles.eclipse}/>
+            <View style={styles.eclipse} />
             <LockImage style={styles.lockImage} />
             <View style={styles.newPwdTextContainer}>
                 <Text style={styles.newPwdText}>{texts.pwdRecovery.setNewPed}</Text>
@@ -60,7 +60,7 @@ export default function ForgotPwd({ navigation }: PropNavigation ) {
                 />
             </View>
             <View style={styles.buttonContainer}>
-                <Button title={texts.pwdRecovery.forgotPwd} onPress={resetPwd}/>
+                <Button title={texts.pwdRecovery.forgotPwd} onPress={resetPwd} />
             </View>
         </View>
     );

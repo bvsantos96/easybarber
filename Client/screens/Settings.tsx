@@ -8,6 +8,7 @@ import { getStyles } from "@styles/Settings";
 import LogOutIcon from "@assets/icons/logout.svg";
 import { removeData } from "utils/ApiRequest";
 import { TOKEN_STORAGE_KEY } from "utils/Constants";
+import { Routes as RootRoutes } from "@navigation/Router";
 
 export default function Settings({ navigation }: PropNavigation) {
     const styles = getStyles();
@@ -23,7 +24,7 @@ export default function Settings({ navigation }: PropNavigation) {
         <View style={styles.container}>
             <Pressable style={styles.logOutContainer} onPress={() => {
                 removeData(TOKEN_STORAGE_KEY);
-                resetNavigation(navigation, 'OnBoarding');
+                resetNavigation(navigation, RootRoutes.Onboarding);
             }}
             >
                 <LogOutIcon width={styles.logOutIcon.width} height={styles.logOutIcon.height} color={styles.logOutIcon.color} size={styles.logOutIcon.width} />

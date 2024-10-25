@@ -1,22 +1,23 @@
 import React, { useState } from "react";
-import { RouteProp, useRoute } from "@react-navigation/native";
 import { View, Text, FlatList } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 
 import { getEstablishmentServiceEmployees, getEstablishmentServices } from "../utils/ApiRequest";
 import { getStyles } from "../styles/ServiceSelection";
-import { Props } from "./EstablishmentDetails";
 import SelectionItem from "../components/SelectionItems";
 import Selection from './Selection';
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { Params, Routes } from "@navigation/Router";
+import texts from "@lang/en.json";
 
-type RouteParams = {
-    establishment: { establishmentId: number }
+export type Route = {
+    establishmentId: number
 };
 
-export default function ServiceSelection({ navigation }: Props) {
+type Props = NativeStackScreenProps<typeof Params, 'ServiceSelection'>;
+
+export default function ServiceSelection({ route, navigation }: Props) {
     const styles = getStyles();
-    const texts = require('@lang/en.json');
-    const route = useRoute<RouteProp<RouteParams, 'establishment'>>();
     const { establishmentId } = route.params;
     const [selected, setSelected] = useState<number | string>(0);
     const { data } = useQuery({
@@ -41,7 +42,7 @@ export default function ServiceSelection({ navigation }: Props) {
             selected={selected !== 0}
             onButtonPress={
                 () => {
-                    navigation.navigate(texts.employees.title, { establishmentId: establishmentId, serviceId: selected });
+                    navigation.navigate(Routes.EmployeeSelection, { establishmentId: establishmentId, serviceId: selected as number });
                 }
             }>
             <View style={styles.listContainer}>

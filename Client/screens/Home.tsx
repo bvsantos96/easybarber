@@ -20,6 +20,7 @@ import PageList, { PageListRef } from '../components/PageList';
 import useLocationStore from '../storage/stores/LocationStore';
 import { getSelectedLocation } from 'utils/Location';
 import Pressable from '@components/Pressable';
+import { Routes } from '@navigation/Router';
 
 export default function Home({ navigation }: PropNavigation) {
     const topBarStyles = topBarGetStyles();
@@ -131,7 +132,7 @@ export default function Home({ navigation }: PropNavigation) {
                             <ListItem
                                 onPress={
                                     () => {
-                                        navigation.navigate(texts.tabs.establishmentDetails, item);
+                                        navigation.navigate(Routes.EstablishmentDetails, item);
                                     }
                                 }
                                 establishment={item} />
