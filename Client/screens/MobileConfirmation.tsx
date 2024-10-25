@@ -1,27 +1,27 @@
 import React, { useRef, useState } from 'react';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { View, Text, TouchableOpacity, TextInput, NativeSyntheticEvent, TextInputKeyPressEventData, Animated } from 'react-native';
+
 import { getStyles } from '../styles/MobileConfirmation';
-import { PropNavigation, resetNavigation } from '../App';
 import KeyImage from '@assets/images/key.svg';
 import ChatImage from '@assets/images/chat.svg';
 import Divider from '@components/Divider';
 import Button from '@components/Button';
-import useLocationStore from 'storage/stores/LocationStore';
-import { RouteProp, useRoute } from '@react-navigation/native';
 import { confirmMobileCode } from 'utils/ApiRequest';
+import { resetNavigation } from 'utils/Utils';
+import { Params, Routes } from '@navigation/Router';
 
-type RouteParams = {
-    screenInformation: {
-        mobileInformation: string,
-        nextScreen: string,
-        resetNavigationBoolean: boolean
-    }
+export type Route = {
+    mobileInformation: string,
+    nextScreen: typeof Routes.ResetPwd,
+    resetNavigationBoolean: boolean
 };
 
-export default function MobileConfirmation({ navigation }: PropNavigation) {
+type Props = NativeStackScreenProps<typeof Params, 'MobileConfirmation'>;
+
+export default function MobileConfirmation({ route, navigation }: Props) {
     const styles = getStyles();
     const texts = require('@lang/en.json');
-    const route = useRoute<RouteProp<RouteParams, 'screenInformation'>>();
     const { mobileInformation, nextScreen, resetNavigationBoolean } = route.params;
 
     const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);

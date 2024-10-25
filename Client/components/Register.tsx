@@ -8,13 +8,13 @@ import Divider from '../components/Divider';
 import Button from '../components/Button';
 
 import { getStyles } from '../styles/Sign';
-import { resetNavigation } from '../App';
 import { Props } from '../screens/SignIn';
 import { getMobileCode } from '../utils/ApiRequest';
 import { Country } from 'react-native-country-picker-modal';
 import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
 import texts from "../langs/en.json";
+import { Routes } from '@navigation/Router';
 
 export default function Register({ navigation, toggleNewUser }: Props) {
     const styles = getStyles();
@@ -40,12 +40,12 @@ export default function Register({ navigation, toggleNewUser }: Props) {
     const register = async () => {
         /**const result: IResult<any> = await doRegister(nation?nation.callingCode[0]:"", phone, password, confirmPassword, name);
         if (result.success)
-            resetNavigation(navigation, 'Tabs');
+            resetNavigation(navigation, RootNav.Tabs.name);
         else
             alert(result.message);*/
-        const mobileInformation=(nation?nation.callingCode[0]:"")+phone;
+        const mobileInformation = (nation ? nation.callingCode[0] : "") + phone;
         //const result = await getMobileCode(mobileInformation);
-        navigation.navigate('MobileConfirmation', {mobileInformation: mobileInformation, nextScreen: "Tabs", resetNavigationBoolean:true});
+        navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: Routes.Tabs, resetNavigationBoolean: true });
     }
 
     return (

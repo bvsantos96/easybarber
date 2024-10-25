@@ -1,30 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { RouteProp, useRoute } from "@react-navigation/native";
+import React, { useState } from "react";
 import { View, Text, FlatList } from "react-native";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
 import { getEstablishmentServiceEmployees, getNowHourAndMinutes, getStartingHour, getUnavailableDates, setAppointment } from "../utils/ApiRequest";
 import { getStyles } from "../styles/ServiceSelection";
-import { Props } from "./EstablishmentDetails";
 import SelectionItem from "../components/SelectionItems";
 import Selection from "./Selection";
 import { AlertType } from "@components/Alert";
 import useAlertStore from "storage/stores/AlertStore";
 import texts from "@lang/en.json";
 import { useQuery } from "@tanstack/react-query";
+import { Params, Routes } from "@navigation/Router";
+import { resetNavigation } from "utils/Utils";
 
-type RouteParams = {
-    appointment: {
-        establishmentId: number;
-        serviceId: number;
-        date?: string;
-        startHour?: string;
-        availableEmployees?: number[];
-    };
+export type Route = {
+    establishmentId: number;
+    serviceId: number;
+    date?: string;
+    startHour?: string;
+    availableEmployees?: number[];
 };
 
-export default function EmployeeSelection({ navigation }: Props) {
+type Props = NativeStackScreenProps<typeof Params, 'EmployeeSelection'>;
+
+export default function EmployeeSelection({ navigation, route }: Props) {
     const styles = getStyles();
-    const route = useRoute<RouteProp<RouteParams, 'appointment'>>();
     const { establishmentId, serviceId, date, startHour, availableEmployees } = route.params;
     const [selected, setSelected] = useState<number | string>(0);
     const { alert } = useAlertStore();
@@ -68,16 +68,13 @@ export default function EmployeeSelection({ navigation }: Props) {
                         })) {
                             alert({
                                 type: AlertType.Success, message: texts.appointments.success, buttonText: texts.appointments.seeAppointments, onPress: () => {
-                                    navigation.reset({
-                                        index: 0,
-                                        routes: [{ name: 'Appointments' }],
-                                    });
+                                    resetNavigation(navigation, Routes.Appointments);
                                 }
                             });
                             return;
                         }
                     } else if (!(date && startHour)) {
-                        navigation.navigate(texts.appointments.schedule, { establishmentId, serviceId, employeeId: selected });
+                        navigation.navigate(Routes.Availability, { establishmentId, serviceId, employeeId: selected as number });
                     }
                 }
             }>
