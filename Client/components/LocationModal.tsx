@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import SearchBar from './SearchBar';
 import { useTheme } from '../styles/ThemeContext';
@@ -25,7 +25,8 @@ const LocationModal: React.FC<LocationModalProps> = ({ toggleModal }) => {
 
     const {
         locations,
-        setLocations
+        setLocations,
+        clearLocations
     } = useLocationStore();
 
     const searchAddress = async (address: string) => {
@@ -68,6 +69,7 @@ const LocationModal: React.FC<LocationModalProps> = ({ toggleModal }) => {
             <Divider size={styles.divider.minHeight} />
             <PageList<ILocation>
                 saveCache={setLocations}
+                resetCache={clearLocations}
                 loadCache={() => locations}
                 reset={resetList}
                 type={PageListType.BOTTOM_SHEET}

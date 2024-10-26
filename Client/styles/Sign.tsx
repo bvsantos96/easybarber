@@ -7,18 +7,18 @@ export const getStyles = () => {
         shadow: {
             ...theme.shadow as any,
         },
-        container:{
+        container: {
             flex: 1,
             width: theme.dimensions.width,
             backgroundColor: theme.colors.mainColor,
             overflow: 'hidden',
             alignItems: 'center'
         },
-        logoContainer:{
+        logoContainer: {
             position: 'absolute',
             top: (42 + theme.dimensions.statusBarHeight) * theme.dimensions.absoluteHeight,
             width: 113 * theme.dimensions.absoluteWidth,
-            height: 113* theme.dimensions.absoluteHeight,
+            height: 113 * theme.dimensions.absoluteHeight,
             backgroundColor: theme.colors.backgroundColor,
             borderRadius: 15,
             alignItems: 'center',
@@ -28,7 +28,7 @@ export const getStyles = () => {
             width: 100 * theme.dimensions.absoluteWidth,
             height: 100 * theme.dimensions.absoluteHeight,
         },
-        bottomTabContainer:{
+        bottomTabContainer: {
             position: 'absolute',
             bottom: 0,
             width: theme.dimensions.width,
@@ -45,16 +45,16 @@ export const getStyles = () => {
         },
         inputsContainer: {
             position: 'absolute',
-            top : 110 * theme.dimensions.absoluteHeight,
+            top: 110 * theme.dimensions.absoluteHeight,
             width: '100%',
             alignItems: 'center',
         },
-        forgotPassContainer:{
+        forgotPassContainer: {
             position: 'absolute',
-            top: 270  * theme.dimensions.absoluteHeight,
+            top: 270 * theme.dimensions.absoluteHeight,
             right: 40 * theme.dimensions.absoluteWidth,
         },
-        forgotPass:{
+        forgotPass: {
             color: theme.colors.text.lightBlack,
             fontSize: theme.fonts.size._17,
             fontFamily: 'Mazzard',
@@ -73,7 +73,7 @@ export const getStyles = () => {
             justifyContent: 'center',
         },
         newUserContainer: {
-            position:  'absolute',
+            position: 'absolute',
             top: 395 * theme.dimensions.absoluteHeight,
             width: '100%',
             flexDirection: 'row',
