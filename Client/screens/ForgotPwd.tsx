@@ -6,7 +6,6 @@ import { getStyles } from '../styles/InsertPhone';
 import PhoneInput from '@components/PhoneInput';
 import { Country } from 'react-native-country-picker-modal';
 import { getDefaultCountryAsync } from 'utils/Constants';
-import RootNav from '@navigation/HomeNavigator';
 import { Routes } from '@navigation/Router';
 
 export default function ForgotPwd({ navigation }: PropNavigation) {

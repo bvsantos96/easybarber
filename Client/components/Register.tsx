@@ -1,6 +1,7 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
+
 import Input from '../components/Input';
 import Title from '../components/Title';
 import { PasswordIcon, NameIcon, ShowPasswordIcon, HidePasswordIcon } from '../components/Icons';
