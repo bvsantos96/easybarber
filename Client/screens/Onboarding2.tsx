@@ -3,8 +3,8 @@ import React from 'react';
 import OnBoarding from '../components/Onboarding';
 import { getStyles } from '../styles/OnBoarding';
 import Image from '@assets/images/firstPage2.svg';
-import RootNav from '@navigation/HomeNavigator';
 import { resetNavigation } from 'utils/Utils';
+import { Routes } from '@navigation/Router';
 
 export default function Onboarding2({ navigation }: PropNavigation) {
     const styles = getStyles();
@@ -21,7 +21,7 @@ export default function Onboarding2({ navigation }: PropNavigation) {
             ]}
             image={<Image style={styles.image} />}
             pageSelect={[false, true]}
-            button={{ title: texts.getStarted, func: () => resetNavigation(navigation, RootNav.AccountTypeSelection.name) }}
+            button={{ title: texts.getStarted, func: () => resetNavigation(navigation, Routes.AccountTypeSelection) }}
         />
     );
 }
