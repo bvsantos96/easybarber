@@ -16,6 +16,7 @@ interface PageListProps<T extends Identifiable> {
     reset?: boolean;
     loadCache?: () => T[];
     saveCache?: (items: T[]) => void;
+    resetCache?: () => void;
     style?: ViewStyle;
     initialItems?: T[];
     pageSize?: number;
@@ -35,7 +36,7 @@ export interface PageListRef<T extends Identifiable> {
 }
 
 const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Ref<PageListRef<T>>) => {
-    const { renderItem, requestFunction, loadCache, saveCache, style, preload = true } = props;
+    const { renderItem, requestFunction, loadCache, saveCache, resetCache, style, preload = true } = props;
     const type = props.type || PageListType.FLAT;
     const initialItems = props.initialItems || [];
     const pageSize = props.pageSize || 10;
@@ -97,9 +98,10 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     }, []);
 
     const resetList = () => {
+        firstEndReached.current = true;
         setRequest(new TimedRequest(createPageable<T>(pageSize), 0));
-        saveCache && saveCache([]);
-        _loadMoreItems(new TimedRequest(createPageable<T>(pageSize), 0));
+        if (resetCache) resetCache(); else { saveCache && saveCache([]); }
+        loadMoreItems(new TimedRequest(createPageable<T>(pageSize), 0));
         return;
     }
 
@@ -123,6 +125,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
                     onEndReached={() => {
+                        if (loadingMore) return;
                         if (preload || (!preload && !firstEndReached.current)) {
                             _loadMoreItems();
                         } else {
@@ -152,6 +155,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
                     onEndReached={() => {
+                        if (loadingMore) return;
                         if (preload || (!preload && !firstEndReached.current)) {
                             _loadMoreItems();
                         } else {
@@ -177,6 +181,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     scrollEnabled={true}
                     overScrollMode={'never'}
                     onPageScroll={async (event: NativeSyntheticEvent<PageSwipeEvent>) => {
+                        if (loadingMore) return;
                         const { position } = event.nativeEvent;
                         if (position >= request.page.content.length - 3) {
                             _loadMoreItems();
