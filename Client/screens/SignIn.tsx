@@ -31,7 +31,7 @@ export default function SignIn({ navigation }: SignInProps) {
     const adjustHeight = () => {
         Animated.timing(heightAnim, {
             toValue: expanded ? maxHeight : styles.bottomTabContainer.height,
-            duration: 400,
+            duration: 300,
             useNativeDriver: false,
         }).start();
     }
@@ -40,13 +40,13 @@ export default function SignIn({ navigation }: SignInProps) {
         expanded && setExpanded(false);
         Animated.timing(translateYAnimation, {
             toValue: 1,
-            duration: 400,
+            duration: 300,
             useNativeDriver: false,
         }).start(() => {
             setNewUser(!newUser)
             Animated.timing(translateYAnimation, {
                 toValue: 0,
-                duration: 400,
+                duration: 300,
                 useNativeDriver: false,
             }).start();
         });
