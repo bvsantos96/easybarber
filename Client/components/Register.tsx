@@ -64,6 +64,7 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
                 }
                 fixedBottomComponent={
                     <View style={styles.buttonContainer}>
+                        <Divider size={25} />
                         <Button title={texts.register.button} onPress={register} />
                         <Divider size={20} />
                         <TouchableOpacity style={styles.alreadyRegisteredContainer} onPress={toggleNewUser}>
@@ -105,7 +106,6 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
                     onInputChange={setConfirmPassword}
                     rightIcon={[<ShowPasswordIcon />, <HidePasswordIcon />]}
                 />
-                <Divider size={25} />
             </KeyboardAvoidingScrollView>
         </>
     )

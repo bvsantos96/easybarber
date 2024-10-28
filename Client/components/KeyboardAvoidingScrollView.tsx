@@ -1,4 +1,4 @@
-import { Keyboard, Platform, ScrollView, TextInput, View } from 'react-native';
+import { Animated, Easing, Keyboard, Platform, ScrollView, TextInput, View } from 'react-native';
 import { getStyles } from '../styles/KeyboardAvoidingScrollView';
 import { ReactElement, ReactNode, RefObject, Children, cloneElement, createRef, isValidElement, useEffect, useMemo, useState, useRef } from 'react';
 import React from 'react';
@@ -8,6 +8,9 @@ import { useTheme } from '@styles/ThemeContext';
 
 export default function KeyboardAvoidingScrollView({ fixedTopComponent, children, fixedBottomComponent, maxHeight, keyboardShow, keyboardHide }: { fixedTopComponent?: ReactNode, children: ReactNode, fixedBottomComponent?: ReactNode, maxHeight: number, keyboardShow?: () => void, keyboardHide?: () => void }) {
     const theme = useTheme();
+    if (maxHeight !== undefined) {
+        maxHeight = maxHeight * theme.dimensions.absoluteHeight;
+    }
     const styles = getStyles();
     const scrollViewRef = useRef<ScrollView>(null);
     const [textInputs, setTextInputs] = useState<RefObject<any>[]>([]);
@@ -15,6 +18,7 @@ export default function KeyboardAvoidingScrollView({ fixedTopComponent, children
     const [topHeight, setTopHeight] = useState(0);
     const [bottomHeight, setBottomHeight] = useState(0);
     const [selectedInput, setSelectedInput] = useState<number | null>(null);
+    const animatedMaxHeight = useRef(new Animated.Value(maxHeight)).current;
 
     const handleTopLayout = (event: any) => {
         if (event.nativeEvent.layout.height > 0)
@@ -29,23 +33,59 @@ export default function KeyboardAvoidingScrollView({ fixedTopComponent, children
     useEffect(() => {
         const _onKeyboardShow = (e: any) => {
             const height: number = e.endCoordinates.height;
+            if (maxHeight !== undefined) {
+                const newMaxHeight = maxHeight + Math.min(
+                    theme.dimensions.heightWithoutStatusBar - topHeight - maxHeight - height,
+                    0
+                );
+
+                Animated.timing(animatedMaxHeight, {
+                    toValue: newMaxHeight,
+                    duration: 300,
+                    easing: Easing.out(Easing.ease),
+                    useNativeDriver: false,
+                }).start();
+            }
             setKeyboardHeight(height);
         }
 
         const _onKeyboardHide = () => {
+            if (maxHeight !== undefined) {
+                const newMaxHeight = maxHeight + Math.min(
+                    theme.dimensions.heightWithoutStatusBar - topHeight - maxHeight,
+                    0
+                );
+
+                Animated.timing(animatedMaxHeight, {
+                    toValue: newMaxHeight,
+                    duration: 300,
+                    easing: Easing.out(Easing.ease),
+                    useNativeDriver: false,
+                }).start();
+            }
             setSelectedInput(null);
             setKeyboardHeight(0);
             keyboardHide && keyboardHide()
         };
 
-        const changeFrame = Keyboard.addListener('keyboardDidChangeFrame', _onKeyboardShow);
-        const hideListener = Keyboard.addListener('keyboardDidHide', _onKeyboardHide);
 
-        return () => {
-            changeFrame.remove();
-            hideListener.remove();
-        };
-    }, []);
+        if (Platform.OS === "android") {
+            const changeFrame = Keyboard.addListener('keyboardDidChangeFrame', _onKeyboardShow);
+            const hideListener = Keyboard.addListener('keyboardDidHide', _onKeyboardHide);
+            return () => {
+                changeFrame.remove();
+                hideListener.remove();
+            };
+        } else {
+            const changeFrame = Keyboard.addListener('keyboardWillChangeFrame', _onKeyboardShow);
+            const hideListener = Keyboard.addListener('keyboardWillHide', _onKeyboardHide);
+            return () => {
+                changeFrame.remove();
+                hideListener.remove();
+            };
+        }
+
+    }, [topHeight]);
 
     const cloneWithRefsRecursive = (element: ReactNode, refsArray: RefObject<TextInput>[]): ReactNode => {
         if (!isValidElement(element)) {
@@ -113,18 +153,20 @@ export default function KeyboardAvoidingScrollView({ fixedTopComponent, children
             <View onLayout={handleTopLayout}>
                 {fixedTopComponent && fixedTopComponent}
             </View>
-            <ScrollView
+            <Animated.ScrollView
                 ref={scrollViewRef}
                 scrollEnabled={keyboardHeight > 0}
+                showsHorizontalScrollIndicator={false}
+                showsVerticalScrollIndicator={false}
                 style={[
                     styles.scrollContainer,
-                    {
-                        maxHeight: (maxHeight + Math.min(theme.dimensions.heightWithoutStatusBar - topHeight - maxHeight - keyboardHeight, 0)) * theme.dimensions.absoluteHeight
-                    },
+                    maxHeight ? {
+                        maxHeight: animatedMaxHeight,
+                    } : {},
                 ]}>
                 {clonedChildrenWithRefs}
                 {keyboardHeight > 0 && <View style={Platform.OS === "ios" ? { paddingBottom: bottomHeight } : { height: bottomHeight }} />}
-            </ScrollView>
+            </Animated.ScrollView>
             {keyboardHeight <= 0 && fixedBottomComponent && <View onLayout={handleFixedBottom}>{fixedBottomComponent}</View>}
             {keyboardHeight > 0 && fixedBottomComponent && <View style={[styles.fixBottom]}>{fixedBottomComponent}</View>}
         </View>
