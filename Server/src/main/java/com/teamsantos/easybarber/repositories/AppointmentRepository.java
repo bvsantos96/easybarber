@@ -138,6 +138,7 @@ public interface AppointmentRepository
                     FROM Appointment s
                     WHERE s.reminded = false
                     AND s.date = :date
+                    AND s.active = true
             """)
     List<AppointmentReminderDTO> findNextDayAppointmentsNotReminded(@Param("date") LocalDate date);
 
