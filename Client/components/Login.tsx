@@ -1,7 +1,6 @@
 import React from 'react';
 import { useEffect, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
-
 import { Country } from 'react-native-country-picker-modal';
 
 import Input from '../components/Input';
@@ -23,8 +22,9 @@ import texts from "../langs/en.json";
 import useAlertStore from 'storage/stores/AlertStore';
 import { Routes } from '@navigation/Router';
 import { resetNavigation } from 'utils/Utils';
+import KeyboardAvoidingScrollView from './KeyboardAvoidingScrollView';
 
-export default function Login({ navigation, toggleNewUser }: SignInProps) {
+export default function Login({ navigation, toggleNewUser, expand, collapse }: SignInProps) {
     const styles = getStyles();
     const [phone, setPhone] = useState("");
     const [nation, setNation] = useState<Country | null>();
@@ -74,33 +74,47 @@ export default function Login({ navigation, toggleNewUser }: SignInProps) {
 
     return (
         <>
-            <View style={styles.titleContainer} >
-                <Divider size={11} />
-                <Title line={[{ text: texts.login.title, highlight: false }]} />
-            </View>
-            <View style={styles.inputsContainer}>
-                <PhoneInput
-                    {...{
-                        setPhone,
-                        setNation,
-                        nation
-                    }}
-                />
-                <Divider size={20} />
-                <Input
-                    leftIcon={<PasswordIcon />}
-                    placeholder={texts.password}
-                    password={true}
-                    onInputChange={setPassword}
-                    rightIcon={[<ShowPasswordIcon />, <HidePasswordIcon />]}
-                />
-            </View>
-            <View style={styles.forgotPassContainer}>
-                <Text style={styles.forgotPass} onPress={() => navigation.navigate(Routes.ForgotPwd)} >{texts.forgotPassword}</Text>
-            </View>
-            <View style={styles.buttonContainer}>
-                <Button title={texts.login.button} onPress={login} />
-            </View>
+            <KeyboardAvoidingScrollView
+                keyboardShow={expand}
+                keyboardHide={collapse}
+                maxHeight={350}
+                fixedTopComponent={
+                    <View style={styles.titleContainer} >
+                        <Divider size={40} />
+                        <Title line={[{ text: texts.login.title, highlight: false }]} />
+                    </View>
+                }
+                fixedBottomComponent={
+                    <View style={styles.buttonContainer}>
+                        <Button title={texts.login.button} onPress={login} />
+                    </View>
+                }
+            >
+                <View style={styles.inputsContainer}>
+                    <Divider size={40} />
+                    <PhoneInput
+                        {...{
+                            setPhone,
+                            setNation,
+                            nation
+                        }}
+                    />
+                    <Divider size={20} />
+                    <Input
+                        leftIcon={<PasswordIcon />}
+                        placeholder={texts.password}
+                        password={true}
+                        onInputChange={setPassword}
+                        rightIcon={[<ShowPasswordIcon />, <HidePasswordIcon />]}
+                    />
+                    <Divider size={20} />
+                </View>
+                <View style={styles.forgotPassContainer}>
+                    <Text style={styles.forgotPass} onPress={() => navigation.navigate(Routes.ForgotPwd)} >{texts.forgotPassword}</Text>
+                </View>
+                <Divider size={25} />
+            </KeyboardAvoidingScrollView>
+            <Divider size={25} />
             <TouchableOpacity style={styles.newUserContainer} onPress={toggleNewUser}>
                 <Text style={styles.newUserText}>{texts.login.newUser}</Text>
                 <Divider horizontal size={13} />

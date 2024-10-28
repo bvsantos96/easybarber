@@ -1,9 +1,11 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Pressable, View, TextInput, InputModeOptions } from 'react-native';
 import { getStyles } from '../styles/Input';
 import { useTheme } from '../styles/ThemeContext';
 
 type InputProps = {
+    onBlur?: () => void,
+    onFocus?: () => void,
     leftIcon?: JSX.Element,
     placeholder?: string,
     onInputChange?: (e: string) => void,
@@ -72,19 +74,23 @@ type InputProps = {
 }
 
 // types can be found here: https://reactnative.dev/docs/textinput#autocomplete
-const Input = ({
-    leftIcon = undefined,
+
+
+const Input = React.forwardRef<TextInput, InputProps>(({
+    onFocus,
+    onBlur,
+    leftIcon,
     placeholder = "",
     onInputChange = (e: string) => { alert(`No onInputChange(${e}) passed in props`) },
     type = "text",
-    autoComplete = undefined,
+    autoComplete,
     password = false,
     rightIcon = []
-}: InputProps) => {
+}, ref) => {
     const theme = useTheme();
     const styles = getStyles();
-    const textInputRef = React.useRef<TextInput>(null);
     const [showPassword, setShowPassword] = useState(!password);
+    const textInputRef = useRef<TextInput>(null);
 
     const handleViewPress = () => {
         textInputRef.current?.focus();
@@ -101,20 +107,24 @@ const Input = ({
     };
 
     return (
-        <Pressable style={styles.container} onPress={handleViewPress}>
+        <Pressable
+            ref={ref}
+            style={styles.container} onPress={handleViewPress}>
             <View style={styles.inputView}>
                 {leftIcon && <View style={styles.iconView}>
                     {leftIcon}
                 </View>}
                 <TextInput
                     ref={textInputRef}
+                    onFocus={onFocus}
                     style={rightIcon ? styles.textInputWithShowPasswordIcon : styles.textInput}
                     placeholder={placeholder}
                     placeholderTextColor={theme.colors.text.lightBlack}
+                    onBlur={onBlur}
                     onChangeText={handleChangeText}
                     secureTextEntry={!showPassword}
                     clearTextOnFocus={false}
-                    autoComplete={autoComplete}
+                    {...(password ? { autoCompleteType: 'password' } : { autoComplete: autoComplete })}
                     inputMode={type}
                 />
                 {rightIcon && rightIcon.length >= 0 && (
@@ -125,6 +135,6 @@ const Input = ({
             </View>
         </Pressable>
     );
-};
+});
 
 export default Input;
