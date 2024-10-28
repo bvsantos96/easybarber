@@ -12,16 +12,18 @@ interface NationSelectionProps {
 
 interface PhoneInputProps extends NationSelectionProps {
     setPhone: Dispatch<SetStateAction<string>>;
-    onFocus?: () => void
+    onFocus?: () => void,
+    username?: boolean
 }
 
-const PhoneInput = forwardRef<TextInput, PhoneInputProps>(({ onFocus, setPhone, setNation, nation }, ref) => {
+const PhoneInput = forwardRef<TextInput, PhoneInputProps>(({ onFocus, setPhone, setNation, nation, username = false }, ref) => {
     return (
         <Input
             onFocus={onFocus}
             ref={ref}
             leftIcon={<NationPicker {...{ setNation, nation }} />}
             placeholder={texts.phoneNumber}
+            username={username}
             type="tel"
             autoComplete="tel"
             onInputChange={setPhone}
