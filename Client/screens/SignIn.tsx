@@ -37,6 +37,7 @@ export default function SignIn({ navigation }: SignInProps) {
     }
 
     const changeNewUser = () => {
+        expanded && setExpanded(false);
         Animated.timing(translateYAnimation, {
             toValue: 1,
             duration: 400,
