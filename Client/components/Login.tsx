@@ -77,7 +77,7 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
             <KeyboardAvoidingScrollView
                 keyboardShow={expand}
                 keyboardHide={collapse}
-                maxHeight={300}
+                maxHeight={350}
                 fixedTopComponent={
                     <View style={styles.titleContainer} >
                         <Divider size={40} />
