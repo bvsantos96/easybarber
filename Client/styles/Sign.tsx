@@ -38,43 +38,41 @@ export const getStyles = () => {
             alignItems: 'center',
             backgroundColor: theme.colors.backgroundColor,
         },
+        avoidingKeyboard: {
+            flex: 1,
+            width: theme.dimensions.width,
+        },
         titleContainer: {
-            position: 'absolute',
-            top: 30 * theme.dimensions.absoluteHeight,
+            width: theme.dimensions.width,
             alignItems: 'center',
         },
         inputsContainer: {
-            position: 'absolute',
-            top: 110 * theme.dimensions.absoluteHeight,
             width: '100%',
             alignItems: 'center',
         },
         forgotPassContainer: {
-            position: 'absolute',
-            top: 270 * theme.dimensions.absoluteHeight,
-            right: 40 * theme.dimensions.absoluteWidth,
+            right: 0
         },
         forgotPass: {
             color: theme.colors.text.lightBlack,
+            textAlign: "right",
             fontSize: theme.fonts.size._17,
             fontFamily: 'Mazzard',
             fontWeight: '500',
             lineHeight: 20 * theme.dimensions.absoluteHeight,
         },
         buttonContainer: {
-            position: 'absolute',
-            top: 314 * theme.dimensions.absoluteHeight,
             width: '100%',
             alignItems: 'center',
         },
         alreadyRegisteredContainer: {
-            width: "100%",
+            width: theme.dimensions.width,
+            alignItems: 'center',
             flexDirection: 'row',
             justifyContent: 'center',
+            alignSelf: 'center',
         },
         newUserContainer: {
-            position: 'absolute',
-            top: 395 * theme.dimensions.absoluteHeight,
             width: '100%',
             flexDirection: 'row',
             justifyContent: 'center',

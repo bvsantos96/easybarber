@@ -9,15 +9,16 @@ import Divider from '../components/Divider';
 import Button from '../components/Button';
 
 import { getStyles } from '../styles/Sign';
-import { Props } from '../screens/SignIn';
+import { SignInProps } from '../screens/SignIn';
 import { getMobileCode } from '../utils/ApiRequest';
 import { Country } from 'react-native-country-picker-modal';
 import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
 import texts from "../langs/en.json";
 import { Routes } from '@navigation/Router';
+import KeyboardAvoidingScrollView from './KeyboardAvoidingScrollView';
 
-export default function Register({ navigation, toggleNewUser }: Props) {
+export default function Register({ navigation, toggleNewUser, expand, collapse }: SignInProps) {
     const styles = getStyles();
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
@@ -51,16 +52,36 @@ export default function Register({ navigation, toggleNewUser }: Props) {
 
     return (
         <>
-            <View style={styles.titleContainer} >
-                <Title line={[{ text: texts.register.title, highlight: false }]} />
-                <Divider size={23} />
+            <KeyboardAvoidingScrollView
+                keyboardShow={expand}
+                keyboardHide={collapse}
+                maxHeight={400}
+                fixedTopComponent={
+                    <>
+                        <Divider size={40} />
+                        <Title line={[{ text: texts.register.title, highlight: false }]} />
+                    </>
+                }
+                fixedBottomComponent={
+                    <View style={styles.buttonContainer}>
+                        <Button title={texts.register.button} onPress={register} />
+                        <Divider size={20} />
+                        <TouchableOpacity style={styles.alreadyRegisteredContainer} onPress={toggleNewUser}>
+                            <Text style={styles.newUserText}>{texts.register.newUser}</Text>
+                            <Divider horizontal size={20} />
+                            <Text style={styles.newUserRedText}>{texts.login.button}</Text>
+                        </TouchableOpacity>
+                    </View>
+                }
+            >
+                <Divider size={30} />
                 <Input
                     leftIcon={<NameIcon />}
                     placeholder={texts.name}
                     type="text"
                     onInputChange={setName}
                 />
-                <Divider size={19.25} />
+                <Divider size={20} />
                 <PhoneInput
                     {...{
                         setPhone,
@@ -68,7 +89,7 @@ export default function Register({ navigation, toggleNewUser }: Props) {
                         nation
                     }}
                 />
-                <Divider size={19.25} />
+                <Divider size={20} />
                 <Input
                     leftIcon={<PasswordIcon />}
                     placeholder={texts.password}
@@ -76,7 +97,7 @@ export default function Register({ navigation, toggleNewUser }: Props) {
                     onInputChange={setPassword}
                     rightIcon={[<ShowPasswordIcon />, <HidePasswordIcon />]}
                 />
-                <Divider size={19.25} />
+                <Divider size={20} />
                 <Input
                     leftIcon={<PasswordIcon />}
                     placeholder={texts.confirmPassword}
@@ -84,15 +105,8 @@ export default function Register({ navigation, toggleNewUser }: Props) {
                     onInputChange={setConfirmPassword}
                     rightIcon={[<ShowPasswordIcon />, <HidePasswordIcon />]}
                 />
-                <Divider size={36.25} />
-                <Button title={texts.register.button} onPress={register} />
-                <Divider size={35.25} />
-                <TouchableOpacity style={styles.alreadyRegisteredContainer} onPress={toggleNewUser}>
-                    <Text style={styles.newUserText}>{texts.register.newUser}</Text>
-                    <Divider horizontal size={13} />
-                    <Text style={styles.newUserRedText}>{texts.login.button}</Text>
-                </TouchableOpacity>
-            </View>
+                <Divider size={25} />
+            </KeyboardAvoidingScrollView>
         </>
     )
 }
