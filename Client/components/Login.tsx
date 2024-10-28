@@ -93,6 +93,7 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
                 <View style={styles.inputsContainer}>
                     <Divider size={40} />
                     <PhoneInput
+                        username={true}
                         {...{
                             setPhone,
                             setNation,
