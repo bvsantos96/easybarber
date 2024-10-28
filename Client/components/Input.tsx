@@ -70,6 +70,7 @@ type InputProps = {
     | 'off'
     | undefined;
     password?: boolean,
+    username?: boolean,
     rightIcon?: JSX.Element[],
 }
 
@@ -84,6 +85,7 @@ const Input = React.forwardRef<TextInput, InputProps>(({
     onInputChange = (e: string) => { alert(`No onInputChange(${e}) passed in props`) },
     type = "text",
     autoComplete,
+    username = false,
     password = false,
     rightIcon = []
 }, ref) => {
@@ -125,6 +127,7 @@ const Input = React.forwardRef<TextInput, InputProps>(({
                     secureTextEntry={!showPassword}
                     clearTextOnFocus={false}
                     {...(password ? { autoCompleteType: 'password' } : { autoComplete: autoComplete })}
+                    textContentType={password ? 'password' : username ? 'username' : 'none'}
                     inputMode={type}
                 />
                 {rightIcon && rightIcon.length >= 0 && (
