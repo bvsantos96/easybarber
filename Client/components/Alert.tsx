@@ -135,8 +135,8 @@ export const CustomAlert: React.FC<Props> = ({
                         <View style={styles.buttonContainer}>
                             <View style={styles.buttonWrapperLeft} >
                                 <Button
-                                    backgroundColor={backgroundColor}
-                                    borderColor={backgroundColor}
+                                    backgroundColor={_backgroundColor()}
+                                    borderColor={_backgroundColor()}
                                     title={_buttonText}
                                     onPress={() => handleClose(onPress)}
                                     stylesInput={styles.button}
@@ -145,9 +145,9 @@ export const CustomAlert: React.FC<Props> = ({
                             {onPress2 &&
                                 <View style={styles.buttonWrapperRight} >
                                     <Button
-                                        buttonTextColor={styles.button2.color}
-                                        backgroundColor={backgroundColor}
-                                        borderColor={backgroundColor}
+                                        buttonTextColor={_backgroundColor()}
+                                        backgroundColor={styles.button2.backgroundColor}
+                                        borderColor={_backgroundColor()}
                                         title={_buttonText2}
                                         onPress={() => handleClose(onPress2)}
                                         stylesInput={styles.button}
