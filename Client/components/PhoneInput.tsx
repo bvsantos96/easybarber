@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 import { SetStateAction, Dispatch } from 'react';
 import Input from '../components/Input';
 import CountryPicker, { Country } from 'react-native-country-picker-modal';
 import texts from '@lang/en.json';
+import { TextInput } from 'react-native';
 
 interface NationSelectionProps {
     setNation: Dispatch<SetStateAction<Country | null | undefined>>;
@@ -11,12 +12,14 @@ interface NationSelectionProps {
 
 interface PhoneInputProps extends NationSelectionProps {
     setPhone: Dispatch<SetStateAction<string>>;
+    onFocus?: () => void
 }
 
-const PhoneInput: React.FC<PhoneInputProps> = ({ setPhone, setNation, nation }) => {
-
+const PhoneInput = forwardRef<TextInput, PhoneInputProps>(({ onFocus, setPhone, setNation, nation }, ref) => {
     return (
         <Input
+            onFocus={onFocus}
+            ref={ref}
             leftIcon={<NationPicker {...{ setNation, nation }} />}
             placeholder={texts.phoneNumber}
             type="tel"
@@ -24,7 +27,7 @@ const PhoneInput: React.FC<PhoneInputProps> = ({ setPhone, setNation, nation }) 
             onInputChange={setPhone}
         />
     );
-};
+});
 
 export const NationPicker: React.FC<NationSelectionProps> = ({ nation, setNation }) => {
     return (

@@ -5,7 +5,7 @@ import { StatusBarStyle } from 'expo-status-bar';
 
 const getStatusBarHeight = (): number => {
     if (Platform.OS === 'ios') {
-        return StatusBar.currentHeight || 20; // Default iOS status bar height
+        return StatusBar.currentHeight || 25; // Default iOS status bar height
     } else if (Platform.OS === 'android') {
         return StatusBar.currentHeight || StatusBar.currentHeight === 0 || StatusBar.currentHeight === undefined ? 24 : StatusBar.currentHeight;
     }
@@ -31,7 +31,7 @@ interface Colors {
         black: string;
         lightBlack: string;
         lightGray: string;
-        darkBlueGray:string;
+        darkBlueGray: string;
     };
     button: {
         main: string;
@@ -44,6 +44,7 @@ interface DimensionsData {
     width: number;
     height: number;
     minDimension: number;
+    heightWithoutStatusBar: number;
     statusBarHeight: number;
     absoluteMinDimension: number;
     absoluteHeight: number;
@@ -134,6 +135,7 @@ const defaultTheme: Theme = {
         height,
         minDimension,
         statusBarHeight: getStatusBarHeight(),
+        heightWithoutStatusBar: (height - (getStatusBarHeight() * (Platform.OS === "ios" ? 4 : 1))) * (height / 844),
         absoluteHeight: height / 844,
         absoluteWidth: width / 390,
         absoluteMinDimension: minDimension / 390,
