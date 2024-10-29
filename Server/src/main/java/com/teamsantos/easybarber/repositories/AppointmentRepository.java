@@ -99,7 +99,7 @@ public interface AppointmentRepository
                     s.id,
                     s.service.service.name,
                     COALESCE(s.nonRegisteredUser, s.user.name),
-                    s.establishment.id
+                    s.establishment.id,
                     s.establishment.name,
                     s.establishment.location,
                     s.establishment.address,
