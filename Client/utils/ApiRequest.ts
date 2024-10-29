@@ -259,9 +259,9 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
                     SecureStore.setItemAsync(SECURE_STORAGE_LOGIN_KEY, createSecureToken(countryCode, phone, password));
                 }
             },
-            buttonText: langs.yes,
+            buttonText: langs.enable,
             onPress2: () => { },
-            buttonText2: langs.no
+            buttonText2: langs.notNow
         });
         setToken(result.message);
     }
