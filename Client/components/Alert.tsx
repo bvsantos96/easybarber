@@ -6,6 +6,7 @@ import Success from '@assets/images/success.svg';
 import Info from '@assets/images/info.svg';
 import Error from '@assets/images/error.svg';
 import texts from '@lang/en.json';
+import { useTheme } from '@styles/ThemeContext';
 
 export enum AlertType {
     Success = 'success',
@@ -83,7 +84,21 @@ export const CustomAlert: React.FC<Props> = ({
         if (func) func();
     };
 
+    const theme = useTheme();
     const styles = getStyles();
+    const _backgroundColor = () => {
+        switch (_type) {
+            case AlertType.Success:
+                return theme.colors.successColor;
+            case AlertType.Error:
+                return theme.colors.mainColor;
+            case AlertType.Info:
+                return theme.colors.infoColor;
+            default:
+                return theme.colors.mainColor;
+        }
+    }
+    const [backgroundColor] = React.useState(_backgroundColor());
 
     return (
         < >
@@ -120,6 +135,8 @@ export const CustomAlert: React.FC<Props> = ({
                         <View style={styles.buttonContainer}>
                             <View style={styles.buttonWrapperLeft} >
                                 <Button
+                                    backgroundColor={_backgroundColor()}
+                                    borderColor={_backgroundColor()}
                                     title={_buttonText}
                                     onPress={() => handleClose(onPress)}
                                     stylesInput={styles.button}
@@ -128,8 +145,9 @@ export const CustomAlert: React.FC<Props> = ({
                             {onPress2 &&
                                 <View style={styles.buttonWrapperRight} >
                                     <Button
-                                        buttonTextColor={styles.button2.color}
+                                        buttonTextColor={_backgroundColor()}
                                         backgroundColor={styles.button2.backgroundColor}
+                                        borderColor={_backgroundColor()}
                                         title={_buttonText2}
                                         onPress={() => handleClose(onPress2)}
                                         stylesInput={styles.button}
