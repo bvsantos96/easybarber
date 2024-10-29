@@ -92,6 +92,12 @@ public class UserService {
 
     @Transactional
     public UserDTO createUser(UserCreateDTO userCreateDTO, boolean isEmployee, boolean systemAdmin) throws Exception {
+        if (!userCreateDTO.isValidNumberString()) {
+            throw new IllegalArgumentException("Mobile information is not valid");
+        }
+        if (!userCreateDTO.isValidPassword()) {
+            throw new IllegalArgumentException("Password is not valid");
+        }
         userCreateDTO.setPassword(PasswordEncoding.encode(userCreateDTO.getPassword()));
         User user = modelMapper.map(userCreateDTO, User.class);
         if (user != null) {
