@@ -33,7 +33,7 @@ export default function EmployeeSelection({ navigation, route }: Props) {
         queryFn: async () => getEstablishmentServiceEmployees(establishmentId, serviceId),
         enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0 && (availableEmployees == undefined || availableEmployees == null || availableEmployees.length == 0),
         networkMode: 'offlineFirst',
-        staleTime: 6000
+        staleTime: 60000
     });
 
     const today = new Date();
@@ -47,7 +47,7 @@ export default function EmployeeSelection({ navigation, route }: Props) {
             await getUnavailableDates(establishmentId, serviceId, Number.parseInt(`${selected}`), year, month, getStartingHour(new Date(), getNowHourAndMinutes())),
         enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0 && (availableEmployees == undefined || availableEmployees == null || availableEmployees.length == 0),
         networkMode: 'offlineFirst',
-        staleTime: 6000
+        staleTime: 60000
     });
 
     return (

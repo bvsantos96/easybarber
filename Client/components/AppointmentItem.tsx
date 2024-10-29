@@ -6,6 +6,7 @@ import ClockIcon from "@assets/icons/clock.svg";
 import { getStyles } from "../styles/Appointments";
 import { getDateAsString, getTimeAsString } from "../utils/Utils";
 import Fontisto from '@expo/vector-icons/Fontisto';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Divider from "./Divider";
 import Pressable from "./Pressable";
@@ -14,9 +15,17 @@ import { cancelAppointment } from "utils/ApiRequest";
 import texts from "@lang/en.json";
 import useAlertStore from "storage/stores/AlertStore";
 import { AlertType } from "./Alert";
+import { useTheme } from "@styles/ThemeContext";
+import { Routes } from "@navigation/Router";
 
-export default function AppointmentItem({ appointment, cancel }: { appointment: AppointmentInfo, cancel?: (id: number) => void }) {
+interface Props extends PropNavigation {
+    appointment: AppointmentInfo;
+    cancel?: (id: number) => void;
+}
+
+export default function AppointmentItem({ navigation, appointment, cancel }: Props) {
     const { alert } = useAlertStore();
+    const theme = useTheme();
     const styles = getStyles();
     const date = new Date(`${appointment.date}T${appointment.time}`);
     const dateString = getDateAsString(date);
@@ -25,10 +34,11 @@ export default function AppointmentItem({ appointment, cancel }: { appointment: 
     const position = useRef(new Animated.Value(0)).current;
     const [isMoving, setIsMoving] = React.useState(false);
     const value = useRef(0);
+
     const setValue = (newValue: number) => {
         value.current = newValue;
     };
-    const minVal = cancel === undefined ? -75 : -150;
+    const minVal = (cancel === undefined ? -150 : -225) * theme.dimensions.absoluteWidth;
 
     const move = (val = value.current) => {
         Animated.timing(position, {
@@ -86,6 +96,10 @@ export default function AppointmentItem({ appointment, cancel }: { appointment: 
         }),
     ).current;
 
+    const gotoEstablishment = () => {
+        navigation.navigate(Routes.EstablishmentDetails, { id: appointment.establishmentId, name: appointment.establishmentName, load: true });
+    }
+
     return (
         <View style={{ position: "relative" }}>
             <Animated.View
@@ -136,6 +150,10 @@ export default function AppointmentItem({ appointment, cancel }: { appointment: 
                         <Divider size={15} horizontal={true} />
                     </>
                 }
+                <Pressable onPress={() => gotoEstablishment()} style={[styles.icon, styles.maps]}>
+                    <Ionicons name="open-outline" size={styles.icon.fontSize} color="white" />
+                </Pressable>
+                <Divider size={15} horizontal={true} />
                 <Pressable onPress={() => gotoLocation(appointment.establishmentName, appointment.establishmentAddress, appointment.latitude, appointment.longitude)} style={[styles.icon, styles.maps]}>
                     <MaterialCommunityIcons name="google-maps" size={styles.icon.fontSize} color="white" />
                 </Pressable>
