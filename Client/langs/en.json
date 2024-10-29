@@ -116,7 +116,8 @@
         "enterPhone": "Please enter your phone number on which your account registered.",
         "forgotPwd": "Forgot Password",
         "setNewPed": "Set a new password",
-        "set": "set"
+        "set": "set",
+        "pwdMustMatch": "Passwords must match"
     },
     "phoneNumber": "Phone Number",
     "password": "Password",

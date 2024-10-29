@@ -13,7 +13,7 @@ export const getStyles = () => {
         },
         buttonContainer: {
             position: 'absolute',
-            top: 590 * theme.dimensions.absoluteHeight,
+            top: 595 * theme.dimensions.absoluteHeight,
             width: 319 * theme.dimensions.absoluteWidth,
             height: 58.75 * theme.dimensions.absoluteHeight,
             alignItems: 'center',
@@ -55,6 +55,16 @@ export const getStyles = () => {
             left: 38.26 * theme.dimensions.absoluteWidth,
             width: 313.45 * theme.dimensions.absoluteWidth,
             height: 56 * theme.dimensions.absoluteHeight
-        }
+        },
+        errorMessage: {
+            position: 'absolute',
+            top: (457.94 + 58.75 + 58.75 + 5) * theme.dimensions.absoluteHeight,
+            left: 43.5 * theme.dimensions.absoluteWidth,
+            width: 299.99 * theme.dimensions.absoluteWidth,
+            color: 'red',
+            textAlign: 'center',
+            fontSize: theme.fonts.size._12,
+            fontWeight: '500'
+        },
     })
 };
