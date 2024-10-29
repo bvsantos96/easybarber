@@ -19,6 +19,8 @@ const tabHeight = 50 * height / 844;
 
 interface Colors {
     mainColor: string;
+    successColor: string;
+    infoColor: string;
     backgroundColor: string;
     imageBackground: string;
     statusBarOnHome: StatusBarStyle;
@@ -110,6 +112,8 @@ export const useTheme = (): Theme => {
 const defaultTheme: Theme = {
     colors: {
         mainColor: '#DF2238',
+        successColor: '#78B64E',
+        infoColor: '#2A74CC',
         backgroundColor: 'white',
         imageBackground: "rgba(109, 4, 4, 0.10)",
         statusBarOnHome: "light",

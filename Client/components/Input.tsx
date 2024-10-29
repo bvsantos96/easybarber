@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react';
-import { Pressable, View, TextInput, InputModeOptions } from 'react-native';
+import { Pressable, View, TextInput, InputModeOptions, ReturnKeyTypeOptions, NativeSyntheticEvent, TextInputSubmitEditingEventData, TextInputFocusEventData } from 'react-native';
 import { getStyles } from '../styles/Input';
 import { useTheme } from '../styles/ThemeContext';
 
 type InputProps = {
-    onBlur?: () => void,
-    onFocus?: () => void,
+    onBlur?: | ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) | undefined;
+    onFocus?: | ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) | undefined;
     leftIcon?: JSX.Element,
     placeholder?: string,
     onInputChange?: (e: string) => void,
@@ -72,14 +72,17 @@ type InputProps = {
     password?: boolean,
     username?: boolean,
     rightIcon?: JSX.Element[],
+    onSubmitEditing?: | ((e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => void) | undefined;
+    returnKeyType?: ReturnKeyTypeOptions | undefined;
 }
 
 // types can be found here: https://reactnative.dev/docs/textinput#autocomplete
 
-
 const Input = React.forwardRef<TextInput, InputProps>(({
     onFocus,
     onBlur,
+    onSubmitEditing,
+    returnKeyType,
     leftIcon,
     placeholder = "",
     onInputChange = (e: string) => { alert(`No onInputChange(${e}) passed in props`) },
@@ -129,6 +132,8 @@ const Input = React.forwardRef<TextInput, InputProps>(({
                     {...(password ? { autoCompleteType: 'password' } : { autoComplete: autoComplete })}
                     textContentType={password ? 'password' : username ? 'username' : 'none'}
                     inputMode={type}
+                    onSubmitEditing={onSubmitEditing}
+                    returnKeyType={returnKeyType ? returnKeyType : 'default'}
                 />
                 {rightIcon && rightIcon.length >= 0 && (
                     <Pressable style={styles.showPasswordIcon} onPress={handleShowPasswordPress}>

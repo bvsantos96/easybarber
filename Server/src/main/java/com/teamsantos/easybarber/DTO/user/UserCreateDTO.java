@@ -46,4 +46,23 @@ public class UserCreateDTO extends BaseDTO {
         }
         return false;
     }
+
+    public boolean isValidNumberString() {
+        String pattern = "[-+]?\\d*\\.?\\d+";
+        return getMobileInformation().matches(pattern);
+    }
+
+    public boolean isValidPassword() {
+        // Check if the password meets the following criteria:
+        // - At least 8 characters long
+        // - Contains at least one uppercase letter
+        // - Contains at least one lowercase letter
+        // - Contains at least one digit
+        boolean hasMinLength = password.length() >= 8;
+        boolean hasUppercase = password.matches(".*[A-Z].*");
+        boolean hasLowercase = password.matches(".*[a-z].*");
+        boolean hasDigit = password.matches(".*\\d.*");
+
+        return hasMinLength && hasUppercase && hasLowercase && hasDigit;
+    }
 }
