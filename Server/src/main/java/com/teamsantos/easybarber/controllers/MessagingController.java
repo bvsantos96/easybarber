@@ -39,7 +39,7 @@ public class MessagingController {
             messagingService.verificationCodeMessage(code, sms);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("Failed to send confirmation message: " + e.getMessage(), e);
+            logger.error("Failed to send confirmation message: " + e.getMessage());
             response.setResponseMessage("Failed to send confirmation message");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -54,7 +54,7 @@ public class MessagingController {
             messagingService.pwdRecoveryCodeMessage(code, sms);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("Failed to send confirmation message: " + e.getMessage(), e);
+            logger.error("Failed to send confirmation message: " + e.getMessage());
             response.setResponseMessage("Failed to send confirmation message");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -67,7 +67,7 @@ public class MessagingController {
             messagingService.verifyCode(sms.getPhoneNr(), sms.getConfirmationCode());
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
-            logger.error("Failed to confirm code: " + e.getMessage(), e);
+            logger.error("Failed to confirm code: " + e.getMessage());
             response.setResponseMessage("Failed to confirm code");
             return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
         }

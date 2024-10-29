@@ -70,10 +70,6 @@ export default function MobileConfirmation({ route, navigation }: Props) {
         const response = await confirmMobileCode(mobileInformation, confirmationCode);
 
         if (response) {
-            /**alert({
-                buttonText: texts.code.getStarted,
-                message: texts.code.successfullVerification
-            });**/
             if (resetNavigationBoolean) {
                 resetNavigation(navigation, nextScreen);
             }
