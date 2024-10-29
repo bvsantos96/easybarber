@@ -54,7 +54,7 @@ export default function Tabs() {
                             ),
                             tabBarLabel: tab.title,
                         }} >
-                        {() => (<SafeFullScreen><tab.component /></SafeFullScreen>)}
+                        {(props) => (<SafeFullScreen><tab.component {...props} /></SafeFullScreen>)}
                     </Tab.Screen>
                 )
             })}
