@@ -7,7 +7,7 @@ import AppointmentItem from '../components/AppointmentItem';
 import PageList, { PageListRef } from '../components/PageList';
 import AnimatedSwitch from '@components/AnimatedSwitch';
 
-export default function Appointments() {
+export default function Appointments({ navigation }: PropNavigation) {
     const texts = require("@lang/en.json");
     const styles = getStyles();
     const [resetSearch, _] = useState(false);
@@ -52,7 +52,7 @@ export default function Appointments() {
                     reset={resetSearch}
                     ref={pageListUpcommingRef}
                     renderItem={({ item }: { item: AppointmentInfo }) =>
-                        <AppointmentItem cancel={cancelAppointment} key={item.id} appointment={item} />
+                        <AppointmentItem navigation={navigation} cancel={cancelAppointment} key={item.id} appointment={item} />
                     }
                     requestFunction={loadUpcomming} />
                 <PageList<AppointmentInfo>
@@ -61,7 +61,7 @@ export default function Appointments() {
                     reset={resetSearch}
                     ref={pageListRef}
                     renderItem={({ item }: { item: AppointmentInfo }) =>
-                        <AppointmentItem key={item.id} appointment={item} />
+                        <AppointmentItem navigation={navigation} key={item.id} appointment={item} />
                     }
                     requestFunction={loadPast} />
             </View>
