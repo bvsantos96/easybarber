@@ -6,6 +6,7 @@ import ClockIcon from "@assets/icons/clock.svg";
 import { getStyles } from "../styles/Appointments";
 import { getDateAsString, getTimeAsString } from "../utils/Utils";
 import Fontisto from '@expo/vector-icons/Fontisto';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Divider from "./Divider";
 import Pressable from "./Pressable";
@@ -14,9 +15,18 @@ import { cancelAppointment } from "utils/ApiRequest";
 import texts from "@lang/en.json";
 import useAlertStore from "storage/stores/AlertStore";
 import { AlertType } from "./Alert";
+import { Routes } from "@navigation/Router";
+import { useTheme } from "@styles/ThemeContext";
 
-export default function AppointmentItem({ appointment, cancel }: { appointment: AppointmentInfo, cancel?: (id: number) => void }) {
+interface Props extends PropNavigation {
+    appointment: AppointmentInfo;
+    cancel?: (id: number) => void;
+    past: boolean;
+}
+
+export default function AppointmentItem({ navigation, appointment, cancel, past }: Props) {
     const { alert } = useAlertStore();
+    const theme = useTheme();
     const styles = getStyles();
     const date = new Date(`${appointment.date}T${appointment.time}`);
     const dateString = getDateAsString(date);
@@ -25,10 +35,16 @@ export default function AppointmentItem({ appointment, cancel }: { appointment: 
     const position = useRef(new Animated.Value(0)).current;
     const [isMoving, setIsMoving] = React.useState(false);
     const value = useRef(0);
+    const minValue = useRef(0);
+
     const setValue = (newValue: number) => {
         value.current = newValue;
     };
-    const minVal = cancel === undefined ? -75 : -150;
+
+    const handleIconsLayout = (event: any) => {
+        const { width } = event.nativeEvent.layout;
+        minValue.current = -width;
+    }
 
     const move = (val = value.current) => {
         Animated.timing(position, {
@@ -45,18 +61,18 @@ export default function AppointmentItem({ appointment, cancel }: { appointment: 
     const handleSelection = useCallback((flip = true, left?: boolean) => {
         if (isMoving) return;
         setIsMoving(true);
-        let newValue = flip ? (minVal - value.current) : left ? 0 : minVal;
+        let newValue = flip ? (minValue.current - value.current) : left ? 0 : minValue.current;
         if (value.current === newValue) {
             move(value.current);
             return;
         }
         setValue(newValue);
-    }, [isMoving, minVal]);
+    }, [isMoving, minValue]);
 
     const release = (evt: any, gestureState: any) => {
         let p = gestureState.x0 > movingRef.current ? gestureState.x0 - movingRef.current : gestureState.x0;
         let x = evt.nativeEvent.pageX - p;
-        if (x <= minVal / 2) {
+        if (x <= minValue.current / 2) {
             handleSelection((gestureState.vx === 0 && gestureState.vy === 0), false);
         } else {
             handleSelection((gestureState.vx === 0 && gestureState.vy === 0), true);
@@ -74,8 +90,8 @@ export default function AppointmentItem({ appointment, cancel }: { appointment: 
                 let x = value.current + evt.nativeEvent.pageX - p;
                 if (x > 0) {
                     x = 0;
-                } else if (x < minVal) {
-                    x = minVal;
+                } else if (x < minValue.current) {
+                    x = minValue.current;
                 }
                 position.setValue(x);
             },
@@ -85,6 +101,10 @@ export default function AppointmentItem({ appointment, cancel }: { appointment: 
             onShouldBlockNativeResponder: () => true
         }),
     ).current;
+
+    const gotoEstablishment = () => {
+        navigation.navigate(Routes.EstablishmentDetails, { id: appointment.establishmentId, name: appointment.establishmentName, load: true });
+    }
 
     return (
         <View style={{ position: "relative" }}>
@@ -112,35 +132,57 @@ export default function AppointmentItem({ appointment, cancel }: { appointment: 
                         <Text style={styles.locationText}>{dateString} {texts.at} {timeString}</Text>
                     </View>
                 </View>
+                {appointment.cancelled &&
+                    <View style={styles.cancelled} />
+                }
             </Animated.View>
             <View style={[styles.itemContainer, styles.shadow, styles.backContainer, { flexDirection: "row" }]} >
-                {cancel !== undefined &&
-                    <>
-                        <Pressable onPress={async () => {
-                            alert({
-                                type: AlertType.Error,
-                                message: texts.appointments.cancel,
-                                buttonText: texts.yes,
-                                onPress: async () => {
-                                    if (await cancelAppointment(appointment.id)) {
-                                        cancel(appointment.id);
-                                    }
-                                },
-                                onPress2: () => { },
-                                buttonText2: texts.no
-                            });
-                        }
-                        } style={[styles.icon, styles.redIcon]}>
-                            <Fontisto name="trash" size={styles.icon.fontSize} color="white" />
-                        </Pressable>
-                        <Divider size={15} horizontal={true} />
-                    </>
-                }
-                <Pressable onPress={() => gotoLocation(appointment.establishmentName, appointment.establishmentAddress, appointment.latitude, appointment.longitude)} style={[styles.icon, styles.maps]}>
-                    <MaterialCommunityIcons name="google-maps" size={styles.icon.fontSize} color="white" />
-                </Pressable>
-                <Divider size={15} horizontal={true} />
+                <View style={{ flexDirection: "row" }} onLayout={handleIconsLayout}>
+                    <Divider size={15} horizontal={true} />
+                    {cancel !== undefined &&
+                        <>
+                            <Pressable onPress={async () => {
+                                alert({
+                                    type: AlertType.Error,
+                                    message: texts.appointments.cancel,
+                                    buttonText: texts.yes,
+                                    onPress: async () => {
+                                        if (await cancelAppointment(appointment.id)) {
+                                            cancel(appointment.id);
+                                        }
+                                    },
+                                    onPress2: () => { },
+                                    buttonText2: texts.no
+                                });
+                            }
+                            } style={[styles.icon, styles.redIcon]}>
+                                <Fontisto name="trash" size={styles.icon.fontSize} color={theme.colors.backgroundColor} />
+                            </Pressable>
+                            <Divider size={15} horizontal={true} />
+                        </>
+                    }
+                    {past && cancel === undefined && !appointment.cancelled &&
+                        <>
+                            <Pressable onPress={() => console.log()} style={[styles.icon, styles.maps]}>
+                                <Ionicons name="star-half" size={styles.icon.fontSize} color={theme.colors.mainColor} />
+                            </Pressable>
+                            <Divider size={15} horizontal={true} />
+                        </>
+                    }
+                    <Pressable onPress={() => gotoEstablishment()} style={[styles.icon, styles.maps]}>
+                        <Ionicons name="open-outline" size={styles.icon.fontSize} color={theme.colors.mainColor} />
+                    </Pressable>
+                    <Divider size={15} horizontal={true} />
+                    {!appointment.cancelled &&
+                        <>
+                            <Pressable onPress={() => gotoLocation(appointment.establishmentName, appointment.establishmentAddress, appointment.latitude, appointment.longitude)} style={[styles.icon, styles.maps]}>
+                                <MaterialCommunityIcons name="google-maps" size={styles.icon.fontSize} color={theme.colors.mainColor} />
+                            </Pressable>
+                            <Divider size={15} horizontal={true} />
+                        </>
+                    }
+                </View>
             </View>
-        </View>
+        </View >
     );
 }

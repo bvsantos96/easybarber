@@ -7,7 +7,7 @@ import { getStyles } from '../styles/EstablishmentDetails';
 import { getStyles as getListStyles } from '../styles/List';
 import { getStyles as getSelectionStyles } from "../styles/Selection";
 
-import { getEstablishmentCats, getEstablishmentServices, getImageList } from '../utils/ApiRequest';
+import { getEstablishmentCats, getEstablishmentDetails, getEstablishmentServices, getImageList } from '../utils/ApiRequest';
 import { gotoLocation } from '../utils/Location';
 import { Underline } from '../components/Underline';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
@@ -30,7 +30,8 @@ export default function EstablishmentDetails({ route, navigation }: Props) {
     const styles = getStyles();
     const selectionStyles = getSelectionStyles();
     const listStyles = getListStyles();
-    const establishment: EstablishmentInfo = route.params;
+    const _establishment: EstablishmentInfo = route.params;
+    const [establishment, setEstablishment] = useState<EstablishmentInfo>(_establishment);
     const [categories, setCategories] = useState<ICategory[]>([]);
 
     useQuery({
@@ -41,6 +42,33 @@ export default function EstablishmentDetails({ route, navigation }: Props) {
         staleTime: 60000,
     });
 
+    const { data } = useQuery({
+        queryKey: [`establishment/${establishment.id}/details`, establishment.id],
+        queryFn: async () => getEstablishmentDetails(establishment.id),
+        enabled: !!(establishment.id) && !!(establishment.load),
+        networkMode: 'offlineFirst',
+        staleTime: 60000
+    });
+
+    useEffect(() => {
+        if (!!data) {
+            const est: EstablishmentInfo = {
+                id: data.id as number,
+                name: data.name,
+                description: data.description,
+                address: data.address,
+                latitude: data.latitude,
+                longitude: data.longitude,
+                distance: 0,
+                nvotes: data.nvotes,
+                sumVotes: data.sumVotes,
+                images: data.images,
+                load: false
+            };
+            setEstablishment(est);
+        }
+    }
+        , [data]);
 
     useEffect(() => {
         const fetchEstablishmentServices = async () => {
@@ -58,28 +86,31 @@ export default function EstablishmentDetails({ route, navigation }: Props) {
         }
 
         fetchEstablishmentServices();
-    }, [establishment.id]);
+    }, [_establishment.id]);
 
     return (
         <View style={selectionStyles.container}>
             <View style={styles.imageStyle} >
-                <PageList<IImage>
-                    type={PageListType.PAGERVIEW}
-                    initialItems={establishment.images}
-                    pageSize={4}
-                    renderItem={
-                        ({ item, index }: { item: IImage, index: number }) => {
-                            return (
-                                <Image
-                                    key={index}
-                                    cachePolicy="memory-disk"
-                                    source={{ uri: (item.data || defaultBarberImage) }}
-                                    style={listStyles.imageStyle}
-                                />
-                            )
+                {establishment?.images?.length > 0 &&
+                    <PageList<IImage>
+                        preload={false}
+                        type={PageListType.PAGERVIEW}
+                        initialItems={establishment.images}
+                        pageSize={4}
+                        renderItem={
+                            ({ item, index }: { item: IImage, index: number }) => {
+                                return (
+                                    <Image
+                                        key={index}
+                                        cachePolicy="memory-disk"
+                                        source={{ uri: (item.data || defaultBarberImage) }}
+                                        style={listStyles.imageStyle}
+                                    />
+                                )
+                            }
                         }
-                    }
-                    requestFunction={(page: IPage<IImage>, params?: Record<string, string | number | boolean>) => getImageList(`establishment/${establishment.id}`, page, params)} />
+                        requestFunction={(page: IPage<IImage>, params?: Record<string, string | number | boolean>) => getImageList(`establishment/${establishment.id}`, page, params)} />
+                }
                 <ImageRating
                     rating={establishment.nvotes > 0 ? (establishment.sumVotes / establishment.nvotes).toFixed(1) : "0.0"}
                     nvotes={establishment?.nvotes ?? 0}

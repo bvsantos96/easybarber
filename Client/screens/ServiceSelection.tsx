@@ -24,7 +24,7 @@ export default function ServiceSelection({ route, navigation }: Props) {
         queryKey: [`/establishment/${establishmentId}/services/list`],
         queryFn: async () => await getEstablishmentServices(establishmentId),
         networkMode: 'offlineFirst',
-        staleTime: 6000
+        staleTime: 60000
     });
 
     useQuery({
