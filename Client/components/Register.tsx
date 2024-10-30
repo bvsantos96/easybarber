@@ -95,8 +95,7 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
                 />
                 <Divider size={20} />
                 <Input
-                    leftIcon={<PasswordIcon />}
-                    placeholder={texts.confirmPassword}
+                    leftIcon={<PasswordIcon />}placeholder={texts.confirmPassword}
                     password={true}
                     onInputChange={setConfirmPassword}
                     rightIcon={[<ShowPasswordIcon />, <HidePasswordIcon />]}

@@ -65,13 +65,15 @@ public interface AppointmentRepository
                     s.id,
                     s.service.service.name,
                     s.employee.user.name,
+                    s.establishment.id,
                     s.establishment.name,
                     s.establishment.location,
                     s.establishment.address,
                     COALESCE(ei.data, esi.data, s.service.service.serviceType.imageURL),
                     s.date,
                     s.time,
-                    s.confirmed
+                    s.confirmed,
+                    s.active
                 )
                 FROM Appointment s
                 LEFT JOIN EmployeeImage ei on s.employee.id = ei.entity.id and ei.isMain = true
@@ -86,10 +88,11 @@ public interface AppointmentRepository
                 and (:#{#filter.future} is null OR (
                         (:#{#filter.future} = true AND (s.date > CURRENT_DATE or (s.date = current_date and s.time >= current_time)))
                     OR
-                        (:#{#filter.future} = false AND (s.date < CURRENT_DATE or (s.date = current_date and s.time < current_time)))
+                        (:#{#filter.future} = false AND ((s.date < CURRENT_DATE or (s.date = current_date and s.time < current_time)) OR (s.active = false)))
                     )
                 )
                 and (:#{#filter.activeOnly} is null or s.active = :#{#filter.activeOnly})
+                ORDER BY s.date DESC, s.time DESC
             """)
     Page<AppointmentListDTO> findAllToUser(AppointmentFilter filter, Pageable pageable);
 
@@ -98,13 +101,15 @@ public interface AppointmentRepository
                     s.id,
                     s.service.service.name,
                     COALESCE(s.nonRegisteredUser, s.user.name),
+                    s.establishment.id,
                     s.establishment.name,
                     s.establishment.location,
                     s.establishment.address,
                     COALESCE(esi.data, s.service.service.serviceType.imageURL),
                     s.date,
                     s.time,
-                    s.confirmed
+                    s.confirmed,
+                    s.active
                 )
                 FROM Appointment s
                 LEFT JOIN EstablishmentImage esi on s.establishment.id = esi.entity.id and esi.isMain = true
@@ -118,10 +123,11 @@ public interface AppointmentRepository
                 and (:#{#filter.future} is null OR (
                         (:#{#filter.future} = true AND (s.date > CURRENT_DATE or (s.date = current_date and s.time >= current_time)))
                     OR
-                        (:#{#filter.future} = false AND (s.date < CURRENT_DATE or (s.date = current_date and s.time < current_time)))
+                        (:#{#filter.future} = false AND ((s.date < CURRENT_DATE or (s.date = current_date and s.time < current_time)) OR (s.active = false)))
                     )
                 )
                 and (:#{#filter.activeOnly} is null or s.active = :#{#filter.activeOnly})
+                ORDER BY s.date DESC, s.time DESC
             """)
     Page<AppointmentListDTO> findAllToEmployee(AppointmentFilter filter, Pageable pageable);
 
@@ -199,11 +205,10 @@ public interface AppointmentRepository
 
     @Query(value = """
                 SELECT
-                    SUM(CASE WHEN (a.date > CURRENT_DATE OR (a.date = CURRENT_DATE AND a.time >= CURRENT_TIME)) THEN 1 ELSE 0 END) AS future,
-                    SUM(CASE WHEN (a.date < CURRENT_DATE OR (a.date = CURRENT_DATE AND a.time < CURRENT_TIME)) THEN 1 ELSE 0 END) AS past
+                    SUM(CASE WHEN (a.active = TRUE AND a.date > CURRENT_DATE OR (a.date = CURRENT_DATE AND a.time >= CURRENT_TIME)) THEN 1 ELSE 0 END) AS future,
+                    SUM(CASE WHEN (a.active = FALSE OR a.date < CURRENT_DATE OR (a.date = CURRENT_DATE AND a.time < CURRENT_TIME)) THEN 1 ELSE 0 END) AS past
                 FROM appointment a
                 WHERE (:userView = true AND :userId = a.user_id OR :userView = false AND :userId = a.employee_id)
-                    AND a.active = true
                     AND a.confirmed = true
             """, nativeQuery = true)
     Optional<Tuple> countAppointments(long userId, boolean userView);
