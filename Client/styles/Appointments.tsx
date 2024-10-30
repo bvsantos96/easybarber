@@ -142,7 +142,7 @@ export const getStyles = () => {
         },
         cancelled: {
             ...StyleSheet.absoluteFillObject,
-            backgroundColor: 'rgba(128, 128, 128, 0.5)',
+            backgroundColor: 'rgba(128, 128, 128, 0.35)',
             borderRadius: 10,
         },
     });

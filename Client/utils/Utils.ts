@@ -13,7 +13,7 @@ export const getFullDateAsString = (date: Date) => {
 }
 
 export const getDateAsString = (date: Date) => {
-    return `${twoDigits(date.getDate())}/${twoDigits(date.getMonth() + 1)}`;
+    return `${twoDigits(date.getDate())}/${twoDigits(date.getMonth() + 1)}${date.getFullYear() === new Date().getFullYear() ? '' : '/' + date.getFullYear().toString().substring(2, 4)}`;
 }
 
 export const twoDigits = (value: number) => {
