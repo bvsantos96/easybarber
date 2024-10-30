@@ -92,6 +92,7 @@ public interface AppointmentRepository
                     )
                 )
                 and (:#{#filter.activeOnly} is null or s.active = :#{#filter.activeOnly})
+                ORDER BY s.date DESC, s.time DESC
             """)
     Page<AppointmentListDTO> findAllToUser(AppointmentFilter filter, Pageable pageable);
 
@@ -126,6 +127,7 @@ public interface AppointmentRepository
                     )
                 )
                 and (:#{#filter.activeOnly} is null or s.active = :#{#filter.activeOnly})
+                ORDER BY s.date DESC, s.time DESC
             """)
     Page<AppointmentListDTO> findAllToEmployee(AppointmentFilter filter, Pageable pageable);
 
@@ -203,11 +205,10 @@ public interface AppointmentRepository
 
     @Query(value = """
                 SELECT
-                    SUM(CASE WHEN (a.date > CURRENT_DATE OR (a.date = CURRENT_DATE AND a.time >= CURRENT_TIME)) THEN 1 ELSE 0 END) AS future,
-                    SUM(CASE WHEN (a.date < CURRENT_DATE OR (a.date = CURRENT_DATE AND a.time < CURRENT_TIME)) THEN 1 ELSE 0 END) AS past
+                    SUM(CASE WHEN (a.active = TRUE AND a.date > CURRENT_DATE OR (a.date = CURRENT_DATE AND a.time >= CURRENT_TIME)) THEN 1 ELSE 0 END) AS future,
+                    SUM(CASE WHEN (a.active = FALSE OR a.date < CURRENT_DATE OR (a.date = CURRENT_DATE AND a.time < CURRENT_TIME)) THEN 1 ELSE 0 END) AS past
                 FROM appointment a
                 WHERE (:userView = true AND :userId = a.user_id OR :userView = false AND :userId = a.employee_id)
-                    AND a.active = true
                     AND a.confirmed = true
             """, nativeQuery = true)
     Optional<Tuple> countAppointments(long userId, boolean userView);

@@ -106,10 +106,6 @@ export default function AppointmentItem({ navigation, appointment, cancel, past 
         navigation.navigate(Routes.EstablishmentDetails, { id: appointment.establishmentId, name: appointment.establishmentName, load: true });
     }
 
-    if (appointment.cancelled) {
-        console.log("Appointment cancelled");
-    }
-
     return (
         <View style={{ position: "relative" }}>
             <Animated.View
