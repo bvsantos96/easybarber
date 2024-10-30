@@ -107,7 +107,7 @@ export default function Availability({ route, navigation }: Props) {
         queryKey: [`getUnavailableDates`, establishmentId, serviceId, employeeId, year, month],
         queryFn: async () => await getUnavailableDates(establishmentId, serviceId, employeeId, year, month, getStartingHour(new Date(), new Date().toISOString().split('T')[0])),
         enabled: month > 0 && year > 0 && !calculatedMonth.has(`${month}-${year}`),
-        staleTime: 6000
+        staleTime: 60000
     });
 
     useEffect(() => {
