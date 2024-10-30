@@ -137,8 +137,13 @@ export const getStyles = () => {
             borderColor: theme.colors.mainColor,
         },
         maps: {
-            backgroundColor: theme.colors.text.darkBlueGray,
-            borderColor: theme.colors.text.darkBlueGray,
+            backgroundColor: theme.colors.backgroundColor,
+            borderColor: theme.colors.backgroundColor,
+        },
+        cancelled: {
+            ...StyleSheet.absoluteFillObject,
+            backgroundColor: 'rgba(128, 128, 128, 0.35)',
+            borderRadius: 10,
         },
     });
 }

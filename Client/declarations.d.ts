@@ -95,6 +95,7 @@ declare interface EstablishmentInfo extends Identifiable {
     nvotes: number;
     sumVotes: number;
     images: IImage[];
+    load?: boolean;
 }
 
 declare interface AppointmentFilter extends Record<string, string | number | boolean> {
@@ -113,6 +114,7 @@ declare interface AppointmentInfo extends Identifiable {
     id: number;
     serviceName: string;
     entityName: string;
+    establishmentId: number;
     establishmentName: string;
     establishmentAddress: string;
     latitude: number;
@@ -120,6 +122,7 @@ declare interface AppointmentInfo extends Identifiable {
     date: string;
     time: string;
     confirmed: boolean;
+    cancelled: boolean;
     photo: string;
 }
 
