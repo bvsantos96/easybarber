@@ -52,7 +52,7 @@ export default function Appointments({ navigation }: PropNavigation) {
                     reset={resetSearch}
                     ref={pageListUpcommingRef}
                     renderItem={({ item }: { item: AppointmentInfo }) =>
-                        <AppointmentItem navigation={navigation} cancel={cancelAppointment} key={item.id} appointment={item} />
+                        <AppointmentItem navigation={navigation} cancel={cancelAppointment} key={item.id} appointment={item} past={false} />
                     }
                     requestFunction={loadUpcomming} />
                 <PageList<AppointmentInfo>
@@ -61,7 +61,7 @@ export default function Appointments({ navigation }: PropNavigation) {
                     reset={resetSearch}
                     ref={pageListRef}
                     renderItem={({ item }: { item: AppointmentInfo }) =>
-                        <AppointmentItem navigation={navigation} key={item.id} appointment={item} />
+                        <AppointmentItem navigation={navigation} key={item.id} appointment={item} past={true} />
                     }
                     requestFunction={loadPast} />
             </View>
