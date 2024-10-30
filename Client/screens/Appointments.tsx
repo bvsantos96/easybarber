@@ -22,7 +22,7 @@ export default function Appointments({ navigation }: PropNavigation) {
     }
 
     const loadPast = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter) => {
-        return await getAppointments(page, { ...params, future: false, activeOnly: true });
+        return await getAppointments(page, { ...params, future: false });
     }
 
     useEffect(() => {
