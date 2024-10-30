@@ -115,7 +115,7 @@
         "verificationFailed": "Verification failed. Please try again."
     },
     "pwdRecovery": {
-        "enterPhone": "Please enter your phone number on which your account registered.",
+        "enterPhone": "Please enter your phone number on which your account is registered.",
         "forgotPwd": "Forgot Password",
         "setNewPed": "Set a new password",
         "set": "set",

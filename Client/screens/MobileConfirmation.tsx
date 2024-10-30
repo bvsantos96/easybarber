@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { View, Text, TouchableOpacity, TextInput, NativeSyntheticEvent, TextInputKeyPressEventData, Animated } from 'react-native';
 
@@ -28,6 +28,10 @@ export default function MobileConfirmation({ route, navigation }: Props) {
     const [errorMessage, setErrorMessage] = useState<string>('');
     const inputRefs = useRef<(TextInput | null)[]>([]);
     const tiltAnimation = useRef(new Animated.Value(0)).current;
+
+    useEffect(() => {
+        inputRefs.current[0]?.focus();
+    }, []);
 
     const handleCodeChange = (text: string, index: number): void => {
         const numericText = text.replace(/[^0-9]/g, '');

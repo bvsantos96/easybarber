@@ -33,9 +33,9 @@ export default function ResetPwd({ route, navigation }: Props) {
     
     const resetPwd = async () => {
         if( password !== confirmPassword ){
-                setErrorMessage(texts.pwdRecovery.pwdMustMatch);
-                tiltScreen();
-                return;
+            setErrorMessage(texts.pwdRecovery.pwdMustMatch);
+            tiltScreen();
+            return;
         }
         const result = await resetPwdRQ(mobileInformation, confirmationCode, password, confirmPassword);
 
