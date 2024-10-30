@@ -88,7 +88,7 @@ public interface AppointmentRepository
                 and (:#{#filter.future} is null OR (
                         (:#{#filter.future} = true AND (s.date > CURRENT_DATE or (s.date = current_date and s.time >= current_time)))
                     OR
-                        (:#{#filter.future} = false AND (s.date < CURRENT_DATE or (s.date = current_date and s.time < current_time)))
+                        (:#{#filter.future} = false AND ((s.date < CURRENT_DATE or (s.date = current_date and s.time < current_time)) OR (s.active = false)))
                     )
                 )
                 and (:#{#filter.activeOnly} is null or s.active = :#{#filter.activeOnly})
@@ -122,7 +122,7 @@ public interface AppointmentRepository
                 and (:#{#filter.future} is null OR (
                         (:#{#filter.future} = true AND (s.date > CURRENT_DATE or (s.date = current_date and s.time >= current_time)))
                     OR
-                        (:#{#filter.future} = false AND (s.date < CURRENT_DATE or (s.date = current_date and s.time < current_time)))
+                        (:#{#filter.future} = false AND ((s.date < CURRENT_DATE or (s.date = current_date and s.time < current_time)) OR (s.active = false)))
                     )
                 )
                 and (:#{#filter.activeOnly} is null or s.active = :#{#filter.activeOnly})
