@@ -72,7 +72,8 @@ public interface AppointmentRepository
                     COALESCE(ei.data, esi.data, s.service.service.serviceType.imageURL),
                     s.date,
                     s.time,
-                    s.confirmed
+                    s.confirmed,
+                    s.active
                 )
                 FROM Appointment s
                 LEFT JOIN EmployeeImage ei on s.employee.id = ei.entity.id and ei.isMain = true
@@ -106,7 +107,8 @@ public interface AppointmentRepository
                     COALESCE(esi.data, s.service.service.serviceType.imageURL),
                     s.date,
                     s.time,
-                    s.confirmed
+                    s.confirmed,
+                    s.active
                 )
                 FROM Appointment s
                 LEFT JOIN EstablishmentImage esi on s.establishment.id = esi.entity.id and esi.isMain = true

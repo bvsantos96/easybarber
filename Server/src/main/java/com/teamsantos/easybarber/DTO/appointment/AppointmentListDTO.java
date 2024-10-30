@@ -28,11 +28,12 @@ public class AppointmentListDTO extends BaseDTO {
     private LocalDate date;
     private LocalTime time;
     private boolean confirmed;
+    private boolean cancelled;
 
     public AppointmentListDTO(Long id, String serviceName, String entityName, long establishmentId,
             String establishmentName, Point location,
             String address, String image,
-            LocalDate date, LocalTime time, boolean confirmed) {
+            LocalDate date, LocalTime time, boolean confirmed, boolean active) {
         super(id);
         this.serviceName = serviceName;
         this.entityName = entityName;
@@ -44,6 +45,7 @@ public class AppointmentListDTO extends BaseDTO {
         this.date = date;
         this.time = time;
         this.confirmed = confirmed;
+        this.cancelled = !active;
     }
 
     private void setLocation(final Point location) {

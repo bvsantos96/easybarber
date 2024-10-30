@@ -122,6 +122,7 @@ declare interface AppointmentInfo extends Identifiable {
     date: string;
     time: string;
     confirmed: boolean;
+    cancelled: boolean;
     photo: string;
 }
 
