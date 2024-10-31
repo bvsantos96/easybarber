@@ -409,11 +409,13 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     }
 
     @Transactional
-    public void addFeedback(Long id, int feedback) {
-        Establishment establishment = establishmentRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
-        establishment.setSumVotes(establishment.getSumVotes() + feedback);
-        establishment.setNVotes(establishment.getNVotes() + 1);
-        establishmentRepository.save(establishment);
+    public void addFeedback(Long id, int feedback, boolean replace) {
+        establishmentRepository.findById(id).ifPresent(establishment -> {
+            establishment.setSumVotes(establishment.getSumVotes() + feedback);
+            if (!replace) {
+                establishment.setNVotes(establishment.getNVotes() + 1);
+            }
+            establishmentRepository.save(establishment);
+        });
     }
 }

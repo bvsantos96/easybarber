@@ -107,20 +107,21 @@ const _request = async<T>(url: string, method: string, body: any, successMessage
             mode: 'cors',
             headers: {
                 ...(token && { 'Authorization': `Bearer ${token}` }),
-                ...(method !== "GET" && { 'Content-Type': 'application/json' }),
+                ...(method !== "GET" && body && { 'Content-Type': 'application/json' }),
             },
-            ...(method !== "GET" && { body: JSON.stringify(body) }),
+            ...(method !== "GET" && body && { body: JSON.stringify(body) }),
         });
     }
 
+    console.log("Requesting: ", _url);
     return fetch(_url, {
         method: method,
         mode: 'cors',
         headers: {
             ...(token && { 'Authorization': `Bearer ${token}` }),
-            ...(method !== "GET" && { 'Content-Type': 'application/json' }),
+            ...(method !== "GET" && body && { 'Content-Type': 'application/json' }),
         },
-        ...(method !== "GET" && { body: JSON.stringify(body) }),
+        ...(method !== "GET" && body && { body: JSON.stringify(body) }),
     }).then(async response => {
         let data;
         try {
@@ -489,8 +490,8 @@ export const getApiVersion = async (): Promise<string> => {
     throw new Error(langs.apiMessages.failed);
 }
 
-export const getMobileCode = async (phoneCountryCode:string, phoneNr: string): Promise<boolean> => {
-    const response = await request("/sms/confirmation", "POST", {phoneNr: phoneNr, phoneCountryCode: phoneCountryCode}, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+export const getMobileCode = async (phoneCountryCode: string, phoneNr: string): Promise<boolean> => {
+    const response = await request("/sms/confirmation", "POST", { phoneNr: phoneNr, phoneCountryCode: phoneCountryCode }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
@@ -505,8 +506,8 @@ export const confirmMobileCode = async (phoneNr: string, confirmationCode: strin
     return false;
 }
 
-export const getMobileCodeResetPwd = async (phoneCountryCode:string, phoneNr: string): Promise<boolean> => {
-    const response = await request("/sms/resetpwd", "POST", {phoneNr: phoneNr, phoneCountryCode: phoneCountryCode}, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+export const getMobileCodeResetPwd = async (phoneCountryCode: string, phoneNr: string): Promise<boolean> => {
+    const response = await request("/sms/resetpwd", "POST", { phoneNr: phoneNr, phoneCountryCode: phoneCountryCode }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
@@ -568,3 +569,10 @@ const refreshToken = async (): Promise<boolean> => {
     }
 }
 
+export const appointmentFeedback = async (appointmentId: number, rating: number): Promise<boolean> => {
+    const response = await request(`/appointment/${appointmentId}/feedback/${rating}`, "POST", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.NONE);
+    if (response.success) {
+        return true;
+    }
+    return false;
+}
