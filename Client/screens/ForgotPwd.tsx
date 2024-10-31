@@ -7,6 +7,7 @@ import PhoneInput from '@components/PhoneInput';
 import { Country } from 'react-native-country-picker-modal';
 import { getDefaultCountryAsync } from 'utils/Constants';
 import { Routes } from '@navigation/Router';
+import { getMobileCodeResetPwd } from 'utils/ApiRequest';
 
 export default function ForgotPwd({ navigation }: PropNavigation) {
     const styles = getStyles();
@@ -29,12 +30,11 @@ export default function ForgotPwd({ navigation }: PropNavigation) {
 
     const forgotPwd = async () => {
         const mobileInformation = (nation ? nation.callingCode[0] : "") + phone;
-        /*const success = await getMobileCodeResetPwd(mobileInformation);
+        const success = await getMobileCodeResetPwd(nation ? nation.callingCode[0] : "", phone);
 
         if(success){
-            navigation.navigate(RootNav.MobileConfirmation.name, {mobileInformation: mobileInformation});
-        }*/
-        navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: "ResetPwd", resetNavigationBoolean: false });
+            navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: "ResetPwd", resetNavigationBoolean: false });
+        }
     };
 
     return (
