@@ -489,8 +489,8 @@ export const getApiVersion = async (): Promise<string> => {
     throw new Error(langs.apiMessages.failed);
 }
 
-export const getMobileCode = async (phoneNr: string): Promise<boolean> => {
-    const response = await request("/sms/confirmation", "POST", { phoneNr: "+" + phoneNr }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+export const getMobileCode = async (phoneCountryCode:string, phoneNr: string): Promise<boolean> => {
+    const response = await request("/sms/confirmation", "POST", {phoneNr: phoneNr, phoneCountryCode: phoneCountryCode}, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
@@ -505,8 +505,8 @@ export const confirmMobileCode = async (phoneNr: string, confirmationCode: strin
     return false;
 }
 
-export const getMobileCodeResetPwd = async (phoneNr: string): Promise<boolean> => {
-    const response = await request("/sms/resetpwd", "POST", { phoneNr: "+" + phoneNr }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+export const getMobileCodeResetPwd = async (phoneCountryCode:string, phoneNr: string): Promise<boolean> => {
+    const response = await request("/sms/resetpwd", "POST", {phoneNr: phoneNr, phoneCountryCode: phoneCountryCode}, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }

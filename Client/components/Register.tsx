@@ -40,13 +40,8 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
     }, []);
 
     const register = async () => {
-        /**const result: IResult<any> = await doRegister(nation?nation.callingCode[0]:"", phone, password, confirmPassword, name);
-        if (result.success)
-            resetNavigation(navigation, RootNav.Tabs.name);
-        else
-            alert(result.message);*/
         const mobileInformation = (nation ? nation.callingCode[0] : "") + phone;
-        //const result = await getMobileCode(mobileInformation);
+        const result = await getMobileCode(nation ? nation.callingCode[0] : "", mobileInformation);
         navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: Routes.Tabs, resetNavigationBoolean: true });
     }
 
