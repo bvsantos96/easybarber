@@ -163,7 +163,23 @@ export default function AppointmentItem({ navigation, appointment, cancel, past 
                     }
                     {past && cancel === undefined && !appointment.cancelled &&
                         <>
-                            <Pressable onPress={() => console.log()} style={[styles.icon, styles.maps]}>
+                            <Pressable
+                                style={[styles.icon, styles.maps]}
+                                onPress={() => {
+                                    const message = texts.appointments.feedback.replace("{service}", appointment.serviceName).replace("{establishment}", appointment.establishmentName)
+                                        .replace("{date}", dateString).replace("{time}", timeString) + "\n\n" + texts.appointments.feedBackThanks;
+                                    alert({
+                                        type: AlertType.Voting,
+                                        message: message,
+                                        buttonText: texts.submit,
+                                        onPress: async (rank: number) => {
+                                            console.log(rank);
+                                        },
+                                        onPress2: () => { },
+                                        buttonText2: texts.dismiss
+                                    });
+                                }
+                                }>
                                 <Ionicons name="star-half" size={styles.icon.fontSize} color={theme.colors.mainColor} />
                             </Pressable>
                             <Divider size={15} horizontal={true} />
