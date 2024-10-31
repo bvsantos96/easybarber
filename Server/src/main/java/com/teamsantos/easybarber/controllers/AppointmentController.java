@@ -123,7 +123,7 @@ public class AppointmentController {
         }
     }
 
-    @GetMapping("/appointment/{id}/feedback/{feedback}")
+    @PostMapping("/appointment/{id}/feedback/{feedback}")
     public ResponseEntity<BaseResponseDTO> feedback(@PathVariable long id, @PathVariable int feedback) {
         try {
             appointmentService.feedback(id, feedback);

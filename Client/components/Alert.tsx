@@ -29,6 +29,7 @@ export interface AlertProps {
     onPress2?: () => void;
     buttonText2?: string;
     fontSize?: number;
+    defaultVoting?: number;
 }
 
 interface Props extends AlertProps {
@@ -48,7 +49,8 @@ export const CustomAlert: React.FC<Props> = ({
     buttonText,
     buttonText2,
     onPress2,
-    type
+    type,
+    defaultVoting
 }) => {
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const scaleAnim = useRef(new Animated.Value(0.8)).current;
@@ -145,6 +147,7 @@ export const CustomAlert: React.FC<Props> = ({
     useEffect(() => {
         setColor(_backgroundColor());
         setIcon(_icon());
+        setRating(defaultVoting || 0);
     }, [visible]);
 
     return (
