@@ -112,7 +112,7 @@ export const useTheme = (): Theme => {
 const defaultTheme: Theme = {
     colors: {
         mainColor: '#DF2238',
-        successColor: '#78B64E',
+        successColor: '#6FC138',
         infoColor: '#2A74CC',
         backgroundColor: 'white',
         imageBackground: "rgba(109, 4, 4, 0.10)",

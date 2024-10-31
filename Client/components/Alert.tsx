@@ -1,14 +1,17 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Stars from 'react-native-stars';
 import { View, Text, Animated } from 'react-native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { getStyles } from '../styles/Alert';
 import Button from './Button';
 import Success from '@assets/images/success.svg';
 import Info from '@assets/images/info.svg';
 import Error from '@assets/images/error.svg';
+import Voting from '@assets/images/voting.svg';
 import texts from '@lang/en.json';
 import { useTheme } from '@styles/ThemeContext';
+import Divider from './Divider';
 
 export enum AlertType {
     Success = 'success',
@@ -19,11 +22,13 @@ export enum AlertType {
 
 export interface AlertProps {
     message: string;
+    message2?: string;
     onPress?: (param?: any) => void;
     buttonText?: string;
     type?: AlertType;
     onPress2?: () => void;
     buttonText2?: string;
+    fontSize?: number;
 }
 
 interface Props extends AlertProps {
@@ -33,14 +38,16 @@ interface Props extends AlertProps {
 }
 
 export const CustomAlert: React.FC<Props> = ({
+    fontSize,
     children,
     visible,
     setVisible,
     message,
+    message2,
     onPress,
     buttonText,
-    onPress2,
     buttonText2,
+    onPress2,
     type
 }) => {
     const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -91,37 +98,54 @@ export const CustomAlert: React.FC<Props> = ({
         }
     }, [visible, fadeAnim, scaleAnim]);
 
-    const handleClose = (func?: () => void) => {
+    const handleClose = (func?: (param?: any) => void) => {
         setVisible(false);
-        if (func) func();
+        if (type === AlertType.Voting) {
+            if (func) func(rating);
+        } else {
+            if (func) func();
+        }
     };
 
     const theme = useTheme();
     const styles = getStyles();
-    const _backgroundColor = () => {
+    const [starsSize] = useState<number>((((styles.alertBox.width * 0.72) / 5 + 40) * theme.dimensions.absoluteWidth) / 2);
+
+    const _backgroundColor = (): string => {
         switch (_type) {
-            case AlertType.Success:
-                return theme.colors.successColor;
             case AlertType.Error:
                 return theme.colors.mainColor;
             case AlertType.Info:
                 return theme.colors.infoColor;
+            case AlertType.Voting:
+                return theme.colors.mainColor;
+            case AlertType.Success:
             default:
                 return theme.colors.mainColor;
         }
     }
 
-    const icon = () => {
+    const _icon = (): React.JSX.Element => {
         switch (_type) {
             case AlertType.Error:
-                return AlertType.Error;
+                return <Error style={styles.image} />
             case AlertType.Info:
-                return AlertType.Info;
+                return <Info style={styles.image} />
+            case AlertType.Voting:
+                return <Voting style={styles.image} />
             case AlertType.Success:
             default:
-                return AlertType.Success;
+                return <Success style={styles.image} />
         }
     }
+
+    const [color, setColor] = useState<string>(_backgroundColor());
+    const [icon, setIcon] = useState<React.JSX.Element>(_icon());
+
+    useEffect(() => {
+        setColor(_backgroundColor());
+        setIcon(_icon());
+    }, [visible]);
 
     return (
         < >
@@ -143,55 +167,64 @@ export const CustomAlert: React.FC<Props> = ({
                             },
                         ]}
                     >
-                        {(icon() === AlertType.Success) &&
-                            <Success style={styles.image} />
-                        }
-                        {icon() === AlertType.Error &&
-                            <Error style={styles.image} />
-                        }
-                        {icon() === AlertType.Info &&
-                            <Info style={styles.image} />
-                        }
-                        <View style={styles.messageContainer}>
-                            <Text style={styles.message}>{message}</Text>
-                        </View>
-                        {_type === AlertType.Voting &&
-                            <View style={{ alignItems: 'center' }}>
-                                <Stars
-                                    half={false}
-                                    default={rating}
-                                    update={setStarsSelected}
-                                    spacing={10 * theme.dimensions.absoluteWidth}
-                                    starSize={50 * theme.dimensions.absoluteWidth}
-                                    count={5}
-                                    zero={true}
-                                    fullStar={require('@assets/icons/star.png')}
-                                    emplyStar={require('@assets/icons/starEmpty.png')}
-                                />
-                            </View>
-                        }
-                        <View style={styles.buttonContainer}>
-                            <View style={styles.buttonWrapperLeft} >
-                                <Button
-                                    backgroundColor={_backgroundColor()}
-                                    borderColor={_backgroundColor()}
-                                    title={_buttonText}
-                                    onPress={() => handleClose(onPress)}
-                                    stylesInput={styles.button}
-                                />
-                            </View>
-                            {onPress2 &&
-                                <View style={styles.buttonWrapperRight} >
+                        <View style={styles.alertView}>
+                            <Divider size={20} horizontal={false} />
+                            {icon}
+                            <Divider size={30} horizontal={false} />
+                            <Text style={[styles.message, fontSize ? { fontSize: fontSize } : {}]}>{message}</Text>
+                            {_type === AlertType.Voting ? (
+                                <>
+                                    <Divider size={15} horizontal={false} />
+                                    <View style={styles.votingContainer}>
+                                        <Stars
+                                            half={false}
+                                            default={rating}
+                                            update={setStarsSelected}
+                                            spacing={10 * theme.dimensions.absoluteWidth}
+                                            starSize={starsSize}
+                                            count={5}
+                                            zero={true}
+                                            fullStar={<Ionicons name="star" size={starsSize} color={theme.colors.mainColor} />}
+                                            emptyStar={<Ionicons name="star-outline" size={starsSize} color={theme.colors.text.lightGray} />}
+                                        />
+                                    </View>
+                                    <Divider size={10} horizontal={false} />
+                                </>
+                            ) : (
+                                <Divider size={10} horizontal={false} />
+                            )}
+                            {message2 &&
+                                <>
+                                    <Divider size={10} horizontal={false} />
+                                    <Text style={[styles.message, styles.message2]}>{message2}</Text>
+                                    <Divider size={10} horizontal={false} />
+                                </>
+                            }
+                            <Divider size={10} horizontal={false} />
+                            <View style={styles.buttonContainer} >
+                                <View style={styles.buttonWrapperLeft} >
                                     <Button
-                                        buttonTextColor={_backgroundColor()}
-                                        backgroundColor={styles.button2.backgroundColor}
-                                        borderColor={_backgroundColor()}
-                                        title={_buttonText2}
-                                        onPress={() => handleClose(onPress2)}
+                                        backgroundColor={color}
+                                        borderColor={color}
+                                        title={_buttonText}
+                                        onPress={() => handleClose(onPress)}
                                         stylesInput={styles.button}
                                     />
                                 </View>
-                            }
+                                {onPress2 &&
+                                    <View style={[styles.buttonWrapperRight, theme.shadow]} >
+                                        <Button
+                                            buttonTextColor={color}
+                                            backgroundColor={styles.button2.backgroundColor}
+                                            borderColor={color}
+                                            title={_buttonText2}
+                                            onPress={() => handleClose(onPress2)}
+                                            stylesInput={styles.button}
+                                        />
+                                    </View>
+                                }
+                            </View>
+                            <Divider size={25} horizontal={false} />
                         </View>
                     </Animated.View>
                 </Animated.View>

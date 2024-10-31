@@ -24,19 +24,17 @@ export const getStyles = () => {
             zIndex: 100
         },
         alertBox: {
-            position: 'absolute',
+            justifyContent: 'center',
+            alignItems: 'center',
             width: 318.64 * theme.dimensions.absoluteWidth,
-            height: 406.19 * theme.dimensions.absoluteHeight,
-            top: 200.09 * theme.dimensions.absoluteHeight,
-            left: 35.68 * theme.dimensions.absoluteWidth,
+            maxHeight: theme.dimensions.height * 0.8,
             backgroundColor: theme.colors.backgroundColor,
             borderRadius: (318.64 * theme.dimensions.absoluteWidth) * 0.045
         },
-        messageContainer: {
-            position: 'absolute',
-            top: 210.86 * theme.dimensions.absoluteHeight,
-            textAlign: 'center',
-            width: 318.72 * theme.dimensions.absoluteWidth
+        alertView: {
+            justifyContent: 'center',
+            alignItems: 'center',
+            width: "90%",
         },
         message: {
             color: theme.colors.text.black,
@@ -45,6 +43,9 @@ export const getStyles = () => {
             fontWeight: '600',
             lineHeight: 25.2 * theme.dimensions.absoluteHeight,
             textAlign: 'center'
+        },
+        message2: {
+            fontSize: theme.fonts.size._14,
         },
         buttonWrapperRight: {
             flex: 1,
@@ -55,11 +56,7 @@ export const getStyles = () => {
             marginRight: 2.5,
         },
         buttonContainer: {
-            position: 'absolute',
-            top: 309.62 * theme.dimensions.absoluteHeight,
-            left: 35.25 * theme.dimensions.absoluteWidth,
-            width: 249.5 * theme.dimensions.absoluteWidth,
-            height: 58.75 * theme.dimensions.absoluteHeight,
+            height: 48.75 * theme.dimensions.absoluteHeight,
             flexDirection: 'row',
             justifyContent: 'space-between',
         },
@@ -72,12 +69,13 @@ export const getStyles = () => {
             color: theme.colors.mainColor
         },
         image: {
-            position: 'absolute',
-            width: 182.97 * theme.dimensions.absoluteWidth,
+            width: 182.7 * theme.dimensions.absoluteWidth,
             height: 133.54 * theme.dimensions.absoluteHeight,
-            left: 69.00 * theme.dimensions.absoluteWidth,
-            top: 39.08 * theme.dimensions.absoluteHeight,
             zIndex: 9999999
-        }
+        },
+        votingContainer: {
+            width: "80%",
+            alignItems: 'center'
+        },
     })
 };

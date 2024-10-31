@@ -166,11 +166,12 @@ export default function AppointmentItem({ navigation, appointment, cancel, past 
                             <Pressable
                                 style={[styles.icon, styles.maps]}
                                 onPress={() => {
-                                    const message = texts.appointments.feedback.replace("{service}", appointment.serviceName).replace("{establishment}", appointment.establishmentName)
-                                        .replace("{date}", dateString).replace("{time}", timeString) + "\n\n" + texts.appointments.feedBackThanks;
+                                    const message = texts.appointments.feedback.replace("{employee}", appointment.entityName).replace("{establishment}", appointment.establishmentName);
                                     alert({
                                         type: AlertType.Voting,
                                         message: message,
+                                        fontSize: theme.fonts.size._16,
+                                        message2: texts.appointments.feedBackThanks,
                                         buttonText: texts.submit,
                                         onPress: async (rank: number) => {
                                             console.log(rank);
