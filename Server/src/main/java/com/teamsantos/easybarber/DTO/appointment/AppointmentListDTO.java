@@ -18,6 +18,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class AppointmentListDTO extends BaseDTO {
     private String serviceName;
+    private Long entityId;
     private String entityName;
     private long establishmentId;
     private String establishmentName;
@@ -30,12 +31,13 @@ public class AppointmentListDTO extends BaseDTO {
     private boolean confirmed;
     private boolean cancelled;
 
-    public AppointmentListDTO(Long id, String serviceName, String entityName, long establishmentId,
+    public AppointmentListDTO(Long id, String serviceName, Long entityId, String entityName, long establishmentId,
             String establishmentName, Point location,
             String address, String image,
             LocalDate date, LocalTime time, boolean confirmed, boolean active) {
         super(id);
         this.serviceName = serviceName;
+        this.entityId = entityId;
         this.entityName = entityName;
         this.establishmentId = establishmentId;
         this.establishmentName = establishmentName;
