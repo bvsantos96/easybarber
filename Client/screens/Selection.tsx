@@ -20,6 +20,7 @@ export default function Selection({ onButtonPress, children, selected, selection
             {children}
             <View style={styles.button}>
                 <Button
+                    preventMultiplePress
                     disabled={!selected}
                     stylesInput={{ width: '100%' }}
                     onPress={onButtonPress} title={buttonText} />
