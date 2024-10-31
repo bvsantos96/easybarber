@@ -168,6 +168,7 @@ public class AppointmentService {
         appointmentRepository.save(appointment);
     }
 
+    @Transactional(readOnly = true)
     public AppointmentCountDTO countAppointments(boolean userView) {
         Optional<Tuple> count = appointmentRepository.countAppointments(UserContext.getUserId(), userView);
         if (count.isEmpty()) {
@@ -184,5 +185,18 @@ public class AppointmentService {
         } catch (Exception e) {
         }
         return new AppointmentCountDTO(upcomming, past);
+    }
+
+    @Transactional
+    public void feedback(long id, int feedback) {
+        Appointment appointment = appointmentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+        if (appointment.getUser().getId() != UserContext.getUserId()) {
+            throw new IllegalArgumentException("You do not have permission to give feedback for this appointment");
+        }
+        employeeService.addFeedback(appointment.getEmployee().getId(), feedback);
+        establishmentService.addFeedback(appointment.getEstablishment().getId(), feedback);
+        appointment.setFeedbackAsked(true);
+        appointmentRepository.save(appointment);
     }
 }

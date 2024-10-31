@@ -68,4 +68,13 @@ public class EmployeeService extends ServiceWithImages<Employee, EmployeeImage> 
     public Long getEmployeeId(Long establishmentStaffId) {
         return establishmentStaffRepository.getEmployeeId(establishmentStaffId);
     }
+
+    @Transactional
+    public void addFeedback(Long id, int feedback) {
+        employeeRepository.findById(id).ifPresent(employee -> {
+            employee.setSumVotes(employee.getSumVotes() + feedback);
+            employee.setNVotes(employee.getNVotes() + 1);
+            employeeRepository.save(employee);
+        });
+    }
 }
