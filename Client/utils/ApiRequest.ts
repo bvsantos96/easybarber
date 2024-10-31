@@ -113,7 +113,6 @@ const _request = async<T>(url: string, method: string, body: any, successMessage
         });
     }
 
-    console.log("Requesting: ", _url);
     return fetch(_url, {
         method: method,
         mode: 'cors',
