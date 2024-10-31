@@ -1,5 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import Stars from 'react-native-stars';
 import { View, Text, Animated } from 'react-native';
+
 import { getStyles } from '../styles/Alert';
 import Button from './Button';
 import Success from '@assets/images/success.svg';
@@ -12,11 +14,12 @@ export enum AlertType {
     Success = 'success',
     Error = 'error',
     Info = 'info',
+    Voting = 'voting',
 }
 
 export interface AlertProps {
     message: string;
-    onPress?: () => void;
+    onPress?: (param?: any) => void;
     buttonText?: string;
     type?: AlertType;
     onPress2?: () => void;
@@ -42,6 +45,15 @@ export const CustomAlert: React.FC<Props> = ({
 }) => {
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const scaleAnim = useRef(new Animated.Value(0.8)).current;
+    const [rating, setRating] = useState<number>(0);
+
+    const setStarsSelected = (value: number) => {
+        if (value === rating && value === 1) {
+            setRating(0);
+            return;
+        }
+        setRating(value);
+    }
 
     const _type = type || AlertType.Success;
     const _buttonText = buttonText || texts.dismiss;
@@ -98,7 +110,18 @@ export const CustomAlert: React.FC<Props> = ({
                 return theme.colors.mainColor;
         }
     }
-    const [backgroundColor] = React.useState(_backgroundColor());
+
+    const icon = () => {
+        switch (_type) {
+            case AlertType.Error:
+                return AlertType.Error;
+            case AlertType.Info:
+                return AlertType.Info;
+            case AlertType.Success:
+            default:
+                return AlertType.Success;
+        }
+    }
 
     return (
         < >
@@ -120,18 +143,33 @@ export const CustomAlert: React.FC<Props> = ({
                             },
                         ]}
                     >
-                        {_type === AlertType.Success &&
+                        {(icon() === AlertType.Success) &&
                             <Success style={styles.image} />
                         }
-                        {_type === AlertType.Error &&
+                        {icon() === AlertType.Error &&
                             <Error style={styles.image} />
                         }
-                        {_type === AlertType.Info &&
+                        {icon() === AlertType.Info &&
                             <Info style={styles.image} />
                         }
                         <View style={styles.messageContainer}>
                             <Text style={styles.message}>{message}</Text>
                         </View>
+                        {_type === AlertType.Voting &&
+                            <View style={{ alignItems: 'center' }}>
+                                <Stars
+                                    half={false}
+                                    default={rating}
+                                    update={setStarsSelected}
+                                    spacing={10 * theme.dimensions.absoluteWidth}
+                                    starSize={50 * theme.dimensions.absoluteWidth}
+                                    count={5}
+                                    zero={true}
+                                    fullStar={require('@assets/icons/star.png')}
+                                    emplyStar={require('@assets/icons/starEmpty.png')}
+                                />
+                            </View>
+                        }
                         <View style={styles.buttonContainer}>
                             <View style={styles.buttonWrapperLeft} >
                                 <Button

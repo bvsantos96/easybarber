@@ -2,6 +2,7 @@
     "appName": "EasyBarbers",
     "yes": "Yes",
     "no": "No",
+    "submit": "Submit",
     "dismiss": "Dismiss",
     "logout": "Logout",
     "logoutSuccess": "Logout Successful",
@@ -205,6 +206,8 @@
         "subTitle": "In order to show you nearby barbers, we\nneed to know your location."
     },
     "appointments": {
+        "feedback": "Let us know how your {service} with {employee} at {establishment} went on {date} at {time}. Your feedback is greatly appreciated and helps us improve our services.",
+        "feedBackThanks": "Thank you for sharing your thoughts!",
         "seeAppointments": "See Appointments",
         "upcomming": "Upcomming",
         "book": "Book Appointment",
