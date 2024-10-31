@@ -122,4 +122,14 @@ public class AppointmentController {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
         }
     }
+
+    @GetMapping("/appointment/{id}/feedback/{feedback}")
+    public ResponseEntity<BaseResponseDTO> feedback(@PathVariable long id, @PathVariable int feedback) {
+        try {
+            appointmentService.feedback(id, feedback);
+            return ResponseEntity.status(HttpStatus.OK).body(new BaseResponseDTO("Feedback sent"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
+        }
+    }
 }
