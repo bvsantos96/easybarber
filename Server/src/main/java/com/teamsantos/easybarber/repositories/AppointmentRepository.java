@@ -74,7 +74,8 @@ public interface AppointmentRepository
                     s.date,
                     s.time,
                     s.confirmed,
-                    s.active
+                    s.active,
+                    s.feedback
                 )
                 FROM Appointment s
                 LEFT JOIN EmployeeImage ei on s.employee.id = ei.entity.id and ei.isMain = true
@@ -111,7 +112,8 @@ public interface AppointmentRepository
                     s.date,
                     s.time,
                     s.confirmed,
-                    s.active
+                    s.active,
+                    s.feedback
                 )
                 FROM Appointment s
                 LEFT JOIN EstablishmentImage esi on s.establishment.id = esi.entity.id and esi.isMain = true
