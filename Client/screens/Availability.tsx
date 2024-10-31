@@ -141,6 +141,7 @@ export default function Availability({ route, navigation }: Props) {
                 async () => {
                     let _employeeId = (employeeId !== undefined && employeeId !== 0) ? employeeId : time?.employeeIds.length === 1 ? time?.employeeIds[0] : undefined;
                     if (_employeeId !== undefined) {
+                        alert({ type: AlertType.Loading, message: "" });
                         if (await setAppointment({
                             id: 0,
                             establishmentId: establishmentId,
@@ -149,6 +150,7 @@ export default function Availability({ route, navigation }: Props) {
                             date: date,
                             time: time?.start || ""
                         })) {
+                            alert({ type: AlertType.Loading, message: "" });
                             alert({
                                 type: AlertType.Success, message: texts.appointments.success, onPress: () => {
                                     navigation.reset({
@@ -157,12 +159,14 @@ export default function Availability({ route, navigation }: Props) {
                                     });
                                 }
                             });
+
                             return;
                         } else {
                             alert({ type: AlertType.Error, message: texts.appointments.failed });
                         }
                         return;
                     }
+                    alert({ type: AlertType.Loading, message: "" });
                     navigation.navigate(Routes.EmployeeSelection, { establishmentId, serviceId, date, startHour: time?.start, availableEmployees: time?.employeeIds });
                     return;
                 }
