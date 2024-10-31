@@ -70,10 +70,12 @@ public class EmployeeService extends ServiceWithImages<Employee, EmployeeImage> 
     }
 
     @Transactional
-    public void addFeedback(Long id, int feedback) {
+    public void addFeedback(Long id, int feedback, boolean replace) {
         employeeRepository.findById(id).ifPresent(employee -> {
             employee.setSumVotes(employee.getSumVotes() + feedback);
-            employee.setNVotes(employee.getNVotes() + 1);
+            if (!replace) {
+                employee.setNVotes(employee.getNVotes() + 1);
+            }
             employeeRepository.save(employee);
         });
     }

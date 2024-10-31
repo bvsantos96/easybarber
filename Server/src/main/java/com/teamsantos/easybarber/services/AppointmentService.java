@@ -194,8 +194,18 @@ public class AppointmentService {
         if (appointment.getUser().getId() != UserContext.getUserId()) {
             throw new IllegalArgumentException("You do not have permission to give feedback for this appointment");
         }
-        employeeService.addFeedback(appointment.getEmployee().getId(), feedback);
-        establishmentService.addFeedback(appointment.getEstablishment().getId(), feedback);
+
+        boolean replace = false;
+        if (appointment.getFeedback() != null) {
+            if (appointment.getFeedback() == feedback) {
+                return;
+            }
+            replace = true;
+            feedback -= appointment.getFeedback();
+        }
+        employeeService.addFeedback(appointment.getEmployee().getId(), feedback, replace);
+        establishmentService.addFeedback(appointment.getEstablishment().getId(), feedback, replace);
+        appointment.setFeedback(feedback);
         appointment.setFeedbackAsked(true);
         appointmentRepository.save(appointment);
     }

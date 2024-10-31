@@ -125,6 +125,7 @@ declare interface AppointmentInfo extends Identifiable {
     confirmed: boolean;
     cancelled: boolean;
     photo: string;
+    feedback: number;
 }
 
 declare interface IFilterRequest {
