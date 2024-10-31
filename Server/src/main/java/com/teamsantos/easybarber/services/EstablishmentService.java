@@ -403,7 +403,17 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         establishmentStaffRepository.deletebyEstablishmentIdAndEmployeeId(establishmentId, employeeId);
     }
 
+    @Transactional(readOnly = true)
     public Long getServiceId(Long establishmentServiceId) {
         return establishmentServiceRepository.getServiceId(establishmentServiceId);
+    }
+
+    @Transactional
+    public void addFeedback(Long id, int feedback) {
+        Establishment establishment = establishmentRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Establishment not found"));
+        establishment.setSumVotes(establishment.getSumVotes() + feedback);
+        establishment.setNVotes(establishment.getNVotes() + 1);
+        establishmentRepository.save(establishment);
     }
 }

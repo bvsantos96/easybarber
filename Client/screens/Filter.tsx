@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text } from 'react-native';
 import Stars from 'react-native-stars';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { getStyles } from '../styles/Filter';
 import Button from '../components/Button';
@@ -101,11 +102,10 @@ export default function Filter({ filter, setFilter }) {
                         default={rating}
                         update={setStarsSelected}
                         spacing={10 * theme.dimensions.absoluteWidth}
-                        starSize={50 * theme.dimensions.absoluteWidth}
                         count={5}
                         zero={true}
-                        fullStar={require('@assets/icons/star.png')}
-                        emplyStar={require('@assets/icons/starEmpty.png')}
+                        fullStar={<Ionicons name="star" size={50 * theme.dimensions.absoluteWidth} color={theme.colors.mainColor} />}
+                        emptyStar={<Ionicons name="star-outline" size={50 * theme.dimensions.absoluteWidth} color={theme.colors.text.lightGray} />}
                     />
                 </View>
             </View>
