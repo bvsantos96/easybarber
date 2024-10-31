@@ -64,6 +64,7 @@ public interface AppointmentRepository
                 SELECT new com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO(
                     s.id,
                     s.service.service.name,
+                    s.employee.id,
                     s.employee.user.name,
                     s.establishment.id,
                     s.establishment.name,
@@ -100,6 +101,7 @@ public interface AppointmentRepository
                 SELECT new com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO(
                     s.id,
                     s.service.service.name,
+                    COALESCE(s.user.id),
                     COALESCE(s.nonRegisteredUser, s.user.name),
                     s.establishment.id,
                     s.establishment.name,
