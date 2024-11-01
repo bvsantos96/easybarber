@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,6 +18,7 @@ import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO;
 import com.teamsantos.easybarber.DTO.appointment.CancelAppointmentDTO;
+import com.teamsantos.easybarber.DTO.appointment.FeedbackDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.entities.Appointment;
 import com.teamsantos.easybarber.repositories.AppointmentRepository;
@@ -208,5 +210,21 @@ public class AppointmentService {
         appointment.setFeedback(feedback);
         appointment.setFeedbackAsked(true);
         appointmentRepository.save(appointment);
+    }
+
+    @Transactional
+    public FeedbackDTO feedbackAsked() {
+        Pageable pageable = PageRequest.of(0, 1);
+        List<Appointment> appointments = appointmentRepository
+                .findTopByUserIdAndFeedbackAskedFalseOrderByDateDescTimeDesc(UserContext.getUserId(), pageable);
+
+        Appointment appointment = appointments.isEmpty() ? null : appointments.get(0);
+        if (appointment == null) {
+            return new FeedbackDTO();
+        }
+        appointment.setFeedbackAsked(false);
+        appointmentRepository.save(appointment);
+        return new FeedbackDTO(appointment.getId(), appointment.getEmployee().getUser().getName(),
+                appointment.getEstablishment().getName());
     }
 }

@@ -13,6 +13,7 @@ import { ResponseType } from '../enums';
 import { twoDigits } from './Utils';
 import useAlertStore from 'storage/stores/AlertStore';
 import { AlertType } from '@components/Alert';
+import { useTheme } from '@styles/ThemeContext';
 
 export const getTimes = async ({ from, to }: { from?: string, to?: string }): Promise<PickerItem[]> => {
     from = from || "08:00";
@@ -612,4 +613,38 @@ export const getFavorites = async (page?: IPage<EstablishmentInfo>, params?: Rec
     if (!params.hasOwnProperty("longitude"))
         params["longitude"] = location.longitude;
     return await pageGet<EstablishmentInfo>("/favorites/establishments", page, params);
+}
+
+export const requestFeedback = async (): Promise<void> => {
+    const {
+        alert
+    } = useAlertStore.getState();
+    const response = await request<Feedback>("/appointments/feedback", "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    if (response.success) {
+        try {
+            if (response.data !== undefined && response.data !== null && response.data?.id !== undefined && response.data?.id !== null && response.data?.id as number > 0) {
+                const message = langs.appointments.feedback.replace("{employee}", response.data?.employeeName || "").replace("{establishment}", response.data?.establishmentName || "");
+                alert({
+                    type: AlertType.Voting,
+                    defaultVoting: 0,
+                    message: message,
+                    fontSize: 16,
+                    message2: langs.appointments.feedBackThanks,
+                    buttonText: langs.submit,
+                    onPress: async (rank: number) => {
+                        appointmentFeedback(response.data?.id as number, rank);
+                    },
+                    onPress2: () => { },
+                    buttonText2: langs.dismiss
+                });
+                return;
+            }
+            console.log("else ", response.data);
+            return;
+        } catch {
+            console.log("catch ", response.data);
+            return;
+        }
+    }
+    throw new Error(langs.apiMessages.failed);
 }
