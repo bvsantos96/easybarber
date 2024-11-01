@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Stars from 'react-native-stars';
-import { View, Text, Animated } from 'react-native';
+import { View, Text, Animated, ActivityIndicator } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 
 import { getStyles } from '../styles/Alert';
@@ -18,6 +18,7 @@ export enum AlertType {
     Error = 'error',
     Info = 'info',
     Voting = 'voting',
+    Loading = 'loading',
 }
 
 export interface AlertProps {
@@ -29,6 +30,7 @@ export interface AlertProps {
     onPress2?: () => void;
     buttonText2?: string;
     fontSize?: number;
+    defaultVoting?: number;
 }
 
 interface Props extends AlertProps {
@@ -48,7 +50,8 @@ export const CustomAlert: React.FC<Props> = ({
     buttonText,
     buttonText2,
     onPress2,
-    type
+    type,
+    defaultVoting
 }) => {
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const scaleAnim = useRef(new Animated.Value(0.8)).current;
@@ -133,6 +136,8 @@ export const CustomAlert: React.FC<Props> = ({
                 return <Info style={styles.image} />
             case AlertType.Voting:
                 return <Voting style={styles.image} />
+            case AlertType.Loading:
+                return <></>
             case AlertType.Success:
             default:
                 return <Success style={styles.image} />
@@ -145,6 +150,7 @@ export const CustomAlert: React.FC<Props> = ({
     useEffect(() => {
         setColor(_backgroundColor());
         setIcon(_icon());
+        setRating(defaultVoting || 0);
     }, [visible]);
 
     return (
@@ -159,74 +165,78 @@ export const CustomAlert: React.FC<Props> = ({
                         },
                     ]}
                 >
-                    <Animated.View
-                        style={[
-                            styles.alertBox,
-                            {
-                                transform: [{ scale: scaleAnim }],
-                            },
-                        ]}
-                    >
-                        <View style={styles.alertView}>
-                            <Divider size={20} horizontal={false} />
-                            {icon}
-                            <Divider size={30} horizontal={false} />
-                            <Text style={[styles.message, fontSize ? { fontSize: fontSize } : {}]}>{message}</Text>
-                            {_type === AlertType.Voting ? (
-                                <>
-                                    <Divider size={15} horizontal={false} />
-                                    <View style={styles.votingContainer}>
-                                        <Stars
-                                            half={false}
-                                            default={rating}
-                                            update={setStarsSelected}
-                                            spacing={10 * theme.dimensions.absoluteWidth}
-                                            starSize={starsSize}
-                                            count={5}
-                                            zero={true}
-                                            fullStar={<Ionicons name="star" size={starsSize} color={theme.colors.mainColor} />}
-                                            emptyStar={<Ionicons name="star-outline" size={starsSize} color={theme.colors.text.lightGray} />}
-                                        />
-                                    </View>
+                    {_type === AlertType.Loading ? (
+                        <ActivityIndicator style={styles.center} size="large" color={theme.colors.text.lightGray} />
+                    ) : (
+                        <Animated.View
+                            style={[
+                                styles.alertBox,
+                                {
+                                    transform: [{ scale: scaleAnim }],
+                                },
+                            ]}
+                        >
+                            <View style={styles.alertView}>
+                                <Divider size={20} horizontal={false} />
+                                {icon}
+                                <Divider size={30} horizontal={false} />
+                                <Text style={[styles.message, fontSize ? { fontSize: fontSize } : {}]}>{message}</Text>
+                                {_type === AlertType.Voting ? (
+                                    <>
+                                        <Divider size={15} horizontal={false} />
+                                        <View style={styles.votingContainer}>
+                                            <Stars
+                                                half={false}
+                                                default={rating}
+                                                update={setStarsSelected}
+                                                spacing={10 * theme.dimensions.absoluteWidth}
+                                                starSize={starsSize}
+                                                count={5}
+                                                zero={true}
+                                                fullStar={<Ionicons name="star" size={starsSize} color={theme.colors.mainColor} />}
+                                                emptyStar={<Ionicons name="star-outline" size={starsSize} color={theme.colors.text.lightGray} />}
+                                            />
+                                        </View>
+                                        <Divider size={10} horizontal={false} />
+                                    </>
+                                ) : (
                                     <Divider size={10} horizontal={false} />
-                                </>
-                            ) : (
+                                )}
+                                {message2 &&
+                                    <>
+                                        <Divider size={10} horizontal={false} />
+                                        <Text style={[styles.message, styles.message2]}>{message2}</Text>
+                                        <Divider size={10} horizontal={false} />
+                                    </>
+                                }
                                 <Divider size={10} horizontal={false} />
-                            )}
-                            {message2 &&
-                                <>
-                                    <Divider size={10} horizontal={false} />
-                                    <Text style={[styles.message, styles.message2]}>{message2}</Text>
-                                    <Divider size={10} horizontal={false} />
-                                </>
-                            }
-                            <Divider size={10} horizontal={false} />
-                            <View style={styles.buttonContainer} >
-                                <View style={styles.buttonWrapperLeft} >
-                                    <Button
-                                        backgroundColor={color}
-                                        borderColor={color}
-                                        title={_buttonText}
-                                        onPress={() => handleClose(onPress)}
-                                        stylesInput={styles.button}
-                                    />
-                                </View>
-                                {onPress2 &&
-                                    <View style={[styles.buttonWrapperRight, theme.shadow]} >
+                                <View style={styles.buttonContainer} >
+                                    <View style={styles.buttonWrapperLeft} >
                                         <Button
-                                            buttonTextColor={color}
-                                            backgroundColor={styles.button2.backgroundColor}
+                                            backgroundColor={color}
                                             borderColor={color}
-                                            title={_buttonText2}
-                                            onPress={() => handleClose(onPress2)}
+                                            title={_buttonText}
+                                            onPress={() => handleClose(onPress)}
                                             stylesInput={styles.button}
                                         />
                                     </View>
-                                }
+                                    {onPress2 &&
+                                        <View style={[styles.buttonWrapperRight, theme.shadow]} >
+                                            <Button
+                                                buttonTextColor={color}
+                                                backgroundColor={styles.button2.backgroundColor}
+                                                borderColor={color}
+                                                title={_buttonText2}
+                                                onPress={() => handleClose(onPress2)}
+                                                stylesInput={styles.button}
+                                            />
+                                        </View>
+                                    }
+                                </View>
+                                <Divider size={25} horizontal={false} />
                             </View>
-                            <Divider size={25} horizontal={false} />
-                        </View>
-                    </Animated.View>
+                        </Animated.View>
+                    )}
                 </Animated.View>
             )}
         </>

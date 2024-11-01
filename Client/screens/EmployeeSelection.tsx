@@ -58,6 +58,7 @@ export default function EmployeeSelection({ navigation, route }: Props) {
             onButtonPress={
                 async () => {
                     if (date && startHour && selected != 0) {
+                        alert({ type: AlertType.Loading, message: "" });
                         if (await setAppointment({
                             id: 0,
                             establishmentId,
@@ -66,6 +67,7 @@ export default function EmployeeSelection({ navigation, route }: Props) {
                             date,
                             time: startHour
                         })) {
+                            alert({ type: AlertType.Loading, message: "" });
                             alert({
                                 type: AlertType.Success, message: texts.appointments.success, buttonText: texts.appointments.seeAppointments, onPress: () => {
                                     resetNavigation(navigation, Routes.Appointments);

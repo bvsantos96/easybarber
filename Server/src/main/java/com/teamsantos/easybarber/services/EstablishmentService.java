@@ -403,7 +403,19 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         establishmentStaffRepository.deletebyEstablishmentIdAndEmployeeId(establishmentId, employeeId);
     }
 
+    @Transactional(readOnly = true)
     public Long getServiceId(Long establishmentServiceId) {
         return establishmentServiceRepository.getServiceId(establishmentServiceId);
+    }
+
+    @Transactional
+    public void addFeedback(Long id, int feedback, boolean replace) {
+        establishmentRepository.findById(id).ifPresent(establishment -> {
+            establishment.setSumVotes(establishment.getSumVotes() + feedback);
+            if (!replace) {
+                establishment.setNVotes(establishment.getNVotes() + 1);
+            }
+            establishmentRepository.save(establishment);
+        });
     }
 }

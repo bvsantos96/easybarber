@@ -11,7 +11,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import Divider from "./Divider";
 import Pressable from "./Pressable";
 import { gotoLocation } from "utils/Location";
-import { cancelAppointment } from "utils/ApiRequest";
+import { appointmentFeedback, cancelAppointment } from "utils/ApiRequest";
 import texts from "@lang/en.json";
 import useAlertStore from "storage/stores/AlertStore";
 import { AlertType } from "./Alert";
@@ -169,12 +169,14 @@ export default function AppointmentItem({ navigation, appointment, cancel, past 
                                     const message = texts.appointments.feedback.replace("{employee}", appointment.entityName).replace("{establishment}", appointment.establishmentName);
                                     alert({
                                         type: AlertType.Voting,
+                                        defaultVoting: appointment.feedback,
                                         message: message,
                                         fontSize: theme.fonts.size._16,
                                         message2: texts.appointments.feedBackThanks,
                                         buttonText: texts.submit,
                                         onPress: async (rank: number) => {
-                                            console.log(rank);
+                                            appointment.feedback = rank;
+                                            appointmentFeedback(appointment.id, rank);
                                         },
                                         onPress2: () => { },
                                         buttonText2: texts.dismiss

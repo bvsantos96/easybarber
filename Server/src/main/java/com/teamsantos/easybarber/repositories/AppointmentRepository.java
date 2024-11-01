@@ -64,6 +64,7 @@ public interface AppointmentRepository
                 SELECT new com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO(
                     s.id,
                     s.service.service.name,
+                    s.employee.id,
                     s.employee.user.name,
                     s.establishment.id,
                     s.establishment.name,
@@ -73,7 +74,8 @@ public interface AppointmentRepository
                     s.date,
                     s.time,
                     s.confirmed,
-                    s.active
+                    s.active,
+                    s.feedback
                 )
                 FROM Appointment s
                 LEFT JOIN EmployeeImage ei on s.employee.id = ei.entity.id and ei.isMain = true
@@ -100,6 +102,7 @@ public interface AppointmentRepository
                 SELECT new com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO(
                     s.id,
                     s.service.service.name,
+                    COALESCE(s.user.id),
                     COALESCE(s.nonRegisteredUser, s.user.name),
                     s.establishment.id,
                     s.establishment.name,
@@ -109,7 +112,8 @@ public interface AppointmentRepository
                     s.date,
                     s.time,
                     s.confirmed,
-                    s.active
+                    s.active,
+                    s.feedback
                 )
                 FROM Appointment s
                 LEFT JOIN EstablishmentImage esi on s.establishment.id = esi.entity.id and esi.isMain = true

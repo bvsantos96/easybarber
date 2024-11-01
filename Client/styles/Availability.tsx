@@ -14,6 +14,7 @@ export const getStyles = () => {
         },
         slotsContainer: {
             position: 'absolute',
+            backgroundColor: theme.colors.backgroundColor,
             top: 340 * theme.dimensions.absoluteHeight,
             left: 2 * padding,
             width: theme.dimensions.width - (padding * 4),
