@@ -1,14 +1,11 @@
 package com.teamsantos.easybarber.services;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -226,13 +223,7 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public Page<EstablishmentDTO> getFavoriteEstablishments(Long userId, Pageable pageable) {
-        Page<Establishment> establishmentsPage = userRepository.findFavoriteEstablishmentsByUserId(userId, pageable);
-
-        List<EstablishmentDTO> dtoList = establishmentsPage.getContent().stream()
-                .map(establishment -> new EstablishmentDTO())
-                .collect(Collectors.toList());
-
-        return new PageImpl<>(dtoList, pageable, establishmentsPage.getTotalElements());
+        return userRepository.findFavoriteEstablishmentsByUserId(userId, pageable);
     }
 
     @Transactional(readOnly = true)

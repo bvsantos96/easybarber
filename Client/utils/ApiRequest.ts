@@ -585,7 +585,10 @@ export const makeRequest = async (url: string, method: string = "GET"): Promise<
 }
 
 export const isFavorite = async (id: number): Promise<boolean> => {
-    console.log(id);
     const response = await request<boolean>(`establishment/${id}/favorite`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
     return getItemsFromRequest(response);
+}
+
+export const getFavorites = async (page?: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>): Promise<IPage<EstablishmentInfo> | undefined> => {
+    return await pageGet<EstablishmentInfo>("/favorites/establishments", page, params);
 }

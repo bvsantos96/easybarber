@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.user.UserSignInDTO;
-import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.User;
 
 @Repository
@@ -52,11 +52,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("""
             SELECT new com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO(e.id,
-            e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location, :location) AS distance, e.nVotes, e.sumVotes, i)
+            e.name, e.description, e.address, e.location, e.nVotes, e.sumVotes, i)
             FROM User u
             JOIN u.favoriteEstablishments e
             LEFT JOIN EstablishmentImage i ON i.isMain = true AND i.entity.id = e.id
-            WHERE u.id = :userId
             """)
-    Page<Establishment> findFavoriteEstablishmentsByUserId(Long userId, Pageable pageable);
+    Page<EstablishmentDTO> findFavoriteEstablishmentsByUserId(Long userId, Pageable pageable);
 }
