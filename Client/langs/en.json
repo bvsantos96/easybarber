@@ -44,6 +44,9 @@
             "name": "Tabs",
             "homeNavigator": {
                 "name": "Home",
+                "favorites": {
+                    "name": "Favorites"
+                },
                 "home": {
                     "name": "Home"
                 },

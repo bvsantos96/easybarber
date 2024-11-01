@@ -3,9 +3,9 @@ import HomeNavigator from "@screens/HomeNavigator";
 import Appointments from "@screens/Appointments";
 import HomeIcon from "@assets/icons/home.svg";
 import AppointmentsIcon from "@assets/icons/appointments.svg";
-import { Params } from "@navigation/Router";
-import Favorites from "@screens/Favorites";
 import Heart from "@assets/icons/Heart";
+import { Params } from "@navigation/Router";
+import FavoriteNavigator from "@screens/FavoritesNavigator";
 
 const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
     Home: {
@@ -23,8 +23,8 @@ const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
     },
     Favorites: {
         title: texts.navigation.tabs.favorites.name,
-        hasHeader: true,
-        component: Favorites,
+        hasHeader: false,
+        component: FavoriteNavigator,
         tabicon: Heart,
         requiresAuth: true
     },
