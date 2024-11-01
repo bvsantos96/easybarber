@@ -274,3 +274,8 @@ declare interface LoginInfo {
     phone: string;
     password: string;
 }
+
+declare interface Feedback extends Identifiable {
+    employeeName: string;
+    establishmentName: string;
+}
