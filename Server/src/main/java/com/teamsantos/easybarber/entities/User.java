@@ -66,6 +66,17 @@ public class User {
     @ToString.Exclude
     @BatchSize(size = 10)
     private Set<Location> location;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "user_favorite", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "establishment_id"))
+    @BatchSize(size = 10)
+    private Set<Establishment> favoriteEstablishments = new HashSet<>();
+
+    public void addFavoriteEstablishment(Establishment establishment) {
+        if(favoriteEstablishments == null) {
+            favoriteEstablishments = new HashSet<>();
+        }
+        favoriteEstablishments.add(establishment);
+    }
 
     public User(long id, String countryMobile, String mobile, String name, Set<UserType> userTypes) {
         this.id = id;

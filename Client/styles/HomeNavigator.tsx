@@ -17,7 +17,7 @@ export const getStyles = () => {
             borderWidth: 1,
         },
         goBackIcon: {
-            width: 24,
+            width: 24 * theme.dimensions.absoluteWidth,
         },
         header: {
             justifyContent: 'center',
@@ -45,6 +45,6 @@ export const getStyles = () => {
         headerFiller: {
             minWidth: 35 * theme.dimensions.absoluteWidth,
             minHeight: 35 * theme.dimensions.absoluteHeight,
-        }
+        },
     });
 }
