@@ -11,7 +11,7 @@ import { useTheme } from "@styles/ThemeContext";
 import { MarkedDates } from "react-native-calendars/src/types";
 import { Underline } from "@components/Underline";
 import TimeSlotView from "@components/TimeSlotView";
-import { getAvailability, getStartingHour, getUnavailableDates, setAppointment } from "utils/ApiRequest";
+import { getAvailability, getStartingHour, getToken, getUnavailableDates, setAppointment } from "utils/ApiRequest";
 import useAlertStore from "storage/stores/AlertStore";
 import { AlertType } from "@components/Alert";
 import texts from "@lang/en.json";
@@ -137,7 +137,18 @@ export default function Availability({ route, navigation }: Props) {
             onButtonPress={
                 async () => {
                     let _employeeId = (employeeId !== undefined && employeeId !== 0) ? employeeId : time?.employeeIds.length === 1 ? time?.employeeIds[0] : undefined;
-                    if (_employeeId !== undefined) {
+                    if(await getToken() === null){
+                        alert({
+                            type: AlertType.Error, message: texts.login.required, buttonText:"Sign in", onPress: () => {
+                                navigation.reset({
+                                    index: 0,
+                                    routes: [{ name: 'Sign' }],
+                                });
+                            }
+                        });
+                        return;
+                    }
+                    else if (_employeeId !== undefined) {
                         if (await setAppointment({
                             id: 0,
                             establishmentId: establishmentId,
