@@ -2,13 +2,10 @@ import React, { useEffect, useRef } from 'react';
 import { View } from 'react-native';
 import { getStyles } from '../styles/Appointments';
 import { useState } from 'react';
-import { getAppointmentCount, getAppointments, getToken } from '../utils/ApiRequest';
+import { getAppointmentCount, getAppointments } from '../utils/ApiRequest';
 import AppointmentItem from '../components/AppointmentItem';
 import PageList, { PageListRef } from '../components/PageList';
 import AnimatedSwitch from '@components/AnimatedSwitch';
-import { AlertType } from '@components/Alert';
-import useAlertStore from 'storage/stores/AlertStore';
-import { Routes } from '@navigation/Router';
 import texts from '@lang/en.json';
 
 export default function Appointments({ navigation }: PropNavigation) {
