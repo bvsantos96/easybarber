@@ -216,4 +216,17 @@ public interface AppointmentRepository
                     AND a.confirmed = true
             """, nativeQuery = true)
     Optional<Tuple> countAppointments(long userId, boolean userView);
+
+    @Query("""
+                SELECT a
+                FROM Appointment a
+                WHERE a.user.id = :userId
+                AND a.feedbackAsked IS NULL OR a.feedbackAsked = false
+                AND a.active = true
+                AND a.confirmed = true
+                AND a.date < CURRENT_DATE
+                ORDER BY a.date DESC, a.time DESC
+            """)
+    List<Appointment> findTopByUserIdAndFeedbackAskedFalseOrderByDateDescTimeDesc(@Param("userId") long userId,
+            Pageable pageable);
 }
