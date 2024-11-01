@@ -1,20 +1,25 @@
 package com.teamsantos.easybarber.services;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.employee.EmployeeCreateDTO;
+import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.user.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.user.UserDTO;
 import com.teamsantos.easybarber.DTO.user.UserSignInDTO;
 import com.teamsantos.easybarber.entities.Employee;
+import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.User;
 import com.teamsantos.easybarber.entities.UserType;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
@@ -201,5 +206,40 @@ public class UserService {
         User user = userOpt.get();
         user.setPassword(PasswordEncoding.encode(newPwd));
         userRepository.save(user);
+    }
+
+    @Transactional
+    public void favorite(Long establishmentId) {
+        userRepository.findById(UserContext.getUserId()).ifPresent(user -> {
+            user.addFavoriteEstablishment(entityManager.getReference(Establishment.class, establishmentId));
+            userRepository.save(user);
+        });
+    }
+
+    @Transactional
+    public void unfavorite(Long establishmentId) {
+        userRepository.findById(UserContext.getUserId()).ifPresent(user -> {
+            user.getFavoriteEstablishments().removeIf(establishment -> establishment.getId().equals(establishmentId));
+            userRepository.save(user);
+        });
+    }
+
+    @Transactional(readOnly = true)
+    public Page<EstablishmentDTO> getFavoriteEstablishments(Long userId, Pageable pageable) {
+        Page<Establishment> establishmentsPage = userRepository.findFavoriteEstablishmentsByUserId(userId, pageable);
+
+        List<EstablishmentDTO> dtoList = establishmentsPage.getContent().stream()
+                .map(establishment -> new EstablishmentDTO())
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(dtoList, pageable, establishmentsPage.getTotalElements());
+    }
+
+    @Transactional(readOnly = true)
+    public boolean isFavorite(Long establishmentId) {
+        return userRepository.findById(UserContext.getUserId()).map(user -> {
+            return user.getFavoriteEstablishments().stream()
+                    .anyMatch(establishment -> establishment.getId().equals(establishmentId)) ? true : false;
+        }).orElse(false);
     }
 }

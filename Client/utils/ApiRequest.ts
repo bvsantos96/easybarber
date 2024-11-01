@@ -575,3 +575,17 @@ export const appointmentFeedback = async (appointmentId: number, rating: number)
     }
     return false;
 }
+
+export const makeRequest = async (url: string, method: string = "GET"): Promise<boolean> => {
+    const response = await request(url, method, null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.NONE);
+    if (response.success) {
+        return true;
+    }
+    return false;
+}
+
+export const isFavorite = async (id: number): Promise<boolean> => {
+    console.log(id);
+    const response = await request<boolean>(`establishment/${id}/favorite`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    return getItemsFromRequest(response);
+}
