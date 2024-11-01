@@ -65,7 +65,10 @@
             },
             "appointments": {
                 "name": "Appointments"
-            }
+            },
+            "favorites": {
+                "name": "Favorites"
+            },
         },
         "loading": {
             "name": "Loading"

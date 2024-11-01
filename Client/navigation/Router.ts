@@ -23,6 +23,7 @@ export const Params = {
     Settings: undefined,
     Home: undefined,
     Appointments: undefined,
+    Favorites: undefined,
 } as const;
 
 export const Routes = {
