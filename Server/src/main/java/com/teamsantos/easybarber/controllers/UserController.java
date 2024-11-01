@@ -93,7 +93,8 @@ public class UserController {
                 location = GeometryUtils.parseLocation(latitude, longitude);
             }
             return ResponseEntity
-                    .ok(new BasePageDTO<>(userService.getFavoriteEstablishments(UserContext.getUserId(), pageable)));
+                    .ok(new BasePageDTO<>(
+                            userService.getFavoriteEstablishments(UserContext.getUserId(), location, pageable)));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }
