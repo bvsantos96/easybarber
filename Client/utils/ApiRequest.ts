@@ -434,6 +434,12 @@ export const getEmployee = async (id: number): Promise<EmployeeInfo | undefined>
 }
 
 export const getAppointmentCount = async (): Promise<AppointmentCounts> => {
+    if( await getToken() === null){
+        return {
+            upcomming: 0,
+            past: 0
+        }
+    }
     return getItemsFromRequest<AppointmentCounts>(await request<AppointmentCounts>(`appointment/count`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT));
 }
 
@@ -461,6 +467,9 @@ export const getNearByBarbers = async (page?: IPage<EstablishmentInfo>, params?:
 }
 
 export const setNewLocation = async (location: ILocation): Promise<number> => {
+    if(await getToken() === null){
+        return -1;
+    }
     const response = await request<number>("/location", "POST", location, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success && response.data !== undefined && response.data !== null) {
         return response.data;
@@ -490,7 +499,7 @@ export const getApiVersion = async (): Promise<string> => {
 }
 
 export const getMobileCode = async (phoneCountryCode:string, phoneNr: string): Promise<boolean> => {
-    const response = await request("/sms/confirmation", "POST", {phoneNr: phoneNr, phoneCountryCode: phoneCountryCode}, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+    const response = await request("/sms/confirmation", "POST", {phoneNr: phoneNr, phoneCountryCode: "+"+phoneCountryCode}, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
@@ -506,7 +515,7 @@ export const confirmMobileCode = async (phoneNr: string, confirmationCode: strin
 }
 
 export const getMobileCodeResetPwd = async (phoneCountryCode:string, phoneNr: string): Promise<boolean> => {
-    const response = await request("/sms/resetpwd", "POST", {phoneNr: phoneNr, phoneCountryCode: phoneCountryCode}, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+    const response = await request("/sms/resetpwd", "POST", {phoneNr: phoneNr, phoneCountryCode: "+"+phoneCountryCode}, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
