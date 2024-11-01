@@ -94,7 +94,7 @@ public interface AppointmentRepository
                     )
                 )
                 and (:#{#filter.activeOnly} is null or s.active = :#{#filter.activeOnly})
-                ORDER BY s.date DESC, s.time DESC
+                ORDER BY s.date ASC, s.time ASC
             """)
     Page<AppointmentListDTO> findAllToUser(AppointmentFilter filter, Pageable pageable);
 
@@ -131,7 +131,7 @@ public interface AppointmentRepository
                     )
                 )
                 and (:#{#filter.activeOnly} is null or s.active = :#{#filter.activeOnly})
-                ORDER BY s.date DESC, s.time DESC
+                ORDER BY s.date ASC, s.time ASC
             """)
     Page<AppointmentListDTO> findAllToEmployee(AppointmentFilter filter, Pageable pageable);
 
