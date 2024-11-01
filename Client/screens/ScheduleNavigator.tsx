@@ -28,7 +28,7 @@ export const Header = ({ navigation, title, hasGoBack = true, secondHeader, seco
     const debouncedSecond = useCallback(
         debounce((__selected: boolean) => {
             secondHeaderFunction && secondHeaderFunction(__selected);
-        }, 2000),
+        }, 1500),
         [secondHeaderFunction]
     );
 

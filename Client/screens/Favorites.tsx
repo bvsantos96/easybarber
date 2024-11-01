@@ -9,11 +9,12 @@ import { getSelectedLocation } from "utils/Location";
 
 export default function Favorites({ navigation }: PropNavigation) {
     const { selectedLocation } = useLocationStore();
-    const { updateFavorites } = useFavoriteStore();
+    const { updateFavorites, setUpdateFavorites } = useFavoriteStore();
     const [refresh, setRefresh] = useState(false);
 
     useEffect(() => {
         if (updateFavorites) {
+            setUpdateFavorites(false);
             setRefresh(!refresh);
         }
     }, [updateFavorites]);
