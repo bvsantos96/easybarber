@@ -7,7 +7,7 @@ import { getStyles as getExpandedGetStyles } from '../styles/ExpandableView';
 
 import TopBar from '../components/TopBar';
 import { getNearByBarbers } from '../utils/ApiRequest';
-import ListItem from '../components/ListEstablishments';
+import ListItem from '../components/ListItem';
 
 import ExpandableView from '../components/ExpandableView';
 import Divider from '../components/Divider';
