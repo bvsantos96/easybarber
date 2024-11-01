@@ -3,6 +3,7 @@ package com.teamsantos.easybarber.repositories;
 import java.util.Optional;
 import java.util.Set;
 
+import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -56,6 +57,19 @@ public interface UserRepository extends JpaRepository<User, Long> {
             FROM User u
             JOIN u.favoriteEstablishments e
             LEFT JOIN EstablishmentImage i ON i.isMain = true AND i.entity.id = e.id
+            WHERE u.id = :userId
             """)
-    Page<EstablishmentDTO> findFavoriteEstablishmentsByUserId(Long userId, Pageable pageable);
+    Page<EstablishmentDTO> findFavoriteEstablishmentsByUserId(long userId, Pageable pageable);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO(e.id,
+            e.name, e.description, e.address, e.location, ST_Distance_Sphere(e.location,
+            :location) AS distance, e.nVotes, e.sumVotes, i)
+            FROM User u
+            JOIN u.favoriteEstablishments e
+            LEFT JOIN EstablishmentImage i ON i.isMain = true AND i.entity.id = e.id
+            WHERE u.id = :userId
+            ORDER BY distance ASC
+            """)
+    Page<EstablishmentDTO> findFavoriteEstablishmentsByUserId(long userId, Point location, Pageable pageable);
 }

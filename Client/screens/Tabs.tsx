@@ -1,16 +1,29 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTheme } from '../styles/ThemeContext';
 import SafeFullScreen from '../components/SafeFullScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import TabsNav from '@navigation/TabsNavigator';
-import { Params } from '@navigation/Router';
+import { Params, Routes } from '@navigation/Router';
+import { getToken } from 'utils/ApiRequest';
+import { AlertType } from '@components/Alert';
+import useAlertStore from 'storage/stores/AlertStore';
+import { TouchableOpacity } from 'react-native';
 
-export default function Tabs() {
+export default function Tabs({ navigation }: PropNavigation) {
     const Tab = createBottomTabNavigator<typeof Params>();
     const texts = require('../langs/en.json');
     const theme = useTheme();
     const inserts = useSafeAreaInsets();
+    const [authenticated, setAuthenticated] = useState(false);
+    const { alert } = useAlertStore();
+
+    useEffect(() => {
+        const checkAuthentication = async () => {
+            setAuthenticated(await getToken() !== null);
+        };
+        checkAuthentication();
+    }, []);
 
     return (
         <Tab.Navigator
@@ -22,11 +35,12 @@ export default function Tabs() {
                 tabBarStyle: [{
                     height: theme.dimensions.tabHeight + inserts.bottom,
                 }, theme.shadow],
-            }} >
+            }}>
             {TabsNav && Object.keys(TabsNav).map((key) => {
                 const _key = key as keyof typeof TabsNav;
                 const tab = TabsNav[_key];
                 if (!tab) return null;
+
                 return (
                     <Tab.Screen
                         key={_key}
@@ -53,10 +67,32 @@ export default function Tabs() {
                                 <tab.tabicon width={20 * theme.dimensions.absoluteWidth} height={20 * theme.dimensions.absoluteWidth} fill={theme.colors.mainColor} />
                             ),
                             tabBarLabel: tab.title,
-                        }} >
+                            tabBarButton: (props) => (
+                                <TouchableOpacity
+                                    {...props}
+                                    onPress={(event) => {
+                                        if (tab.requiresAuth && !authenticated) {
+                                            alert({
+                                                type: AlertType.Error,
+                                                message: texts.login.required,
+                                                buttonText: texts.login.signIn,
+                                                onPress: () => {
+                                                    navigation.reset({
+                                                        index: 0,
+                                                        routes: [{ name: Routes.Sign }],
+                                                    });
+                                                }
+                                            });
+                                        } else {
+                                            props.onPress?.(event);
+                                        }
+                                    }}
+                                />
+                            )
+                        }}>
                         {(props) => (<SafeFullScreen><tab.component {...props} /></SafeFullScreen>)}
                     </Tab.Screen>
-                )
+                );
             })}
         </Tab.Navigator>
     );
