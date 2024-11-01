@@ -20,6 +20,7 @@ import com.teamsantos.easybarber.DTO.appointment.AppointmentCountDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.appointment.CancelAppointmentDTO;
+import com.teamsantos.easybarber.DTO.appointment.FeedbackDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.exceptions.ForbidenException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
@@ -130,6 +131,15 @@ public class AppointmentController {
             return ResponseEntity.status(HttpStatus.OK).body(new BaseResponseDTO("Feedback sent"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/appointments/feedback")
+    public ResponseEntity<FeedbackDTO> feedbackAsked() {
+        try {
+            return ResponseEntity.status(HttpStatus.OK).body(appointmentService.feedbackAsked());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new FeedbackDTO());
         }
     }
 }
