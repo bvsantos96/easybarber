@@ -77,5 +77,9 @@ export const getStyles = () => {
             width: "80%",
             alignItems: 'center'
         },
+        center: {
+            justifyContent: 'center',
+            alignItems: 'center'
+        },
     })
 };

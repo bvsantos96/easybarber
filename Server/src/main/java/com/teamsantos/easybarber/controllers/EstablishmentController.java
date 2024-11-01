@@ -42,6 +42,7 @@ import com.teamsantos.easybarber.security.filters.EstablishmentSecurityExpressio
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.EstablishmentService;
 import com.teamsantos.easybarber.services.SchedulesService;
+import com.teamsantos.easybarber.services.UserService;
 import com.teamsantos.easybarber.utils.Utils;
 
 @RestController
@@ -49,12 +50,15 @@ import com.teamsantos.easybarber.utils.Utils;
 public class EstablishmentController extends ImageController<Establishment, EstablishmentImage> {
     private final SchedulesService schedulesService;
     private final EstablishmentService establishmentService;
+    private final UserService userService;
 
     @Autowired
-    public EstablishmentController(EstablishmentService service, SchedulesService schedulesService) {
+    public EstablishmentController(EstablishmentService service, SchedulesService schedulesService,
+            UserService userService) {
         super(service);
         this.establishmentService = service;
         this.schedulesService = schedulesService;
+        this.userService = userService;
     }
 
     @GetMapping("/{id}")
@@ -318,6 +322,41 @@ public class EstablishmentController extends ImageController<Establishment, Esta
             return ResponseEntity.ok(schedulesService.getSchedules(filter, pageable));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/{establishmentId}/favorite")
+    public ResponseEntity<BaseResponseDTO> favorite(@PathVariable Long establishmentId) {
+        BaseResponseDTO response = new BaseResponseDTO();
+        try {
+            userService.favorite(establishmentId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @DeleteMapping("/{establishmentId}/favorite")
+    public ResponseEntity<BaseResponseDTO> unfavorite(@PathVariable Long establishmentId) {
+        BaseResponseDTO response = new BaseResponseDTO();
+        try {
+            userService.unfavorite(establishmentId);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @GetMapping("/{establishmentId}/favorite")
+    public ResponseEntity<Boolean> isFavorite(@PathVariable Long establishmentId) {
+        BaseResponseDTO response = new BaseResponseDTO();
+        try {
+            return ResponseEntity.ok(userService.isFavorite(establishmentId));
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(false);
         }
     }
 }

@@ -1,8 +1,9 @@
 declare type StackInfo = {
     title: string;
-    hasHeader: boolean;
     component: React.FC<any>;
+    hasHeader: boolean;
     containerizedComponent: boolean;
+    secondHeader?: React.FC<any>;
 }
 
 declare type TabsInfo = {
@@ -96,6 +97,7 @@ declare interface EstablishmentInfo extends Identifiable {
     sumVotes: number;
     images: IImage[];
     load?: boolean;
+    favorite?: boolean;
 }
 
 declare interface AppointmentFilter extends Record<string, string | number | boolean> {
@@ -108,11 +110,13 @@ declare interface AppointmentFilter extends Record<string, string | number | boo
     userView?: boolean;
     future?: boolean;
     activeOnly?: boolean;
+    favorite?: boolean;
 }
 
 declare interface AppointmentInfo extends Identifiable {
     id: number;
     serviceName: string;
+    entityId: number;
     entityName: string;
     establishmentId: number;
     establishmentName: string;
@@ -124,6 +128,7 @@ declare interface AppointmentInfo extends Identifiable {
     confirmed: boolean;
     cancelled: boolean;
     photo: string;
+    feedback: number;
 }
 
 declare interface IFilterRequest {

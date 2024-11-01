@@ -54,6 +54,10 @@ public class Appointment {
     private Boolean confirmed = true;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean reminded = false;
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean feedbackAsked = false;
+    @Column
+    private Integer feedback;
 
     @Override
     public final boolean equals(Object o) {

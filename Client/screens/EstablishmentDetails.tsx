@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { getStyles } from '../styles/EstablishmentDetails';
 import { getStyles as getListStyles } from '../styles/List';
 import { getStyles as getSelectionStyles } from "../styles/Selection";
 
-import { getEstablishmentCats, getEstablishmentDetails, getEstablishmentServices, getImageList } from '../utils/ApiRequest';
+import { getEstablishmentCats, getEstablishmentDetails, getEstablishmentServices, getImageList, isFavorite, makeRequest } from '../utils/ApiRequest';
 import { gotoLocation } from '../utils/Location';
 import { Underline } from '../components/Underline';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
@@ -23,140 +23,174 @@ import { Params, Routes } from '@navigation/Router';
 
 export type Route = EstablishmentInfo;
 
-type Props = NativeStackScreenProps<typeof Params, 'EstablishmentDetails'>;
+export type SetSelectedRef = {
+    setSelected: (selected: boolean) => Promise<boolean>;
+    selected?: boolean;
+};
+type Props = NativeStackScreenProps<typeof Params, 'EstablishmentDetails'> & {
+    setFavorite: (favorite: boolean) => void;
+};
 
-export default function EstablishmentDetails({ route, navigation }: Props) {
-    const texts = require("@lang/en.json");
-    const styles = getStyles();
-    const selectionStyles = getSelectionStyles();
-    const listStyles = getListStyles();
-    const _establishment: EstablishmentInfo = route.params;
-    const [establishment, setEstablishment] = useState<EstablishmentInfo>(_establishment);
-    const [categories, setCategories] = useState<ICategory[]>([]);
+const EstablishmentDetails = forwardRef<SetSelectedRef, Props>(
+    ({ route, navigation, setFavorite }, ref) => {
+        const queryClient = useQueryClient();
 
-    useQuery({
-        queryKey: [`/establishment/${establishment?.id}/services/list`],
-        queryFn: async () => await getEstablishmentServices(establishment.id),
-        enabled: !!establishment?.id,
-        networkMode: 'offlineFirst',
-        staleTime: 60000,
-    });
+        const texts = require("@lang/en.json");
+        const styles = getStyles();
+        const selectionStyles = getSelectionStyles();
+        const listStyles = getListStyles();
+        const _establishment: EstablishmentInfo = route.params;
+        const [establishment, setEstablishment] = useState<EstablishmentInfo>(_establishment);
+        const [categories, setCategories] = useState<ICategory[]>([]);
 
-    const { data } = useQuery({
-        queryKey: [`establishment/${establishment.id}/details`, establishment.id],
-        queryFn: async () => getEstablishmentDetails(establishment.id),
-        enabled: !!(establishment.id) && !!(establishment.load),
-        networkMode: 'offlineFirst',
-        staleTime: 60000
-    });
-
-    useEffect(() => {
-        if (!!data) {
-            const est: EstablishmentInfo = {
-                id: data.id as number,
-                name: data.name,
-                description: data.description,
-                address: data.address,
-                latitude: data.latitude,
-                longitude: data.longitude,
-                distance: 0,
-                nvotes: data.nvotes,
-                sumVotes: data.sumVotes,
-                images: data.images,
-                load: false
-            };
-            setEstablishment(est);
+        const setSelected = async (selected: boolean) => {
+            queryClient.invalidateQueries({ queryKey: [`/establishment/${establishment?.id}/favorite`, establishment.id] });
+            return makeRequest(`establishment/${route.params.id}/favorite`, selected ? "POST" : "DELETE");
         }
-    }
-        , [data]);
 
-    useEffect(() => {
-        const fetchEstablishmentServices = async () => {
-            const establishmentCats = await getEstablishmentCats(establishment.id);
-            let _categories: ICategory[] = [];
-            if (establishmentCats) {
-                let _cats: ICategory[] = await retrieveCategories();
-                for (let cat of _cats) {
-                    if (establishmentCats.includes(cat.id)) {
-                        _categories.push(cat);
+        useImperativeHandle(ref, () => ({
+            setSelected,
+        }));
+
+        const { data: favoriteData } = useQuery({
+            queryKey: [`/establishment/${establishment?.id}/favorite`, establishment?.id],
+            queryFn: async () => await isFavorite(establishment.id),
+            enabled: !!establishment?.id,
+            networkMode: 'offlineFirst',
+            staleTime: 60000,
+        });
+
+        useEffect(() => {
+            if (favoriteData !== undefined) {
+                setFavorite(favoriteData);
+                setEstablishment({ ...establishment, favorite: favoriteData });
+            }
+        }, [favoriteData]);
+
+        useQuery({
+            queryKey: [`/establishment/${establishment?.id}/services/list`],
+            queryFn: async () => await getEstablishmentServices(establishment.id),
+            enabled: !!establishment?.id,
+            networkMode: 'offlineFirst',
+            staleTime: 60000,
+        });
+
+        const { data } = useQuery({
+            queryKey: [`establishment/${establishment.id}/details`, establishment.id],
+            queryFn: async () => getEstablishmentDetails(establishment.id),
+            enabled: !!(establishment.id) && !!(establishment.load),
+            networkMode: 'offlineFirst',
+            staleTime: 60000
+        });
+
+        useEffect(() => {
+            if (!!data) {
+                const est: EstablishmentInfo = {
+                    id: data.id as number,
+                    name: data.name,
+                    description: data.description,
+                    address: data.address,
+                    latitude: data.latitude,
+                    longitude: data.longitude,
+                    distance: 0,
+                    nvotes: data.nvotes,
+                    sumVotes: data.sumVotes,
+                    images: data.images,
+                    load: false
+                };
+                setEstablishment(est);
+            }
+        }, [data]);
+
+        useEffect(() => {
+            const fetchEstablishmentServices = async () => {
+                const establishmentCats = await getEstablishmentCats(establishment.id);
+                let _categories: ICategory[] = [];
+                if (establishmentCats) {
+                    let _cats: ICategory[] = await retrieveCategories();
+                    for (let cat of _cats) {
+                        if (establishmentCats.includes(cat.id)) {
+                            _categories.push(cat);
+                        }
                     }
                 }
+                setCategories(_categories);
             }
-            setCategories(_categories);
-        }
 
-        fetchEstablishmentServices();
-    }, [_establishment.id]);
+            fetchEstablishmentServices();
+        }, [_establishment.id]);
 
-    return (
-        <View style={selectionStyles.container}>
-            <View style={styles.imageStyle} >
-                {establishment?.images?.length > 0 &&
-                    <PageList<IImage>
-                        preload={false}
-                        type={PageListType.PAGERVIEW}
-                        initialItems={establishment.images}
-                        pageSize={4}
-                        renderItem={
-                            ({ item, index }: { item: IImage, index: number }) => {
-                                return (
-                                    <Image
-                                        key={index}
-                                        cachePolicy="memory-disk"
-                                        source={{ uri: (item.data || defaultBarberImage) }}
-                                        style={listStyles.imageStyle}
-                                    />
-                                )
+        return (
+            <View style={selectionStyles.container}>
+                <View style={styles.imageStyle} >
+                    {establishment?.images?.length > 0 &&
+                        <PageList<IImage>
+                            preload={false}
+                            type={PageListType.PAGERVIEW}
+                            initialItems={establishment.images}
+                            pageSize={4}
+                            renderItem={
+                                ({ item, index }: { item: IImage, index: number }) => {
+                                    return (
+                                        <Image
+                                            key={index}
+                                            cachePolicy="memory-disk"
+                                            source={{ uri: (item.data || defaultBarberImage) }}
+                                            style={listStyles.imageStyle}
+                                        />
+                                    )
+                                }
                             }
-                        }
-                        requestFunction={(page: IPage<IImage>, params?: Record<string, string | number | boolean>) => getImageList(`establishment/${establishment.id}`, page, params)} />
-                }
-                <ImageRating
-                    rating={establishment.nvotes > 0 ? (establishment.sumVotes / establishment.nvotes).toFixed(1) : "0.0"}
-                    nvotes={establishment?.nvotes ?? 0}
-                    right
-                />
-            </View>
-            <TouchableOpacity style={styles.nameContainer} onPress={() => { if (establishment) gotoLocation(establishment?.name, establishment?.address, establishment?.latitude, establishment.longitude) }}>
-                <Text style={styles.name}>{establishment?.name}</Text>
-                <Text style={styles.address}>{establishment?.address}</Text>
-            </TouchableOpacity>
-            <View style={styles.serviceTitleContainer}>
-                <Text style={styles.serviceTitle}>{texts.services.title}</Text>
-                <Underline />
-            </View>
-            <View style={styles.servicesContainer}>
-                {categories && categories.map((category) => (
-                    <Category
-                        padding={styles.categoryPadding.padding}
-                        style={{ marginHorizontal: styles.categoryPadding.margin }}
-                        key={category.id}
-                        id={category.id}
-                        icon={
-                            <SvgUri width={styles.categoryIcon.width}
-                                height={styles.categoryIcon.height}
-                                style={styles.alignCenter}
-                                uri={category.imageURL} />
-                        }
-                        title={category.name}
-                        selectedCategory={category.id} />
-                ))}
-            </View>
-            <View style={styles.aboutTitleContainer}>
-                <Text style={styles.aboutTitle}>{texts.about.title}</Text>
-                <Underline />
-            </View>
-            <Text style={styles.aboutText}>{establishment?.description}</Text>
-            <View style={selectionStyles.button}>
-                <Button
-                    stylesInput={{ width: '100%' }}
-                    onPress={
-                        () => {
-                            navigation.navigate(Routes.ServiceSelection, { establishmentId: establishment.id });
-                        }
-                    } title={texts.appointments.book} />
-            </View>
+                            requestFunction={(page: IPage<IImage>, params?: Record<string, string | number | boolean>) => getImageList(`establishment/${establishment.id}`, page, params)} />
+                    }
+                    <ImageRating
+                        rating={establishment.nvotes > 0 ? (establishment.sumVotes / establishment.nvotes).toFixed(1) : "0.0"}
+                        nvotes={establishment?.nvotes ?? 0}
+                        right
+                    />
+                </View>
+                <TouchableOpacity style={styles.nameContainer} onPress={() => { if (establishment) gotoLocation(establishment?.name, establishment?.address, establishment?.latitude, establishment.longitude) }}>
+                    <Text style={styles.name}>{establishment?.name}</Text>
+                    <Text style={styles.address}>{establishment?.address}</Text>
+                </TouchableOpacity>
+                <View style={styles.serviceTitleContainer}>
+                    <Text style={styles.serviceTitle}>{texts.services.title}</Text>
+                    <Underline />
+                </View>
+                <View style={styles.servicesContainer}>
+                    {categories && categories.map((category) => (
+                        <Category
+                            padding={styles.categoryPadding.padding}
+                            style={{ marginHorizontal: styles.categoryPadding.margin }}
+                            key={category.id}
+                            id={category.id}
+                            icon={
+                                <SvgUri width={styles.categoryIcon.width}
+                                    height={styles.categoryIcon.height}
+                                    style={styles.alignCenter}
+                                    uri={category.imageURL} />
+                            }
+                            title={category.name}
+                            selectedCategory={category.id} />
+                    ))}
+                </View>
+                <View style={styles.aboutTitleContainer}>
+                    <Text style={styles.aboutTitle}>{texts.about.title}</Text>
+                    <Underline />
+                </View>
+                <Text style={styles.aboutText}>{establishment?.description}</Text>
+                <View style={selectionStyles.button}>
+                    <Button
+                        stylesInput={{ width: '100%' }}
+                        onPress={
+                            () => {
+                                navigation.navigate(Routes.ServiceSelection, { establishmentId: establishment.id });
+                            }
+                        } title={texts.appointments.book} />
+                </View>
 
-        </View >
-    );
-}
+            </View >
+        );
+    });
+
+export default EstablishmentDetails;

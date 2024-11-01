@@ -107,9 +107,9 @@ const _request = async<T>(url: string, method: string, body: any, successMessage
             mode: 'cors',
             headers: {
                 ...(token && { 'Authorization': `Bearer ${token}` }),
-                ...(method !== "GET" && { 'Content-Type': 'application/json' }),
+                ...(method !== "GET" && body && { 'Content-Type': 'application/json' }),
             },
-            ...(method !== "GET" && { body: JSON.stringify(body) }),
+            ...(method !== "GET" && body && { body: JSON.stringify(body) }),
         });
     }
 
@@ -118,9 +118,9 @@ const _request = async<T>(url: string, method: string, body: any, successMessage
         mode: 'cors',
         headers: {
             ...(token && { 'Authorization': `Bearer ${token}` }),
-            ...(method !== "GET" && { 'Content-Type': 'application/json' }),
+            ...(method !== "GET" && body && { 'Content-Type': 'application/json' }),
         },
-        ...(method !== "GET" && { body: JSON.stringify(body) }),
+        ...(method !== "GET" && body && { body: JSON.stringify(body) }),
     }).then(async response => {
         let data;
         try {
@@ -577,3 +577,24 @@ const refreshToken = async (): Promise<boolean> => {
     }
 }
 
+export const appointmentFeedback = async (appointmentId: number, rating: number): Promise<boolean> => {
+    const response = await request(`/appointment/${appointmentId}/feedback/${rating}`, "POST", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.NONE);
+    if (response.success) {
+        return true;
+    }
+    return false;
+}
+
+export const makeRequest = async (url: string, method: string = "GET"): Promise<boolean> => {
+    const response = await request(url, method, null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.NONE);
+    if (response.success) {
+        return true;
+    }
+    return false;
+}
+
+export const isFavorite = async (id: number): Promise<boolean> => {
+    console.log(id);
+    const response = await request<boolean>(`establishment/${id}/favorite`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    return getItemsFromRequest(response);
+}
