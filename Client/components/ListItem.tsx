@@ -38,10 +38,12 @@ export default function ListItem({ establishment, onPress }: { establishment: Es
                 </View>
                 <View style={styles.textContainer} >
                     <Text numberOfLines={2} style={styles.title}>{establishment.name}</Text>
-                    <View style={styles.locationContainer}>
-                        <LocationIcon width={styles.locationIcon.width} height={styles.locationIcon.height} style={styles.locationIcon} />
-                        <Text style={styles.locationText}>{establishment.distance.toFixed(1)}{texts.kmAway}</Text>
-                    </View>
+                    {establishment.distance && (
+                        <View style={styles.locationContainer}>
+                            <LocationIcon width={styles.locationIcon.width} height={styles.locationIcon.height} style={styles.locationIcon} />
+                            <Text style={styles.locationText}>{establishment.distance.toFixed(1)}{texts.kmAway}</Text>
+                        </View>
+                    )}
                     <Text style={styles.description}>{establishment.description}</Text>
                 </View>
             </Pressable>
