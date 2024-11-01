@@ -1,12 +1,22 @@
 import ListItem from "@components/ListItem";
 import PageList from "@components/PageList";
 import { Routes } from "@navigation/Router";
+import { useEffect, useState } from "react";
+import useFavoriteStore from "storage/stores/FavoriteStore";
 import useLocationStore from "storage/stores/LocationStore";
 import { getFavorites } from "utils/ApiRequest";
 import { getSelectedLocation } from "utils/Location";
 
 export default function Favorites({ navigation }: PropNavigation) {
     const { selectedLocation } = useLocationStore();
+    const { updateFavorites } = useFavoriteStore();
+    const [refresh, setRefresh] = useState(false);
+
+    useEffect(() => {
+        if (updateFavorites) {
+            setRefresh(!refresh);
+        }
+    }, [updateFavorites]);
 
     const loadMoreLocations = async (page?: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>) => {
         let _selectedLocation: ILocation | undefined = selectedLocation;
@@ -19,6 +29,7 @@ export default function Favorites({ navigation }: PropNavigation) {
     return (
         <PageList<EstablishmentInfo>
             key="favorites"
+            reset={refresh}
             renderItem={({ item }: { item: EstablishmentInfo }) =>
                 <ListItem
                     onPress={
