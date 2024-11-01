@@ -37,11 +37,17 @@ export const getStyles = () => {
             maxHeight: theme.dimensions.height - topBarHeight - 80 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,
         },
         homeListContainer: {
-            flexGrow: 1,
+            flex: 1,
             width: "100%",
         },
         listBottom: {
             paddingBottom: 90 * theme.dimensions.absoluteHeight,
+        },
+        noSlotsContainer: {
+            height: 140 * theme.dimensions.absoluteHeight,
+            justifyContent: 'center',
+            alignSelf: 'center',
+            alignItems: 'center',
         },
     })
 };

@@ -1,5 +1,5 @@
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
-import { FlatList, View, Text, ViewStyle, NativeSyntheticEvent } from "react-native";
+import { FlatList, View, Text, ViewStyle, NativeSyntheticEvent, ActivityIndicator } from "react-native";
 import PagerView from "react-native-pager-view";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet/src";
 
@@ -8,6 +8,10 @@ import { TimedRequest } from "../utils/TimedRequest";
 import { createPageable } from "../utils/PageHandling";
 import { PageListType } from "../enums";
 import { debounce } from "lodash";
+import { useTheme } from "@styles/ThemeContext";
+import texts from "@lang/en.json";
+import Button from "./Button";
+import Divider from "./Divider";
 
 interface PageListProps<T extends Identifiable> {
     renderItem: (item: { item: T, index: number }) => React.JSX.Element;
@@ -38,9 +42,9 @@ export interface PageListRef<T extends Identifiable> {
 const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Ref<PageListRef<T>>) => {
     const { renderItem, requestFunction, loadCache, saveCache, resetCache, style, preload = true } = props;
     const type = props.type || PageListType.FLAT;
+    const theme = useTheme();
     const initialItems = props.initialItems || [];
     const pageSize = props.pageSize || 10;
-    const texts = require("@lang/en.json");
     const styles = getStyles();
     const [request, setRequest] = useState<ITimedRequest<T>>(new TimedRequest(createPageable<T>(pageSize), 0));
     const [loadingMore, setLoadingMore] = useState(false);
@@ -162,14 +166,19 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     onEndReachedThreshold={0.3}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
-                    ListEmptyComponent={() => (<View style={{ height: '100%' }} />)}
-                    ListFooterComponent={() => (
-                        loadingMore && (
-                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
-                                <Text>{texts.loaingMore}</Text>
-                            </View>
-                        )
-                    )}
+                    ListEmptyComponent={() =>
+                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
+                            {loadingMore ?
+                                null
+                                :
+                                <View style={{ justifyContent: "center", alignItems: 'center' }}>
+                                    <Text>{texts.noItems}</Text>
+                                    <Divider size={10} horizontal={false} />
+                                    <Button stylesInput={{ maxHeight: "50%", minWidth: "25%" }} title={texts.reload} onPress={_resetList} />
+                                </View>
+                            }
+                        </View>
+                    }
                 />);
         case PageListType.PAGERVIEW:
             return (
