@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Entypo from '@expo/vector-icons/Entypo';
@@ -8,6 +8,7 @@ import { NavigationProp } from '@react-navigation/native';
 import { Params, Routes } from '@navigation/Router';
 import { Props as SecondHeaderProps } from '@components/FavoriteHeader';
 import { SetSelectedRef } from './EstablishmentDetails';
+import { debounce } from 'lodash';
 
 type HeaderProps = {
     navigation: NavigationProp<any, any>;
@@ -18,8 +19,21 @@ type HeaderProps = {
     selected?: boolean;
 }
 
-export const Header = ({ navigation, title, hasGoBack = true, secondHeader, secondHeaderFunction, selected }: HeaderProps) => {
+export const Header = ({ navigation, title, hasGoBack = true, secondHeader, secondHeaderFunction, selected: _selected }: HeaderProps) => {
     const styles = getStyles();
+    const [selected, setSelected] = React.useState(_selected || false);
+
+    useEffect(() => { (_selected !== undefined && selected !== _selected) && setSelected(_selected || false) }, [_selected]);
+
+    const secondFunction = useCallback(async (_selected: boolean) => {
+        setSelected(_selected);
+        secondHeaderFunction && debounce(async (isFavorite: boolean) => await secondHeaderFunction(isFavorite), 2000);
+    }, []);
+
+    const onPressSecondFunction = (isFavorite: boolean) => {
+        secondFunction(isFavorite);
+    };
+
     return (
         <View style={styles.header}>
             <View style={styles.headerContainer}>
@@ -35,10 +49,8 @@ export const Header = ({ navigation, title, hasGoBack = true, secondHeader, seco
                 <Text style={styles.headerTitle}>{title}</Text>
                 {secondHeader ? (
                     React.createElement(secondHeader, {
-                        selected: selected ?? false,
-                        setSelected: async (_selected: boolean) => {
-                            secondHeaderFunction && await secondHeaderFunction(_selected);
-                        }
+                        selected: selected,
+                        setSelected: onPressSecondFunction
                     })) : (
                     <View style={styles.headerFiller} />
                 )}
