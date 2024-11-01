@@ -3,6 +3,7 @@ package com.teamsantos.easybarber.services;
 import java.security.Principal;
 import java.util.Optional;
 
+import org.locationtech.jts.geom.Point;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -222,8 +223,10 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Page<EstablishmentDTO> getFavoriteEstablishments(Long userId, Pageable pageable) {
-        return userRepository.findFavoriteEstablishmentsByUserId(userId, pageable);
+    public Page<EstablishmentDTO> getFavoriteEstablishments(Long userId, Point location, Pageable pageable) {
+        if (location == null)
+            return userRepository.findFavoriteEstablishmentsByUserId(userId, pageable);
+        return userRepository.findFavoriteEstablishmentsByUserId(userId, location, pageable);
     }
 
     @Transactional(readOnly = true)

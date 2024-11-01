@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.controllers;
 
+import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import com.teamsantos.easybarber.DTO.user.UserDTO;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.services.LocationService;
 import com.teamsantos.easybarber.services.UserService;
+import com.teamsantos.easybarber.utils.GeometryUtils;
 
 @RestController
 public class UserController {
@@ -81,8 +83,15 @@ public class UserController {
     }
 
     @GetMapping("/favorites/establishments")
-    public ResponseEntity<BasePageDTO<EstablishmentDTO>> getFavoriteEstablishments(Pageable pageable) {
+    public ResponseEntity<BasePageDTO<EstablishmentDTO>> getFavoriteEstablishments(
+            @RequestParam(required = false) Double latitude,
+            @RequestParam(required = false) Double longitude,
+            Pageable pageable) {
         try {
+            Point location = null;
+            if (latitude != null && longitude != null) {
+                location = GeometryUtils.parseLocation(latitude, longitude);
+            }
             return ResponseEntity
                     .ok(new BasePageDTO<>(userService.getFavoriteEstablishments(UserContext.getUserId(), pageable)));
         } catch (Exception e) {

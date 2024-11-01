@@ -11,6 +11,7 @@ declare type TabsInfo = {
     hasHeader: boolean;
     component: React.FC<any>;
     tabicon: React.FC<any>;
+    requiresAuth?: boolean;
 }
 
 declare interface Pageable<T> {
