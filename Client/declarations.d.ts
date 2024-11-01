@@ -4,6 +4,7 @@ declare type StackInfo = {
     hasHeader: boolean;
     containerizedComponent: boolean;
     secondHeader?: React.FC<any>;
+    noGoBack?: boolean;
 }
 
 declare type TabsInfo = {

@@ -23,6 +23,7 @@ export const Params = {
     Settings: undefined,
     Home: undefined,
     Appointments: undefined,
+    FavoritesMain: undefined,
     Favorites: undefined,
 } as const;
 
