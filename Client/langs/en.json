@@ -4,6 +4,7 @@
     "no": "No",
     "submit": "Submit",
     "dismiss": "Dismiss",
+    "reload": "Reload",
     "logout": "Logout",
     "logoutSuccess": "Logout Successful",
     "at": "at",
@@ -250,5 +251,6 @@
     "currency": "€",
     "settings": {
         "title": "Settings"
-    }
+    },
+    "noItems": "No items found."
 }
