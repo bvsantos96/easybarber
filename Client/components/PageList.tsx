@@ -58,13 +58,11 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     const loadMoreItems = async (req = request) => {
         setLoadingMore(true);
         const reqElements = req.page.content.length;
-        const result = await req.request(requestFunction);
-        if (result) {
-            if (saveCache && reqElements !== req.page.content.length) {
-                saveCache(req.page.content);
-            }
-            setRequest(new TimedRequest(req.page, req.lastRequest, req.pathParams));
+        await req.request(requestFunction);
+        if (saveCache && reqElements !== req.page.content.length) {
+            saveCache(req.page.content);
         }
+        setRequest(new TimedRequest(req.page, req.lastRequest, req.pathParams));
         setLoadingMore(false);
     };
 
@@ -99,7 +97,6 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
 
     const resetList = () => {
         firstEndReached.current = true;
-        setRequest(new TimedRequest(createPageable<T>(pageSize), 0));
         if (resetCache) resetCache(); else { saveCache && saveCache([]); }
         loadMoreItems(new TimedRequest(createPageable<T>(pageSize), 0));
         return;
