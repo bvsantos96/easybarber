@@ -1,5 +1,5 @@
 import * as Location from 'expo-location';
-import { getLocationsRequest, setNewLocation } from './ApiRequest';
+import { getLocationsRequest, getToken, setNewLocation } from './ApiRequest';
 import { getArrayFromPage, getArrayOrEmpty, store } from '../storage/StorageUtils';
 import { LOCATIONS_STORAGE_KEY } from './Constants';
 import useLocationStore from '../storage/stores/LocationStore';
