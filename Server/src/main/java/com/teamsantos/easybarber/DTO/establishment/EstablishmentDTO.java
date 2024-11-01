@@ -14,7 +14,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class EstablishmentDTO extends BaseEstablishmentDTO {
-    private double distance;
+    private Double distance;
     private Long nVotes;
     private Long sumVotes;
 
