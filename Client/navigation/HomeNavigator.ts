@@ -6,7 +6,7 @@ import EmployeeSelection from "@screens/EmployeeSelection";
 import ServiceSelection from "@screens/ServiceSelection";
 import EstablishmentDetails from "@screens/EstablishmentDetails";
 import { Params } from "@navigation/Router";
-
+import FavoriteHeader from "@components/FavoriteHeader";
 
 const HomeNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     HomeMain: {
@@ -20,6 +20,7 @@ const HomeNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         hasHeader: true,
         component: EstablishmentDetails,
         containerizedComponent: false,
+        secondHeader: FavoriteHeader
     },
     ServiceSelection: {
         title: texts.navigation.tabs.homeNavigator.serviceSelection.name,

@@ -18,7 +18,7 @@ export interface FilterRef {
     contructNewFilter: (filter?: IFilterRequest) => void;
 }
 
-export default function Filter({ filter, setFilter }) {
+export default function Filter({ filter, setFilter }: { filter?: IFilterRequest, setFilter: (filter: IFilterRequest) => void }) {
     const styles = getStyles();
     const theme = useTheme();
     const [categories, setCategories] = useState<PickerItem[]>([]);
