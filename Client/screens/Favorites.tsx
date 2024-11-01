@@ -18,6 +18,7 @@ export default function Favorites({ navigation }: PropNavigation) {
 
     return (
         <PageList<EstablishmentInfo>
+            key="favorites"
             renderItem={({ item }: { item: EstablishmentInfo }) =>
                 <ListItem
                     onPress={

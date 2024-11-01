@@ -25,13 +25,16 @@ export const Header = ({ navigation, title, hasGoBack = true, secondHeader, seco
 
     useEffect(() => { (_selected !== undefined && selected !== _selected) && setSelected(_selected || false) }, [_selected]);
 
-    const secondFunction = useCallback(async (_selected: boolean) => {
-        setSelected(_selected);
-        secondHeaderFunction && debounce(async (isFavorite: boolean) => await secondHeaderFunction(isFavorite), 2000);
-    }, []);
+    const debouncedSecond = useCallback(
+        debounce((__selected: boolean) => {
+            secondHeaderFunction && secondHeaderFunction(__selected);
+        }, 2000),
+        [secondHeaderFunction]
+    );
 
-    const onPressSecondFunction = (isFavorite: boolean) => {
-        secondFunction(isFavorite);
+    const onPressSecondFunction = (__selected: boolean) => {
+        setSelected(__selected);
+        debouncedSecond(__selected);
     };
 
     return (

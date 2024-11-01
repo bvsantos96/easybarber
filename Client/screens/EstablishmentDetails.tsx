@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 
 import { getStyles } from '../styles/EstablishmentDetails';
 import { getStyles as getListStyles } from '../styles/List';
@@ -33,7 +33,6 @@ type Props = NativeStackScreenProps<typeof Params, 'EstablishmentDetails'> & {
 
 const EstablishmentDetails = forwardRef<SetSelectedRef, Props>(
     ({ route, navigation, setFavorite }, ref) => {
-        const queryClient = useQueryClient();
 
         const texts = require("@lang/en.json");
         const styles = getStyles();
@@ -43,22 +42,28 @@ const EstablishmentDetails = forwardRef<SetSelectedRef, Props>(
         const [establishment, setEstablishment] = useState<EstablishmentInfo>(_establishment);
         const [categories, setCategories] = useState<ICategory[]>([]);
 
-        const setSelected = async (selected: boolean) => {
-            queryClient.invalidateQueries({ queryKey: [`/establishment/${establishment?.id}/favorite`, establishment.id] });
-            return makeRequest(`establishment/${route.params.id}/favorite`, selected ? "POST" : "DELETE");
-        }
-
-        useImperativeHandle(ref, () => ({
-            setSelected,
-        }));
-
-        const { data: favoriteData } = useQuery({
+        const { data: favoriteData, refetch } = useQuery({
             queryKey: [`/establishment/${establishment?.id}/favorite`, establishment?.id],
             queryFn: async () => await isFavorite(establishment.id),
             enabled: !!establishment?.id,
             networkMode: 'offlineFirst',
             staleTime: 60000,
         });
+
+        const setSelected = async (selected: boolean) => {
+            try {
+                if (selected === establishment.favorite) return false;
+                await makeRequest(`establishment/${route.params.id}/favorite`, selected ? "POST" : "DELETE");
+                refetch();
+                return true;
+            } catch {
+                return false;
+            }
+        }
+
+        useImperativeHandle(ref, () => ({
+            setSelected,
+        }));
 
         useEffect(() => {
             if (favoriteData !== undefined) {
