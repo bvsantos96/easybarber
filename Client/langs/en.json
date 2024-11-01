@@ -98,7 +98,10 @@
         "newUser": "Are you a new user?",
         "loginWith": "Login with",
         "google": "Google",
-        "apple": "Apple"
+        "apple": "Apple",
+        "guest": "Continue as guest",
+        "required": "You need to be logged in to perform this operation",
+        "sign": "Sign"
     },
     "register": {
         "title": "Create Account",
@@ -221,7 +224,8 @@
         "past": "Past",
         "failed": "Failed to schedule appointment, please try again on a different date.",
         "success": "Your booking has been confirmed successfully.",
-        "cancel": "Are you sure you want to cancel this appointment?"
+        "cancel": "Are you sure you want to cancel this appointment?",
+        "signin": "Please sign in to see your appointments"
     },
     "services": {
         "title": "Services",
