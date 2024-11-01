@@ -20,6 +20,7 @@ import { defaultBarberImage } from '../utils/Constants';
 import { PageListType } from '../enums';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Params, Routes } from '@navigation/Router';
+import useFavoriteStore from 'storage/stores/FavoriteStore';
 
 export type Route = EstablishmentInfo;
 
@@ -41,6 +42,7 @@ const EstablishmentDetails = forwardRef<SetSelectedRef, Props>(
         const _establishment: EstablishmentInfo = route.params;
         const [establishment, setEstablishment] = useState<EstablishmentInfo>(_establishment);
         const [categories, setCategories] = useState<ICategory[]>([]);
+        const { setUpdateFavorites } = useFavoriteStore();
 
         const { data: favoriteData, refetch } = useQuery({
             queryKey: [`/establishment/${establishment?.id}/favorite`, establishment?.id],
@@ -54,6 +56,7 @@ const EstablishmentDetails = forwardRef<SetSelectedRef, Props>(
             try {
                 if (selected === establishment.favorite) return false;
                 await makeRequest(`establishment/${route.params.id}/favorite`, selected ? "POST" : "DELETE");
+                setUpdateFavorites(true);
                 refetch();
                 return true;
             } catch {
