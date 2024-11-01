@@ -12,8 +12,10 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Getter;
@@ -24,6 +26,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
+@Table(indexes = { @Index(columnList = "user_id"), @Index(columnList = "user_id, feedbackAsked") })
 public class Appointment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
