@@ -8,10 +8,10 @@ import { TimedRequest } from "../utils/TimedRequest";
 import { createPageable } from "../utils/PageHandling";
 import { PageListType } from "../enums";
 import { debounce } from "lodash";
-import { useTheme } from "@styles/ThemeContext";
 import texts from "@lang/en.json";
 import Button from "./Button";
 import Divider from "./Divider";
+import { useTheme } from "@styles/ThemeContext";
 
 interface PageListProps<T extends Identifiable> {
     renderItem: (item: { item: T, index: number }) => React.JSX.Element;
@@ -49,9 +49,11 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     const [request, setRequest] = useState<ITimedRequest<T>>(new TimedRequest(createPageable<T>(pageSize), 0));
     const [loadingMore, setLoadingMore] = useState(false);
     const firstEndReached = useRef(true);
+
     const setFirstEndReached = (value: boolean) => {
         firstEndReached.current = value;
     }
+
     const firstLoad = useRef(true);
     const setFirstLoad = (value: boolean) => {
         firstLoad.current = value;
@@ -68,6 +70,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
         }
         setRequest(new TimedRequest(req.page, req.lastRequest, req.pathParams));
         setLoadingMore(false);
+        setFirstLoad(false);
     };
 
     const _loadMoreItems = useRef(debounce(loadMoreItems, 300)).current;
@@ -111,8 +114,6 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     useEffect(() => {
         if (!firstLoad.current) {
             _resetList();
-        } else {
-            setFirstLoad(false);
         }
     }, [props.reset]);
 
@@ -129,20 +130,29 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                         if (loadingMore) return;
                         if (preload || (!preload && !firstEndReached.current)) {
                             _loadMoreItems();
-                        } else {
-                            setFirstEndReached(false);
                         }
                     }}
                     onEndReachedThreshold={0.3}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
-                    ListFooterComponent={() => (
-                        loadingMore && (
+                    ListEmptyComponent={() =>
+                        firstLoad.current ? (
+                            <View style={[styles.noSlotsContainer]}>
+                                <ActivityIndicator style={styles.noSlotsContainer} size="large" color={theme.colors.text.lightGray} />
+                            </View>) : (
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
-                                <Text>{texts.loaingMore}</Text>
+                                {loadingMore ?
+                                    null
+                                    :
+                                    <View style={{ justifyContent: "center", alignItems: 'center' }}>
+                                        <Text>{texts.noItems}</Text>
+                                        <Divider size={10} horizontal={false} />
+                                        <Button stylesInput={{ maxHeight: "50%", minWidth: "25%" }} title={texts.reload} onPress={_resetList} />
+                                    </View>
+                                }
                             </View>
                         )
-                    )}
+                    }
                 />
             );
         case PageListType.FLAT:
@@ -159,48 +169,48 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                         if (loadingMore) return;
                         if (preload || (!preload && !firstEndReached.current)) {
                             _loadMoreItems();
-                        } else {
-                            setFirstEndReached(false);
                         }
                     }}
                     onEndReachedThreshold={0.3}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={() =>
-                        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
-                            {loadingMore ?
-                                null
-                                :
-                                <View style={{ justifyContent: "center", alignItems: 'center' }}>
-                                    <Text>{texts.noItems}</Text>
-                                    <Divider size={10} horizontal={false} />
-                                    <Button stylesInput={{ maxHeight: "50%", minWidth: "25%" }} title={texts.reload} onPress={_resetList} />
-                                </View>
-                            }
-                        </View>
+                        firstLoad.current ? (
+                            <View style={[styles.noSlotsContainer]}>
+                                <ActivityIndicator style={styles.noSlotsContainer} size="large" color={theme.colors.text.lightGray} />
+                            </View>) : (
+                            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
+                                {loadingMore ?
+                                    null
+                                    :
+                                    <View style={{ justifyContent: "center", alignItems: 'center' }}>
+                                        <Text>{texts.noItems}</Text>
+                                        <Divider size={10} horizontal={false} />
+                                        <Button stylesInput={{ maxHeight: "50%", minWidth: "25%" }} title={texts.reload} onPress={_resetList} />
+                                    </View>
+                                }
+                            </View>
+                        )
                     }
                 />);
-        case PageListType.PAGERVIEW:
-            return (
-                <PagerView
-                    ref={pagerViewRef}
-                    scrollEnabled={true}
-                    overScrollMode={'never'}
-                    onPageScroll={async (event: NativeSyntheticEvent<PageSwipeEvent>) => {
-                        if (loadingMore) return;
-                        const { position } = event.nativeEvent;
-                        if (position >= request.page.content.length - 3) {
-                            _loadMoreItems();
-                        } else {
-                            setFirstLoad(false);
-                        }
-                    }}
-                    style={{ flex: 1 }} >
-                    {(request.page.content.length > 0 ? request.page.content : initialItems).map((item, index) => {
-                        return renderItem({ item, index });
-                    })}
-                </PagerView>
-            );
+        case PageListType.PAGERVIEW: return (
+            <PagerView
+                ref={pagerViewRef}
+                scrollEnabled={true}
+                overScrollMode={'never'}
+                onPageScroll={async (event: NativeSyntheticEvent<PageSwipeEvent>) => {
+                    if (loadingMore) return;
+                    const { position } = event.nativeEvent;
+                    if (position >= request.page.content.length - 3) {
+                        _loadMoreItems();
+                    }
+                }}
+                style={{ flex: 1 }} >
+                {(request.page.content.length > 0 ? request.page.content : initialItems).map((item, index) => {
+                    return renderItem({ item, index });
+                })}
+            </PagerView>
+        );
         default:
             return <></>;
 
