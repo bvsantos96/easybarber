@@ -104,7 +104,8 @@
         "apple": "Apple",
         "guest": "Continue as guest",
         "required": "You need to be logged in to perform this operation",
-        "sign": "Sign"
+        "sign": "Sign",
+        "signIn": "Sign In"
     },
     "register": {
         "title": "Create Account",

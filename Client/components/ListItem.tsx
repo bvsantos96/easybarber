@@ -3,20 +3,29 @@ import { getStyles } from "../styles/List";
 import Pressable from "./Pressable";
 import LocationIcon from '@assets/icons/location.svg';
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { defaultBarberImage } from "../utils/Constants";
 import { ImageWithRating } from "./ImageWithRating";
 import { useQuery } from "@tanstack/react-query";
-import { isFavorite } from "utils/ApiRequest";
+import { getToken, isFavorite } from "utils/ApiRequest";
 
 export default function ListItem({ establishment, onPress }: { establishment: EstablishmentInfo, onPress: (employeeId: number) => void }) {
     const styles = getStyles();
     const texts = require("../langs/en.json");
+    const [isAuth, setIsAuth] = useState<boolean | null>(null);
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            setIsAuth(await getToken() !== null);
+        };
+
+        checkAuth();
+    }, []);
 
     useQuery({
         queryKey: [`/establishment/${establishment?.id}/favorite`, establishment?.id],
         queryFn: async () => await isFavorite(establishment.id),
-        enabled: true,
+        enabled: isAuth !== null && isAuth,
         networkMode: 'offlineFirst',
         staleTime: 60000,
     });
