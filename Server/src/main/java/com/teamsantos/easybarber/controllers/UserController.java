@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamsantos.easybarber.DTO.BasePageDTO;
+import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.location.LocationDTO;
 import com.teamsantos.easybarber.DTO.user.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.user.UserDTO;
@@ -76,6 +77,16 @@ public class UserController {
             return ResponseEntity.ok(locationService.addLocation(locationDTO, UserContext.getUserId()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(-1L);
+        }
+    }
+
+    @GetMapping("/favorites/establishments")
+    public ResponseEntity<BasePageDTO<EstablishmentDTO>> getFavoriteEstablishments(Pageable pageable) {
+        try {
+            return ResponseEntity
+                    .ok(new BasePageDTO<>(userService.getFavoriteEstablishments(UserContext.getUserId(), pageable)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
         }
     }
 }
