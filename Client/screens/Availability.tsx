@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Calendar } from "react-native-calendars";
-import { View, Text } from "react-native";
+import { View, Text, ActivityIndicator } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 import PagerView from "react-native-pager-view";
 
@@ -33,6 +33,7 @@ export default function Availability({ route, navigation }: Props) {
     const [date, setDate] = useState<string>("");
     const [time, setTime] = useState<TimeSlot>();
     const { alert } = useAlertStore();
+    const [loading, setLoading] = useState<boolean>(false);
     const disableDates = (dates: string[]): MarkedDates => {
         let disabled: MarkedDates = {};
         dates.forEach(d => {
@@ -92,9 +93,11 @@ export default function Availability({ route, navigation }: Props) {
                 availability.slots = [];
             }
             setTimeSlots(buildTimeSlotViews(availability.slots));
+            setLoading(false);
         }
 
         if (date.length > 0) {
+            setLoading(true);
             fetchAvailability();
         }
     }, [date]);
@@ -149,6 +152,7 @@ export default function Availability({ route, navigation }: Props) {
                         return;
                     }
                     else if (_employeeId !== undefined) {
+                        alert({ type: AlertType.Loading, message: "" });
                         if (await setAppointment({
                             id: 0,
                             establishmentId: establishmentId,
@@ -157,6 +161,7 @@ export default function Availability({ route, navigation }: Props) {
                             date: date,
                             time: time?.start || ""
                         })) {
+                            alert({ type: AlertType.Loading, message: "" });
                             alert({
                                 type: AlertType.Success, message: texts.appointments.success, onPress: () => {
                                     navigation.reset({
@@ -165,12 +170,14 @@ export default function Availability({ route, navigation }: Props) {
                                     });
                                 }
                             });
+
                             return;
                         } else {
                             alert({ type: AlertType.Error, message: texts.appointments.failed });
                         }
                         return;
                     }
+                    alert({ type: AlertType.Loading, message: "" });
                     navigation.navigate(Routes.EmployeeSelection, { establishmentId, serviceId, date, startHour: time?.start, availableEmployees: time?.employeeIds });
                     return;
                 }
@@ -209,25 +216,32 @@ export default function Availability({ route, navigation }: Props) {
                     <Text style={styles.slotsTitle}>{texts.appointments.slotsAvailable}</Text>
                     <Underline />
                 </View>
-                {timeSlots.length > 0 && (
-                    <PagerView
-                        ref={pagerRef}
-                        style={styles.timeSlotsContainer}>
-                        {timeSlots && timeSlots.map((item, index) => (
-                            <TimeSlotView
-                                key={index}
-                                offset={index * elemsPerPage}
-                                select={setTime}
-                                selected={time}
-                                slots={item}
-                            />
-                        ))}
-                    </PagerView>
-                )}
-                {timeSlots.length === 0 && (
-                    <View style={styles.noSlotsContainer}>
-                        <Text style={styles.noSlots}>{texts.appointments.noSlots}</Text>
-                    </View>
+                {loading ? (
+                    <View style={[styles.noSlotsContainer, { backgroundColor: theme.colors.backgroundColor }]}>
+                        <ActivityIndicator style={styles.noSlotsContainer} size="large" color={theme.colors.text.lightGray} />
+                    </View>) : (
+                    <>
+                        {timeSlots.length > 0 && (
+                            <PagerView
+                                ref={pagerRef}
+                                style={styles.timeSlotsContainer}>
+                                {timeSlots && timeSlots.map((item, index) => (
+                                    <TimeSlotView
+                                        key={index}
+                                        offset={index * elemsPerPage}
+                                        select={setTime}
+                                        selected={time}
+                                        slots={item}
+                                    />
+                                ))}
+                            </PagerView>
+                        )}
+                        {timeSlots.length === 0 && (
+                            <View style={styles.noSlotsContainer}>
+                                <Text style={styles.noSlots}>{texts.appointments.noSlots}</Text>
+                            </View>
+                        )}
+                    </>
                 )}
             </View>
         </Selection >
