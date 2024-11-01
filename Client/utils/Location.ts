@@ -142,7 +142,6 @@ export const getSelectedLocation = async (): Promise<ILocation | undefined> => {
         selectedLocation
     } = useLocationStore.getState();
     if (selectedLocation === undefined) {
-        console.log('Selected location is undefined');
         let locations = getArrayFromPage(await getLocationsRequest());
         if (locations.length <= 0) {
             const location = await getLocation();
@@ -155,7 +154,6 @@ export const getSelectedLocation = async (): Promise<ILocation | undefined> => {
         useLocationStore.setState({ locations: locations, selectedLocation: locations[0] });
         return locations[0];
     }
-    console.log('Selected location:', selectedLocation);
     return selectedLocation;
 }
 
