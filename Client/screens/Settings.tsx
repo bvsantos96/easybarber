@@ -1,23 +1,45 @@
 import Pressable from "@components/Pressable";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 import { NavigationProp } from "@react-navigation/native";
 
 import texts from "@lang/en.json";
 import { getStyles } from "@styles/Settings";
-import LogOutIcon from "@assets/icons/logout.svg";
-import { removeData } from "utils/ApiRequest";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { getToken, removeData } from "utils/ApiRequest";
 import { TOKEN_STORAGE_KEY } from "utils/Constants";
 import { Routes } from "@navigation/Router";
 
 export default function Settings({ navigation }: PropNavigation) {
     const styles = getStyles();
+    const [authenticated, setAuthenticated] = useState(false);
 
+    useEffect(() => {
+        const checkAuthentication = async () => {
+            setAuthenticated(await getToken() !== null);
+        };
+        checkAuthentication();
+    }, []);
+    
     const resetNavigation = (navigation: NavigationProp<any, any>, route: string) => {
         navigation.reset({
             index: 0,
             routes: [{ name: route }],
         });
+    }
+
+    if (!authenticated) {
+        return (
+            <View style={styles.container}>
+            <Pressable style={styles.logOutContainer} onPress={() => {
+                resetNavigation(navigation, Routes.Sign);
+            }}
+            >
+                <MaterialIcons name="login" width={styles.logOutIcon.width} height={styles.logOutIcon.height} color={styles.logOutIcon.color} size={styles.logOutIcon.width} />
+                <Text style={styles.logOutText}>{texts.login.signIn}</Text>
+            </Pressable>
+        </View >
+        );
     }
 
     return (
@@ -27,7 +49,7 @@ export default function Settings({ navigation }: PropNavigation) {
                 resetNavigation(navigation, Routes.Onboarding);
             }}
             >
-                <LogOutIcon width={styles.logOutIcon.width} height={styles.logOutIcon.height} color={styles.logOutIcon.color} size={styles.logOutIcon.width} />
+                <MaterialIcons name="logout" width={styles.logOutIcon.width} height={styles.logOutIcon.height} color={styles.logOutIcon.color} size={styles.logOutIcon.width} />
                 <Text style={styles.logOutText}>{texts.logout}</Text>
             </Pressable>
         </View >
