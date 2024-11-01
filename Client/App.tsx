@@ -8,7 +8,7 @@ import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Location from 'expo-location';
 
-import { getToken } from './utils/ApiRequest';
+import { getToken, isFirstTime } from './utils/ApiRequest';
 import { getDefaultCountryString } from './utils/Constants';
 import usePermissionStore from './storage/stores/PermissionStore';
 import texts from "@lang/en.json";
@@ -63,7 +63,14 @@ const Router = () => {
                 console.log("DEBUG AUTO LOGIN");
                 defaultPage = Routes.Sign;
             } else {
-                defaultPage = await getToken() !== null ? Routes.Tabs : Routes.Onboarding;
+                if( await isFirstTime() ){
+                    defaultPage = Routes.Onboarding;
+                }else if( await getToken() !== null){
+                    defaultPage = Routes.Tabs;
+                }
+                else{
+                    defaultPage = Routes.Sign;
+                }
             }
 
             setDefaultPage(defaultPage);

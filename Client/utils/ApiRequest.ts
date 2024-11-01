@@ -7,7 +7,7 @@ import { PickerItem } from '../components/Picker';
 import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
-import { LOCATIONS_STORAGE_KEY, SECURE_STORAGE_LOGIN_KEY, TOKEN_STORAGE_KEY } from './Constants';
+import { FIRST_TIME, LOCATIONS_STORAGE_KEY, SECURE_STORAGE_LOGIN_KEY, TOKEN_STORAGE_KEY } from './Constants';
 import useLocationStore from '../storage/stores/LocationStore';
 import { ResponseType } from '../enums';
 import { twoDigits } from './Utils';
@@ -76,6 +76,15 @@ const setToken = async (token: string | null | undefined) => {
 
 export const getToken = async (): Promise<string | null> => {
     return await getData(TOKEN_STORAGE_KEY);
+}
+
+export const isFirstTime = async (): Promise<boolean> => {
+    const firstTime = await getData(FIRST_TIME);
+    const isFirstTime:boolean = (firstTime !== null );
+    if( isFirstTime ){
+        storeData(FIRST_TIME, "false");
+    }
+    return isFirstTime;
 }
 
 export const apiUrlMaker = (url: string): string => {
