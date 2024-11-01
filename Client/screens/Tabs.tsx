@@ -29,7 +29,6 @@ export default function Tabs({ navigation }: PropNavigation) {
         <Tab.Navigator
             initialRouteName={texts.tabs.home}
             screenOptions={{
-                lazy: true,
                 tabBarActiveTintColor: theme.colors.mainColor,
                 tabBarInactiveTintColor: theme.colors.text.main,
                 tabBarStyle: [{
