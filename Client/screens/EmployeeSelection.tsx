@@ -69,10 +69,11 @@ export default function EmployeeSelection({ navigation, route }: Props) {
                         })) {
                             alert({ type: AlertType.Loading, message: "" });
                             alert({
-                                type: AlertType.Success, message: texts.appointments.success, buttonText: texts.appointments.seeAppointments, onPress: () => {
-                                    resetNavigation(navigation, Routes.Appointments);
+                                type: AlertType.Success, message: texts.appointments.success,
+                                buttonText: texts.dismiss, onPress: () => {
                                 }
                             });
+                            resetNavigation(navigation, Routes.Appointments);
                             return;
                         }
                     } else if (!(date && startHour)) {

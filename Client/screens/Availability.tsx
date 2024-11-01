@@ -140,14 +140,14 @@ export default function Availability({ route, navigation }: Props) {
             onButtonPress={
                 async () => {
                     let _employeeId = (employeeId !== undefined && employeeId !== 0) ? employeeId : time?.employeeIds.length === 1 ? time?.employeeIds[0] : undefined;
-                    if(await getToken() === null){
+                    if (await getToken() === null) {
                         alert({
-                            type: AlertType.Error, message: texts.login.required, buttonText:"Sign in", onPress: () => {
-                                navigation.reset({
-                                    index: 0,
-                                    routes: [{ name: 'Sign' }],
-                                });
+                            type: AlertType.Error, message: texts.login.required, buttonText: "Sign in", onPress: () => {
                             }
+                        });
+                        navigation.reset({
+                            index: 0,
+                            routes: [{ name: 'Sign' }],
                         });
                         return;
                     }
@@ -162,13 +162,10 @@ export default function Availability({ route, navigation }: Props) {
                             time: time?.start || ""
                         })) {
                             alert({ type: AlertType.Loading, message: "" });
-                            alert({
-                                type: AlertType.Success, message: texts.appointments.success, onPress: () => {
-                                    navigation.reset({
-                                        index: 0,
-                                        routes: [{ name: 'Appointments' }],
-                                    });
-                                }
+                            alert({ type: AlertType.Success, message: texts.appointments.success, buttonText: texts.dismiss, onPress: () => { } });
+                            navigation.reset({
+                                index: 0,
+                                routes: [{ name: 'Appointments' }],
                             });
 
                             return;
