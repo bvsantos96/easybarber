@@ -315,6 +315,9 @@ export const pageGet = async <T>(url: string, page?: IPage<T>, params?: Record<s
 }
 
 export const getLocationsRequest = async (page?: IPage<ILocation>, params?: Record<string, string | number | boolean>): Promise<IPage<ILocation> | undefined> => {
+    if (await getToken() === null) {
+        return undefined;
+    }
     if (params === undefined || params === null) {
         params = {};
     }
@@ -434,7 +437,7 @@ export const getEmployee = async (id: number): Promise<EmployeeInfo | undefined>
 }
 
 export const getAppointmentCount = async (): Promise<AppointmentCounts> => {
-    if( await getToken() === null){
+    if (await getToken() === null) {
         return {
             upcomming: 0,
             past: 0
@@ -467,7 +470,7 @@ export const getNearByBarbers = async (page?: IPage<EstablishmentInfo>, params?:
 }
 
 export const setNewLocation = async (location: ILocation): Promise<number> => {
-    if(await getToken() === null){
+    if (await getToken() === null) {
         return -1;
     }
     const response = await request<number>("/location", "POST", location, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
@@ -498,8 +501,8 @@ export const getApiVersion = async (): Promise<string> => {
     throw new Error(langs.apiMessages.failed);
 }
 
-export const getMobileCode = async (phoneCountryCode:string, phoneNr: string): Promise<boolean> => {
-    const response = await request("/sms/confirmation", "POST", {phoneNr: phoneNr, phoneCountryCode: "+"+phoneCountryCode}, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+export const getMobileCode = async (phoneCountryCode: string, phoneNr: string): Promise<boolean> => {
+    const response = await request("/sms/confirmation", "POST", { phoneNr: phoneNr, phoneCountryCode: "+" + phoneCountryCode }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
@@ -514,8 +517,8 @@ export const confirmMobileCode = async (phoneNr: string, confirmationCode: strin
     return false;
 }
 
-export const getMobileCodeResetPwd = async (phoneCountryCode:string, phoneNr: string): Promise<boolean> => {
-    const response = await request("/sms/resetpwd", "POST", {phoneNr: phoneNr, phoneCountryCode: "+"+phoneCountryCode}, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+export const getMobileCodeResetPwd = async (phoneCountryCode: string, phoneNr: string): Promise<boolean> => {
+    const response = await request("/sms/resetpwd", "POST", { phoneNr: phoneNr, phoneCountryCode: "+" + phoneCountryCode }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
@@ -598,6 +601,15 @@ export const isFavorite = async (id: number): Promise<boolean> => {
     return getItemsFromRequest(response);
 }
 
-export const getFavorites = async (page?: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>): Promise<IPage<EstablishmentInfo> | undefined> => {
+export const getFavorites = async (page?: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>, location?: ILocation): Promise<IPage<EstablishmentInfo> | undefined> => {
+    if (params === undefined || params === null)
+        params = {};
+    if (location === undefined || location === null) {
+        return await pageGet<EstablishmentInfo>("/favorites/establishments", page, params);
+    }
+    if (!params.hasOwnProperty("latitude"))
+        params["latitude"] = location.latitude;
+    if (!params.hasOwnProperty("longitude"))
+        params["longitude"] = location.longitude;
     return await pageGet<EstablishmentInfo>("/favorites/establishments", page, params);
 }
