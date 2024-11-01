@@ -9,11 +9,11 @@ export default function Favorites({ navigation }: PropNavigation) {
     const { selectedLocation } = useLocationStore();
 
     const loadMoreLocations = async (page?: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>) => {
-        let _selectedLocation = selectedLocation;
+        let _selectedLocation: ILocation | undefined = selectedLocation;
         if (selectedLocation === undefined) {
             _selectedLocation = await getSelectedLocation();
         }
-        return await getFavorites(page, params);
+        return await getFavorites(page, params, _selectedLocation);
     }
 
     return (

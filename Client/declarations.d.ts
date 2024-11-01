@@ -94,7 +94,7 @@ declare interface EstablishmentInfo extends Identifiable {
     address: string;
     latitude: number;
     longitude: number;
-    distance: number;
+    distance?: number;
     nvotes: number;
     sumVotes: number;
     images: IImage[];
