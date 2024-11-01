@@ -72,6 +72,10 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
         }
     }
 
+    const guestLogin = () => {
+        resetNavigation(navigation, Routes.Tabs);
+    }
+
     return (
         <>
             <KeyboardAvoidingScrollView
@@ -88,6 +92,7 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
                     <View style={styles.buttonContainer}>
                         <Button title={texts.login.button} onPress={login} />
                     </View>
+                    
                 }
             >
                 <View style={styles.inputsContainer}>
@@ -121,12 +126,9 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
                 <Divider horizontal size={13} />
                 <Text style={styles.newUserRedText}>{texts.register.button}</Text>
             </TouchableOpacity>
-            <View style={styles.appleButtonContainer}>
-                <AppleLoginButton />
-            </View>
-            <View style={styles.googleButtonContainer}>
-                <GoogleLoginButton />
-            </View>
+            <TouchableOpacity style={styles.newUserContainer} onPress={guestLogin}>
+                <Text style={styles.newUserRedText}>{texts.login.guest}</Text>
+            </TouchableOpacity>
         </>
     )
 }
