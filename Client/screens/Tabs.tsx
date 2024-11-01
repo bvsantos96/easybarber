@@ -75,11 +75,14 @@ export default function Tabs({ navigation }: PropNavigation) {
                                                 type: AlertType.Error,
                                                 message: texts.login.required,
                                                 buttonText: texts.login.signIn,
-                                                onPress: () => { }
-                                            });
-                                            navigation.reset({
-                                                index: 0,
-                                                routes: [{ name: Routes.Sign }],
+                                                onPress: () => {
+                                                    navigation.reset({
+                                                        index: 0,
+                                                        routes: [{ name: Routes.Sign }],
+                                                    });
+                                                },
+                                                onPress2: () => { },
+                                                buttonText2: texts.dismiss,
                                             });
                                         } else {
                                             props.onPress?.(event);
