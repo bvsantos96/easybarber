@@ -7,13 +7,18 @@ import { getStyles } from '../styles/HomeNavigator';
 import { NavigationProp } from '@react-navigation/native';
 import HomeNav from '@navigation/HomeNavigator';
 import { Params, Routes } from '@navigation/Router';
+import { Props as SecondHeaderProps } from '@components/FavoriteHeader';
+import { SetSelectedRef } from './EstablishmentDetails';
 
-interface HeaderProps {
-    navigation: NavigationProp<any, any>
+type HeaderProps = {
+    navigation: NavigationProp<any, any>;
     title: string;
+    secondHeader?: React.FC<SecondHeaderProps>;
+    secondHeaderFunction?: (selected: boolean) => Promise<boolean>;
+    selected?: boolean;
 }
 
-export const Header = ({ navigation, title }: HeaderProps) => {
+export const Header = ({ navigation, title, secondHeader, secondHeaderFunction, selected }: HeaderProps) => {
     const styles = getStyles();
     return (
         <View style={styles.header}>
@@ -23,6 +28,12 @@ export const Header = ({ navigation, title }: HeaderProps) => {
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>{title}</Text>
                 <View style={styles.headerFiller} />
+                {secondHeader && React.createElement(secondHeader, {
+                    selected: selected ?? false,
+                    setSelected: async (_selected: boolean) => {
+                        secondHeaderFunction && await secondHeaderFunction(_selected);
+                    }
+                })}
             </View>
         </View>
     )
@@ -32,6 +43,8 @@ export const Header = ({ navigation, title }: HeaderProps) => {
 export default function HomeNavigator() {
     const styles = getStyles();
     const Stack = createNativeStackNavigator<typeof Params>();
+    const ref = React.useRef<SetSelectedRef>(null);
+    const [favorite, setFavorite] = React.useState(false);
 
     return (
         <View style={styles.container}>
@@ -47,7 +60,7 @@ export default function HomeNavigator() {
                             options={nav.hasHeader ?
                                 {
                                     header: ({ navigation }) => (
-                                        <Header navigation={navigation} title={nav.title} />
+                                        <Header navigation={navigation} title={nav.title} secondHeader={nav.secondHeader} secondHeaderFunction={ref?.current?.setSelected} selected={favorite} />
                                     ),
                                 }
                                 :
@@ -56,7 +69,14 @@ export default function HomeNavigator() {
                                 }
                             }
                         >
-                            {props => <nav.component {...props} />}
+                            {(props) => {
+                                switch (_key) {
+                                    case Routes.EstablishmentDetails:
+                                        return <nav.component {...props} ref={ref} setFavorite={setFavorite} />;
+                                    default:
+                                        return <nav.component {...props} />;
+                                }
+                            }}
                         </Stack.Screen>
                     );
                 })}
