@@ -7,15 +7,24 @@ import AppointmentItem from '../components/AppointmentItem';
 import PageList, { PageListRef } from '../components/PageList';
 import AnimatedSwitch from '@components/AnimatedSwitch';
 import texts from '@lang/en.json';
+import useAppointmentStore from 'storage/stores/AppointmentStore';
 
 export default function Appointments({ navigation }: PropNavigation) {
     const styles = getStyles();
-    const [resetSearch, _] = useState(false);
+    const [resetSearch, setResetSearch] = useState(false);
     const pageListRef = useRef<PageListRef<AppointmentInfo>>(null);
     const pageListUpcommingRef = useRef<PageListRef<AppointmentInfo>>(null);
     const [upComming, setUpComming] = useState(true);
     const [nUpcomming, setNUpcomming] = useState(0);
     const [nPast, setNPast] = useState(0);
+    const { updateAppointments, resetUpdateAppointments } = useAppointmentStore();
+
+    useEffect(() => {
+        if (updateAppointments) {
+            resetUpdateAppointments();
+            setResetSearch(!resetSearch);
+        }
+    }, [updateAppointments]);
 
     const loadUpcomming = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter) => {
         return await getAppointments(page, { ...params, future: true, activeOnly: true });

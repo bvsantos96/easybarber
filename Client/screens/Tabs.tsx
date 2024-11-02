@@ -5,7 +5,7 @@ import SafeFullScreen from '../components/SafeFullScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import TabsNav from '@navigation/TabsNavigator';
 import { Params, Routes } from '@navigation/Router';
-import { getToken } from 'utils/ApiRequest';
+import { getToken, validateAppointments } from 'utils/ApiRequest';
 import { AlertType } from '@components/Alert';
 import useAlertStore from 'storage/stores/AlertStore';
 import { TouchableOpacity } from 'react-native';
@@ -85,6 +85,9 @@ export default function Tabs({ navigation }: PropNavigation) {
                                                 buttonText2: texts.dismiss,
                                             });
                                         } else {
+                                            if (_key === Routes.Appointments) {
+                                                validateAppointments();
+                                            }
                                             props.onPress?.(event);
                                         }
                                     }}

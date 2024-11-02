@@ -142,4 +142,17 @@ public class AppointmentController {
             return ResponseEntity.badRequest().body(new FeedbackDTO());
         }
     }
+
+    @GetMapping("/appointments/validate")
+    public ResponseEntity<String> validateAppointments(@RequestParam(required = false) Boolean userView) {
+        try {
+            if (userView == null) {
+                userView = true;
+            }
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(appointmentService.validateAppointments(userView));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("");
+        }
+    }
 }
