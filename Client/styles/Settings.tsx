@@ -12,7 +12,7 @@ export const getStyles = () => {
         logOutContainer: {
             position: "absolute",
             left: 147 * theme.dimensions.absoluteWidth,
-            bottom: 167 * theme.dimensions.absoluteHeight,
+            bottom: 45 * theme.dimensions.absoluteHeight,
             flexDirection: "row",
             alignItems: "center",
             justifyContent: "space-between",

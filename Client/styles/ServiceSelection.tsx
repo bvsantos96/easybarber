@@ -29,7 +29,7 @@ export const getStyles = () => {
         },
         singleTitle: {
             fontFamily: 'Poppins',
-            fontSize: theme.fonts.size._18,
+            fontSize: theme.fonts.size._17,
             fontWeight: 900,
         },
         description: {
@@ -52,7 +52,7 @@ export const getStyles = () => {
         },
         listContainer: {
             position: 'absolute',
-            top: 60 * theme.dimensions.absoluteHeight,
+            top: 40 * theme.dimensions.absoluteHeight,
             width: 335 * theme.dimensions.absoluteWidth,
             height: 470 * theme.dimensions.absoluteHeight,
             left: 29 * theme.dimensions.absoluteWidth,

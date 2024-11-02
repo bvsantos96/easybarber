@@ -17,13 +17,11 @@ export const getStyles = () => {
         },
         button: {
             position: 'absolute',
-            bottom: 145 * theme.dimensions.absoluteHeight,
+            bottom: 45 * theme.dimensions.absoluteHeight,
             left: padding,
             width: theme.dimensions.width - 2 * padding,
         },
         selectTextContainer: {
-            position: 'absolute',
-            top: 20 * theme.dimensions.absoluteHeight,
             fontFamily: 'Poppins',
             fontSize: theme.fonts.size._14,
             fontWeight: 400,
