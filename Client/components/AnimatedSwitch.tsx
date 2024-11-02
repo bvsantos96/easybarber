@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useRef } from 'react';
 import { Animated, View, Text, Pressable, PanResponder } from 'react-native';
 import { getStyles } from '../styles/AnimatedSwitch';
+import { useTheme } from '@styles/ThemeContext';
 
 export default function AnimatedSwitch({ text1, text2, setSelected }: { text1: string, text2: string, setSelected: (selected: boolean) => void }) {
-    const maxVal = 150;
+    const theme = useTheme();
+    const maxVal = 155 * theme.dimensions.absoluteWidth;
     const position = useRef(new Animated.Value(0)).current;
     const value = useRef(0);
     const setValue = (newValue: number) => {
@@ -69,7 +71,10 @@ export default function AnimatedSwitch({ text1, text2, setSelected }: { text1: s
     ).current;
 
     return (
-        <View style={styles.container}>
+        <View style={styles.container} onLayout={(event) => {
+            const { width } = event.nativeEvent.layout;
+            console.log(width/2);
+        }}>
             <Pressable style={styles.box} onPress={() => handleSelection()} />
             <Animated.View
                 onLayout={(event) => {
