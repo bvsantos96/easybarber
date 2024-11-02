@@ -11,6 +11,7 @@ import useLocationStore from '../storage/stores/LocationStore';
 import { fetchSuggestions, suggestionsInputValidation } from '../utils/Location';
 import { debounce } from 'lodash';
 import { PageListType } from '../enums';
+import Pressable from './Pressable';
 
 interface LocationModalProps {
     toggleModal: () => void;
