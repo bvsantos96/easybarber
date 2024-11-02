@@ -5,19 +5,12 @@ export const getStyles = () => {
     const theme = useTheme();
     return StyleSheet.create({
         container: {
-            width: '100%',
+            width: '88%',
             height: 100 * theme.dimensions.absoluteHeight,
             borderRadius: 15,
             backgroundColor: theme.colors.backgroundColor,
             marginVertical: 10 * theme.dimensions.absoluteHeight,
-        },
-        containerWBorder: {
-            width: '98%',
-            height: 100 * theme.dimensions.absoluteHeight,
-            borderRadius: 15,
-            backgroundColor: theme.colors.backgroundColor,
-            marginVertical: 10 * theme.dimensions.absoluteHeight,
-            alignSelf: 'center'
+            alignSelf: 'center',
         },
         image: {
             position: 'absolute',

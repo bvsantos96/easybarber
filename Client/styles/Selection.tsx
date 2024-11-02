@@ -7,7 +7,7 @@ export const getStyles = () => {
     return StyleSheet.create({
         container: {
             flex: 1,
-            width: theme.dimensions.width,
+            width: "100%",
             height: theme.dimensions.height,
             backgroundColor: theme.colors.backgroundColor,
             textAlign: 'center',
@@ -18,8 +18,8 @@ export const getStyles = () => {
         button: {
             position: 'absolute',
             bottom: 45 * theme.dimensions.absoluteHeight,
-            left: padding,
-            width: theme.dimensions.width - 2 * padding,
+            width: "88%",
+            alignItems: 'center',
         },
         selectTextContainer: {
             fontFamily: 'Poppins',
@@ -29,6 +29,10 @@ export const getStyles = () => {
             textAlign: 'center',
             alignSelf: 'center',
             justifyContent: 'center',
+        },
+        textContainer: {
+            width: "88%",
+            alignItems: 'center',
         },
     });
 }

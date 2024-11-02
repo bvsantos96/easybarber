@@ -11,17 +11,15 @@ export default function SelectionItem({ image, children, selected = false, onPre
     const theme = useTheme();
 
     return (
-        <Pressable style={[styles.container]} onPress={onPress}>
-            <View style={[styles.containerWBorder, theme.shadow]}>
-                <Image source={{ uri: image }} style={styles.image} />
-                <View>
-                    {children}
-                </View>
-                <View style={[styles.radioContainer, selected ? styles.radioContainerSelectod : {}]}>
-                    {selected &&
-                        <FontAwesome name="circle" size={styles.radio.width} color={styles.radio.color} />
-                    }
-                </View>
+        <Pressable style={[styles.container, theme.shadow]} onPress={onPress}>
+            <Image source={{ uri: image }} style={styles.image} />
+            <View>
+                {children}
+            </View>
+            <View style={[styles.radioContainer, selected ? styles.radioContainerSelectod : {}]}>
+                {selected &&
+                    <FontAwesome name="circle" size={styles.radio.width} color={styles.radio.color} />
+                }
             </View>
         </Pressable>
     );
