@@ -19,7 +19,7 @@ export default function Selection({ onButtonPress, children, selected, selection
 
     const handleTextLayout = (e: any) => {
         const { lines } = e.nativeEvent;
-        setSelectionTextNLines && setSelectionTextNLines((lines.length * topPadding - 10) + 10);
+        setSelectionTextNLines && setSelectionTextNLines((lines.length * 10) + 10);
     };
 
     return (
