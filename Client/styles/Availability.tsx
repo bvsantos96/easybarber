@@ -7,7 +7,7 @@ export const getStyles = () => {
     return StyleSheet.create({
         calendar: {
             position: "absolute",
-            top: 40 * theme.dimensions.absoluteHeight,
+            top: 60 * theme.dimensions.absoluteHeight,
             left: padding,
             width: theme.dimensions.width - padding * 2,
             maxHeight: 240 * theme.dimensions.absoluteHeight,
@@ -15,7 +15,7 @@ export const getStyles = () => {
         slotsContainer: {
             position: 'absolute',
             backgroundColor: theme.colors.backgroundColor,
-            top: 340 * theme.dimensions.absoluteHeight,
+            top: 370 * theme.dimensions.absoluteHeight,
             left: 2 * padding,
             width: theme.dimensions.width - (padding * 4),
             maxHeight: 170 * theme.dimensions.absoluteHeight,

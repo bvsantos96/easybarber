@@ -6,17 +6,25 @@ export const getStyles = () => {
     return StyleSheet.create({
         container: {
             width: '100%',
-            height: 93 * theme.dimensions.absoluteHeight,
+            height: 100 * theme.dimensions.absoluteHeight,
             borderRadius: 15,
             backgroundColor: theme.colors.backgroundColor,
             marginVertical: 10 * theme.dimensions.absoluteHeight,
+        },
+        containerWBorder: {
+            width: '98%',
+            height: 100 * theme.dimensions.absoluteHeight,
+            borderRadius: 15,
+            backgroundColor: theme.colors.backgroundColor,
+            marginVertical: 10 * theme.dimensions.absoluteHeight,
+            alignSelf: 'center'
         },
         image: {
             position: 'absolute',
             top: 0,
             left: 0,
             width: 117 * theme.dimensions.absoluteHeight,
-            height: 93 * theme.dimensions.absoluteHeight,
+            height: 100 * theme.dimensions.absoluteHeight,
             borderRadius: 15,
         },
         radioContainerSelectod: {
@@ -24,8 +32,8 @@ export const getStyles = () => {
         },
         radioContainer: {
             position: 'absolute',
-            right: 28 * theme.dimensions.absoluteWidth,
-            top: 34 * theme.dimensions.absoluteHeight,
+            right: 8 * theme.dimensions.absoluteWidth,
+            top: 37.5 * theme.dimensions.absoluteHeight,
             width: 26 * theme.dimensions.absoluteHeight,
             height: 26 * theme.dimensions.absoluteHeight,
             borderRadius: 13 * theme.dimensions.absoluteHeight,

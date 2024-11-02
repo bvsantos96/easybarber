@@ -12,6 +12,7 @@ import texts from "@lang/en.json";
 import { useQuery } from "@tanstack/react-query";
 import { Params, Routes } from "@navigation/Router";
 import { resetNavigation } from "utils/Utils";
+import Divider from "@components/Divider";
 
 export type Route = {
     establishmentId: number;
@@ -27,6 +28,7 @@ export default function EmployeeSelection({ navigation, route }: Props) {
     const styles = getStyles();
     const { establishmentId, serviceId, date, startHour, availableEmployees } = route.params;
     const [selected, setSelected] = useState<number | string>(0);
+    const [topPadding, setTopPadding] = useState(0);
     const { alert } = useAlertStore();
     const { data } = useQuery({
         queryKey: [`establishment/${establishmentId}/service/${serviceId}/employees`, serviceId],
@@ -52,6 +54,7 @@ export default function EmployeeSelection({ navigation, route }: Props) {
 
     return (
         <Selection
+            setTopPadding={setTopPadding}
             buttonText={texts.appointments.schedule}
             selectionText={(date && startHour) ? texts.employees.selectNot : texts.employees.select}
             selected={(date && startHour) ? selected != 0 : true}
@@ -82,6 +85,7 @@ export default function EmployeeSelection({ navigation, route }: Props) {
                 }
             }>
             <View style={styles.listContainer}>
+                <Divider size={topPadding} horizontal={false} />
                 {data && data.length > 0 && (
                     <FlatList
                         data={data.filter((e) => {
