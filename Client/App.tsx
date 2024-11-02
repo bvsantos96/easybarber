@@ -31,11 +31,12 @@ import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
 import { DEBUG_AUTO_LOGIN } from './utils/EnvVariables';
 import CustomAlert, { AlertType } from './components/Alert';
-import { Header } from '@screens/HomeNavigator';
+import Header from '@components/Header';
 import { getSelectedLocation } from 'utils/Location';
 import useAlertStore from 'storage/stores/AlertStore';
 import RootNav from '@navigation/RootNavigator';
 import { Params, Routes } from '@navigation/Router';
+import { SetSelectedRef } from '@screens/EstablishmentDetails';
 
 const Router = () => {
     const {
@@ -44,6 +45,9 @@ const Router = () => {
         hasLocationPermission
     } = usePermissionStore();
 
+
+    const setSelectedRef = useRef<SetSelectedRef>(null);
+    const [favorite, setFavorite] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const [defaultPage, setDefaultPage] = useState<keyof typeof Params>(Routes.Tabs);
 
@@ -63,13 +67,13 @@ const Router = () => {
                 console.log("DEBUG AUTO LOGIN");
                 defaultPage = Routes.Sign;
             } else {
-                if( await isFirstTime() ){
+                if (await isFirstTime()) {
                     defaultPage = Routes.Onboarding;
-                }else if( await getToken() !== null){
+                } else if (await getToken() !== null) {
                     requestFeedback();
                     defaultPage = Routes.Tabs;
                 }
-                else{
+                else {
                     defaultPage = Routes.Sign;
                 }
             }
@@ -180,13 +184,27 @@ const Router = () => {
                         return (<Stack.Screen
                             key={_key}
                             name={_key}
-                            options={nav.hasHeader ? {
-                                header: ({ navigation }) => (
-                                    <Header navigation={navigation} title={nav.title} />
-                                )
-                            } : { headerShown: false }}
+                            options={nav.hasHeader ?
+                                {
+                                    header: ({ navigation }) => (
+                                        <Header navigation={navigation} title={nav.title} hasGoBack={!nav.noGoBack} secondHeader={nav.secondHeader} secondHeaderFunction={setSelectedRef?.current?.setSelected} selected={favorite} />
+                                    ),
+                                }
+                                :
+                                {
+                                    headerShown: false
+                                }
+                            }
                         >
-                            {(props) => nav.containerizedComponent ? containerizedComponent(<nav.component {...props} />) : <nav.component {...props} />}
+
+                            {(props) => {
+                                switch (_key) {
+                                    case Routes.EstablishmentDetails:
+                                        return <nav.component {...props} ref={setSelectedRef} setFavorite={setFavorite} />;
+                                    default:
+                                        return nav.containerizedComponent ? containerizedComponent(<nav.component {...props} />) : <nav.component {...props} />
+                                }
+                            }}
                         </Stack.Screen>);
                     })}
                 </Stack.Navigator>
