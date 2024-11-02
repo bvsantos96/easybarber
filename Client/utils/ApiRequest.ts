@@ -14,6 +14,7 @@ import { twoDigits } from './Utils';
 import useAlertStore from 'storage/stores/AlertStore';
 import { AlertType } from '@components/Alert';
 import { useTheme } from '@styles/ThemeContext';
+import useAppointmentStore from 'storage/stores/AppointmentStore';
 
 export const getTimes = async ({ from, to }: { from?: string, to?: string }): Promise<PickerItem[]> => {
     from = from || "08:00";
@@ -81,8 +82,8 @@ export const getToken = async (): Promise<string | null> => {
 
 export const isFirstTime = async (): Promise<boolean> => {
     const firstTime = await getData(FIRST_TIME);
-    const isFirstTime:boolean = (firstTime !== null );
-    if( isFirstTime ){
+    const isFirstTime: boolean = (firstTime !== null);
+    if (isFirstTime) {
         storeData(FIRST_TIME, "false");
     }
     return isFirstTime;
@@ -648,12 +649,20 @@ export const requestFeedback = async (): Promise<void> => {
                 });
                 return;
             }
-            console.log("else ", response.data);
             return;
         } catch {
-            console.log("catch ", response.data);
             return;
         }
     }
     throw new Error(langs.apiMessages.failed);
+}
+
+export const validateAppointments = async (): Promise<void> => {
+    const response = await request<string>("/appointments/validate", "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+
+    const {
+        validateHash
+    } = useAppointmentStore.getState();
+
+    validateHash(response.data || "");
 }
