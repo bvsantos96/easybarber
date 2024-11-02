@@ -25,7 +25,9 @@ export default function Selection({ onButtonPress, children, selected, selection
     return (
         <View style={styles.container} >
             <Divider size={topPadding} />
-            <Text onTextLayout={handleTextLayout} style={styles.selectTextContainer}>{selectionText}</Text>
+            <View style={styles.textContainer}>
+                <Text onTextLayout={handleTextLayout} style={styles.selectTextContainer}>{selectionText}</Text>
+            </View>
             {children}
             <View style={styles.button}>
                 <Button

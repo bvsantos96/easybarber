@@ -53,9 +53,8 @@ export const getStyles = () => {
         listContainer: {
             position: 'absolute',
             top: 40 * theme.dimensions.absoluteHeight,
-            width: 335 * theme.dimensions.absoluteWidth,
+            width: theme.dimensions.width,
             height: 470 * theme.dimensions.absoluteHeight,
-            left: 29 * theme.dimensions.absoluteWidth,
         },
     })
 };
