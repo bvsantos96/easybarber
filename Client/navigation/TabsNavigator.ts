@@ -1,6 +1,6 @@
 import texts from "@lang/en.json";
 import HomeNavigator from "@screens/HomeNavigator";
-import Appointments from "@screens/Appointments";
+import AppointmentNavigator from "@screens/AppointmentNavigator";
 import HomeIcon from "@assets/icons/home.svg";
 import AppointmentsIcon from "@assets/icons/appointments.svg";
 import Heart from "@assets/icons/Heart";
@@ -16,8 +16,8 @@ const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
     },
     Appointments: {
         title: texts.navigation.tabs.appointments.name,
-        hasHeader: true,
-        component: Appointments,
+        hasHeader: false,
+        component: AppointmentNavigator,
         tabicon: AppointmentsIcon,
         requiresAuth: true
     },

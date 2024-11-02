@@ -149,9 +149,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={() =>
                         firstLoad ? (
-                            <View style={[styles.noSlotsContainer]}>
-                                <ActivityIndicator style={styles.noSlotsContainer} size="large" color={theme.colors.text.lightGray} />
-                            </View>
+                            null
                         ) : (
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
                                 <View style={{ justifyContent: "center", alignItems: 'center' }}>
@@ -185,9 +183,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={() =>
                         firstLoad ? (
-                            <View style={[styles.noSlotsContainer]}>
-                                <ActivityIndicator style={styles.noSlotsContainer} size="large" color={theme.colors.text.lightGray} />
-                            </View>
+                            null
                         ) : (
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
                                 <View style={{ justifyContent: "center", alignItems: 'center' }}>
