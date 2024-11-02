@@ -4,6 +4,7 @@
     "no": "No",
     "submit": "Submit",
     "dismiss": "Dismiss",
+    "notNow" : "Not Now",
     "reload": "Reload",
     "logout": "Logout",
     "logoutSuccess": "Logout Successful",
