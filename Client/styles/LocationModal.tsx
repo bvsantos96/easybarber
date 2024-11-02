@@ -50,6 +50,9 @@ export const getStyles = () => {
             backgroundColor: theme.colors.borderAlt,
             borderBottomWidth: 0,
         },
+        underlinedText: {
+            textDecorationLine: 'underline',
+        },
         itemTitle: {
             color: theme.colors.text.main,
             fontSize: 14 * theme.dimensions.absoluteWidth,
@@ -72,7 +75,7 @@ export const getStyles = () => {
             marginRight: 5 * theme.dimensions.absoluteWidth,
         },
         itemIconContainer: {
-            width: '10%', 
+            width: '10%',
             height: "100%",
             alignItems: 'center',
             justifyContent: 'center',
