@@ -9,6 +9,7 @@ import Selection from './Selection';
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Params, Routes } from "@navigation/Router";
 import texts from "@lang/en.json";
+import Divider from "@components/Divider";
 
 export type Route = {
     establishmentId: number
@@ -20,6 +21,7 @@ export default function ServiceSelection({ route, navigation }: Props) {
     const styles = getStyles();
     const { establishmentId } = route.params;
     const [selected, setSelected] = useState<number | string>(0);
+    const [topPadding, setTopPadding] = useState(0);
     const { data } = useQuery({
         queryKey: [`/establishment/${establishmentId}/services/list`],
         queryFn: async () => await getEstablishmentServices(establishmentId),
@@ -37,6 +39,7 @@ export default function ServiceSelection({ route, navigation }: Props) {
 
     return (
         <Selection
+            setTopPadding={setTopPadding}
             buttonText={texts.appointments.selectService}
             selectionText={texts.services.select}
             selected={selected !== 0}
@@ -46,6 +49,7 @@ export default function ServiceSelection({ route, navigation }: Props) {
                 }
             }>
             <View style={styles.listContainer}>
+                <Divider size={topPadding} />
                 {data && data.length > 0 && (
                     <FlatList
                         data={data || []}
