@@ -9,6 +9,12 @@ import MobileConfirmation from "@screens/MobileConfirmation";
 import ForgotPwd from "@screens/ForgotPwd";
 import ResetPwd from "@screens/ResetPwd";
 import { Params } from "@navigation/Router";
+import EstablishmentDetails from "@screens/EstablishmentDetails";
+import FavoriteHeader from "@components/FavoriteHeader";
+import ServiceSelection from "@screens/ServiceSelection";
+import EmployeeSelection from "@screens/EmployeeSelection";
+import Availability from "@screens/Availability";
+import Settings from "@screens/Settings";
 
 const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     Onboarding: {
@@ -65,6 +71,37 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         component: ResetPwd,
         containerizedComponent: false,
     },
+    EstablishmentDetails: {
+        title: texts.navigation.tabs.homeNavigator.establishmentDetails.name,
+        hasHeader: true,
+        component: EstablishmentDetails,
+        containerizedComponent: false,
+        secondHeader: FavoriteHeader
+    },
+    ServiceSelection: {
+        title: texts.navigation.tabs.homeNavigator.serviceSelection.name,
+        hasHeader: true,
+        component: ServiceSelection,
+        containerizedComponent: false,
+    },
+    EmployeeSelection: {
+        title: texts.navigation.tabs.homeNavigator.employeeSelection.name,
+        hasHeader: true,
+        component: EmployeeSelection,
+        containerizedComponent: false,
+    },
+    Availability: {
+        title: texts.navigation.tabs.homeNavigator.schedule.name,
+        hasHeader: true,
+        component: Availability,
+        containerizedComponent: false,
+    },
+    Settings: {
+        title: texts.navigation.tabs.homeNavigator.settings.name,
+        hasHeader: true,
+        component: Settings,
+        containerizedComponent: false
+    }
 };
 
 export default RootNav;

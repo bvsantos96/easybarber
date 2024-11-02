@@ -47,6 +47,13 @@ export default function Appointments({ navigation }: PropNavigation) {
         setNUpcomming(nUpcomming - 1);
     }
 
+    const MemoizedAppointmentItem = React.memo(AppointmentItem);
+    const renderItemPast = ({ item }: { item: AppointmentInfo }) =>
+        <MemoizedAppointmentItem navigation={navigation} key={item.id} appointment={item} past={true} />
+
+    const renderItemFuture = ({ item }: { item: AppointmentInfo }) =>
+        <MemoizedAppointmentItem navigation={navigation} cancel={cancelAppointment} key={item.id} appointment={item} past={false} />
+
     return (
         <View style={styles.container}>
             <View style={styles.titleContainer}>
@@ -56,24 +63,22 @@ export default function Appointments({ navigation }: PropNavigation) {
             </View>
 
             <View style={[styles.listContainer]}>
-                <PageList<AppointmentInfo>
-                    key="upcomming"
-                    style={upComming ? {} : { display: 'none' }}
-                    reset={resetSearch}
-                    ref={pageListUpcommingRef}
-                    renderItem={({ item }: { item: AppointmentInfo }) =>
-                        <AppointmentItem navigation={navigation} cancel={cancelAppointment} key={item.id} appointment={item} past={false} />
-                    }
-                    requestFunction={loadUpcomming} />
-                <PageList<AppointmentInfo>
-                    style={upComming ? { display: 'none' } : {}}
-                    key="past"
-                    reset={resetSearch}
-                    ref={pageListRef}
-                    renderItem={({ item }: { item: AppointmentInfo }) =>
-                        <AppointmentItem navigation={navigation} key={item.id} appointment={item} past={true} />
-                    }
-                    requestFunction={loadPast} />
+                    <PageList<AppointmentInfo>
+                        key="upcomming"
+                        style={upComming ? {} : { display: 'none' }}
+                        reset={resetSearch}
+                        ref={pageListUpcommingRef}
+                        renderItem={renderItemFuture}
+                        requestFunction={loadUpcomming}
+                    />
+                    <PageList<AppointmentInfo>
+                        key="past"
+                        style={upComming ? { display: 'none' } : {}}
+                        reset={resetSearch}
+                        ref={pageListRef}
+                        renderItem={renderItemPast}
+                        requestFunction={loadPast}
+                    />
             </View>
         </View>
     );
