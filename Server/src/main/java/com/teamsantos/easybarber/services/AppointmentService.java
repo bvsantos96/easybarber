@@ -17,6 +17,7 @@ import com.teamsantos.easybarber.DTO.appointment.AppointmentCountDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO;
+import com.teamsantos.easybarber.DTO.appointment.AppointmentsHashDTO;
 import com.teamsantos.easybarber.DTO.appointment.CancelAppointmentDTO;
 import com.teamsantos.easybarber.DTO.appointment.FeedbackDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
@@ -222,9 +223,22 @@ public class AppointmentService {
         if (appointment == null) {
             return new FeedbackDTO();
         }
-        appointment.setFeedbackAsked(false);
+        appointment.setFeedbackAsked(true);
         appointmentRepository.save(appointment);
         return new FeedbackDTO(appointment.getId(), appointment.getEmployee().getUser().getName(),
                 appointment.getEstablishment().getName());
+    }
+
+    @Transactional(readOnly = true)
+    public String validateAppointments(boolean userView) {
+        List<AppointmentsHashDTO> appointments = appointmentRepository.findAllAppointmentsHash(UserContext.getUserId(),
+                userView);
+
+        String hash = "";
+        for (AppointmentsHashDTO appointment : appointments) {
+            hash += appointment.toString();
+        }
+
+        return Utils.hash(hash);
     }
 }
