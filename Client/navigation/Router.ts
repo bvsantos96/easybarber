@@ -22,6 +22,7 @@ export const Params = {
     Availability: {} as AvailabilityRoute,
     Settings: undefined,
     Home: undefined,
+    AppointmentsMain: undefined,
     Appointments: undefined,
     FavoritesMain: undefined,
     Favorites: undefined,
