@@ -71,10 +71,7 @@ export default function AnimatedSwitch({ text1, text2, setSelected }: { text1: s
     ).current;
 
     return (
-        <View style={styles.container} onLayout={(event) => {
-            const { width } = event.nativeEvent.layout;
-            console.log(width/2);
-        }}>
+        <View style={styles.container}>
             <Pressable style={styles.box} onPress={() => handleSelection()} />
             <Animated.View
                 onLayout={(event) => {
