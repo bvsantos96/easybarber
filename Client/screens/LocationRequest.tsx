@@ -6,13 +6,14 @@ import Button from "../components/Button";
 import LogoSmall from "@assets/images/logoRounded.svg";
 import * as Location from 'expo-location';
 import usePermissionStore from "storage/stores/PermissionStore";
+import Pressable from "@components/Pressable";
+import texts from "@lang/en.json";
 
 export default function LocationRequest() {
     const {
         setRequestingLocationPermission,
         setHasLocationPermission
     } = usePermissionStore();
-    const texts = require("@lang/en.json");
     const styles = getStyles();
 
     const requestLocationPermission = async () => {
@@ -40,6 +41,15 @@ export default function LocationRequest() {
             </View>
             <View style={styles.containerSubTitle} >
                 <Text style={styles.textSubtitle}>{texts.location.subTitle}</Text>
+            </View>
+            <View style={[styles.dismissContainer, styles.centerHorizontal]}>
+                <Pressable
+                    onPress={() => {
+                        setHasLocationPermission(false);
+                        setRequestingLocationPermission(false);
+                    }}>
+                    <Text style={[styles.textSubtitle, styles.underlinedText]}>{texts.notNow}</Text>
+                </Pressable>
             </View>
             <View style={styles.buttonContainer}>
                 <Button borderRadius={10} backgroundColor={styles.button.backgroundColor} buttonTextColor={styles.button.color} title={texts.allow} onPress={requestLocationPermission} />
@@ -102,6 +112,9 @@ const getStyles = () => {
             width: theme.dimensions.width,
             alignItems: 'center',
         },
+        underlinedText: {
+            textDecorationLine: 'underline',
+        },
         textSubtitle: {
             fontSize: 14 * theme.dimensions.absoluteWidth,
             fontFamily: 'Poppins',
@@ -110,6 +123,15 @@ const getStyles = () => {
             color: theme.colors.text.alt,
             alignSelf: 'center',
             textAlign: 'center',
+        },
+        centerHorizontal: {
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
+        dismissContainer: {
+            position: 'absolute',
+            top: 646 * theme.dimensions.absoluteHeight,
+            width: theme.dimensions.width,
         },
         buttonContainer: {
             position: 'absolute',
