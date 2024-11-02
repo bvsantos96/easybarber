@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 
 import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO;
+import com.teamsantos.easybarber.DTO.appointment.AppointmentsHashDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.entities.Appointment;
@@ -229,4 +230,20 @@ public interface AppointmentRepository
             """)
     List<Appointment> findTopByUserIdAndFeedbackAskedFalseOrderByDateDescTimeDesc(@Param("userId") long userId,
             Pageable pageable);
+
+    @Query("""
+                SELECT new com.teamsantos.easybarber.DTO.appointment.AppointmentsHashDTO(
+                    a.id,
+                    CASE
+                        WHEN (a.active = TRUE AND (a.date > CURRENT_DATE OR (a.date = CURRENT_DATE AND a.time >= CURRENT_TIME)))
+                        THEN true
+                        ELSE false
+                    END
+                )
+                FROM Appointment a
+                WHERE
+                    ((:userView = true AND :userId = a.user.id) OR (:userView = false AND :userId = a.employee.id))
+                    AND a.confirmed = true
+            """)
+    List<AppointmentsHashDTO> findAllAppointmentsHash(long userId, boolean userView);
 }

@@ -3,11 +3,13 @@ package com.teamsantos.easybarber.utils;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.bouncycastle.jcajce.provider.digest.SHA256;
 import org.json.JSONArray;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
@@ -164,5 +166,14 @@ public class Utils {
             return String.format("%%%s%%", value.trim());
         }
         return value;
+    }
+
+    public static String hash(String originalString) {
+        SHA256.Digest digest = new SHA256.Digest();
+        byte[] hashBytes = digest.digest(originalString.getBytes());
+
+        String hashedString = Base64.getEncoder().encodeToString(hashBytes);
+
+        return hashedString;
     }
 }
