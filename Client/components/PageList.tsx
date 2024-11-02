@@ -49,28 +49,34 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     const [request, setRequest] = useState<ITimedRequest<T>>(new TimedRequest(createPageable<T>(pageSize), 0));
     const [loadingMore, setLoadingMore] = useState(false);
     const firstEndReached = useRef(true);
-
-    const setFirstEndReached = (value: boolean) => {
-        firstEndReached.current = value;
-    }
-
-    const firstLoad = useRef(true);
-    const setFirstLoad = (value: boolean) => {
-        firstLoad.current = value;
-    }
-
     const pagerViewRef = React.useRef<PagerView>(null);
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);;
+    const [firstLoad, setFirstLoad] = useState(true);
+
+    const startTimeout = () => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+
+        timeoutRef.current = setTimeout(() => {
+            _resetList();
+        }, 300000);
+    };
 
     const loadMoreItems = async (req = request) => {
         setLoadingMore(true);
-        const reqElements = req.page.content.length;
-        await req.request(requestFunction);
-        if (saveCache && reqElements !== req.page.content.length) {
-            saveCache(req.page.content);
+        try {
+            const reqElements = req.page.content.length;
+            await req.request(requestFunction);
+            if (saveCache && reqElements !== req.page.content.length) {
+                saveCache(req.page.content);
+            }
+            setRequest(new TimedRequest(req.page, req.lastRequest, req.pathParams));
+            startTimeout();
+        } finally {
+            setLoadingMore(false);
+            setFirstLoad(false);
         }
-        setRequest(new TimedRequest(req.page, req.lastRequest, req.pathParams));
-        setLoadingMore(false);
-        setFirstLoad(false);
     };
 
     const _loadMoreItems = useRef(debounce(loadMoreItems, 300)).current;
@@ -100,6 +106,12 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
         if (preload) {
             loadMoreItems();
         }
+
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
+            }
+        };
     }, []);
 
     const resetList = () => {
@@ -112,7 +124,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     const _resetList = useRef(debounce(resetList, 300)).current;
 
     useEffect(() => {
-        if (!firstLoad.current) {
+        if (!firstLoad) {
             _resetList();
         }
     }, [props.reset]);
@@ -136,20 +148,17 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={() =>
-                        firstLoad.current ? (
+                        firstLoad ? (
                             <View style={[styles.noSlotsContainer]}>
                                 <ActivityIndicator style={styles.noSlotsContainer} size="large" color={theme.colors.text.lightGray} />
-                            </View>) : (
+                            </View>
+                        ) : (
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
-                                {loadingMore ?
-                                    null
-                                    :
-                                    <View style={{ justifyContent: "center", alignItems: 'center' }}>
-                                        <Text>{texts.noItems}</Text>
-                                        <Divider size={10} horizontal={false} />
-                                        <Button stylesInput={{ maxHeight: "50%", minWidth: "25%" }} title={texts.reload} onPress={_resetList} />
-                                    </View>
-                                }
+                                <View style={{ justifyContent: "center", alignItems: 'center' }}>
+                                    <Text>{texts.noItems}</Text>
+                                    <Divider size={10} horizontal={false} />
+                                    <Button stylesInput={{ maxHeight: "50%", minWidth: "25%" }} title={texts.reload} onPress={_resetList} />
+                                </View>
                             </View>
                         )
                     }
@@ -175,20 +184,17 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={() =>
-                        firstLoad.current ? (
+                        firstLoad ? (
                             <View style={[styles.noSlotsContainer]}>
                                 <ActivityIndicator style={styles.noSlotsContainer} size="large" color={theme.colors.text.lightGray} />
-                            </View>) : (
+                            </View>
+                        ) : (
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
-                                {loadingMore ?
-                                    null
-                                    :
-                                    <View style={{ justifyContent: "center", alignItems: 'center' }}>
-                                        <Text>{texts.noItems}</Text>
-                                        <Divider size={10} horizontal={false} />
-                                        <Button stylesInput={{ maxHeight: "50%", minWidth: "25%" }} title={texts.reload} onPress={_resetList} />
-                                    </View>
-                                }
+                                <View style={{ justifyContent: "center", alignItems: 'center' }}>
+                                    <Text>{texts.noItems}</Text>
+                                    <Divider size={10} horizontal={false} />
+                                    <Button stylesInput={{ maxHeight: "50%", minWidth: "25%" }} title={texts.reload} onPress={_resetList} />
+                                </View>
                             </View>
                         )
                     }
