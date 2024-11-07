@@ -202,7 +202,7 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         return establishmentServiceRepository.findAllServiceDTO(filter, pageable);
     }
 
-    public void addService(Long id, CreateEstablishmentServiceDTO serviceDTO)
+    public Long addService(Long id, CreateEstablishmentServiceDTO serviceDTO)
             throws NotFoundException, AlreadyExistsException {
         if (id == null) {
             throw new IllegalArgumentException("Establishment id cannot be null");
@@ -216,11 +216,12 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         if (serviceDTO.getPrice() == null) {
             throw new IllegalArgumentException("Service price cannot be null");
         }
-        addService(id, serviceDTO.getServiceId(), serviceDTO.getPrice());
+        return addService(id, serviceDTO.getServiceId(), serviceDTO.getPrice());
     }
 
     @Transactional
-    public void addService(long id, Long serviceId, double price) throws NotFoundException, AlreadyExistsException {
+    public Long addService(long id, Long serviceId, double price) throws NotFoundException, AlreadyExistsException {
+        long esId = 0L;
         if (serviceId != null) {
             Establishment establishment = establishmentRepository.findByIdWithStaff(id)
                     .orElseThrow(NotFoundException::new);
@@ -238,9 +239,10 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
             serviceEntity.setPrice(price);
             serviceEntity.setEstablishment(establishment);
             serviceEntity.setService(service);
-            long esId = establishmentServiceRepository.save(serviceEntity).getId();
+            esId = establishmentServiceRepository.save(serviceEntity).getId();
             addEmployeeToService(id, esId, employee.getId());
         }
+        return esId;
     }
 
     @Transactional
