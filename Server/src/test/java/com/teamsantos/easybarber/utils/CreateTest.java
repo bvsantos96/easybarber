@@ -1,10 +1,14 @@
 package com.teamsantos.easybarber.utils;
 
+import org.json.JSONObject;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import com.teamsantos.easybarber.DTO.BaseResponseDTO;
+import com.teamsantos.easybarber.testDTOs.UserTestDTO;
 
 public class CreateTest {
     public static ResultActions delete(MockMvc mockMvc, String path, String jwt) throws Exception {
@@ -129,6 +133,11 @@ public class CreateTest {
                 .content(item));
     }
 
+    public static String login(MockMvc mockMvc, UserTestDTO user) throws Exception {
+        ResultActions result = post(mockMvc, "/login", user.toString());
+        return result.andReturn().getResponse().getContentAsString();
+    }
+
     public static void createForbidden(MockMvc mockMvc, String path, String jwt, String item) throws Exception {
         ResultActions result = post(mockMvc, path, jwt, item);
         result
@@ -150,11 +159,14 @@ public class CreateTest {
                         .isCreated());
     }
 
-    public static void createOrFound(MockMvc mockMvc, String path, String item) throws Exception {
+    public static Long createId(MockMvc mockMvc, String path, String item) throws Exception {
         ResultActions result = post(mockMvc, path, item);
         result
                 .andExpect(MockMvcResultMatchers.status()
-                        .is(AnyOfStatusMatcher.createdOrFound()));
+                        .isCreated());
+        return JSONToDTO
+                .toDTO(new JSONObject(result.andReturn().getResponse().getContentAsString()), BaseResponseDTO.class)
+                .getId();
     }
 
     public static void create(MockMvc mockMvc, String path, String jwt, String item) throws Exception {
@@ -162,6 +174,23 @@ public class CreateTest {
         result
                 .andExpect(MockMvcResultMatchers.status()
                         .isCreated());
+    }
+
+    public static Long createId(MockMvc mockMvc, String path, String jwt, String item) throws Exception {
+        ResultActions result = post(mockMvc, path, jwt, item);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .isCreated());
+        return JSONToDTO
+                .toDTO(new JSONObject(result.andReturn().getResponse().getContentAsString()), BaseResponseDTO.class)
+                .getId();
+    }
+
+    public static void createOrFound(MockMvc mockMvc, String path, String item) throws Exception {
+        ResultActions result = post(mockMvc, path, item);
+        result
+                .andExpect(MockMvcResultMatchers.status()
+                        .is(AnyOfStatusMatcher.createdOrFound()));
     }
 
     public static void createOrFound(MockMvc mockMvc, String path, String jwt, String item) throws Exception {

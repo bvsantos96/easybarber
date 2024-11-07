@@ -190,7 +190,7 @@ public class EstablishmentController extends ImageController<Establishment, Esta
             @RequestBody CreateEstablishmentServiceDTO service) {
         BaseResponseDTO responseDTO = new BaseResponseDTO();
         try {
-            establishmentService.addService(establishmentId, service);
+            responseDTO.setId(establishmentService.addService(establishmentId, service));
             return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
         } catch (UnsupportedOperationException e) {
             responseDTO.setResponseMessage(e.getMessage());

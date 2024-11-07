@@ -67,6 +67,7 @@ public class ServiceService extends
         }
         com.teamsantos.easybarber.entities.Service service = modelMapper.map(serviceDTO,
                 com.teamsantos.easybarber.entities.Service.class);
+        service.setId(null);
         service.setEmployee(entityManager.getReference(Employee.class, employeeId));
         service.setServiceType(entityManager.getReference(ServiceType.class, serviceDTO.getServiceTypeId()));
         return serviceRepository.save(service).getId();

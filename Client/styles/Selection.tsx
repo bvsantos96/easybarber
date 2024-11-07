@@ -3,7 +3,6 @@ import { useTheme } from './ThemeContext';
 
 export const getStyles = () => {
     const theme = useTheme();
-    const padding = (theme.dimensions.width - 356.11 * theme.dimensions.absoluteWidth) / 2;
     return StyleSheet.create({
         container: {
             flex: 1,

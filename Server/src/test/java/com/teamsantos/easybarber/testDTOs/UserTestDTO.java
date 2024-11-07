@@ -21,4 +21,8 @@ public class UserTestDTO extends UserCreateDTO {
     public UserTestDTO(Long id, String countryMobile, String mobile, String password, String name) {
         super(id, countryMobile, mobile, password, name);
     }
+
+    public static UserTestDTO createDummy(int idx) {
+        return new UserTestDTO("+351", "90000000" + idx, "Test123*", "Test" + idx);
+    }
 }
