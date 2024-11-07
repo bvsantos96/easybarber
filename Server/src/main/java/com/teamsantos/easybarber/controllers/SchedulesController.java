@@ -50,6 +50,11 @@ public class SchedulesController {
             if (replaceExisting == null) {
                 replaceExisting = true;
             }
+
+            if (obj.getEmployeeId() == null) {
+                obj.setEmployeeId(UserContext.getEmployeeId());
+            }
+
             Pair<List<Long>, String> result = schedulesService.create(obj, UserContext.getEmployeeId(),
                     forceSave,
                     replaceExisting);

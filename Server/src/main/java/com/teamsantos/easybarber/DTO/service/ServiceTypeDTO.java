@@ -39,4 +39,9 @@ public class ServiceTypeDTO extends BaseDTO {
         this.description = description;
         return this;
     }
+
+    public static ServiceTypeDTO createDummy(int i) {
+        return new ServiceTypeDTO(Long.parseLong("" + i), "ServiceType" + i, "ServiceType description" + i,
+                String.format("/icons/categories/serviceType%d.svg", i));
+    }
 }

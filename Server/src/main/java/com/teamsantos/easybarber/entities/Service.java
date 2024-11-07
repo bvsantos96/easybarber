@@ -1,9 +1,6 @@
 package com.teamsantos.easybarber.entities;
 
-import java.util.Objects;
 import java.util.Set;
-
-import org.hibernate.proxy.HibernateProxy;
 
 import com.teamsantos.easybarber.DTO.service.ServiceDTO;
 import com.teamsantos.easybarber.entities.base.EntityWithImages;
@@ -23,12 +20,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = false, of = { "name", "description", "duration", "serviceType", "employee" })
 @ToString
 @Entity
 @Table(indexes = { @Index(columnList = "service_type_id"), @Index(columnList = "employee_id") })
@@ -50,31 +49,6 @@ public class Service extends EntityWithImages<Service, ServiceImage> {
     private Employee employee;
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "service", cascade = CascadeType.ALL)
     private Set<EstablishmentService> establishments;
-
-    @Override
-    public final boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null)
-            return false;
-        Class<?> oEffectiveClass = o instanceof HibernateProxy
-                ? ((HibernateProxy) o).getHibernateLazyInitializer().getPersistentClass()
-                : o.getClass();
-        Class<?> thisEffectiveClass = this instanceof HibernateProxy
-                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass()
-                : this.getClass();
-        if (thisEffectiveClass != oEffectiveClass)
-            return false;
-        Service service = (Service) o;
-        return getId() != null && Objects.equals(getId(), service.getId());
-    }
-
-    @Override
-    public final int hashCode() {
-        return this instanceof HibernateProxy
-                ? ((HibernateProxy) this).getHibernateLazyInitializer().getPersistentClass().hashCode()
-                : getClass().hashCode();
-    }
 
     public void update(ServiceDTO serviceDTO) {
         this.name = Utils.setFieldIfNotNullOrEmpty(name, serviceDTO.getName());
