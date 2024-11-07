@@ -91,4 +91,15 @@ public class AppointmentDTO extends BaseDTO {
         appointment.setReminded(false);
         return appointment;
     }
+
+    public static AppointmentDTO createDummy(int index, long establishmentId, long serviceId, long employeeId) {
+        LocalDate date = LocalDate.now();
+        if (index > 0) {
+            date = date.plusDays(index);
+        } else {
+            date = date.minusDays(-index);
+        }
+        return new AppointmentDTO(null, employeeId, establishmentId, serviceId, "description", null,
+                date, LocalTime.parse("09:00"));
+    }
 }

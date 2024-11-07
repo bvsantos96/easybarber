@@ -25,4 +25,8 @@ public class CreateEstablishmentServiceDTO extends BaseDTO {
         this.active = active;
         this.active = getActive();
     }
+
+    public static CreateEstablishmentServiceDTO createDummy(long establishmentId, long serviceId) {
+        return new CreateEstablishmentServiceDTO(null, serviceId, establishmentId, 10.0, true);
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
@@ -32,6 +33,7 @@ import com.teamsantos.easybarber.utils.JSONToDTO;
 import com.teamsantos.easybarber.utils.TestsState;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class EstablishmentTests {
     private final MockMvc mockMvc;

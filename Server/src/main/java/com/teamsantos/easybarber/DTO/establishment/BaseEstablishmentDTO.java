@@ -40,6 +40,11 @@ public class BaseEstablishmentDTO extends BaseResponseDTO {
         super();
     }
 
+    public static BaseEstablishmentDTO createDummy(final int idx) {
+        return new BaseEstablishmentDTO(null, "Establishment" + idx, "Description" + idx, 38.672588, -9.165830,
+                "Rua Ramiro Ferrao " + idx);
+    }
+
     public BaseEstablishmentDTO(final String name, final String description) {
         this.name = name;
         this.description = description;

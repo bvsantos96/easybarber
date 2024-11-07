@@ -107,4 +107,11 @@ public class ServiceDTO extends BaseDTO {
                 && description.equals(service.getDescription())
                 && Objects.equals(duration, service.getDuration());
     }
+
+    public static ServiceDTO createDummy(int index, long serviceType) {
+        return new ServiceDTO(null, null, serviceType,
+                "Service" + index, "Service description" + index,
+                "https://media.istockphoto.com/id/640274128/pt/foto/barber-using-scissors-and-comb.jpg?s=2048x2048&w=is&k=20&c=8Zdkb-wzjjmuQj8xFp3RcUyKo69LYWLf1H6M0HMnMNg=",
+                10.0, 30);
+    }
 }

@@ -219,8 +219,9 @@ public class SchedulesService {
                 employee,
                 exception.getEstablishmentId());
         Set<Long> ids = new HashSet<>();
-        for (ScheduleException _exception : _exceptions) {
-            ids.add(scheduleExceptionRepository.save(_exception).getId());
+        List<ScheduleException> exceptions = scheduleExceptionRepository.saveAll(_exceptions);
+        for (ScheduleException e : exceptions) {
+            ids.add(e.getId());
         }
         return ids;
     }
