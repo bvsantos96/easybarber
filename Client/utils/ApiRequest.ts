@@ -496,7 +496,7 @@ export const getCategories = async (): Promise<ICategory[]> => {
     if (response.hasOwnProperty("data") && response.data !== undefined && response.data !== null) {
         // TODO: save the retrieve images into device storage and replace the imageUrls with the local paths
         for (const element of response.data) {
-            if (element.hasOwnProperty("imageURL")) {
+            if (element.hasOwnProperty("imageURL") && element.imageURL !== undefined && element.imageURL !== null && element.imageURL.length > 0) {
                 element.imageURL = await downloadToDevice(element.name, apiUrlMaker(element.imageURL));
             }
         }
