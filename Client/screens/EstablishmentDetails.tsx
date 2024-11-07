@@ -166,21 +166,26 @@ const EstablishmentDetails = forwardRef<SetSelectedRef, Props>(
                     <Underline />
                 </View>
                 <View style={styles.servicesContainer}>
-                    {categories && categories.map((category) => (
-                        <Category
-                            padding={styles.categoryPadding.padding}
-                            style={{ marginHorizontal: styles.categoryPadding.margin }}
-                            key={category.id}
-                            id={category.id}
-                            icon={
-                                <SvgUri width={styles.categoryIcon.width}
-                                    height={styles.categoryIcon.height}
-                                    style={styles.alignCenter}
-                                    uri={category.imageURL} />
-                            }
-                            title={category.name}
-                            selectedCategory={category.id} />
-                    ))}
+                    {categories && categories.map((category) => {
+                        return (
+                            <Category
+                                padding={styles.categoryPadding.padding}
+                                style={{ marginHorizontal: styles.categoryPadding.margin }}
+                                key={category.id}
+                                id={category.id}
+                                icon={
+                                    (category.imageURL && category.imageURL.length > 0) ?
+                                        (<SvgUri width={styles.categoryIcon.width}
+                                            height={styles.categoryIcon.height}
+                                            style={styles.alignCenter}
+                                            uri={category.imageURL} />)
+                                        : <></>
+                                }
+                                title={category.name}
+                                selectedCategory={category.id} />
+                        )
+                    })
+                    }
                 </View>
                 <View style={styles.aboutTitleContainer}>
                     <Text style={styles.aboutTitle}>{texts.about.title}</Text>
