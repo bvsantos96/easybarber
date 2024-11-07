@@ -11,9 +11,9 @@ import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
@@ -30,9 +30,11 @@ import com.teamsantos.easybarber.utils.CreateTest;
 import com.teamsantos.easybarber.utils.Pair;
 
 @SpringBootTest
-@ActiveProfiles("test_heavy")
 @AutoConfigureMockMvc
 public class HeavyDBTests {
+    @Value("${teamsantos.istestheavy}")
+    private boolean isTestContext;
+
     private final MockMvc mockMvc;
 
     private final int nServicesPerEstablishment = 10;
@@ -173,8 +175,10 @@ public class HeavyDBTests {
     }
 
     @Test
-    public void createHeavyDB() throws Exception {
-        int conflicts = 0;
+    public void createEstablishmentRelatedInfo() throws Exception {
+        if (!isTestContext) {
+            return;
+        }
         createServiceTypes();
         for (int i = 0; i < nEstablishments; i++) {
             Pair<Long, String> establishment = createEstablishment(i);
@@ -193,32 +197,13 @@ public class HeavyDBTests {
                         _employees);
             }
         }
-        for (int i = 0; i < nUsers; i++) {
-            Pair<Long, String> user = createUser(nEstablishments * nEmployeesPerEstablishment + i);
-            for (int j = 1; j < nPastAppointmentsPerUser; j++) {
-                int index = random.nextInt(0, services.size());
-                Long serviceId = (Long) services.keySet().toArray()[index];
-                Pair<Long, Long> service = services.get(serviceId);
-                try {
-                    createAppointments(-j * i, user.getSecond(), service.getFirst(), serviceId, service.getSecond());
-                } catch (Exception e) {
-                    conflicts++;
-                    System.out
-                            .println(String.format("Error creating appointment (Date time conflict - %d)", conflicts));
-                }
-            }
-            for (int j = 1; j < nFutureAppointmentsPerUser; j++) {
-                int index = random.nextInt(0, services.size());
-                Long serviceId = (Long) services.keySet().toArray()[index];
-                Pair<Long, Long> service = services.get(serviceId);
-                try {
-                    createAppointments(j * i, user.getSecond(), service.getFirst(), serviceId, service.getSecond());
-                } catch (Exception e) {
-                    conflicts++;
-                    System.out
-                            .println(String.format("Error creating appointment (Date time conflict - %d)", conflicts));
-                }
-            }
+    }
+
+    @Test
+    public void createUserRelatedInfo() throws Exception {
+        if (!isTestContext) {
+            return;
         }
+        CreateTest.get(mockMvc, "/appointments/createDummy");
     }
 }
