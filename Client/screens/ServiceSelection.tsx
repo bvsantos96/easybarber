@@ -55,7 +55,7 @@ export default function ServiceSelection({ route, navigation }: Props) {
                         data={data || []}
                         renderItem={
                             ({ item }: { item: ServiceInfo }) =>
-                                <SelectionItem key={item.id} image={item.image.data} selected={item.id == selected} onPress={() => { setSelected(item.id) }}>
+                                <SelectionItem key={item.id} image={item.image?.data} selected={item.id == selected} onPress={() => { setSelected(item.id) }}>
                                     <View style={styles.textContainer}>
                                         <View style={styles.titleAndSubTitleContainer}>
                                             <Text style={styles.title}>{item.name}</Text>

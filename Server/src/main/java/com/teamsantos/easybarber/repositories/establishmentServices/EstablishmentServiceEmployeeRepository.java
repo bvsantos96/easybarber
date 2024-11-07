@@ -24,11 +24,14 @@ public interface EstablishmentServiceEmployeeRepository extends JpaRepository<Es
             long employeeId);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.NameIdImageDTO(e.employee.id, e.employee.employee.user.name, img.data)
+            SELECT new com.teamsantos.easybarber.DTO.NameIdImageDTO(
+                e.employee.id,
+                e.employee.employee.user.name,
+                img.data
+            )
             FROM EstablishmentServiceEmployee e
-            LEFT JOIN e.employee.employee.images img
+            LEFT JOIN e.employee.employee.images img ON img.isMain = true
             WHERE e.service.id = :establishmentServiceId
-                AND img.isMain = true
             """)
     List<NameIdImageDTO> listEmployeesOfEstablishmentService(long establishmentServiceId);
 }
