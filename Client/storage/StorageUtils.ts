@@ -13,6 +13,9 @@ export const downloadToDevice = async (id: string, url: string): Promise<string>
             await FileSystem.deleteAsync(fileUri);
         }
         const downloadResult = await FileSystem.downloadAsync(url, fileUri);
+        if (downloadResult.status !== 200) {
+            return "";
+        }
         return downloadResult.uri;
     } catch (error) {
         throw error;

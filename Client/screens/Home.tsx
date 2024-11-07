@@ -94,26 +94,30 @@ export default function Home({ navigation }: PropNavigation) {
                     title={texts.topCategories}>
                     <Divider size={10} />
                     <View style={homeStyles.topCategoriesList}>
-                        {categories && categories.map((category) => (
-                            <Category
-                                key={category.id}
-                                id={category.id}
-                                icon={
-                                    <SvgUri width={topBarStyles.categoryIcon.width}
-                                        height={topBarStyles.categoryIcon.height}
-                                        style={homeStyles.alignCenter}
-                                        uri={category.imageURL} />}
-                                title={category.name}
-                                select={setFilter}
-                                selectedCategory={
-                                    filter && typeof filter === 'object'
-                                        && 'serviceType' in filter
-                                        && typeof filter.serviceType === 'string'
-                                        ? parseInt(filter.serviceType)
-                                        : -1
-                                }
-                            />
-                        ))}
+                        {categories && categories.map((category) => {
+                            return (
+                                <Category
+                                    key={category.id}
+                                    id={category.id}
+                                    icon={
+                                        category.imageURL && category.imageURL.length > 0 &&
+                                        (<SvgUri width={topBarStyles.categoryIcon.width}
+                                            height={topBarStyles.categoryIcon.height}
+                                            style={homeStyles.alignCenter}
+                                            uri={category.imageURL} />)}
+                                    title={category.name}
+                                    select={setFilter}
+                                    selectedCategory={
+                                        filter && typeof filter === 'object'
+                                            && 'serviceType' in filter
+                                            && typeof filter.serviceType === 'string'
+                                            ? parseInt(filter.serviceType)
+                                            : -1
+                                    }
+                                />
+                            )
+                        }
+                        )}
                     </View>
                 </ExpandableView>
                 <View style={expandedStyles.titleContainer}>

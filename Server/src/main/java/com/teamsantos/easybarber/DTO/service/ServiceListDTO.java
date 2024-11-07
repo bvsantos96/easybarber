@@ -23,7 +23,9 @@ public class ServiceListDTO extends BaseDTO {
     public ServiceListDTO(long id, long serviceTypeId, String name, String description, double price,
             ServiceImage image) {
         this(id, serviceTypeId, name, description, price);
-        this.image = image.convertToDTO();
+        if (image != null) {
+            this.image = image.convertToDTO();
+        }
     }
 
     public ServiceListDTO(long id, long serviceTypeId, String name, String description, double price) {
@@ -36,6 +38,8 @@ public class ServiceListDTO extends BaseDTO {
 
     public ServiceListDTO(long id, long serviceTypeId, String name, String description, double price, String image) {
         this(id, serviceTypeId, name, description, price);
-        this.image = new ImageDTO(0L, image, false);
+        if (image != null) {
+            this.image = new ImageDTO(0L, image, false);
+        }
     }
 }
