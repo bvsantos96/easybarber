@@ -11,16 +11,15 @@ import ListItem from '../components/ListItem';
 
 import ExpandableView from '../components/ExpandableView';
 import Divider from '../components/Divider';
-import Category from '../components/Category';
 import { createPageable } from '../utils/PageHandling';
 import { TimedRequest } from '../utils/TimedRequest';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
-import { SvgUri } from 'react-native-svg';
 import PageList, { PageListRef } from '../components/PageList';
 import useLocationStore from '../storage/stores/LocationStore';
 import { getSelectedLocation } from 'utils/Location';
 import Pressable from '@components/Pressable';
 import { Routes } from '@navigation/Router';
+import CategoryList from '@components/CategoryList';
 
 export default function Home({ navigation }: PropNavigation) {
     const topBarStyles = topBarGetStyles();
@@ -92,32 +91,12 @@ export default function Home({ navigation }: PropNavigation) {
                     onExpand={() => { setNearbyBarbersExpanded(topCategoriesExpanded); setTopCategoriesExpanded(!topCategoriesExpanded) }}
                     expanded={topCategoriesExpanded}
                     title={texts.topCategories}>
-                    <Divider size={10} />
                     <View style={homeStyles.topCategoriesList}>
-                        {categories && categories.map((category) => {
-                            return (
-                                <Category
-                                    key={category.id}
-                                    id={category.id}
-                                    icon={
-                                        category.imageURL && category.imageURL.length > 0 &&
-                                        (<SvgUri width={topBarStyles.categoryIcon.width}
-                                            height={topBarStyles.categoryIcon.height}
-                                            style={homeStyles.alignCenter}
-                                            uri={category.imageURL} />)}
-                                    title={category.name}
-                                    select={setFilter}
-                                    selectedCategory={
-                                        filter && typeof filter === 'object'
-                                            && 'serviceType' in filter
-                                            && typeof filter.serviceType === 'string'
-                                            ? parseInt(filter.serviceType)
-                                            : -1
-                                    }
-                                />
-                            )
-                        }
-                        )}
+                        <CategoryList
+                            categories={categories}
+                            maxWidth={topBarStyles.homeContainer.width}
+                            setFilter={setFilter}
+                            filter={filter} />
                     </View>
                 </ExpandableView>
                 <View style={expandedStyles.titleContainer}>
