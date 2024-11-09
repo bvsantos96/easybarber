@@ -11,8 +11,6 @@ import { getEstablishmentCats, getEstablishmentDetails, getEstablishmentServices
 import { gotoLocation } from '../utils/Location';
 import { Underline } from '../components/Underline';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
-import Category from '../components/Category';
-import { SvgUri } from 'react-native-svg';
 import Button from '../components/Button';
 import { ImageRating } from '../components/ImageRating';
 import PageList from '../components/PageList';
@@ -21,6 +19,8 @@ import { PageListType } from '../enums';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Params, Routes } from '@navigation/Router';
 import useFavoriteStore from 'storage/stores/FavoriteStore';
+import CategoryList from '@components/CategoryList';
+import { useTheme } from '@styles/ThemeContext';
 
 export type Route = EstablishmentInfo;
 
@@ -35,6 +35,7 @@ type Props = NativeStackScreenProps<typeof Params, 'EstablishmentDetails'> & {
 const EstablishmentDetails = forwardRef<SetSelectedRef, Props>(
     ({ route, navigation, setFavorite }, ref) => {
 
+        const theme = useTheme();
         const texts = require("@lang/en.json");
         const styles = getStyles();
         const selectionStyles = getSelectionStyles();
@@ -166,26 +167,10 @@ const EstablishmentDetails = forwardRef<SetSelectedRef, Props>(
                     <Underline />
                 </View>
                 <View style={styles.servicesContainer}>
-                    {categories && categories.map((category) => {
-                        return (
-                            <Category
-                                padding={styles.categoryPadding.padding}
-                                style={{ marginHorizontal: styles.categoryPadding.margin }}
-                                key={category.id}
-                                id={category.id}
-                                icon={
-                                    (category.imageURL && category.imageURL.length > 0) ?
-                                        (<SvgUri width={styles.categoryIcon.width}
-                                            height={styles.categoryIcon.height}
-                                            style={styles.alignCenter}
-                                            uri={category.imageURL} />)
-                                        : <></>
-                                }
-                                title={category.name}
-                                selectedCategory={category.id} />
-                        )
-                    })
-                    }
+                    <CategoryList
+                        categorySize={45}
+                        categories={categories}
+                        maxWidth={(theme.dimensions.width * theme.dimensions.absoluteWidth) - styles.servicesContainer.left * 2} />
                 </View>
                 <View style={styles.aboutTitleContainer}>
                     <Text style={styles.aboutTitle}>{texts.about.title}</Text>

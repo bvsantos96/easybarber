@@ -14,6 +14,7 @@ interface CategoryProps {
     selectedCategory: number;
     style?: ViewStyle;
     padding?: number;
+    size?: number;
 }
 
 export default function Category({
@@ -23,10 +24,12 @@ export default function Category({
     select = (_filter: IFilterRequest) => { },
     selectedCategory = -1,
     style = {},
-    padding = 17.5
+    padding = 17.5,
+    size = 60
 }: CategoryProps) {
     const topBarStyles = topBarGetStyles();
     const theme = useTheme();
+    const _padding = padding === 17.5 ? (padding * size / 60) : padding;
 
     return (
         <View style={[style]}>
@@ -36,7 +39,11 @@ export default function Category({
                 }
                 select(filter);
             }}>
-                <View style={[topBarStyles.categoryIconContainer, { padding: padding * theme.dimensions.absoluteWidth }, id != selectedCategory && selectedCategory != -1 ? topBarStyles.categorySelected : null]}>
+                <View style={[topBarStyles.categoryIconContainer, {
+                    minWidth: size * theme.dimensions.absoluteWidth,
+                    minHeight: size * theme.dimensions.absoluteWidth,
+                    padding: _padding * theme.dimensions.absoluteWidth
+                }, id != selectedCategory && selectedCategory != -1 ? topBarStyles.categorySelected : null]}>
                     {icon}
                 </View>
                 <Divider size={8} />
