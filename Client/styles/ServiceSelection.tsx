@@ -54,7 +54,7 @@ export const getStyles = () => {
             position: 'absolute',
             top: 40 * theme.dimensions.absoluteHeight,
             width: theme.dimensions.width,
-            height: 470 * theme.dimensions.absoluteHeight,
+            height: 520 * theme.dimensions.absoluteHeight,
         },
     })
 };
