@@ -64,6 +64,7 @@ export const getStyles = () => {
             top: 310 * theme.dimensions.absoluteHeight,
             left: padding,
             width: "100%",
+            height: 80 * theme.dimensions.absoluteHeight,
             flexDirection: 'row',
             overflow: 'hidden',
         },
