@@ -33,7 +33,6 @@ export default function CategoriesList({ categories, maxWidth, filter, setFilter
         for (let i = 0; i < categories.length; i += elementsPerPage) {
             rows.push(categories.slice(i, i + elementsPerPage));
         }
-        console.log("elementsPerPage", elementsPerPage);
         _padding.current = (maxWidth - (elementsPerPage * categorySize)) / (elementsPerPage * 2);
         setCategoryRows(rows);
     }, [categories]);
