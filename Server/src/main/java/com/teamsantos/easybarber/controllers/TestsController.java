@@ -137,21 +137,25 @@ public class TestsController {
 
     private void createServiceTypes() {
         for (int i = 0; i < nServiceTypes; i++) {
+            System.out.println("Creating service type " + i);
             serviceTypes.add(serviceTypeRepository.save(ServiceTypeDTO.createDummy(i).toEntity()).getId());
         }
     }
 
     private long createEmployee(int i) throws Exception {
+        System.out.println("Creating employee " + i);
         return userService.createUser(
                 new UserCreateDTO("+351", fillPhoneNumber(i), "Test123*", "User " + i)).getId();
     }
 
     private long createEstablishment(int i) throws Exception {
+        System.out.println("Creating establishment " + i);
         long ownerId = createEmployee(i * nEmployeesPerEstablishment);
         return establishmentService.create(BaseEstablishmentDTO.createDummy(i), ownerId);
     }
 
     private void createSchedule(long employeeId, long establishmentId) {
+        System.out.println("Creating schedule for employee " + employeeId + " in establishment " + establishmentId);
         morning.setEstablishmentId(establishmentId);
         schedulesService.create(morning, employeeId, true, true);
         if (random.nextBoolean()) {
@@ -161,6 +165,7 @@ public class TestsController {
     }
 
     private void createException(long employeeId, long establishmentId) throws Exception {
+        System.out.println("Creating exception for employee " + employeeId + " in establishment " + establishmentId);
         exception.setEmployeeId(employeeId);
         exception.setEstablishmentId(establishmentId);
         if (random.nextBoolean()) {
@@ -169,6 +174,7 @@ public class TestsController {
     }
 
     private void createService(int index, long establishmentId, List<Long> employees) throws Exception {
+        System.out.println("Creating service " + index + " in establishment " + establishmentId);
         long employeeServiceId = serviceService.createService(
                 CreateServiceDTO.createDummy(ServiceDTO.createDummy(index, serviceTypes.get(index % nServiceTypes))));
         long establishmentServiceId = establishmentService.addService(establishmentId,
@@ -238,6 +244,7 @@ public class TestsController {
                 // Create appointments in the future
                 nAppointments = random.nextInt(0, 5);
                 for (int j = 0; j < nAppointments; j++) {
+                    System.out.println("Creating appointment(" + j + ") for user " + i);
                     EstablishmentServiceEmployee establishmentServiceEmployee = establishmentServiceEmployees
                             .get(random.nextInt(0, establishmentServiceEmployees.size()));
                     // Create appointment in the future
