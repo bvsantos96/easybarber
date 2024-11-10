@@ -149,8 +149,8 @@ public class TestsController {
     }
 
     private long createEstablishment(int i) throws Exception {
-        System.out.println("Creating establishment " + i);
         long ownerId = createEmployee(i * nEmployeesPerEstablishment);
+        System.out.println("Creating establishment " + i);
         return establishmentService.create(BaseEstablishmentDTO.createDummy(i), ownerId);
     }
 
