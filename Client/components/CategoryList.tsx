@@ -7,7 +7,6 @@ import { getStyles as topBarGetStyles } from '../styles/TopBar';
 import { getStyles as getHomeGetStyles } from '../styles/Home';
 import Category from "./Category";
 import { useTheme } from "@styles/ThemeContext";
-import Divider from "./Divider";
 
 interface CategoriesListProps {
     categories: ICategory[];
