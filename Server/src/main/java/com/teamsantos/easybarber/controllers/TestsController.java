@@ -122,7 +122,7 @@ public class TestsController {
 
     @GetMapping("/createheavydb")
     public ResponseEntity<BaseResponseDTO> createDummyEstablishments() {
-        if (isTestContext) {
+        if (!isTestContext) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new BaseResponseDTO("Test context is disabled"));
         }
         try {
