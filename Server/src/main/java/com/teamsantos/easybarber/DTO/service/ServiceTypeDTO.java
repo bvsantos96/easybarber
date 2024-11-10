@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.DTO.service;
 
 import com.teamsantos.easybarber.DTO.BaseDTO;
+import com.teamsantos.easybarber.entities.ServiceType;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -43,5 +44,13 @@ public class ServiceTypeDTO extends BaseDTO {
     public static ServiceTypeDTO createDummy(int i) {
         return new ServiceTypeDTO(Long.parseLong("" + i), "ServiceType" + i, "ServiceType description" + i,
                 String.format("/icons/categories/serviceType%d.svg", i));
+    }
+
+    public ServiceType toEntity() {
+        ServiceType serviceType = new ServiceType();
+        serviceType.setName(name);
+        serviceType.setDescription(description);
+        serviceType.setImageURL(imageURL);
+        return serviceType;
     }
 }
