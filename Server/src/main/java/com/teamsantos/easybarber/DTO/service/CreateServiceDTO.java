@@ -15,4 +15,9 @@ public class CreateServiceDTO {
     private String description;
     private Double price;
     private int duration;
+
+    public static CreateServiceDTO createDummy(ServiceDTO serviceDTO) {
+        return new CreateServiceDTO(serviceDTO.getServiceTypeId(), serviceDTO.getName(), serviceDTO.getDescription(),
+                serviceDTO.getPrice(), serviceDTO.getDuration());
+    }
 }

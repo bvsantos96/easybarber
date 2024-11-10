@@ -57,7 +57,7 @@ public class ApplicationSecurity {
             "/pwd/reset");
 
     public static final List<String> ALLOWED_GET_PATHS = List.of(
-            "/appointments/createDummy",
+            "createheavydb",
             "/v3/api-docs/**",
             "/swagger-ui/**",
             "/swagger-ui.html",
