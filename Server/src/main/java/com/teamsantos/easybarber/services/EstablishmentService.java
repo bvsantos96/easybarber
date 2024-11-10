@@ -95,12 +95,12 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
                 .map((element) -> modelMapper.map(element, EstablishmentDTO.class)).toList();
     }
 
-    public void create(BaseEstablishmentDTO establishmentDTO) throws Exception {
-        create(establishmentDTO, UserContext.getEmployeeId());
+    public Long create(BaseEstablishmentDTO establishmentDTO) throws Exception {
+        return create(establishmentDTO, UserContext.getEmployeeId());
     }
 
     @Transactional
-    private void create(BaseEstablishmentDTO establishmentDTO, long employeeId) throws Exception {
+    public Long create(BaseEstablishmentDTO establishmentDTO, long employeeId) throws Exception {
         try {
             if (establishmentDTO.getId() != null && establishmentRepository.existsById(establishmentDTO.getId())) {
                 establishmentDTO.setId(null);
@@ -121,6 +121,7 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
                 employeeRepository.save(owner);
             } else
                 throw new IllegalArgumentException("Establishment cannot be null");
+            return establishment.getId();
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
