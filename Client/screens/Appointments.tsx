@@ -63,22 +63,22 @@ export default function Appointments({ navigation }: PropNavigation) {
             </View>
 
             <View style={[styles.listContainer]}>
-                    <PageList<AppointmentInfo>
-                        key="upcomming"
-                        style={upComming ? {} : { display: 'none' }}
-                        reset={resetSearch}
-                        ref={pageListUpcommingRef}
-                        renderItem={renderItemFuture}
-                        requestFunction={loadUpcomming}
-                    />
-                    <PageList<AppointmentInfo>
-                        key="past"
-                        style={upComming ? { display: 'none' } : {}}
-                        reset={resetSearch}
-                        ref={pageListRef}
-                        renderItem={renderItemPast}
-                        requestFunction={loadPast}
-                    />
+                <PageList<AppointmentInfo>
+                    key="upcomming"
+                    style={upComming ? {} : { display: 'none' }}
+                    reset={resetSearch}
+                    ref={pageListUpcommingRef}
+                    renderItem={renderItemFuture}
+                    requestFunction={loadUpcomming}
+                />
+                <PageList<AppointmentInfo>
+                    key="past"
+                    style={upComming ? { display: 'none' } : {}}
+                    reset={resetSearch}
+                    ref={pageListRef}
+                    renderItem={renderItemPast}
+                    requestFunction={loadPast}
+                />
             </View>
         </View>
     );

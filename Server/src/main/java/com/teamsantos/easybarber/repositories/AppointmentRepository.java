@@ -66,7 +66,7 @@ public interface AppointmentRepository
                     s.id,
                     s.service.service.name,
                     s.employee.id,
-                    s.employee.user.name,
+                    u.name,
                     s.establishment.id,
                     s.establishment.name,
                     s.establishment.location,
@@ -79,6 +79,7 @@ public interface AppointmentRepository
                     s.feedback
                 )
                 FROM Appointment s
+                LEFT JOIN User u on s.user.id = s.employee.user.id
                 LEFT JOIN EmployeeImage ei on s.employee.id = ei.entity.id and ei.isMain = true
                 LEFT JOIN EstablishmentImage esi on s.establishment.id = esi.entity.id and esi.isMain = true
                 WHERE (:#{#filter.employeeId} is null or s.employee.id = :#{#filter.employeeId})
