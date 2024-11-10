@@ -77,17 +77,21 @@ public class AppointmentFilter {
 
             if (this.future != null) {
                 if (this.future) {
-                    predicates.add(criteriaBuilder.or(
-                            criteriaBuilder.greaterThan(root.get("date"), LocalDate.now()),
-                            criteriaBuilder.and(
-                                    criteriaBuilder.equal(root.get("date"), LocalDate.now()),
-                                    criteriaBuilder.greaterThanOrEqualTo(root.get("time"), LocalTime.now()))));
+                    predicates.add(criteriaBuilder.and(
+                            criteriaBuilder.equal(root.get("active"), true),
+                            criteriaBuilder.or(
+                                    criteriaBuilder.greaterThan(root.get("date"), LocalDate.now()),
+                                    criteriaBuilder.and(
+                                            criteriaBuilder.equal(root.get("date"), LocalDate.now()),
+                                            criteriaBuilder.greaterThanOrEqualTo(root.get("time"), LocalTime.now())))));
                 } else {
                     predicates.add(criteriaBuilder.or(
-                            criteriaBuilder.lessThan(root.get("date"), LocalDate.now()),
-                            criteriaBuilder.and(
-                                    criteriaBuilder.equal(root.get("date"), LocalDate.now()),
-                                    criteriaBuilder.lessThan(root.get("time"), LocalTime.now()))));
+                            criteriaBuilder.equal(root.get("active"), false),
+                            criteriaBuilder.or(
+                                    criteriaBuilder.lessThan(root.get("date"), LocalDate.now()),
+                                    criteriaBuilder.and(
+                                            criteriaBuilder.equal(root.get("date"), LocalDate.now()),
+                                            criteriaBuilder.lessThan(root.get("time"), LocalTime.now())))));
                 }
             }
 
