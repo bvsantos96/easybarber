@@ -1,13 +1,13 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import { Image } from 'expo-image';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { getStyles } from '../styles/EstablishmentDetails';
 import { getStyles as getListStyles } from '../styles/List';
 import { getStyles as getSelectionStyles } from "../styles/Selection";
 
-import { getEstablishmentCats, getEstablishmentDetails, getEstablishmentServices, getImageList, isFavorite, makeRequest } from '../utils/ApiRequest';
+import { getEstablishmentCats, getEstablishmentDetails, getEstablishmentServices, getFavoriteIds, getImageList, isFavorite, makeRequest } from '../utils/ApiRequest';
 import { gotoLocation } from '../utils/Location';
 import { Underline } from '../components/Underline';
 import { retrieveCategories } from '../storage/ApiLongTermStorage';
@@ -34,7 +34,6 @@ type Props = NativeStackScreenProps<typeof Params, 'EstablishmentDetails'> & {
 
 const EstablishmentDetails = forwardRef<SetSelectedRef, Props>(
     ({ route, navigation, setFavorite }, ref) => {
-
         const theme = useTheme();
         const texts = require("@lang/en.json");
         const styles = getStyles();
@@ -58,6 +57,7 @@ const EstablishmentDetails = forwardRef<SetSelectedRef, Props>(
                 if (selected === establishment.favorite) return false;
                 await makeRequest(`establishment/${route.params.id}/favorite`, selected ? "POST" : "DELETE");
                 setUpdateFavorites(true);
+                await getFavoriteIds();
                 refetch();
                 return true;
             } catch {
