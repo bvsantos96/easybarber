@@ -1,17 +1,17 @@
 import Pressable from "@components/Pressable";
 import React, { useEffect, useState } from "react";
 import { View, Text } from "react-native";
-import { NavigationProp } from "@react-navigation/native";
 
 import texts from "@lang/en.json";
 import { getStyles } from "@styles/Settings";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { getToken, removeData } from "utils/ApiRequest";
-import { TOKEN_STORAGE_KEY } from "utils/Constants";
+import { getToken } from "utils/ApiRequest";
 import { Routes } from "@navigation/Router";
 import { resetNavigation } from "utils/Utils";
+import useAuthStore from "storage/stores/AuthStore";
 
 export default function Settings({ navigation }: PropNavigation) {
+    const { toggleDoLogout } = useAuthStore();
     const styles = getStyles();
     const [authenticated, setAuthenticated] = useState(false);
 
@@ -40,8 +40,7 @@ export default function Settings({ navigation }: PropNavigation) {
     return (
         <View style={styles.container}>
             <Pressable style={styles.logOutContainer} onPress={() => {
-                removeData(TOKEN_STORAGE_KEY);
-                resetNavigation(navigation, Routes.Onboarding);
+                toggleDoLogout();
             }}
             >
                 <MaterialIcons name="logout" width={styles.logOutIcon.width} height={styles.logOutIcon.height} color={styles.logOutIcon.color} size={styles.logOutIcon.width} />
