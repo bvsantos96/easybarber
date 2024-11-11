@@ -16,7 +16,6 @@ import useAlertStore from "storage/stores/AlertStore";
 import { AlertType } from "@components/Alert";
 import texts from "@lang/en.json";
 import { Params, Routes } from "@navigation/Router";
-import { resetNavigation } from "utils/Utils";
 
 export type Route = {
     establishmentId: number;
@@ -152,14 +151,15 @@ export default function Availability({ route, navigation }: Props) {
                     }
                     else if (_employeeId !== undefined) {
                         alert({ type: AlertType.Loading, message: "" });
-                        if (await setAppointment({
+                        const msg = await setAppointment({
                             id: 0,
                             establishmentId: establishmentId,
                             establishmentServiceId: serviceId,
                             establishmentStaffId: _employeeId,
                             date: date,
                             time: time?.start || ""
-                        })) {
+                        });
+                        if (msg.length === 0) {
                             alert({ type: AlertType.Loading, message: "" });
                             alert({
                                 type: AlertType.Success, message: texts.appointments.success, buttonText: texts.dismiss, onPress: () => {
@@ -169,7 +169,11 @@ export default function Availability({ route, navigation }: Props) {
 
                             return;
                         } else {
-                            alert({ type: AlertType.Error, message: texts.appointments.failed });
+                            alert({ type: AlertType.Loading, message: "" });
+                            alert({
+                                type: AlertType.Error, message: msg,
+                                buttonText: texts.dismiss, onPress: () => { }
+                            });
                         }
                         return;
                     }
