@@ -72,7 +72,7 @@ public class User {
     private Set<Establishment> favoriteEstablishments = new HashSet<>();
 
     public void addFavoriteEstablishment(Establishment establishment) {
-        if(favoriteEstablishments == null) {
+        if (favoriteEstablishments == null) {
             favoriteEstablishments = new HashSet<>();
         }
         favoriteEstablishments.add(establishment);
@@ -159,12 +159,13 @@ public class User {
             name = userDTO.getName();
     }
 
-	public static User load(UserCreateDTO userCreateDTO) {
+    public static User load(UserCreateDTO userCreateDTO) {
         User user = new User();
+        user.setMobileInformation(userCreateDTO.getMobileInformation());
         user.setCountryMobile(userCreateDTO.getCountryMobile());
         user.setMobile(userCreateDTO.getMobile());
         user.setName(userCreateDTO.getName());
         user.setPassword(userCreateDTO.getPassword());
         return user;
-	}
+    }
 }

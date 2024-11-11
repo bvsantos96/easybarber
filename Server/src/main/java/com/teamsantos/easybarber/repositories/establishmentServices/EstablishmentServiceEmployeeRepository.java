@@ -33,6 +33,7 @@ public interface EstablishmentServiceEmployeeRepository extends JpaRepository<Es
             JOIN EmployeeSchedule es ON es.employee.id = e.employee.id AND es.establishment.id = e.establishment.id
             LEFT JOIN e.employee.employee.images img ON img.isMain = true
             WHERE e.service.id = :establishmentServiceId
+            GROUP BY e.employee.id, e.employee.employee.user.name, img.data
             """)
     List<NameIdImageDTO> listEmployeesOfEstablishmentService(long establishmentServiceId);
 }
