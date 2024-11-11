@@ -15,6 +15,8 @@ import useAlertStore from 'storage/stores/AlertStore';
 import { AlertType } from '@components/Alert';
 import { useTheme } from '@styles/ThemeContext';
 import useAppointmentStore from 'storage/stores/AppointmentStore';
+import { useQuery } from '@tanstack/react-query';
+import useFavoriteStore from 'storage/stores/FavoriteStore';
 
 export const getTimes = async ({ from, to }: { from?: string, to?: string }): Promise<PickerItem[]> => {
     from = from || "08:00";
@@ -607,9 +609,21 @@ export const makeRequest = async (url: string, method: string = "GET"): Promise<
     return false;
 }
 
+export const getFavoriteIds = async (): Promise<number[]> => {
+    const response = await request<number[]>("/favorites/establishments/ids", "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
+    const favorites = getItemsFromRequest(response);
+    const { setFavorites } = useFavoriteStore.getState();
+    setFavorites(favorites);
+    return favorites;
+}
+
 export const isFavorite = async (id: number): Promise<boolean> => {
-    const response = await request<boolean>(`establishment/${id}/favorite`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
-    return getItemsFromRequest(response);
+    const { favorites } = useFavoriteStore.getState();
+    let _favorites = favorites;
+    if (favorites === undefined || favorites === null) {
+        _favorites = await getFavoriteIds();
+    }
+    return _favorites?.includes(id) || false;
 }
 
 export const getFavorites = async (page?: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>, location?: ILocation): Promise<IPage<EstablishmentInfo> | undefined> => {

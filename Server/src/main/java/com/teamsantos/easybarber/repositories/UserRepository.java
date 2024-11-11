@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.repositories;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -72,4 +73,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
             ORDER BY distance ASC
             """)
     Page<EstablishmentDTO> findFavoriteEstablishmentsByUserId(long userId, Point location, Pageable pageable);
+
+    @Query("""
+            SELECT e.id
+            FROM User u
+            JOIN u.favoriteEstablishments e
+            WHERE u.id = :userId
+            """)
+	List<Long> getFavoriteEstablishmentsIds(Long userId);
 }
