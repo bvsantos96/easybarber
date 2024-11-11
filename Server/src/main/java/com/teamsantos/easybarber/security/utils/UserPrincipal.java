@@ -19,7 +19,7 @@ public class UserPrincipal {
     private List<GrantedAuthority> roles;
     private Object[] permissions;
 
-    public UserPrincipal(long userId, Long employeeId, List<String> roles) {
+    public UserPrincipal(Long userId, Long employeeId, List<String> roles) {
         this.id = userId;
         this.employeeId = employeeId;
         this.roles = new ArrayList<>();

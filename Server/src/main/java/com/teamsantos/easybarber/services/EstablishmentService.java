@@ -3,7 +3,6 @@ package com.teamsantos.easybarber.services;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 import org.locationtech.jts.io.ParseException;
@@ -111,7 +110,7 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
                     throw new AlreadyExistsException("Establishment name already exists");
                 establishment = repository.save(establishment);
                 establishmentDTO.setId(establishment.getId());
-                Employee owner = employeeRepository.findById(UserContext.getEmployeeId())
+                Employee owner = employeeRepository.findById(employeeId)
                         .orElseThrow(() -> new GenericNotFoundException("Employee"));
                 EstablishmentStaff establishmentOwned = new EstablishmentStaff(true, true, false,
                         owner, establishment);
@@ -224,13 +223,10 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     public Long addService(long id, Long serviceId, double price) throws NotFoundException, AlreadyExistsException {
         long esId = 0L;
         if (serviceId != null) {
-            Establishment establishment = establishmentRepository.findByIdWithStaff(id)
-                    .orElseThrow(NotFoundException::new);
             com.teamsantos.easybarber.entities.Service service = serviceRepository.findById(serviceId)
                     .orElseThrow(NotFoundException::new);
             Employee employee = service.getEmployee();
-            if (establishment.getStaff().stream()
-                    .noneMatch((staff) -> Objects.equals(staff.getEmployee().getId(), employee.getId())))
+            if (!establishmentRepository.existsByStaffEmployeeIdAndId(employee.getId(), id))
                 throw new UnsupportedOperationException("User is not an employee of this establishment");
             if (establishmentServiceRepository.existsByServiceIdAndEstablishmentId(serviceId, id))
                 throw new AlreadyExistsException("Service already registered in establishment");
@@ -238,7 +234,7 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
                     com.teamsantos.easybarber.entities.EstablishmentService.class);
             serviceEntity.setId(null);
             serviceEntity.setPrice(price);
-            serviceEntity.setEstablishment(establishment);
+            serviceEntity.setEstablishment(entityManager.getReference(Establishment.class, id));
             serviceEntity.setService(service);
             esId = establishmentServiceRepository.save(serviceEntity).getId();
             addEmployeeToService(id, esId, employee.getId());
