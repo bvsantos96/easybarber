@@ -379,7 +379,7 @@ const getItemsFromRequest = <T>(result: IResult<T>): T => {
             return result.data as T;
         }
     }
-    throw new Error(langs.apiMessages.failed);
+    throw new Error(result.message ?? langs.apiMessages.failed);
 }
 
 export const getEstablishmentCats = async (id: number): Promise<number[] | undefined> => {
@@ -400,13 +400,13 @@ export const getUnavailableDates = async (establishmentId: number, serviceId: nu
     return getItemsFromRequest<string[]>(result);
 }
 
-export const setAppointment = async (appointment: AppointmentCreate): Promise<boolean> => {
+export const setAppointment = async (appointment: AppointmentCreate): Promise<string> => {
     const result = await request<number>("appointment", "POST", appointment, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
     try {
         getItemsFromRequest<number>(result);
-        return true;
-    } catch (e) {
-        return false;
+        return "";
+    } catch (e: any) {
+        return e.message;
     }
 }
 
