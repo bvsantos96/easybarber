@@ -9,6 +9,7 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { getToken, removeData } from "utils/ApiRequest";
 import { TOKEN_STORAGE_KEY } from "utils/Constants";
 import { Routes } from "@navigation/Router";
+import { resetNavigation } from "utils/Utils";
 
 export default function Settings({ navigation }: PropNavigation) {
     const styles = getStyles();
@@ -20,25 +21,19 @@ export default function Settings({ navigation }: PropNavigation) {
         };
         checkAuthentication();
     }, []);
-    
-    const resetNavigation = (navigation: NavigationProp<any, any>, route: string) => {
-        navigation.reset({
-            index: 0,
-            routes: [{ name: route }],
-        });
-    }
+
 
     if (!authenticated) {
         return (
             <View style={styles.container}>
-            <Pressable style={styles.logOutContainer} onPress={() => {
-                resetNavigation(navigation, Routes.Sign);
-            }}
-            >
-                <MaterialIcons name="login" width={styles.logOutIcon.width} height={styles.logOutIcon.height} color={styles.logOutIcon.color} size={styles.logOutIcon.width} />
-                <Text style={styles.logOutText}>{texts.login.signIn}</Text>
-            </Pressable>
-        </View >
+                <Pressable style={styles.logOutContainer} onPress={() => {
+                    resetNavigation(navigation, Routes.Sign);
+                }}
+                >
+                    <MaterialIcons name="login" width={styles.logOutIcon.width} height={styles.logOutIcon.height} color={styles.logOutIcon.color} size={styles.logOutIcon.width} />
+                    <Text style={styles.logOutText}>{texts.login.signIn}</Text>
+                </Pressable>
+            </View >
         );
     }
 

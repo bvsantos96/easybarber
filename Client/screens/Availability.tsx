@@ -16,6 +16,7 @@ import useAlertStore from "storage/stores/AlertStore";
 import { AlertType } from "@components/Alert";
 import texts from "@lang/en.json";
 import { Params, Routes } from "@navigation/Router";
+import { resetNavigation } from "utils/Utils";
 
 export type Route = {
     establishmentId: number;
@@ -145,10 +146,8 @@ export default function Availability({ route, navigation }: Props) {
                             type: AlertType.Error, message: texts.login.required, buttonText: "Sign in", onPress: () => {
                             }
                         });
-                        navigation.reset({
-                            index: 0,
-                            routes: [{ name: 'Sign' }],
-                        });
+
+                        navigation.navigate(Routes.Sign);
                         return;
                     }
                     else if (_employeeId !== undefined) {
@@ -162,10 +161,10 @@ export default function Availability({ route, navigation }: Props) {
                             time: time?.start || ""
                         })) {
                             alert({ type: AlertType.Loading, message: "" });
-                            alert({ type: AlertType.Success, message: texts.appointments.success, buttonText: texts.dismiss, onPress: () => { } });
-                            navigation.reset({
-                                index: 0,
-                                routes: [{ name: 'Appointments' }],
+                            alert({
+                                type: AlertType.Success, message: texts.appointments.success, buttonText: texts.dismiss, onPress: () => {
+                                    navigation.navigate(Routes.Appointments);
+                                }
                             });
 
                             return;
