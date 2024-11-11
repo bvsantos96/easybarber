@@ -74,9 +74,9 @@ export default function EmployeeSelection({ navigation, route }: Props) {
                             alert({
                                 type: AlertType.Success, message: texts.appointments.success,
                                 buttonText: texts.dismiss, onPress: () => {
+                                    navigation.navigate(Routes.Appointments);
                                 }
                             });
-                            resetNavigation(navigation, Routes.Appointments);
                             return;
                         }
                     } else if (!(date && startHour)) {

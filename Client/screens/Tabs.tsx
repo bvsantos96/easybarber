@@ -9,6 +9,7 @@ import { getToken, validateAppointments } from 'utils/ApiRequest';
 import { AlertType } from '@components/Alert';
 import useAlertStore from 'storage/stores/AlertStore';
 import { TouchableOpacity } from 'react-native';
+import { resetNavigation } from 'utils/Utils';
 
 export default function Tabs({ navigation }: PropNavigation) {
     const Tab = createBottomTabNavigator<typeof Params>();
@@ -76,10 +77,7 @@ export default function Tabs({ navigation }: PropNavigation) {
                                                 message: texts.login.required,
                                                 buttonText: texts.login.signIn,
                                                 onPress: () => {
-                                                    navigation.reset({
-                                                        index: 0,
-                                                        routes: [{ name: Routes.Sign }],
-                                                    });
+                                                    resetNavigation(navigation, Routes.Sign);
                                                 },
                                                 onPress2: () => { },
                                                 buttonText2: texts.dismiss,
