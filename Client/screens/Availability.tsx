@@ -166,8 +166,6 @@ export default function Availability({ route, navigation }: Props) {
                                     navigation.navigate(Routes.Appointments);
                                 }
                             });
-
-                            return;
                         } else {
                             alert({ type: AlertType.Loading, message: "" });
                             alert({
