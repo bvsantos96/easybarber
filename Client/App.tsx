@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
 import { Platform, Linking } from 'react-native';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -8,8 +8,8 @@ import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Location from 'expo-location';
 
-import { getToken, isFirstTime, requestFeedback } from './utils/ApiRequest';
-import { getDefaultCountryString } from './utils/Constants';
+import { getToken, isFirstTime, removeData, requestFeedback } from './utils/ApiRequest';
+import { TOKEN_STORAGE_KEY, getDefaultCountryString } from './utils/Constants';
 import usePermissionStore from './storage/stores/PermissionStore';
 import texts from "@lang/en.json";
 
@@ -37,6 +37,8 @@ import useAlertStore from 'storage/stores/AlertStore';
 import RootNav from '@navigation/RootNavigator';
 import { Params, Routes } from '@navigation/Router';
 import { SetSelectedRef } from '@screens/EstablishmentDetails';
+import useAuthStore from 'storage/stores/AuthStore';
+import { resetNavigation } from 'utils/Utils';
 
 const Router = () => {
     const {
@@ -150,6 +152,14 @@ const Router = () => {
         }
     }, [requestingLocationPermission]);
 
+    const { doLogout } = useAuthStore();
+    const queryClient = useQueryClient()
+
+    useEffect(() => {
+        removeData(TOKEN_STORAGE_KEY);
+        waitAndResetNavigation(Routes.Onboarding);
+        queryClient.clear();
+    }, [doLogout]);
 
     if (isLoading) {
         return null;

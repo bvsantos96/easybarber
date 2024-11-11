@@ -13,10 +13,9 @@ import { ResponseType } from '../enums';
 import { twoDigits } from './Utils';
 import useAlertStore from 'storage/stores/AlertStore';
 import { AlertType } from '@components/Alert';
-import { useTheme } from '@styles/ThemeContext';
 import useAppointmentStore from 'storage/stores/AppointmentStore';
-import { useQuery } from '@tanstack/react-query';
 import useFavoriteStore from 'storage/stores/FavoriteStore';
+import useAuthStore from 'storage/stores/AuthStore';
 
 export const getTimes = async ({ from, to }: { from?: string, to?: string }): Promise<PickerItem[]> => {
     from = from || "08:00";
@@ -109,6 +108,8 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
 }
 
 const _request = async<T>(url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed, responseType: ResponseType, first: boolean): Promise<IResult<T>> => {
+    const { toggleDoLogout } = useAuthStore.getState();
+
     let _url = apiUrlMaker(url);
     if (_url.length <= 0)
         return { success: false, message: langs.apiMessages.failed };
@@ -152,6 +153,7 @@ const _request = async<T>(url: string, method: string, body: any, successMessage
                     if (await refreshToken()) {
                         return _request<T>(url, method, body, successMessage, errorMessage, responseType, false);
                     } else {
+                        toggleDoLogout();
                         return { success: false, message: langs.apiMessages.unauthorized };
                     }
                 }
