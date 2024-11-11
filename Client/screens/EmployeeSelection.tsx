@@ -11,7 +11,6 @@ import useAlertStore from "storage/stores/AlertStore";
 import texts from "@lang/en.json";
 import { useQuery } from "@tanstack/react-query";
 import { Params, Routes } from "@navigation/Router";
-import { resetNavigation } from "utils/Utils";
 import Divider from "@components/Divider";
 
 export type Route = {
@@ -62,14 +61,15 @@ export default function EmployeeSelection({ navigation, route }: Props) {
                 async () => {
                     if (date && startHour && selected != 0) {
                         alert({ type: AlertType.Loading, message: "" });
-                        if (await setAppointment({
+                        const msg = await setAppointment({
                             id: 0,
                             establishmentId,
                             establishmentServiceId: serviceId,
                             establishmentStaffId: Number.parseInt(`${selected}`),
                             date,
                             time: startHour
-                        })) {
+                        });
+                        if (msg.length === 0) {
                             alert({ type: AlertType.Loading, message: "" });
                             alert({
                                 type: AlertType.Success, message: texts.appointments.success,
@@ -78,6 +78,12 @@ export default function EmployeeSelection({ navigation, route }: Props) {
                                 }
                             });
                             return;
+                        } else {
+                            alert({ type: AlertType.Loading, message: "" });
+                            alert({
+                                type: AlertType.Error, message: msg,
+                                buttonText: texts.dismiss, onPress: () => { }
+                            });
                         }
                     } else if (!(date && startHour)) {
                         navigation.navigate(Routes.Availability, { establishmentId, serviceId, employeeId: selected as number });
