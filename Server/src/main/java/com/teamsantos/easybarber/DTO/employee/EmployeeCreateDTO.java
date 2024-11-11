@@ -9,4 +9,10 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 public class EmployeeCreateDTO extends UserCreateDTO {
     private String description;
+
+    public EmployeeCreateDTO(String countryMobile, String mobile, String password, String name,
+            String description) {
+        super(countryMobile, mobile, password, name);
+        this.description = description;
+    }
 }

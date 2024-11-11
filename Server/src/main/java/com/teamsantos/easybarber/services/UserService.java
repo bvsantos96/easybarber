@@ -102,7 +102,7 @@ public class UserService {
             throw new IllegalArgumentException("Password is not valid");
         }
         userCreateDTO.setPassword(PasswordEncoding.encode(userCreateDTO.getPassword()));
-        User user = modelMapper.map(userCreateDTO, User.class);
+        User user = User.load(userCreateDTO);
         if (user != null) {
             try {
                 if (userCreateDTO.getId() != null && userRepository.existsById(userCreateDTO.getId())) {
@@ -120,12 +120,12 @@ public class UserService {
                 throw new UserAlreadyExistsException();
             }
 
+            user.addUserType(entityManager.getReference(UserType.class, UserTypeService
+                    .getUserType(isEmployee ? UserTypeService.UserTypes.EMPLOYEE : UserTypeService.UserTypes.CLIENT)));
             if (user.getUserTypes() == null || user.getUserTypes().isEmpty()) {
                 user.addUserType(entityManager.getReference(UserType.class, UserTypeService
                         .getUserType(UserTypeService.UserTypes.CLIENT)));
             }
-            user.addUserType(entityManager.getReference(UserType.class, UserTypeService
-                    .getUserType(isEmployee ? UserTypeService.UserTypes.EMPLOYEE : UserTypeService.UserTypes.CLIENT)));
             if (systemAdmin)
                 user.addUserType(entityManager.getReference(UserType.class,
                         UserTypeService.getUserType(UserTypeService.UserTypes.SYSTEM_ADMIN)));
