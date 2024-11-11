@@ -32,7 +32,7 @@ public interface EstablishmentRepository
     boolean existsByName(String name);
 
     @Query("""
-                SELECT e FROM Establishment e JOIN FETCH e.staff WHERE e.id = :establishmentId
+                SELECT e FROM Establishment e WHERE e.id = :establishmentId
             """)
     Optional<Establishment> findByIdWithStaff(long establishmentId);
 
@@ -98,4 +98,13 @@ public interface EstablishmentRepository
             WHERE e.id = :id
             """)
     Optional<EstablishmentDTO> findByIdDTO(long id);
+
+    @Query("""
+            SELECT EXISTS(
+                SELECT 1
+                from EstablishmentStaff e
+                where e.establishment.id = :establishmentId AND e.employee.id = :staffId
+                )
+            """)
+    boolean existsByStaffEmployeeIdAndId(long staffId, long establishmentId);
 }

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
+import com.teamsantos.easybarber.DTO.employee.EmployeeCreateDTO;
 import com.teamsantos.easybarber.DTO.establishment.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.establishment.service.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
@@ -32,6 +33,8 @@ import com.teamsantos.easybarber.entities.EstablishmentServiceEmployee;
 import com.teamsantos.easybarber.repositories.AppointmentRepository;
 import com.teamsantos.easybarber.repositories.ServiceTypeRepository;
 import com.teamsantos.easybarber.repositories.establishmentServices.EstablishmentServiceEmployeeRepository;
+import com.teamsantos.easybarber.security.utils.UserContext;
+import com.teamsantos.easybarber.security.utils.UserPrincipal;
 import com.teamsantos.easybarber.services.EstablishmentService;
 import com.teamsantos.easybarber.services.SchedulesService;
 import com.teamsantos.easybarber.services.ServiceService;
@@ -145,20 +148,22 @@ public class TestsController {
     private long createEmployee(int i) throws Exception {
         System.out.println("Creating employee " + i);
         return userService.createUser(
-                new UserCreateDTO("+351", fillPhoneNumber(i), "Test123*", "User " + i)).getId();
+                new EmployeeCreateDTO("+351", fillPhoneNumber(i), "Test123*", "Employee " + i, "Employee " + i), true)
+                .getId();
     }
 
-    private long createEstablishment(int i) throws Exception {
-        long ownerId = createEmployee(i * nEmployeesPerEstablishment);
+    private long createEstablishment(int i, long ownerId) throws Exception {
         System.out.println("Creating establishment " + i);
         return establishmentService.create(BaseEstablishmentDTO.createDummy(i), ownerId);
     }
 
     private void createSchedule(long employeeId, long establishmentId) {
         System.out.println("Creating schedule for employee " + employeeId + " in establishment " + establishmentId);
+        morning.setEmployeeId(employeeId);
         morning.setEstablishmentId(establishmentId);
         schedulesService.create(morning, employeeId, true, true);
         if (random.nextBoolean()) {
+            evening.setEmployeeId(employeeId);
             evening.setEstablishmentId(establishmentId);
             schedulesService.create(evening, employeeId, true, true);
         }
@@ -173,8 +178,10 @@ public class TestsController {
         }
     }
 
-    private void createService(int index, long establishmentId, List<Long> employees) throws Exception {
+    private void createService(int index, long establishmentId, long ownerId, List<Long> employees) throws Exception {
         System.out.println("Creating service " + index + " in establishment " + establishmentId);
+        UserContext.clear();
+        UserContext.setCurrentUser(new UserPrincipal(null, ownerId, List.of("employee")));
         long employeeServiceId = serviceService.createService(
                 CreateServiceDTO.createDummy(ServiceDTO.createDummy(index, serviceTypes.get(index % nServiceTypes))));
         long establishmentServiceId = establishmentService.addService(establishmentId,
@@ -191,7 +198,8 @@ public class TestsController {
 
     private void createEstablishmentInfo() throws Exception {
         for (int i = 0; i < nEstablishments; i++) {
-            long establishment = createEstablishment(i);
+            long ownerId = createEmployee(i * nEmployeesPerEstablishment);
+            long establishment = createEstablishment(i, ownerId);
             List<Long> _employees = new ArrayList<>();
             for (int j = 1; j < nEmployeesPerEstablishment; j++) {
                 long employee = createEmployee(i * nEmployeesPerEstablishment + j);
@@ -201,7 +209,7 @@ public class TestsController {
                 createException(employee, establishment);
             }
             for (int k = 0; k < nServicesPerEstablishment; k++) {
-                createService(i * nServicesPerEstablishment + k, establishment, _employees);
+                createService(i * nServicesPerEstablishment + k, establishment, ownerId, _employees);
             }
         }
     }
