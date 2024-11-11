@@ -158,4 +158,13 @@ public class User {
         if (userDTO.getName() != null)
             name = userDTO.getName();
     }
+
+	public static User load(UserCreateDTO userCreateDTO) {
+        User user = new User();
+        user.setCountryMobile(userCreateDTO.getCountryMobile());
+        user.setMobile(userCreateDTO.getMobile());
+        user.setName(userCreateDTO.getName());
+        user.setPassword(userCreateDTO.getPassword());
+        return user;
+	}
 }
