@@ -6,7 +6,7 @@ import { getStyles as getHomeGetStyles } from '../styles/Home';
 import { getStyles as getExpandedGetStyles } from '../styles/ExpandableView';
 
 import TopBar from '../components/TopBar';
-import { getNearByBarbers } from '../utils/ApiRequest';
+import { getFavoriteIds, getNearByBarbers } from '../utils/ApiRequest';
 import ListItem from '../components/ListItem';
 
 import ExpandableView from '../components/ExpandableView';
@@ -49,6 +49,7 @@ export default function Home({ navigation }: PropNavigation) {
     }
 
     useEffect(() => {
+        getFavoriteIds();
         const _getSelectedLocation = async () => {
             if (await getSelectedLocation() === undefined) {
                 setResetSearch(!resetSearch);

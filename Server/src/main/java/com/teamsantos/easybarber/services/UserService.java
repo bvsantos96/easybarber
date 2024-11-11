@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.services;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Optional;
 
 import org.locationtech.jts.geom.Point;
@@ -235,5 +236,10 @@ public class UserService {
             return user.getFavoriteEstablishments().stream()
                     .anyMatch(establishment -> establishment.getId().equals(establishmentId)) ? true : false;
         }).orElse(false);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> getFavoriteEstablishmentsIds(Long userId) {
+        return userRepository.getFavoriteEstablishmentsIds(userId);
     }
 }
