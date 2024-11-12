@@ -51,7 +51,6 @@ public class MessageLoader {
                     messagesMap.put(baseFileName, fileMap);
                 }
             }
-            System.out.println("Messages Map: " + messagesMap);
         } catch (IOException e) {
             e.printStackTrace();
         }
