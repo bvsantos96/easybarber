@@ -77,7 +77,8 @@ public class ApplicationSecurity {
             "/service/types",
             "/icons/**",
             "/schedules/**",
-            "/sms/**");
+            "/sms/**",
+            "/image/**");
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
