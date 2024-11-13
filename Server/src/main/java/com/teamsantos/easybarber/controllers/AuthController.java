@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
@@ -29,10 +30,14 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestBody UserCreateDTO userDTO) {
+    public ResponseEntity<String> loginUser(@RequestBody UserCreateDTO userDTO,
+            @RequestParam(required = false) Boolean employeeOnly) {
         try {
             userDTO.setMobile(userDTO.getMobile().replace(" ", ""));
-            return ResponseEntity.ok(userService.loginUser(userDTO));
+            if (employeeOnly == null) {
+                employeeOnly = false;
+            }
+            return ResponseEntity.ok(userService.loginUser(userDTO, employeeOnly));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
