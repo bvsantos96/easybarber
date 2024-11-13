@@ -57,6 +57,7 @@ public class ApplicationSecurity {
             "/pwd/reset");
 
     public static final List<String> ALLOWED_GET_PATHS = List.of(
+            "/establishment/image/**",
             "/createheavydb",
             "/v3/api-docs/**",
             "/swagger-ui/**",
@@ -77,8 +78,7 @@ public class ApplicationSecurity {
             "/service/types",
             "/icons/**",
             "/schedules/**",
-            "/sms/**",
-            "/image/**");
+            "/sms/**");
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
