@@ -148,32 +148,29 @@ public abstract class ImageController<T extends EntityWithImages<T, E>, E extend
         S3Client s3Client = null;
         try {
             AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(
-                accessKeyId,
-                secretKey
-            );
+                    accessKeyId,
+                    secretKey);
 
             s3Client = S3Client.builder()
-                .region(Region.of(region))
-                .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
-                .build();
+                    .region(Region.of(region))
+                    .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
+                    .build();
 
             ListObjectsV2Request listReq = ListObjectsV2Request.builder()
-                .bucket(bucketName)
-                .maxKeys(1)
-                .build();
+                    .bucket(bucketName)
+                    .maxKeys(1)
+                    .build();
 
             ListObjectsV2Response listRes = s3Client.listObjectsV2(listReq);
 
             return ResponseEntity.ok(String.format(
-                "Successfully connected to S3 bucket '%s'. Found %d objects.",
-                bucketName,
-                listRes.keyCount()
-            ));
+                    "Successfully connected to S3 bucket '%s'. Found %d objects.",
+                    bucketName,
+                    listRes.keyCount()));
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
-                String.format("Failed to access S3 bucket: %s", e.getMessage())
-            );
+                    String.format("Failed to access S3 bucket: %s", e.getMessage()));
         } finally {
             if (s3Client != null) {
                 s3Client.close();
