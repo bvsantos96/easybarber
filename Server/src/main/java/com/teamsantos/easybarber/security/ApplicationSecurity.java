@@ -57,6 +57,7 @@ public class ApplicationSecurity {
             "/pwd/reset");
 
     public static final List<String> ALLOWED_GET_PATHS = List.of(
+            "/establishment/image/**",
             "/createheavydb",
             "/v3/api-docs/**",
             "/swagger-ui/**",
