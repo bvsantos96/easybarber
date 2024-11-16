@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -37,28 +38,30 @@ public class AppointmentsScheduler {
         }
         log.info("Running appointment reminder scheduler...");
         try {
-            List<AppointmentReminderDTO> appointmentsToRemind = appointmentService.getNextDayAppointmentsNotReminded();
-            if(appointmentsToRemind.isEmpty()){
-                log.info("No appointments to remind");
-            }
-            for (AppointmentReminderDTO appointment : appointmentsToRemind) {
-                String messageBody = String.format(
-                        "Dear %s, this is a reminder of your upcoming appointment at %s with %s. "
-                        + "Your appointment is scheduled for %s at %s. If you need to reschedule, please contact us. "
-                        + "We look forward to seeing you!",
-                        appointment.getUserName(),
-                        appointment.getEstablishmentName(),
-                        appointment.getEmployeeName(),
-                        appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("MMMM dd, yyyy")),
-                        appointment.getAppointmentTime().format(DateTimeFormatter.ofPattern("hh:mm a"))
-                );
-                
-                // Send the message to the user's mobile phone
-                messagingService.sendMessage(appointment.getMobileInformation(), messageBody);
-                appointmentService.setAppointmentAsReminded(appointment.getAppointmentID());
-            }
+            appointmentService.getNextDayAppointmentsNotReminded().forEach(this::processAppointmentReminders);
         } catch (Exception e) {
             log.error("Failed to send appointment reminders", e);
         }
+    }
+
+    @Async("asyncTaskExecutor")
+    public void processAppointmentReminders(AppointmentReminderDTO appointment) {
+        try {
+            String template = String.format(
+                    "Dear %s, this is a reminder of your upcoming appointment at %s with %s. "
+                    + "Your appointment is scheduled for %s at %s. If you need to reschedule, please contact us. "
+                    + "We look forward to seeing you!",
+                    appointment.getUserName(),
+                    appointment.getEstablishmentName(),
+                    appointment.getEmployeeName(),
+                    appointment.getAppointmentDate().format(DateTimeFormatter.ofPattern("MMMM dd, yyyy")),
+                    appointment.getAppointmentTime().format(DateTimeFormatter.ofPattern("hh:mm a"))
+            );
+            messagingService.sendMessage(appointment.getMobileInformation(), template);
+            appointmentService.setAppointmentAsReminded(appointment.getAppointmentID());
+        } catch (Exception e) {
+            log.error("Failed to send appointment reminders", e);
+        }
+
     }
 }
