@@ -110,6 +110,7 @@ public class MessagingService {
             return;
         }
 
+        System.out.println("This is prod debug number to italy:"+to);
         Message.creator(
                 new PhoneNumber(to),
                 new PhoneNumber(senderId),
