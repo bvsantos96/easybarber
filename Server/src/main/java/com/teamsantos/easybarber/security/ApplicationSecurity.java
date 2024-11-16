@@ -78,7 +78,7 @@ public class ApplicationSecurity {
             "/icons/**",
             "/schedules/**",
             "/sms/**",
-            "/image/**");
+            "/establishment/image/**");
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
