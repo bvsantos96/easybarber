@@ -58,7 +58,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public String loginUser(UserCreateDTO userCreateDTO) {
+    public String loginUser(UserCreateDTO userCreateDTO, boolean employeeOnly) {
         UserSignInDTO user = userRepository
                 .findUserSignInByMobileInformation(userCreateDTO.getMobileInformation())
                 .orElseThrow(UserNotFoundException::new);
@@ -66,6 +66,9 @@ public class UserService {
         // table so that we can load them faster.
         // This will make the user type change a bit slower but that is not that
         // frequent of a request compared with the login that affects everyuser
+        if (employeeOnly && user.getEmployeeId() == null) {
+            throw new IllegalArgumentException("User is not an employee");
+        }
         user.setUserTypeIds(userRepository.getAllUserTypes(user.getId()));
 
         if (PasswordEncoding.getPasswordEncoder().matches(userCreateDTO.getPassword(), user.getPassword())) {
