@@ -8,7 +8,7 @@ import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Location from 'expo-location';
 
-import { getToken, isFirstTime, removeData, requestFeedback } from './utils/ApiRequest';
+import { getToken, isFirstTime, refreshToken, removeData, requestFeedback } from './utils/ApiRequest';
 import { TOKEN_STORAGE_KEY, getDefaultCountryString } from './utils/Constants';
 import usePermissionStore from './storage/stores/PermissionStore';
 import texts from "@lang/en.json";
@@ -38,7 +38,6 @@ import RootNav from '@navigation/RootNavigator';
 import { Params, Routes } from '@navigation/Router';
 import { SetSelectedRef } from '@screens/EstablishmentDetails';
 import useAuthStore from 'storage/stores/AuthStore';
-import { resetNavigation } from 'utils/Utils';
 
 const Router = () => {
     const {
@@ -71,12 +70,11 @@ const Router = () => {
             } else {
                 if (await isFirstTime()) {
                     defaultPage = Routes.Onboarding;
-                } else if (await getToken() !== null) {
+                } else if (await getToken() === null && !await refreshToken()) {
+                    defaultPage = Routes.Sign;
+                } else {
                     requestFeedback();
                     defaultPage = Routes.Tabs;
-                }
-                else {
-                    defaultPage = Routes.Sign;
                 }
             }
 
