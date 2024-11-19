@@ -266,18 +266,21 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
     const result = await request("login", "POST", { countryMobile: _countryCode, mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed, ResponseType.STRING);
 
     if (result.success) {
-        alert({
-            type: AlertType.Info,
-            message: langs.saveLogin,
-            onPress: async () => {
-                if (await validateBiometricUser()) {
-                    SecureStore.setItemAsync(SECURE_STORAGE_LOGIN_KEY, createSecureToken(countryCode, phone, password));
-                }
-            },
-            buttonText: langs.enable,
-            onPress2: () => { },
-            buttonText2: langs.notNow
-        });
+        const user = await loadSecureTokenFromStorage();
+        if (user === null || (user.countryCode !== countryCode || user.phone !== phone || user.password !== password)) {
+            alert({
+                type: AlertType.Info,
+                message: langs.saveLogin,
+                onPress: async () => {
+                    if (await validateBiometricUser()) {
+                        SecureStore.setItemAsync(SECURE_STORAGE_LOGIN_KEY, createSecureToken(countryCode, phone, password));
+                    }
+                },
+                buttonText: langs.enable,
+                onPress2: () => { },
+                buttonText2: langs.notNow
+            });
+        }
         setToken(result.message);
     }
 
@@ -578,15 +581,26 @@ const loadSecureToken = (token: string) => {
     return loginInfo;
 }
 
-const refreshToken = async (): Promise<boolean> => {
+const loadSecureTokenFromStorage = async (): Promise<LoginInfo | null> => {
     try {
         if (!(await validateBiometricUser())) {
-            return false;
+            return null;
         }
         const secureLoginString = await SecureStore.getItemAsync(SECURE_STORAGE_LOGIN_KEY);
         if (secureLoginString === null)
-            return false;
+            return null;
         const secureLoginInfo = loadSecureToken(secureLoginString);
+        return { countryCode: secureLoginInfo.countryCode, phone: secureLoginInfo.phone, password: secureLoginInfo.password };
+    } catch (error) {
+        return null;
+    }
+}
+
+export const refreshToken = async (): Promise<boolean> => {
+    try {
+        const secureLoginInfo = await loadSecureTokenFromStorage();
+        if (secureLoginInfo === null)
+            return false;
         doLogin(secureLoginInfo.countryCode, secureLoginInfo.phone, secureLoginInfo.password);
         return true;
     } catch (error) {
