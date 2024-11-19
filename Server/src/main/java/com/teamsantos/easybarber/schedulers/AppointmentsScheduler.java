@@ -41,6 +41,9 @@ public class AppointmentsScheduler {
             if(appointmentsToRemind.isEmpty()){
                 log.info("No appointments to remind");
             }
+
+            // isto e terrivel, mas nao tenho tempo para fazer melhor
+
             for (AppointmentReminderDTO appointment : appointmentsToRemind) {
                 String messageBody = String.format(
                         "Dear %s, this is a reminder of your upcoming appointment at %s with %s. "
