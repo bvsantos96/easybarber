@@ -10,15 +10,18 @@ import Button from '../components/Button';
 
 import { getStyles } from '../styles/Sign';
 import { SignInProps } from '../screens/SignIn';
-import { getMobileCode } from '../utils/ApiRequest';
+import { getMobileCode, validateRegister } from '../utils/ApiRequest';
 import { Country } from 'react-native-country-picker-modal';
 import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
 import texts from "../langs/en.json";
 import { Routes } from '@navigation/Router';
 import KeyboardAvoidingScrollView from './KeyboardAvoidingScrollView';
+import { AlertType } from './Alert';
+import useAlertStore from 'storage/stores/AlertStore';
 
 export default function Register({ navigation, toggleNewUser, expand, collapse }: SignInProps) {
+    const { alert } = useAlertStore();
     const styles = getStyles();
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
@@ -40,8 +43,17 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
     }, []);
 
     const register = async () => {
+        const result = await validateRegister(nation ? nation.callingCode[0] : "", phone, password, confirmPassword, name);
+        if (result.success === false) {
+            alert({ type: AlertType.Error, message: result.message });
+            return;
+        }
         const mobileInformation = (nation ? nation.callingCode[0] : "") + phone;
-        const result = await getMobileCode(nation ? nation.callingCode[0] : "", mobileInformation);
+
+        const _result = await getMobileCode(nation ? nation.callingCode[0] : "", mobileInformation);
+        if (_result) {
+            return;
+        }
         navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: Routes.Tabs, resetNavigationBoolean: true });
     }
 
@@ -95,7 +107,7 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
                 />
                 <Divider size={20} />
                 <Input
-                    leftIcon={<PasswordIcon />}placeholder={texts.confirmPassword}
+                    leftIcon={<PasswordIcon />} placeholder={texts.confirmPassword}
                     password={true}
                     onInputChange={setConfirmPassword}
                     rightIcon={[<ShowPasswordIcon />, <HidePasswordIcon />]}
