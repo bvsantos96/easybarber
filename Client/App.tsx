@@ -154,6 +154,8 @@ const Router = () => {
     const queryClient = useQueryClient()
 
     useEffect(() => {
+        if (doLogout === undefined) return;
+        console.log("LOGOUT");
         removeData(TOKEN_STORAGE_KEY);
         waitAndResetNavigation(Routes.Onboarding);
         queryClient.clear();
