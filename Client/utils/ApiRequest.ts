@@ -284,14 +284,26 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
     return result;
 }
 
-export const doRegister = async (countryCode: string, phone: string, password: string, confirmPassword: string, name: string): Promise<IResult<any>> => {
+export const validateRegister = async (countryCode: string, phone: string, password: string, confirmPassword: string, name: string): Promise<IResult<any>> => {
     phone = phone.trim();
-    if (!isValidNumberString(phone))
+    phone = phone.replace(/\s/g, '');
+    const _countryCode = countryCode.startsWith('+') ? countryCode : `+${countryCode}`;
+    if (name.length < 3) {
+        return { success: false, message: langs.apiMessages.register.invalidName };
+    }
+    if (!isValidNumberString(`${_countryCode}${phone}`)) {
         return { success: false, message: langs.apiMessages.invalidPhone };
+    }
     if (password != confirmPassword)
         return { success: false, message: langs.apiMessages.register.passwordMismatch };
     if (!isValidPassword(password))
         return { success: false, message: langs.apiMessages.register.invalidPassword };
+    return { success: true, message: "" };
+}
+
+export const doRegister = async (countryCode: string, phone: string, password: string, confirmPassword: string, name: string): Promise<IResult<any>> => {
+    phone = phone.trim();
+    validateRegister(countryCode, phone, password, confirmPassword, name);
     name = name.trim();
     if (name.length < 3)
         return { success: false, message: langs.apiMessages.register.invalidName };
