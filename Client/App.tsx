@@ -38,7 +38,6 @@ import RootNav from '@navigation/RootNavigator';
 import { Params, Routes } from '@navigation/Router';
 import { SetSelectedRef } from '@screens/EstablishmentDetails';
 import useAuthStore from 'storage/stores/AuthStore';
-import { resetNavigation } from 'utils/Utils';
 
 const Router = () => {
     const {

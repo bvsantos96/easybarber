@@ -11,6 +11,7 @@ import Divider from '@components/Divider';
 import { resetPwdRQ } from 'utils/ApiRequest';
 import { Params, Routes } from '@navigation/Router';
 import { resetNavigation } from 'utils/Utils';
+import KeyboardAvoidingScrollView from '@components/KeyboardAvoidingScrollView';
 
 export type Route = {
     mobileInformation: string,
@@ -26,13 +27,15 @@ export default function ResetPwd({ route, navigation }: Props) {
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState<string>('');
+    const [keyboardHeight, setKeyboardHeight] = useState<number>(0);
+    const translateYAnimation = useRef(new Animated.Value(0)).current;
 
     const { mobileInformation, confirmationCode } = route.params;
 
     const tiltAnimation = useRef(new Animated.Value(0)).current;
-    
+
     const resetPwd = async () => {
-        if( password !== confirmPassword ){
+        if (password !== confirmPassword) {
             setErrorMessage(texts.pwdRecovery.pwdMustMatch);
             tiltScreen();
             return;
@@ -53,50 +56,80 @@ export default function ResetPwd({ route, navigation }: Props) {
         ]).start();
     };
 
+    const onKeyboardChange = (up: boolean) => {
+        if (up) {
+            Animated.timing(translateYAnimation, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: false,
+            }).start();
+            return;
+        }
+
+        Animated.timing(translateYAnimation, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: false,
+        }).start();
+    }
+
     return (
-        <Animated.View
-            style={[
-                styles.container,
-                {
-                    transform: [{
-                        rotate: tiltAnimation.interpolate({
-                            inputRange: [-1, 1],
-                            outputRange: ['-5deg', '5deg']
-                        })
-                    }]
-                }
-            ]}
+        <KeyboardAvoidingScrollView
+            setKeyboardHeight={setKeyboardHeight}
+            maxHeight={styles.container.height}
+            keyboardHide={() => onKeyboardChange(false)}
+            keyboardShow={() => onKeyboardChange(true)}
         >
-            <View style={styles.container}>
-                <View style={styles.eclipse} />
-                <LockImage style={styles.lockImage} />
-                <View style={styles.newPwdTextContainer}>
-                    <Text style={styles.newPwdText}>{texts.pwdRecovery.setNewPed}</Text>
+            <Animated.View
+                style={[
+                    styles.container,
+                    {
+                        transform: [{
+                            translateY: translateYAnimation.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [-keyboardHeight, 0],
+                            })
+                        },
+                        {
+                            rotate: tiltAnimation.interpolate({
+                                inputRange: [-1, 1],
+                                outputRange: ['-5deg', '5deg']
+                            })
+                        }]
+                    }
+                ]}
+            >
+                <View style={styles.container}>
+                    <View style={styles.eclipse} />
+                    <LockImage style={styles.lockImage} />
+                    <View style={styles.newPwdTextContainer}>
+                        <Text style={styles.newPwdText}>{texts.pwdRecovery.setNewPed}</Text>
+                    </View>
+                    <View style={styles.passwordInputContainer}>
+                        <Input
+                            leftIcon={<PasswordIcon />}
+                            placeholder={texts.password}
+                            password={true}
+                            onInputChange={setPassword}
+                            rightIcon={[<ShowPasswordIcon />, <HidePasswordIcon />]}
+                        />
+                        <Divider size={19.25} />
+                        <Input
+                            leftIcon={<PasswordIcon />}
+                            placeholder={texts.confirmPassword}
+                            password={true}
+                            onInputChange={setConfirmPassword}
+                            rightIcon={[<ShowPasswordIcon />, <HidePasswordIcon />]}
+                        />
+                    </View>
+                    {errorMessage ? (
+                        <Text style={styles.errorMessage}>{errorMessage}</Text>
+                    ) : null}
+                    <View style={styles.buttonContainer}>
+                        <Button title={texts.pwdRecovery.forgotPwd} onPress={resetPwd} />
+                    </View>
                 </View>
-                <View style={styles.passwordInputContainer}>
-                    <Input
-                        leftIcon={<PasswordIcon />}
-                        placeholder={texts.password}
-                        password={true}
-                        onInputChange={setPassword}
-                        rightIcon={[<ShowPasswordIcon />, <HidePasswordIcon />]}
-                    />
-                    <Divider size={19.25} />
-                    <Input
-                        leftIcon={<PasswordIcon />}
-                        placeholder={texts.confirmPassword}
-                        password={true}
-                        onInputChange={setConfirmPassword}
-                        rightIcon={[<ShowPasswordIcon />, <HidePasswordIcon />]}
-                    />
-                </View>
-                {errorMessage ? (
-                <Text style={styles.errorMessage}>{errorMessage}</Text>
-                ) : null}
-                <View style={styles.buttonContainer}>
-                    <Button title={texts.pwdRecovery.forgotPwd} onPress={resetPwd} />
-                </View>
-            </View>
-        </Animated.View>
+            </Animated.View>
+        </KeyboardAvoidingScrollView>
     );
 }
