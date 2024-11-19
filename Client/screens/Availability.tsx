@@ -85,17 +85,17 @@ export default function Availability({ route, navigation }: Props) {
     }
     const [timeSlots, setTimeSlots] = useState<TimeSlot[][][]>([]);
 
-    useEffect(() => {
+    const fetchAvailability = async () => {
         const today = new Date();
-        const fetchAvailability = async () => {
-            let availability: TimeSlots = await getAvailability(establishmentId, serviceId, employeeId, date, getStartingHour(today, date));
-            if (availability?.slots === null || availability?.slots === undefined) {
-                availability.slots = [];
-            }
-            setTimeSlots(buildTimeSlotViews(availability.slots));
-            setLoading(false);
+        let availability: TimeSlots = await getAvailability(establishmentId, serviceId, employeeId, date, getStartingHour(today, date));
+        if (availability?.slots === null || availability?.slots === undefined) {
+            availability.slots = [];
         }
+        setTimeSlots(buildTimeSlotViews(availability.slots));
+        setLoading(false);
+    }
 
+    useEffect(() => {
         if (date.length > 0) {
             setLoading(true);
             fetchAvailability();
@@ -170,7 +170,9 @@ export default function Availability({ route, navigation }: Props) {
                             alert({ type: AlertType.Loading, message: "" });
                             alert({
                                 type: AlertType.Error, message: msg,
-                                buttonText: texts.dismiss, onPress: () => { }
+                                buttonText: texts.dismiss, onPress: () => {
+                                    fetchAvailability();
+                                }
                             });
                         }
                         return;
