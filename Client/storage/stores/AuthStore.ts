@@ -8,7 +8,7 @@ interface AuthStore {
 const useAuthStore = create<AuthStore>(
     (set, get) => ({
         doLogout: undefined,
-        toggleDoLogout: () => set({ doLogout: !!!get().doLogout }),
+        toggleDoLogout: () => set({ doLogout: !get().doLogout }),
     }));
 
 export default useAuthStore;
