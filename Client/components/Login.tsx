@@ -8,7 +8,6 @@ import Title from '../components/Title';
 import { HidePasswordIcon, PasswordIcon, ShowPasswordIcon } from '../components/Icons';
 import Divider from '../components/Divider';
 import Button from '../components/Button';
-import { AppleLoginButton, GoogleLoginButton } from '../components/LoginBrandButton';
 
 import { doLogin } from '../utils/ApiRequest';
 
@@ -92,7 +91,7 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
                     <View style={styles.buttonContainer}>
                         <Button title={texts.login.button} onPress={login} />
                     </View>
-                    
+
                 }
             >
                 <View style={styles.inputsContainer}>
