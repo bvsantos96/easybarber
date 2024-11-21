@@ -10,6 +10,7 @@ import Button from '@components/Button';
 import { confirmMobileCode } from 'utils/ApiRequest';
 import { resetNavigation } from 'utils/Utils';
 import { Params, Routes } from '@navigation/Router';
+import KeyboardAvoidingScrollView from '@components/KeyboardAvoidingScrollView';
 
 export type Route = {
     mobileInformation: string,
@@ -28,6 +29,8 @@ export default function MobileConfirmation({ route, navigation }: Props) {
     const [errorMessage, setErrorMessage] = useState<string>('');
     const inputRefs = useRef<(TextInput | null)[]>([]);
     const tiltAnimation = useRef(new Animated.Value(0)).current;
+    const [keyboardHeight, setKeyboardHeight] = useState<number>(0);
+    const translateYAnimation = useRef(new Animated.Value(0)).current;
 
     useEffect(() => {
         inputRefs.current[0]?.focus();
@@ -86,51 +89,81 @@ export default function MobileConfirmation({ route, navigation }: Props) {
         }
     };
 
+    const onKeyboardChange = (up: boolean) => {
+        if (up) {
+            Animated.timing(translateYAnimation, {
+                toValue: 0,
+                duration: 300,
+                useNativeDriver: false,
+            }).start();
+            return;
+        }
+
+        Animated.timing(translateYAnimation, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: false,
+        }).start();
+    }
+
     return (
-        <Animated.View
-            style={[
-                styles.container,
-                {
-                    transform: [{
-                        rotate: tiltAnimation.interpolate({
-                            inputRange: [-1, 1],
-                            outputRange: ['-5deg', '5deg']
-                        })
-                    }]
-                }
-            ]}
+        <KeyboardAvoidingScrollView
+            setKeyboardHeight={setKeyboardHeight}
+            maxHeight={styles.container.height}
+            keyboardHide={() => onKeyboardChange(false)}
+            keyboardShow={() => onKeyboardChange(true)}
         >
-            <View style={styles.eclipse} />
-            <ChatImage style={styles.chatImage} />
-            <KeyImage style={styles.keyImage} />
-            <View style={styles.insertCodeContainer}>
-                <Text style={styles.insertCode}>{texts.code.enterCode} +{mobileInformation}</Text>
-            </View>
-            <View style={styles.codeInputContainer}>
-                {[0, 1, 2, 3, 4, 5].map((index) => (
-                    <TextInput
-                        key={index}
-                        style={styles.codeInput}
-                        keyboardType="numeric"
-                        maxLength={6 - index}
-                        value={code[index]}
-                        onChangeText={(text) => handleCodeChange(text, index)}
-                        onKeyPress={(event) => handleKeyPress(event, index)}
-                        ref={(ref) => (inputRefs.current[index] = ref)}
-                    />
-                ))}
-            </View>
-            {errorMessage ? (
-                <Text style={styles.errorMessage}>{errorMessage}</Text>
-            ) : null}
-            <TouchableOpacity style={styles.resendCodeContainer}>
-                <Text style={styles.resendCodeText}>{texts.code.codeNotReceived}</Text>
-                <Divider horizontal size={3} />
-                <Text style={styles.resendCodeRedText}>{texts.code.resendCode}</Text>
-            </TouchableOpacity>
-            <View style={styles.buttonContainer}>
-                <Button title={texts.code.verify} onPress={handleConfirmCode} />
-            </View>
-        </Animated.View>
+            <Animated.View
+                style={[
+                    styles.container,
+                    {
+                        transform: [{
+                            translateY: translateYAnimation.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [-keyboardHeight, 0],
+                            })
+                        },
+                        {
+                            rotate: tiltAnimation.interpolate({
+                                inputRange: [-1, 1],
+                                outputRange: ['-5deg', '5deg']
+                            })
+                        }]
+                    }
+                ]}
+            >
+                <View style={styles.eclipse} />
+                <ChatImage style={styles.chatImage} />
+                <KeyImage style={styles.keyImage} />
+                <View style={styles.insertCodeContainer}>
+                    <Text style={styles.insertCode}>{texts.code.enterCode} +{mobileInformation}</Text>
+                </View>
+                <View style={styles.codeInputContainer}>
+                    {[0, 1, 2, 3, 4, 5].map((index) => (
+                        <TextInput
+                            key={index}
+                            style={styles.codeInput}
+                            keyboardType="numeric"
+                            maxLength={6 - index}
+                            value={code[index]}
+                            onChangeText={(text) => handleCodeChange(text, index)}
+                            onKeyPress={(event) => handleKeyPress(event, index)}
+                            ref={(ref) => (inputRefs.current[index] = ref)}
+                        />
+                    ))}
+                </View>
+                {errorMessage ? (
+                    <Text style={styles.errorMessage}>{errorMessage}</Text>
+                ) : null}
+                <TouchableOpacity style={styles.resendCodeContainer}>
+                    <Text style={styles.resendCodeText}>{texts.code.codeNotReceived}</Text>
+                    <Divider horizontal size={3} />
+                    <Text style={styles.resendCodeRedText}>{texts.code.resendCode}</Text>
+                </TouchableOpacity>
+                <View style={styles.buttonContainer}>
+                    <Button title={texts.code.verify} onPress={handleConfirmCode} />
+                </View>
+            </Animated.View>
+        </KeyboardAvoidingScrollView>
     );
 }
