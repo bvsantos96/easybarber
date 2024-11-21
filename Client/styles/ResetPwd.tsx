@@ -7,6 +7,7 @@ export const getStyles = () => {
         container: {
             flex: 1,
             width: theme.dimensions.width,
+            height: theme.dimensions.height,
             backgroundColor: theme.colors.backgroundColor,
             overflow: 'hidden',
             alignItems: 'center'
@@ -21,21 +22,21 @@ export const getStyles = () => {
         },
         eclipse: {
             position: 'absolute',
-            width: 243.2*theme.dimensions.absoluteWidth,
-            height: 243.2*theme.dimensions.absoluteHeight,
-            left: 73.4*theme.dimensions.absoluteWidth,
-            top: 69.68*theme.dimensions.absoluteHeight,
+            width: 243.2 * theme.dimensions.absoluteWidth,
+            height: 243.2 * theme.dimensions.absoluteHeight,
+            left: 73.4 * theme.dimensions.absoluteWidth,
+            top: 69.68 * theme.dimensions.absoluteHeight,
             backgroundColor: 'rgba(223, 34, 56, 0.1)',
-            borderRadius: (243.2*theme.dimensions.absoluteWidth) / 2
+            borderRadius: (243.2 * theme.dimensions.absoluteWidth) / 2
         },
         lockImage: {
             position: 'absolute',
-            width: 103.33*theme.dimensions.absoluteWidth,
-            height: 130*theme.dimensions.absoluteHeight,
-            left: 143.33*theme.dimensions.absoluteWidth,
-            top: 128.08*theme.dimensions.absoluteHeight
+            width: 103.33 * theme.dimensions.absoluteWidth,
+            height: 130 * theme.dimensions.absoluteHeight,
+            left: 143.33 * theme.dimensions.absoluteWidth,
+            top: 128.08 * theme.dimensions.absoluteHeight
         },
-        passwordInputContainer:{
+        passwordInputContainer: {
             position: 'absolute',
             top: 434 * theme.dimensions.absoluteHeight,
             left: 35.5 * theme.dimensions.absoluteWidth,
@@ -49,7 +50,7 @@ export const getStyles = () => {
             lineHeight: 28 * theme.dimensions.absoluteHeight,
             textAlign: 'center'
         },
-        newPwdTextContainer:{
+        newPwdTextContainer: {
             position: 'absolute',
             top: 362.44 * theme.dimensions.absoluteHeight,
             left: 38.26 * theme.dimensions.absoluteWidth,
