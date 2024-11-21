@@ -7,6 +7,7 @@ export const getStyles = () => {
         container: {
             flex: 1,
             width: theme.dimensions.width,
+            height: theme.dimensions.height,
             backgroundColor: theme.colors.backgroundColor,
             overflow: 'hidden',
             alignItems: 'center'

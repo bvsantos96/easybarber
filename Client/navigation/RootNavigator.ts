@@ -61,7 +61,7 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     },
     ForgotPwd: {
         title: texts.navigation.forgotPwd.name,
-        hasHeader: false,
+        hasHeader: true,
         component: ForgotPwd,
         containerizedComponent: false,
     },

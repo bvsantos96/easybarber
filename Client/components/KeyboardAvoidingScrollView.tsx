@@ -6,7 +6,7 @@ import PhoneInput from './PhoneInput';
 import Input from './Input';
 import { useTheme } from '@styles/ThemeContext';
 
-export default function KeyboardAvoidingScrollView({ fixedTopComponent, children, fixedBottomComponent, maxHeight, keyboardShow, keyboardHide }: { fixedTopComponent?: ReactNode, children: ReactNode, fixedBottomComponent?: ReactNode, maxHeight: number, keyboardShow?: () => void, keyboardHide?: () => void }) {
+export default function KeyboardAvoidingScrollView({ fixedTopComponent, children, fixedBottomComponent, maxHeight, keyboardShow, keyboardHide, setKeyboardHeight }: { fixedTopComponent?: ReactNode, children: ReactNode, fixedBottomComponent?: ReactNode, maxHeight: number, keyboardShow?: () => void, keyboardHide?: () => void, setKeyboardHeight?: (height: number) => void }) {
     const theme = useTheme();
     if (maxHeight !== undefined) {
         maxHeight = maxHeight * theme.dimensions.absoluteHeight;
@@ -14,11 +14,16 @@ export default function KeyboardAvoidingScrollView({ fixedTopComponent, children
     const styles = getStyles();
     const scrollViewRef = useRef<ScrollView>(null);
     const [textInputs, setTextInputs] = useState<RefObject<any>[]>([]);
-    const [keyboardHeight, setKeyboardHeight] = useState<number>(0);
+    const [keyboardHeight, __setKeyboardHeight] = useState<number>(0);
     const [topHeight, setTopHeight] = useState(0);
     const [bottomHeight, setBottomHeight] = useState(0);
     const [selectedInput, setSelectedInput] = useState<number | null>(null);
     const animatedMaxHeight = useRef(new Animated.Value(maxHeight)).current;
+
+    const _setKeyboardHeight = (height: number) => {
+        setKeyboardHeight && setKeyboardHeight(height);
+        __setKeyboardHeight(height);
+    }
 
     const handleTopLayout = (event: any) => {
         if (event.nativeEvent.layout.height > 0)
@@ -46,7 +51,7 @@ export default function KeyboardAvoidingScrollView({ fixedTopComponent, children
                     useNativeDriver: false,
                 }).start();
             }
-            setKeyboardHeight(height);
+            _setKeyboardHeight(height);
         }
 
         const _onKeyboardHide = () => {
@@ -64,7 +69,7 @@ export default function KeyboardAvoidingScrollView({ fixedTopComponent, children
                 }).start();
             }
             setSelectedInput(null);
-            setKeyboardHeight(0);
+            _setKeyboardHeight(0);
             keyboardHide && keyboardHide()
         };
 
