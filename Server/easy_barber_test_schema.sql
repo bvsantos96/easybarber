@@ -1,6 +1,6 @@
 -- MySQL dump 10.13  Distrib 8.3.0, for macos14.2 (arm64)
 --
--- Host: 172.233.245.119    Database: easy_barber_stagging_heavy
+-- Host: 172.233.245.119    Database: easy_barber_testing
 -- ------------------------------------------------------
 -- Server version	8.0.37-0ubuntu0.23.10.2
 
@@ -26,8 +26,6 @@ CREATE TABLE `appointment` (
   `active` tinyint(1) NOT NULL DEFAULT '1',
   `confirmed` tinyint(1) NOT NULL DEFAULT '1',
   `date` date DEFAULT NULL,
-  `feedback` int DEFAULT NULL,
-  `feedback_asked` tinyint(1) NOT NULL DEFAULT '0',
   `reminded` tinyint(1) NOT NULL DEFAULT '0',
   `time` time(6) DEFAULT NULL,
   `employee_id` bigint NOT NULL,
@@ -38,16 +36,15 @@ CREATE TABLE `appointment` (
   `description` varchar(255) DEFAULT NULL,
   `non_registered_user` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `IDXocj7ys3racy36d4tdauqvvqp2` (`user_id`),
-  KEY `IDXm7ngu3uqckrnkf0x7qcbwhj8q` (`user_id`,`feedback_asked`),
   KEY `FK9daqcqq2nrtbcr5xqeivvkorq` (`employee_id`),
   KEY `FK995w9yqrlhf2jhiqvon7ndfn2` (`establishment_id`),
   KEY `FKc5vnhe960ftnpvt7pcwq5pd57` (`establishment_service_id`),
+  KEY `FKa8m1smlfsc8kkjn2t6wpdmysk` (`user_id`),
   CONSTRAINT `FK995w9yqrlhf2jhiqvon7ndfn2` FOREIGN KEY (`establishment_id`) REFERENCES `establishment` (`id`),
   CONSTRAINT `FK9daqcqq2nrtbcr5xqeivvkorq` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`),
   CONSTRAINT `FKa8m1smlfsc8kkjn2t6wpdmysk` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
   CONSTRAINT `FKc5vnhe960ftnpvt7pcwq5pd57` FOREIGN KEY (`establishment_service_id`) REFERENCES `establishment_service` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4015 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -67,7 +64,7 @@ CREATE TABLE `employee` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_b1od27kmks86dw2jpm4kwdryk` (`user`),
   CONSTRAINT `FKjdyul4cmndt1b48vw1166bee5` FOREIGN KEY (`user`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=501 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -82,12 +79,11 @@ CREATE TABLE `employee_image` (
   `entity_id` bigint NOT NULL,
   `id` bigint NOT NULL AUTO_INCREMENT,
   `data` varchar(255) DEFAULT NULL,
-  `url` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDXbbkynu30go5e2pww6iggdktnb` (`entity_id`,`is_main`),
   KEY `IDXb1wodbu6fbd4faq15k313h9b0` (`entity_id`,`data`),
   CONSTRAINT `FKjqtgbx7ipqgo9j7mqh07tpuyv` FOREIGN KEY (`entity_id`) REFERENCES `employee` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -110,7 +106,7 @@ CREATE TABLE `employee_schedule` (
   KEY `FKopf7kqhml8g3efddqc6rki7jv` (`employee_id`),
   CONSTRAINT `FKdnicvgjeytvd7t7nf4yh9itj2` FOREIGN KEY (`establishment_id`) REFERENCES `establishment` (`id`),
   CONSTRAINT `FKopf7kqhml8g3efddqc6rki7jv` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2946 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -129,7 +125,7 @@ CREATE TABLE `establishment` (
   `name` varchar(255) DEFAULT NULL,
   `location` geometry DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=101 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -144,12 +140,11 @@ CREATE TABLE `establishment_image` (
   `entity_id` bigint NOT NULL,
   `id` bigint NOT NULL AUTO_INCREMENT,
   `data` varchar(255) DEFAULT NULL,
-  `url` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX368m4bnfqblu9ov75o8psxsqw` (`entity_id`,`is_main`),
   KEY `IDX95w699v45nsknxm1rvlxdssd2` (`entity_id`,`data`),
   CONSTRAINT `FKdvuqxcsya8hxjtfsqqdtoy618` FOREIGN KEY (`entity_id`) REFERENCES `establishment` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -170,7 +165,7 @@ CREATE TABLE `establishment_service` (
   KEY `FKe7cftoweu00yb0j4go9606rlc` (`service_id`),
   CONSTRAINT `FKe2gcddysc6njum0xmu68gwjlq` FOREIGN KEY (`establishment_id`) REFERENCES `establishment` (`id`),
   CONSTRAINT `FKe7cftoweu00yb0j4go9606rlc` FOREIGN KEY (`service_id`) REFERENCES `service` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -192,7 +187,7 @@ CREATE TABLE `establishment_service_employee` (
   CONSTRAINT `FK455e7ijpacj566hva0m6ymla7` FOREIGN KEY (`employee_id`) REFERENCES `establishment_staff` (`id`),
   CONSTRAINT `FKe7ervykqx44734smntb5lbc2t` FOREIGN KEY (`establishment_id`) REFERENCES `establishment` (`id`),
   CONSTRAINT `FKfqammx81imvgsdwcsj4m07vhs` FOREIGN KEY (`service_id`) REFERENCES `establishment_service` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3644 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -214,7 +209,7 @@ CREATE TABLE `establishment_staff` (
   KEY `FK3lnmq3hv96sebpcwor21viw1t` (`establishment_id`),
   CONSTRAINT `FK34orwdgal0jk4542lxyvsfc4m` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`),
   CONSTRAINT `FK3lnmq3hv96sebpcwor21viw1t` FOREIGN KEY (`establishment_id`) REFERENCES `establishment` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=501 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -237,7 +232,7 @@ CREATE TABLE `location` (
   PRIMARY KEY (`id`),
   KEY `IDXe5jwd37ob25i4e7jwownmu08w` (`user_id`),
   CONSTRAINT `FKeua4vn06qu0iq9d32qnmuhqkl` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -262,7 +257,7 @@ CREATE TABLE `schedule_exception` (
   KEY `FKstfqw5nn4jg2djanwcmxom745` (`establishment_id`),
   CONSTRAINT `FKcgandf16c4r4sb03tb3aotqiy` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`),
   CONSTRAINT `FKstfqw5nn4jg2djanwcmxom745` FOREIGN KEY (`establishment_id`) REFERENCES `establishment` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=110 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -284,7 +279,7 @@ CREATE TABLE `service` (
   KEY `IDXcsgprwtglgj0cf507qpt5oyx5` (`employee_id`),
   CONSTRAINT `FK3xthwhrkfejag3mpvp5ep6ppu` FOREIGN KEY (`employee_id`) REFERENCES `employee` (`id`),
   CONSTRAINT `FK8e4s0klc1xdmf3dwoy16k7fmi` FOREIGN KEY (`service_type_id`) REFERENCES `service_type` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1001 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -299,12 +294,11 @@ CREATE TABLE `service_image` (
   `entity_id` bigint NOT NULL,
   `id` bigint NOT NULL AUTO_INCREMENT,
   `data` varchar(255) DEFAULT NULL,
-  `url` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `IDX916k1n69pqygq1ouva6geaab7` (`entity_id`,`is_main`),
   KEY `IDXixi75usg18jb8sl9l0g8ncccd` (`entity_id`,`data`),
   CONSTRAINT `FKaig970fq9p87bl3ee87fotd1x` FOREIGN KEY (`entity_id`) REFERENCES `service` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -320,7 +314,7 @@ CREATE TABLE `service_type` (
   `imageurl` varchar(255) DEFAULT NULL,
   `name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -342,24 +336,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_3tbutmd8b2416d77g7dhhnri4` (`mobile_information`),
   KEY `IDXt7ccnc1wptnpgv6dnxbldtfn9` (`mobile_information`)
-) ENGINE=InnoDB AUTO_INCREMENT=1501 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `user_favorite`
---
-
-DROP TABLE IF EXISTS `user_favorite`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `user_favorite` (
-  `establishment_id` bigint NOT NULL,
-  `user_id` bigint NOT NULL,
-  PRIMARY KEY (`establishment_id`,`user_id`),
-  KEY `FK2eajkverwrmx1fdy0oovpxrx0` (`user_id`),
-  CONSTRAINT `FK2eajkverwrmx1fdy0oovpxrx0` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`),
-  CONSTRAINT `FK9sl1r4g5s15f0mqr6oapiyyae` FOREIGN KEY (`establishment_id`) REFERENCES `establishment` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -419,4 +396,4 @@ CREATE TABLE `verification_code` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-11-23  0:16:18
+-- Dump completed on 2024-10-18 16:03:31
