@@ -1,6 +1,37 @@
 {
-  "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
-  }
+    "module": "esnext",
+    "strict": true,
+    "baseUrl": ".",
+    "paths": {
+      "@components/*": [
+        "./components/*"
+      ],
+      "@assets/*": [
+        "./assets/*"
+      ],
+      "@screens/*": [
+        "./screens/*"
+      ],
+      "@styles/*": [
+        "./styles/*"
+      ],
+      "@icons/*": [
+        "./components/icons/*"
+      ],
+      "@lang/*": [
+        "./langs/*"
+      ],
+      "@navigation/*": [
+        "./navigation/*"
+      ],
+    },
+    "jsx": "react-native"
+  },
+  "include": [
+    "./**/*.ts",
+    "./**/*.tsx",
+    "declarations.d.ts"
+  ],
+  "extends": "expo/tsconfig.base"
 }
