@@ -101,7 +101,7 @@ public class EstablishmentTests {
                 }
             }
 
-            String jwt = new EmployeeTests(mockMvc).loginById(3L, false);
+            String jwt = new EmployeeTests(mockMvc).loginById(2L, false);
             Long establishmentId = EstablishmentData.establishments.get(0).getId();
             UserCreateDTO employee = EmployeeData.employees.get(1);
             ResultActions result = CreateTest.post(mockMvc,
