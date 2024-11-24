@@ -11,7 +11,6 @@ import { Routes } from "@navigation/Router";
 import { resetNavigation } from "utils/Utils";
 import useAuthStore from "storage/stores/AuthStore";
 import SettingItem from "@components/SettingItem";
-import { MobileConfirmationFunctions } from "enums";
 
 export default function Settings({ navigation }: PropNavigation) {
     const { toggleDoLogout } = useAuthStore();
@@ -51,7 +50,7 @@ export default function Settings({ navigation }: PropNavigation) {
                         return;
                     }
                     const mobileInformation = phoneInfo.countryCode + phoneInfo.phone;
-                    // getMobileCodeResetPwd(phoneInfo.countryCode, phoneInfo.phone);
+                    getMobileCodeResetPwd(phoneInfo.countryCode, phoneInfo.phone);
 
                     navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: Routes.ResetPwd, resetNavigationBoolean: false });
                 }}

@@ -10,9 +10,9 @@ import Button from '@components/Button';
 import { confirmMobileCode, doRegister } from 'utils/ApiRequest';
 import { resetNavigation } from 'utils/Utils';
 import { Params, Routes } from '@navigation/Router';
-import KeyboardAvoidingScrollView from '@components/KeyboardAvoidingScrollView';
 import { MobileConfirmationFunctions } from 'enums';
 import texts from '@lang/en.json';
+import KeyboardAwareView from '@components/KeyboardAwareView';
 
 export type Route = {
     mobileInformation: string,
@@ -124,11 +124,10 @@ export default function MobileConfirmation({ route, navigation }: Props) {
     }
 
     return (
-        <KeyboardAvoidingScrollView
+        <KeyboardAwareView
+            onKeyboardHide={() => onKeyboardChange(false)}
+            onKeyboardShow={() => onKeyboardChange(true)}
             setKeyboardHeight={setKeyboardHeight}
-            maxHeight={styles.container.height}
-            keyboardHide={() => onKeyboardChange(false)}
-            keyboardShow={() => onKeyboardChange(true)}
         >
             <Animated.View
                 style={[
@@ -181,6 +180,6 @@ export default function MobileConfirmation({ route, navigation }: Props) {
                     <Button title={texts.code.verify} onPress={handleConfirmCode} />
                 </View>
             </Animated.View>
-        </KeyboardAvoidingScrollView>
+        </KeyboardAwareView>
     );
 }
