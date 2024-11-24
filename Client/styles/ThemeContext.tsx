@@ -22,6 +22,7 @@ interface Colors {
     successColor: string;
     infoColor: string;
     backgroundColor: string;
+    iconBackground: string;
     imageBackground: string;
     statusBarOnHome: StatusBarStyle;
     borderAlt: string;
@@ -115,6 +116,7 @@ const defaultTheme: Theme = {
         successColor: '#6FC138',
         infoColor: '#2A74CC',
         backgroundColor: 'white',
+        iconBackground: 'rgba(223, 34, 56, 0.1)',
         imageBackground: "rgba(109, 4, 4, 0.10)",
         statusBarOnHome: "light",
         borderAlt: 'rgba(109, 4, 4, 0.1)',

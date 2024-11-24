@@ -251,7 +251,8 @@
     "checkAvailability": "Check Availability",
     "currency": "€",
     "settings": {
-        "title": "Settings"
+        "title": "Settings",
+        "resetPwd": "Reset Password"
     },
     "noItems": "No items found."
 }
