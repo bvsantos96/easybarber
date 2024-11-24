@@ -85,7 +85,6 @@ public class EstablishmentController extends ImageController<Establishment, Esta
             establishmentDTO.setResponseMessage(e.getMessage());
             return ResponseEntity.status(HttpStatus.FOUND).body(establishmentDTO);
         } catch (Exception e) {
-            System.err.println(e.getMessage());
             establishmentDTO.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(establishmentDTO);
         }
