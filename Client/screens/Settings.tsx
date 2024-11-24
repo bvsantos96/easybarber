@@ -6,11 +6,12 @@ import SecurityIcon from "@icons/security.svg";
 import texts from "@lang/en.json";
 import { getStyles } from "@styles/Settings";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { getMobileCode, getMobileInformation, getToken } from "utils/ApiRequest";
+import { getMobileCodeResetPwd, getMobileInformation, getToken } from "utils/ApiRequest";
 import { Routes } from "@navigation/Router";
 import { resetNavigation } from "utils/Utils";
 import useAuthStore from "storage/stores/AuthStore";
 import SettingItem from "@components/SettingItem";
+import { MobileConfirmationFunctions } from "enums";
 
 export default function Settings({ navigation }: PropNavigation) {
     const { toggleDoLogout } = useAuthStore();
@@ -50,12 +51,9 @@ export default function Settings({ navigation }: PropNavigation) {
                         return;
                     }
                     const mobileInformation = phoneInfo.countryCode + phoneInfo.phone;
-                    const _result = await getMobileCode(phoneInfo.countryCode, phoneInfo.phone);
-                    if (!_result) {
-                        return;
-                    }
+                    // getMobileCodeResetPwd(phoneInfo.countryCode, phoneInfo.phone);
 
-                    navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: "ResetPwd", resetNavigationBoolean: false });
+                    navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: Routes.ResetPwd, resetNavigationBoolean: false });
                 }}
             />
             <Pressable style={styles.logOutContainer} onPress={() => {

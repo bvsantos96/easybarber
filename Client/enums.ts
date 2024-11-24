@@ -20,6 +20,7 @@ export enum PageListType {
     PAGERVIEW = "page_view"
 }
 
+
 export enum MobileConfirmationFunctions {
     REGISTER = "register",
 }

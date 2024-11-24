@@ -52,11 +52,8 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
 
         const countryCode = nation ? nation.callingCode[0] : "";
         const mobileInformation = countryCode + phone;
+        getMobileCode(countryCode, phone);
 
-        const _result = await getMobileCode(countryCode, phone);
-        if (!_result) {
-            return;
-        }
         const registerInfo: RegisterInfo = {
             name: name,
             phone: phone,

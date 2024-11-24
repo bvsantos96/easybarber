@@ -12,6 +12,7 @@ import { resetNavigation } from 'utils/Utils';
 import { Params, Routes } from '@navigation/Router';
 import KeyboardAvoidingScrollView from '@components/KeyboardAvoidingScrollView';
 import { MobileConfirmationFunctions } from 'enums';
+import texts from '@lang/en.json';
 
 export type Route = {
     mobileInformation: string,
@@ -25,7 +26,6 @@ type Props = NativeStackScreenProps<typeof Params, 'MobileConfirmation'>;
 
 export default function MobileConfirmation({ route, navigation }: Props) {
     const styles = getStyles();
-    const texts = require('@lang/en.json');
     const { mobileInformation, nextScreen, resetNavigationBoolean, functionData, functionName } = route.params;
 
     const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
@@ -90,17 +90,15 @@ export default function MobileConfirmation({ route, navigation }: Props) {
         const response = await confirmMobileCode(mobileInformation, confirmationCode);
 
         if (response) {
-            if (functionName) {
-                if (await func()) {
-                    if (resetNavigationBoolean) {
-                        resetNavigation(navigation, nextScreen);
-                    }
-                    else {
-                        navigation.navigate(nextScreen, { mobileInformation: mobileInformation, confirmationCode: confirmationCode });
-                    }
-                } else {
-                    navigation.goBack();
-                }
+            if (functionName && !(await func())) {
+                navigation.goBack();
+            }
+            if (resetNavigationBoolean) {
+                resetNavigation(navigation, nextScreen);
+            }
+            else {
+                setCode(['', '', '', '', '', '']);
+                navigation.navigate(nextScreen, { mobileInformation: mobileInformation, confirmationCode: confirmationCode });
             }
         } else {
             setErrorMessage(texts.code.verificationFailed);

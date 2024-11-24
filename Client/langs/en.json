@@ -130,9 +130,11 @@
     "pwdRecovery": {
         "enterPhone": "Please enter your phone number on which your account is registered.",
         "forgotPwd": "Forgot Password",
-        "setNewPed": "Set a new password",
+        "setNewPwd": "Set a new password",
+        "setPwd": "Set new password",
         "set": "set",
-        "pwdMustMatch": "Passwords must match"
+        "pwdMustMatch": "Passwords must match",
+        "pwdResetSuccess": "Password reset successfully"
     },
     "phoneNumber": "Phone Number",
     "password": "Password",
