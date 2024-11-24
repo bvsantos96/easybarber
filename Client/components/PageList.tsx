@@ -1,5 +1,5 @@
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
-import { FlatList, View, Text, ViewStyle, NativeSyntheticEvent, ActivityIndicator } from "react-native";
+import { FlatList, View, Text, ViewStyle, NativeSyntheticEvent } from "react-native";
 import PagerView from "react-native-pager-view";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet/src";
 
@@ -11,7 +11,6 @@ import { debounce } from "lodash";
 import texts from "@lang/en.json";
 import Button from "./Button";
 import Divider from "./Divider";
-import { useTheme } from "@styles/ThemeContext";
 
 interface PageListProps<T extends Identifiable> {
     renderItem: (item: { item: T, index: number }) => React.JSX.Element;
@@ -42,7 +41,6 @@ export interface PageListRef<T extends Identifiable> {
 const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Ref<PageListRef<T>>) => {
     const { renderItem, requestFunction, loadCache, saveCache, resetCache, style, preload = true } = props;
     const type = props.type || PageListType.FLAT;
-    const theme = useTheme();
     const initialItems = props.initialItems || [];
     const pageSize = props.pageSize || 10;
     const styles = getStyles();
