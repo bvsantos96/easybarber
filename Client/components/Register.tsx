@@ -19,6 +19,7 @@ import { Routes } from '@navigation/Router';
 import KeyboardAvoidingScrollView from './KeyboardAvoidingScrollView';
 import { AlertType } from './Alert';
 import useAlertStore from 'storage/stores/AlertStore';
+import { FunctionTypes } from 'enums';
 
 export default function Register({ navigation, toggleNewUser, expand, collapse }: SignInProps) {
     const { alert } = useAlertStore();
@@ -54,7 +55,15 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
         if (_result) {
             return;
         }
-        navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: Routes.Tabs, resetNavigationBoolean: true });
+
+        navigation.navigate(Routes.MobileConfirmation,
+            {
+                blockUntil: _result,
+                mobileInformation: mobileInformation,
+                nextScreen: Routes.Tabs,
+                resetNavigationBoolean: true,
+                resendFunction: FunctionTypes.CONFIRMATION_CDOE
+            });
     }
 
     return (

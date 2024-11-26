@@ -187,6 +187,11 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public boolean existsByMobileInformation(String mobileInformation) {
+        return userRepository.existsByMobileInformation(mobileInformation);
+    }
+
+    @Transactional(readOnly = true)
     public UserDTO getUserByMobileNr(String mobileNr) throws Exception {
         Optional<User> user = userRepository.findByMobileInformation(mobileNr);
 

@@ -19,3 +19,8 @@ export enum PageListType {
     BOTTOM_SHEET = "bottom_sheet",
     PAGERVIEW = "page_view"
 }
+
+export enum FunctionTypes {
+    CONFIRMATION_CDOE = "confirmation_code",
+    RESET_PASSWORD = "reset_password",
+}
