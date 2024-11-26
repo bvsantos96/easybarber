@@ -567,12 +567,12 @@ const makeMobileInformation = (countryCode: string, phoneNr: string): string => 
     return `${parseCountryCode(countryCode)}${phoneNr}`;
 }
 
-export const getMobileCode = async (phoneCountryCode: string, phoneNr: string): Promise<boolean> => {
-    const response = await request("/sms/confirmation", "POST", { phoneNr: phoneNr, phoneCountryCode: parseCountryCode(phoneCountryCode) }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+export const getMobileCode = async (phoneCountryCode: string, phoneNr: string): Promise<number | undefined> => {
+    const response = await request<number>("/sms/confirmation", "POST", { phoneNr: phoneNr, phoneCountryCode: parseCountryCode(phoneCountryCode) }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
-        return true;
+        return response.data;
     }
-    return false;
+    return response.data
 }
 
 export const confirmMobileCode = async (phoneNr: string, confirmationCode: string): Promise<boolean> => {
@@ -583,12 +583,12 @@ export const confirmMobileCode = async (phoneNr: string, confirmationCode: strin
     return false;
 }
 
-export const getMobileCodeResetPwd = async (phoneCountryCode: string, phoneNr: string): Promise<boolean> => {
-    const response = await request("/sms/resetpwd", "POST", { phoneNr: phoneNr, phoneCountryCode: parseCountryCode(phoneCountryCode) }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+export const getMobileCodeResetPwd = async (phoneCountryCode: string, phoneNr: string): Promise<number | undefined> => {
+    const response = await request<number>("/sms/resetpwd", "POST", { phoneNr: phoneNr, phoneCountryCode: parseCountryCode(phoneCountryCode) }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
-        return true;
+        return response.data;
     }
-    return false;
+    return response.data;
 }
 
 export const resetPwdRQ = async (phoneNr: string, confirmationCode: string, password: string, confirmPassword: string): Promise<boolean> => {

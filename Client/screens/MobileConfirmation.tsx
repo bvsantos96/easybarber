@@ -7,33 +7,38 @@ import KeyImage from '@assets/images/key.svg';
 import ChatImage from '@assets/images/chat.svg';
 import Divider from '@components/Divider';
 import Button from '@components/Button';
-import { confirmMobileCode, doRegister } from 'utils/ApiRequest';
+import { MobileConfirmationFunctions } from 'enums';
+import { confirmMobileCode, doRegister, getMobileCode, getMobileCodeResetPwd } from 'utils/ApiRequest';
 import { resetNavigation } from 'utils/Utils';
 import { Params, Routes } from '@navigation/Router';
-import { MobileConfirmationFunctions } from 'enums';
-import texts from '@lang/en.json';
 import KeyboardAwareView from '@components/KeyboardAwareView';
+import texts from '@lang/en.json';
 
 export type Route = {
-    mobileInformation: string,
+    phoneNr: string,
+    countryCode: string,
     nextScreen: typeof Routes.ResetPwd,
     resetNavigationBoolean: boolean,
     functionData?: Object,
-    functionName?: MobileConfirmationFunctions
+    functionName?: MobileConfirmationFunctions,
+    blockUntil?: number,
+    resendFunction: MobileConfirmationFunctions
 };
 
 type Props = NativeStackScreenProps<typeof Params, 'MobileConfirmation'>;
 
 export default function MobileConfirmation({ route, navigation }: Props) {
     const styles = getStyles();
-    const { mobileInformation, nextScreen, resetNavigationBoolean, functionData, functionName } = route.params;
+    const { phoneNr, countryCode, nextScreen, resetNavigationBoolean, functionData, functionName, blockUntil, resendFunction } = route.params;
 
+    const mobileInformation = countryCode + phoneNr;
     const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const inputRefs = useRef<(TextInput | null)[]>([]);
     const tiltAnimation = useRef(new Animated.Value(0)).current;
     const [keyboardHeight, setKeyboardHeight] = useState<number>(0);
     const translateYAnimation = useRef(new Animated.Value(0)).current;
+    const [blockTime, setBlockTime] = useState<number>(blockUntil || 0);
 
     useEffect(() => {
         inputRefs.current[0]?.focus();
@@ -80,6 +85,12 @@ export default function MobileConfirmation({ route, navigation }: Props) {
             case MobileConfirmationFunctions.REGISTER:
                 const data = functionData as RegisterInfo;
                 return await doRegister(data.countryCode, data.phone, data.password, data.confirmPassword, data.name)
+            case MobileConfirmationFunctions.CONFIRMATION_CDOE:
+                setBlockTime(await getMobileCode(countryCode, phoneNr) || 0);
+                break;
+            case MobileConfirmationFunctions.RESET_PASSWORD:
+                setBlockTime(await getMobileCodeResetPwd(countryCode, phoneNr) || 0);
+                break;
             default:
                 return true;
         }
@@ -122,6 +133,16 @@ export default function MobileConfirmation({ route, navigation }: Props) {
             useNativeDriver: false,
         }).start();
     }
+
+    useEffect(() => {
+        if (blockTime > 0) {
+            const timer = setInterval(() => {
+                setBlockTime((prev) => prev - 1);
+            }, 1000);
+
+            return () => clearInterval(timer);
+        }
+    }, [blockTime]);
 
     return (
         <KeyboardAwareView
@@ -171,10 +192,13 @@ export default function MobileConfirmation({ route, navigation }: Props) {
                 {errorMessage ? (
                     <Text style={styles.errorMessage}>{errorMessage}</Text>
                 ) : null}
-                <TouchableOpacity style={styles.resendCodeContainer}>
-                    <Text style={styles.resendCodeText}>{texts.code.codeNotReceived}</Text>
-                    <Divider horizontal size={3} />
-                    <Text style={styles.resendCodeRedText}>{texts.code.resendCode}</Text>
+                <TouchableOpacity style={styles.resendCodeContainer} onPress={func} disabled={blockTime === 0} >
+                    <View style={styles.row}>
+                        <Text style={styles.resendCodeText}>{texts.code.codeNotReceived}</Text>
+                        <Divider horizontal size={3} />
+                        <Text style={styles.resendCodeRedText}>{texts.code.resendCode}</Text>
+                    </View>
+                    {blockTime > 0 && <Text style={styles.resendCodeText}>{texts.code.resendCodeIn} {blockTime}</Text>}
                 </TouchableOpacity>
                 <View style={styles.buttonContainer}>
                     <Button title={texts.code.verify} onPress={handleConfirmCode} />

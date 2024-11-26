@@ -19,7 +19,7 @@ import { Routes } from '@navigation/Router';
 import KeyboardAvoidingScrollView from './KeyboardAvoidingScrollView';
 import { AlertType } from './Alert';
 import useAlertStore from 'storage/stores/AlertStore';
-import { MobileConfirmationFunctions } from 'enums';
+import { FunctionTypes, MobileConfirmationFunctions } from 'enums';
 
 export default function Register({ navigation, toggleNewUser, expand, collapse }: SignInProps) {
     const { alert } = useAlertStore();
@@ -52,7 +52,7 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
 
         const countryCode = nation ? nation.callingCode[0] : "";
         const mobileInformation = countryCode + phone;
-        getMobileCode(countryCode, phone);
+        const _result = await getMobileCode(countryCode, phone);
 
         const registerInfo: RegisterInfo = {
             name: name,
@@ -61,7 +61,16 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
             confirmPassword: confirmPassword,
             countryCode: countryCode
         }
-        navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: Routes.Tabs, resetNavigationBoolean: true, functionName: MobileConfirmationFunctions.REGISTER, functionData: registerInfo });
+        navigation.navigate(Routes.MobileConfirmation,
+            {
+                mobileInformation: mobileInformation,
+                nextScreen: Routes.Tabs,
+                resetNavigationBoolean: true,
+                functionName: MobileConfirmationFunctions.REGISTER,
+                functionData: registerInfo,
+                blockUntil: _result,
+                resendFunction: MobileConfirmationFunctions.CONFIRMATION_CDOE
+            });
     }
 
     return (

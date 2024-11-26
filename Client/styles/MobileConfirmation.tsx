@@ -22,32 +22,35 @@ export const getStyles = () => {
         },
         eclipse: {
             position: 'absolute',
-            width: 243.2*theme.dimensions.absoluteWidth,
-            height: 243.2*theme.dimensions.absoluteHeight,
-            left: 73.4*theme.dimensions.absoluteWidth,
-            top: 69.68*theme.dimensions.absoluteHeight,
+            width: 243.2 * theme.dimensions.absoluteWidth,
+            height: 243.2 * theme.dimensions.absoluteHeight,
+            left: 73.4 * theme.dimensions.absoluteWidth,
+            top: 69.68 * theme.dimensions.absoluteHeight,
             backgroundColor: 'rgba(223, 34, 56, 0.1)',
-            borderRadius: (243.2*theme.dimensions.absoluteWidth) / 2
+            borderRadius: (243.2 * theme.dimensions.absoluteWidth) / 2
         },
         chatImage: {
             position: 'absolute',
-            width: 121.09*theme.dimensions.absoluteWidth,
-            height: 121.81*theme.dimensions.absoluteHeight,
-            left: 134.48*theme.dimensions.absoluteWidth,
-            top: 130.38*theme.dimensions.absoluteHeight
+            width: 121.09 * theme.dimensions.absoluteWidth,
+            height: 121.81 * theme.dimensions.absoluteHeight,
+            left: 134.48 * theme.dimensions.absoluteWidth,
+            top: 130.38 * theme.dimensions.absoluteHeight
         },
         keyImage: {
             position: 'absolute',
-            width: 57.09*theme.dimensions.absoluteWidth,
-            height: 30.54*theme.dimensions.absoluteHeight,
-            left: 166.48*theme.dimensions.absoluteWidth,
-            top: 162.7*theme.dimensions.absoluteHeight
+            width: 57.09 * theme.dimensions.absoluteWidth,
+            height: 30.54 * theme.dimensions.absoluteHeight,
+            left: 166.48 * theme.dimensions.absoluteWidth,
+            top: 162.7 * theme.dimensions.absoluteHeight
         },
         resendCodeContainer: {
-            position:  'absolute',
-            top: 547.49 * theme.dimensions.absoluteHeight,
+            position: 'absolute',
+            top: 525.49 * theme.dimensions.absoluteHeight,
             width: '100%',
+        },
+        row: {
             flexDirection: 'row',
+            alignItems: 'center',
             justifyContent: 'center',
         },
         resendCodeText: {
@@ -72,7 +75,7 @@ export const getStyles = () => {
             lineHeight: 28 * theme.dimensions.absoluteHeight,
             textAlign: 'center'
         },
-        insertCodeContainer:{
+        insertCodeContainer: {
             position: 'absolute',
             top: 362.44 * theme.dimensions.absoluteHeight,
             left: 38.26 * theme.dimensions.absoluteWidth,
@@ -87,14 +90,14 @@ export const getStyles = () => {
             lineHeight: 25.2 * theme.dimensions.absoluteHeight,
             textAlign: 'center'
         },
-        verifyPhoneContainer:{
+        verifyPhoneContainer: {
             position: 'absolute',
             top: 68.5 * theme.dimensions.absoluteHeight,
             left: 137.5 * theme.dimensions.absoluteWidth,
             width: 115 * theme.dimensions.absoluteWidth,
             height: 25 * theme.dimensions.absoluteHeight
         },
-        codeInputContainer:{
+        codeInputContainer: {
             position: 'absolute',
             top: 457.94 * theme.dimensions.absoluteHeight,
             left: 43.5 * theme.dimensions.absoluteWidth,

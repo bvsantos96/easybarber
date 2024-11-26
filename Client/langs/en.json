@@ -125,7 +125,8 @@
         "verify": "Verify",
         "successfullVerification": "Your phone has been verified successfully",
         "getStarted": "Get Started",
-        "verificationFailed": "Verification failed. Please try again."
+        "verificationFailed": "Verification failed. Please try again.",
+        "resendCodeIn": "Resend code in",
     },
     "pwdRecovery": {
         "enterPhone": "Please enter your phone number on which your account is registered.",
