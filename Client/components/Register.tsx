@@ -19,7 +19,7 @@ import { Routes } from '@navigation/Router';
 import KeyboardAvoidingScrollView from './KeyboardAvoidingScrollView';
 import { AlertType } from './Alert';
 import useAlertStore from 'storage/stores/AlertStore';
-import { FunctionTypes, MobileConfirmationFunctions } from 'enums';
+import { MobileConfirmationFunctions } from 'enums';
 
 export default function Register({ navigation, toggleNewUser, expand, collapse }: SignInProps) {
     const { alert } = useAlertStore();
@@ -51,7 +51,6 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
         }
 
         const countryCode = nation ? nation.callingCode[0] : "";
-        const mobileInformation = countryCode + phone;
         const _result = await getMobileCode(countryCode, phone);
 
         const registerInfo: RegisterInfo = {
@@ -63,7 +62,8 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
         }
         navigation.navigate(Routes.MobileConfirmation,
             {
-                mobileInformation: mobileInformation,
+                phoneNr: phone,
+                countryCode: countryCode,
                 nextScreen: Routes.Tabs,
                 resetNavigationBoolean: true,
                 functionName: MobileConfirmationFunctions.REGISTER,

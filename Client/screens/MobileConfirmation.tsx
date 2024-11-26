@@ -30,7 +30,6 @@ type Props = NativeStackScreenProps<typeof Params, 'MobileConfirmation'>;
 export default function MobileConfirmation({ route, navigation }: Props) {
     const styles = getStyles();
     const { phoneNr, countryCode, nextScreen, resetNavigationBoolean, functionData, functionName, blockUntil, resendFunction } = route.params;
-
     const mobileInformation = countryCode + phoneNr;
     const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
     const [errorMessage, setErrorMessage] = useState<string>('');
@@ -80,8 +79,8 @@ export default function MobileConfirmation({ route, navigation }: Props) {
         ]).start();
     };
 
-    const func = async () => {
-        switch (functionName) {
+    const func = async (name = functionName) => {
+        switch (name) {
             case MobileConfirmationFunctions.REGISTER:
                 const data = functionData as RegisterInfo;
                 return await doRegister(data.countryCode, data.phone, data.password, data.confirmPassword, data.name)
@@ -192,7 +191,7 @@ export default function MobileConfirmation({ route, navigation }: Props) {
                 {errorMessage ? (
                     <Text style={styles.errorMessage}>{errorMessage}</Text>
                 ) : null}
-                <TouchableOpacity style={styles.resendCodeContainer} onPress={func} disabled={blockTime === 0} >
+                <TouchableOpacity style={styles.resendCodeContainer} onPress={() => { func(resendFunction) }} disabled={blockTime === 0} >
                     <View style={styles.row}>
                         <Text style={styles.resendCodeText}>{texts.code.codeNotReceived}</Text>
                         <Divider horizontal size={3} />

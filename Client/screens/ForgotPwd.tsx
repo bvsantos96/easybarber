@@ -33,12 +33,12 @@ export default function ForgotPwd({ navigation }: PropNavigation) {
     }, []);
 
     const forgotPwd = async () => {
-        const mobileInformation = (nation ? nation.callingCode[0] : "") + phone;
         const success = await getMobileCodeResetPwd(nation ? nation.callingCode[0] : "", phone);
         if (success) {
             navigation.navigate(Routes.MobileConfirmation,
                 {
-                    mobileInformation: mobileInformation,
+                    phoneNr: phone,
+                    countryCode: nation ? nation.callingCode[0] : "",
                     nextScreen: "ResetPwd",
                     resetNavigationBoolean: false,
                     blockUntil: success,
