@@ -23,6 +23,6 @@ export enum PageListType {
 
 export enum MobileConfirmationFunctions {
     REGISTER = "register",
-    CONFIRMATION_CDOE = "confirmation_code",
+    CONFIRMATION_CODE = "confirmation_code",
     RESET_PASSWORD = "reset_password",
 }

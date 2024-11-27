@@ -100,7 +100,7 @@ export default function MobileConfirmation({ route, navigation }: Props) {
             case MobileConfirmationFunctions.REGISTER:
                 const data = functionData as RegisterInfo;
                 return await doRegister(data.countryCode, data.phone, data.password, data.confirmPassword, data.name)
-            case MobileConfirmationFunctions.CONFIRMATION_CDOE:
+            case MobileConfirmationFunctions.CONFIRMATION_CODE:
                 setBlockTime("...");
                 time = await getMobileCode(countryCode, phoneNr);
                 setBlockUntilTimestamp(time);

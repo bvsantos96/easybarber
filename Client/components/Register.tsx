@@ -73,7 +73,7 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
                 functionName: MobileConfirmationFunctions.REGISTER,
                 functionData: registerInfo,
                 blockUntil: blockuntil === 0 ? undefined : blockuntil,
-                resendFunction: MobileConfirmationFunctions.CONFIRMATION_CDOE
+                resendFunction: MobileConfirmationFunctions.CONFIRMATION_CODE
             });
     }
 
