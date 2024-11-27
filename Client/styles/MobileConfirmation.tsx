@@ -45,8 +45,9 @@ export const getStyles = () => {
         },
         resendCodeContainer: {
             position: 'absolute',
-            top: 525.49 * theme.dimensions.absoluteHeight,
+            top: 547.49 * theme.dimensions.absoluteHeight,
             width: '100%',
+            alignItems: 'center',
         },
         row: {
             flexDirection: 'row',

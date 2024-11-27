@@ -51,8 +51,6 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
         }
 
         const countryCode = nation ? nation.callingCode[0] : "";
-        const _result = await getMobileCode(countryCode, phone);
-
         const registerInfo: RegisterInfo = {
             name: name,
             phone: phone,
@@ -60,6 +58,12 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
             confirmPassword: confirmPassword,
             countryCode: countryCode
         }
+
+        const blockuntil = await getMobileCode(countryCode, phone);
+        if (!blockuntil) {
+            return;
+        }
+
         navigation.navigate(Routes.MobileConfirmation,
             {
                 phoneNr: phone,
@@ -68,7 +72,7 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
                 resetNavigationBoolean: true,
                 functionName: MobileConfirmationFunctions.REGISTER,
                 functionData: registerInfo,
-                blockUntil: _result,
+                blockUntil: blockuntil === 0 ? undefined : blockuntil,
                 resendFunction: MobileConfirmationFunctions.CONFIRMATION_CDOE
             });
     }

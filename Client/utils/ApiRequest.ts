@@ -202,6 +202,9 @@ const _request = async<T>(url: string, method: string, body: any, successMessage
                 case ResponseType.STRING:
                     _response = { success: true, message: data, data: data };
                     break;
+                case ResponseType.VALUE:
+                    _response = { success: true, message: successMessage, data: data?.value };
+                    break;
                 case ResponseType.OBJECT:
                     _response = { success: true, message: data, data: data };
                     break;
@@ -563,12 +566,8 @@ const parseCountryCode = (countryCode: string): string => {
     return `+${countryCode}`;
 }
 
-const makeMobileInformation = (countryCode: string, phoneNr: string): string => {
-    return `${parseCountryCode(countryCode)}${phoneNr}`;
-}
-
 export const getMobileCode = async (phoneCountryCode: string, phoneNr: string): Promise<number | undefined> => {
-    const response = await request<number>("/sms/confirmation", "POST", { phoneNr: phoneNr, phoneCountryCode: parseCountryCode(phoneCountryCode) }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+    const response = await request<number>("/sms/confirmation", "POST", { phoneNr: phoneNr, phoneCountryCode: parseCountryCode(phoneCountryCode) }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.VALUE);
     if (response.success) {
         return response.data;
     }
@@ -584,7 +583,7 @@ export const confirmMobileCode = async (phoneNr: string, confirmationCode: strin
 }
 
 export const getMobileCodeResetPwd = async (phoneCountryCode: string, phoneNr: string): Promise<number | undefined> => {
-    const response = await request<number>("/sms/resetpwd", "POST", { phoneNr: phoneNr, phoneCountryCode: parseCountryCode(phoneCountryCode) }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+    const response = await request<number>("/sms/resetpwd", "POST", { phoneNr: phoneNr, phoneCountryCode: parseCountryCode(phoneCountryCode) }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.VALUE);
     if (response.success) {
         return response.data;
     }

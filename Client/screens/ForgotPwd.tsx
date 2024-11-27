@@ -33,18 +33,20 @@ export default function ForgotPwd({ navigation }: PropNavigation) {
     }, []);
 
     const forgotPwd = async () => {
-        const success = await getMobileCodeResetPwd(nation ? nation.callingCode[0] : "", phone);
-        if (success) {
-            navigation.navigate(Routes.MobileConfirmation,
-                {
-                    phoneNr: phone,
-                    countryCode: nation ? nation.callingCode[0] : "",
-                    nextScreen: "ResetPwd",
-                    resetNavigationBoolean: false,
-                    blockUntil: success,
-                    resendFunction: MobileConfirmationFunctions.RESET_PASSWORD
-                });
+        const blockuntil = await getMobileCodeResetPwd(nation ? nation.callingCode[0] : "", phone);
+        if (!blockuntil) {
+            return;
         }
+
+        navigation.navigate(Routes.MobileConfirmation,
+            {
+                phoneNr: phone,
+                countryCode: nation ? nation.callingCode[0] : "",
+                nextScreen: "ResetPwd",
+                resetNavigationBoolean: false,
+                blockUntil: blockuntil === 0 ? undefined : blockuntil,
+                resendFunction: MobileConfirmationFunctions.RESET_PASSWORD
+            });
     };
 
     const onKeyboardChange = (up: boolean) => {
