@@ -579,6 +579,7 @@ const parseCountryCode = (countryCode: string): string => {
 
 export const getMobileCode = async (phoneCountryCode: string, phoneNr: string): Promise<number | undefined> => {
     const response = await request<number>("/sms/confirmation", "POST", { phoneNr: phoneNr, phoneCountryCode: parseCountryCode(phoneCountryCode) }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.VALUE);
+
     if (response.success) {
         return response.data;
     }
@@ -595,6 +596,7 @@ export const confirmMobileCode = async (phoneNr: string, confirmationCode: strin
 
 export const getMobileCodeResetPwd = async (phoneCountryCode: string, phoneNr: string): Promise<number | undefined> => {
     const response = await request<number>("/sms/resetpwd", "POST", { phoneNr: phoneNr, phoneCountryCode: parseCountryCode(phoneCountryCode) }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.VALUE);
+
     if (response.success) {
         return response.data;
     }

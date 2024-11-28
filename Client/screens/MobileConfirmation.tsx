@@ -79,7 +79,7 @@ export default function MobileConfirmation({ route, navigation }: Props) {
             Animated.timing(tiltAnimation, { toValue: 0, duration: 100, useNativeDriver: false })
         ]).start();
     };
-
+  
     const updateBlockTimeFromTimestamp = async (time?: number) => {
         if (time === undefined) {
             setBlockTime(undefined);
