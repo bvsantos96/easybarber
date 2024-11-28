@@ -23,7 +23,6 @@ export default function SignIn({ navigation }: SignInProps) {
     const translateYAnimation = useRef(new Animated.Value(0)).current;
     const [expanded, setExpanded] = useState(false);
     const heightAnim = useRef(new Animated.Value(styles.bottomTabContainer.height)).current;
-
     const maxHeight = theme.dimensions.heightWithoutStatusBar;
 
     useEffect(() => { adjustHeight() }, [expanded]);

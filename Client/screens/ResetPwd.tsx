@@ -44,7 +44,7 @@ export default function ResetPwd({ route, navigation }: Props) {
         const result = await resetPwdRQ(mobileInformation, confirmationCode, password, confirmPassword);
 
         if (result) {
-            alert({ type: AlertType.Info, message: texts.pwdRecovery.pwdResetSuccess, onPress: () => { navigation.navigate(Routes.Settings) }, buttonText: texts.dismiss });
+            alert({ type: AlertType.Info, message: texts.pwdRecovery.pwdResetSuccess, onPress: () => { navigation.navigate(Routes.Sign) }, buttonText: texts.dismiss });
         }
     };
 
