@@ -9,6 +9,7 @@ import { getDefaultCountryAsync } from 'utils/Constants';
 import { Routes } from '@navigation/Router';
 import { getMobileCodeResetPwd } from 'utils/ApiRequest';
 import KeyboardAvoidingScrollView from '@components/KeyboardAvoidingScrollView';
+import { MobileConfirmationFunctions } from 'enums';
 
 export default function ForgotPwd({ navigation }: PropNavigation) {
     const styles = getStyles();
@@ -32,9 +33,20 @@ export default function ForgotPwd({ navigation }: PropNavigation) {
     }, []);
 
     const forgotPwd = async () => {
-        const mobileInformation = (nation ? nation.callingCode[0] : "") + phone;
-        getMobileCodeResetPwd(nation ? nation.callingCode[0] : "", phone);
-        navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: "ResetPwd", resetNavigationBoolean: false });
+        const blockuntil = await getMobileCodeResetPwd(nation ? nation.callingCode[0] : "", phone);
+        if (!blockuntil) {
+            return;
+        }
+
+        navigation.navigate(Routes.MobileConfirmation,
+            {
+                phoneNr: phone,
+                countryCode: nation ? nation.callingCode[0] : "",
+                nextScreen: "ResetPwd",
+                resetNavigationBoolean: false,
+                blockUntil: blockuntil === 0 ? undefined : blockuntil,
+                resendFunction: MobileConfirmationFunctions.RESET_PASSWORD
+            });
     };
 
     const onKeyboardChange = (up: boolean) => {

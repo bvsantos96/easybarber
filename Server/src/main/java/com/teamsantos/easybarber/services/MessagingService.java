@@ -3,7 +3,6 @@ package com.teamsantos.easybarber.services;
 import java.util.Map;
 import java.util.Random;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -17,19 +16,26 @@ import com.twilio.type.PhoneNumber;
 
 @Service
 public class MessagingService {
-
-    @Autowired
-    private VerificationCodeRepository verificationCodeRepository;
-
     @Value("${teamsantos.istest}")
     private boolean isTestContext;
-
     @Value("${twilio.sender-id}")
     private String senderId;
 
+    private final int ATTEMPTS_BEFORE_RATE_LIMIT = 2;
+    private final int RATE_LIMIT = 1;
+
+    public static enum RequestType {
+        CONFIRMATION, RESET_PWD
+    }
+
+    private final UserService userService;
+    private final VerificationCodeRepository verificationCodeRepository;
     private final MessageLoader messageLoader;
 
-    public MessagingService(MessageLoader messageLoader) {
+    public MessagingService(MessageLoader messageLoader, VerificationCodeRepository verificationCodeRepository,
+            UserService userService) {
+        this.userService = userService;
+        this.verificationCodeRepository = verificationCodeRepository;
         this.messageLoader = messageLoader;
     }
 
@@ -39,11 +45,27 @@ public class MessagingService {
         return String.valueOf(code);
     }
 
-    public void saveVerificationCode(String phoneNumber, String code) {
-        VerificationCode verificationCode = new VerificationCode();
-        verificationCode.setPhoneNumber(phoneNumber);
-        verificationCode.setCode(code);
+    /**
+     * Generates a verification code for a phone number
+     * 
+     * @param phoneNumber
+     * @param code
+     * @return time in milliseconds until when the code a code can be resent
+     */
+    public Long saveVerificationCode(String phoneNumber, final String code) throws Exception {
+        VerificationCode verificationCode = verificationCodeRepository.findById(phoneNumber)
+                .orElse(new VerificationCode(phoneNumber));
+        if (verificationCode.getAttempts() >= ATTEMPTS_BEFORE_RATE_LIMIT) {
+            if (verificationCode.getLastAttempt() + RATE_LIMIT * 60000 > System.currentTimeMillis()) {
+                return verificationCode.getLastAttempt() + RATE_LIMIT * 60000;
+            }
+        }
+        verificationCode.changeCode(code);
         verificationCodeRepository.save(verificationCode);
+        if (verificationCode.getAttempts() >= ATTEMPTS_BEFORE_RATE_LIMIT) {
+            return verificationCode.getLastAttempt() + RATE_LIMIT * 60000;
+        }
+        return 0L;
     }
 
     public void verifyCode(String phoneNumber, String code) throws Exception {
@@ -59,24 +81,24 @@ public class MessagingService {
         }
     }
 
-    public void verificationCodeMessage(String code, RequestConfirmationCode sms) throws Exception {
-        Map<String, String> messages = messageLoader.getMessagesMap().getOrDefault(sms.getPhoneCountryCode(),
-                messageLoader.getMessagesMap().get("en"));
-
-        String messageTemplate = messages.get("welcome.message");
-
-        if (messageTemplate != null) {
-            messageTemplate = messageTemplate.replace("{code}", code);
+    public void verificationCodeMessage(String code, RequestConfirmationCode sms, RequestType type) throws Exception {
+        if (userService.existsByMobileInformation(sms.getPhoneCountryCode() + sms.getPhoneNr())) {
+            if (type == RequestType.CONFIRMATION) {
+                throw new Exception("Phone number already exists");
+            }
+        } else {
+            if (type == RequestType.RESET_PWD) {
+                throw new Exception("Phone number does not exist");
+            }
         }
 
-        sendMessage(String.format("%s%s", sms.getPhoneCountryCode(), sms.getPhoneNr()), messageTemplate);
-    }
-
-    public void pwdRecoveryCodeMessage(String code, RequestConfirmationCode sms) throws Exception {
         Map<String, String> messages = messageLoader.getMessagesMap().getOrDefault(sms.getPhoneCountryCode(),
                 messageLoader.getMessagesMap().get("en"));
 
-        String messageTemplate = messages.get("password.recovery");
+        String messageTemplate = switch (type) {
+            case CONFIRMATION -> messages.get("welcome.message");
+            case RESET_PWD -> messages.get("password.recovery");
+        };
 
         if (messageTemplate != null) {
             messageTemplate = messageTemplate.replace("{code}", code);

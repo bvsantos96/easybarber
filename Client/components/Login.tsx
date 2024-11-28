@@ -64,9 +64,13 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
             return;
         }
         const result: IResult<IAPIResponse> = await doLogin(nation.callingCode[0], phone, password);
-        if (result.success)
-            resetNavigation(navigation, Routes.Tabs);
-        else {
+        if (result.success) {
+            if (navigation.getState().index > 0) {
+                navigation.goBack();
+            } else {
+                resetNavigation(navigation, Routes.Tabs);
+            }
+        } else {
             alert({ type: AlertType.Error, message: `${texts.apiMessages.login.failed}\n${result.message}` });
         }
     }

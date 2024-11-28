@@ -150,7 +150,7 @@ const Router = () => {
         }
     }, [requestingLocationPermission]);
 
-    const { doLogout } = useAuthStore();
+    const { doLogout, token } = useAuthStore();
     const queryClient = useQueryClient()
 
     useEffect(() => {
@@ -196,9 +196,14 @@ const Router = () => {
                             name={_key}
                             options={nav.hasHeader ?
                                 {
-                                    header: ({ navigation }) => (
-                                        <Header navigation={navigation} title={nav.title} hasGoBack={!nav.noGoBack} secondHeader={nav.secondHeader} secondHeaderFunction={setSelectedRef?.current?.setSelected} selected={favorite} />
-                                    ),
+                                    header: ({ navigation }) => {
+                                        switch (_key) {
+                                            case Routes.EstablishmentDetails:
+                                                return <Header navigation={navigation} title={nav.title} hasGoBack={!nav.noGoBack} secondHeader={token ? nav.secondHeader : undefined} secondHeaderFunction={setSelectedRef?.current?.setSelected} selected={favorite} />
+                                            default:
+                                                return <Header navigation={navigation} title={nav.title} hasGoBack={!nav.noGoBack} secondHeader={nav.secondHeader} secondHeaderFunction={setSelectedRef?.current?.setSelected} selected={favorite} />
+                                        }
+                                    },
                                 }
                                 :
                                 {
