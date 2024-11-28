@@ -67,7 +67,7 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     },
     ResetPwd: {
         title: texts.navigation.resetPwd.name,
-        hasHeader: false,
+        hasHeader: true,
         component: ResetPwd,
         containerizedComponent: false,
     },
