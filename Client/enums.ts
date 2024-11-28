@@ -11,7 +11,8 @@ export enum ResponseType {
     STRING = 0,
     OBJECT = 1,
     LIST = 2,
-    FULL_LIST = 3
+    FULL_LIST = 3,
+    VALUE = 4
 }
 
 export enum PageListType {
@@ -22,4 +23,6 @@ export enum PageListType {
 
 export enum MobileConfirmationFunctions {
     REGISTER = "register",
+    CONFIRMATION_CODE = "confirmation_code",
+    RESET_PASSWORD = "reset_password",
 }

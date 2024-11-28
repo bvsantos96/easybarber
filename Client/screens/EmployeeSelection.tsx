@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, FlatList } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { getEstablishmentServiceEmployees, getNowHourAndMinutes, getStartingHour, getUnavailableDates, setAppointment } from "../utils/ApiRequest";
+import { getEstablishmentServiceEmployees, getNowHourAndMinutes, getStartingHour, getToken, getUnavailableDates, setAppointment } from "../utils/ApiRequest";
 import { getStyles } from "../styles/ServiceSelection";
 import SelectionItem from "../components/SelectionItems";
 import Selection from "./Selection";
@@ -41,11 +41,10 @@ export default function EmployeeSelection({ navigation, route }: Props) {
     const month = today.getMonth() + 1;
     const year = today.getFullYear();
 
-
     useQuery({
         queryKey: [`getUnavailableDates`, establishmentId, serviceId, selected, year, month],
         queryFn: async () =>
-            await getUnavailableDates(establishmentId, serviceId, Number.parseInt(`${selected}`), year, month, getStartingHour(new Date(), getNowHourAndMinutes())),
+            await getUnavailableDates(establishmentId, serviceId, +selected, year, month, getStartingHour(new Date(), getNowHourAndMinutes())),
         enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0 && (availableEmployees == undefined || availableEmployees == null || availableEmployees.length == 0),
         networkMode: 'offlineFirst',
         staleTime: 60000
@@ -60,12 +59,25 @@ export default function EmployeeSelection({ navigation, route }: Props) {
             onButtonPress={
                 async () => {
                     if (date && startHour && selected != 0) {
+                        if (await getToken() === null) {
+                            alert({
+                                type: AlertType.Error,
+                                message: texts.login.required,
+                                buttonText: texts.login.signIn,
+                                onPress: () => {
+                                    navigation.navigate(Routes.Sign);
+                                },
+                                buttonText2: texts.dismiss,
+                            });
+
+                            return;
+                        }
                         alert({ type: AlertType.Loading, message: "" });
                         const msg = await setAppointment({
                             id: 0,
                             establishmentId,
                             establishmentServiceId: serviceId,
-                            establishmentStaffId: Number.parseInt(`${selected}`),
+                            establishmentStaffId: +selected,
                             date,
                             time: startHour
                         });
@@ -96,7 +108,7 @@ export default function EmployeeSelection({ navigation, route }: Props) {
                     <FlatList
                         data={data.filter((e) => {
                             if (availableEmployees == undefined) return true;
-                            availableEmployees.includes(Number.parseInt("" + e.id))
+                            return availableEmployees.includes(+e.id);
                         }) || []}
                         renderItem={
                             ({ item }: { item: ImageEntity }) =>
