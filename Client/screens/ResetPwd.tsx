@@ -10,8 +10,10 @@ import Input from '@components/Input';
 import Divider from '@components/Divider';
 import { resetPwdRQ } from 'utils/ApiRequest';
 import { Params, Routes } from '@navigation/Router';
-import { resetNavigation } from 'utils/Utils';
+import texts from '@lang/en.json';
 import KeyboardAvoidingScrollView from '@components/KeyboardAvoidingScrollView';
+import useAlertStore from 'storage/stores/AlertStore';
+import { AlertType } from '@components/Alert';
 
 export type Route = {
     mobileInformation: string,
@@ -21,9 +23,8 @@ export type Route = {
 type Props = NativeStackScreenProps<typeof Params, 'ResetPwd'>;
 
 export default function ResetPwd({ route, navigation }: Props) {
+    const { alert } = useAlertStore();
     const styles = getStyles();
-    const texts = require('@lang/en.json');
-
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [errorMessage, setErrorMessage] = useState<string>('');
@@ -43,7 +44,7 @@ export default function ResetPwd({ route, navigation }: Props) {
         const result = await resetPwdRQ(mobileInformation, confirmationCode, password, confirmPassword);
 
         if (result) {
-            resetNavigation(navigation, Routes.Sign);
+            alert({ type: AlertType.Info, message: texts.pwdRecovery.pwdResetSuccess, onPress: () => { navigation.navigate(Routes.Settings) }, buttonText: texts.dismiss });
         }
     };
 
@@ -103,7 +104,7 @@ export default function ResetPwd({ route, navigation }: Props) {
                     <View style={styles.eclipse} />
                     <LockImage style={styles.lockImage} />
                     <View style={styles.newPwdTextContainer}>
-                        <Text style={styles.newPwdText}>{texts.pwdRecovery.setNewPed}</Text>
+                        <Text style={styles.newPwdText}>{texts.pwdRecovery.setNewPwd}</Text>
                     </View>
                     <View style={styles.passwordInputContainer}>
                         <Input
@@ -126,7 +127,7 @@ export default function ResetPwd({ route, navigation }: Props) {
                         <Text style={styles.errorMessage}>{errorMessage}</Text>
                     ) : null}
                     <View style={styles.buttonContainer}>
-                        <Button title={texts.pwdRecovery.forgotPwd} onPress={resetPwd} />
+                        <Button title={texts.pwdRecovery.setPwd} onPress={resetPwd} />
                     </View>
                 </View>
             </Animated.View>
