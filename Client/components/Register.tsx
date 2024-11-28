@@ -10,7 +10,7 @@ import Button from '../components/Button';
 
 import { getStyles } from '../styles/Sign';
 import { SignInProps } from '../screens/SignIn';
-import { getMobileCode, validateRegister } from '../utils/ApiRequest';
+import { doRegister, getMobileCode, validateRegister } from '../utils/ApiRequest';
 import { Country } from 'react-native-country-picker-modal';
 import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
@@ -19,6 +19,7 @@ import { Routes } from '@navigation/Router';
 import KeyboardAvoidingScrollView from './KeyboardAvoidingScrollView';
 import { AlertType } from './Alert';
 import useAlertStore from 'storage/stores/AlertStore';
+import { MobileConfirmationFunctions } from 'enums';
 
 export default function Register({ navigation, toggleNewUser, expand, collapse }: SignInProps) {
     const { alert } = useAlertStore();
@@ -48,13 +49,22 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
             alert({ type: AlertType.Error, message: result.message });
             return;
         }
-        const mobileInformation = (nation ? nation.callingCode[0] : "") + phone;
 
-        const _result = await getMobileCode(nation ? nation.callingCode[0] : "", mobileInformation);
-        if (_result) {
+        const countryCode = nation ? nation.callingCode[0] : "";
+        const mobileInformation = countryCode + phone;
+
+        const _result = await getMobileCode(countryCode, phone);
+        if (!_result) {
             return;
         }
-        navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: Routes.Tabs, resetNavigationBoolean: true });
+        const registerInfo: RegisterInfo = {
+            name: name,
+            phone: phone,
+            password: password,
+            confirmPassword: confirmPassword,
+            countryCode: countryCode
+        }
+        navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: Routes.Tabs, resetNavigationBoolean: true, functionName: MobileConfirmationFunctions.REGISTER, functionData: registerInfo });
     }
 
     return (

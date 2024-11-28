@@ -30,4 +30,3 @@ export const resetNavigation = (navigation: NavigationProp<any, any>, route: str
         routes: [{ name: route }],
     });
 }
-

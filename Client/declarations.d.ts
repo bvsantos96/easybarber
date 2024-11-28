@@ -279,3 +279,11 @@ declare interface Feedback extends Identifiable {
     employeeName: string;
     establishmentName: string;
 }
+
+declare interface RegisterInfo {
+    countryCode: string;
+    phone: string;
+    password: string;
+    confirmPassword: string;
+    name: string;
+}
