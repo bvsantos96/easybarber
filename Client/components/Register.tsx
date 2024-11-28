@@ -51,9 +51,6 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
         }
 
         const countryCode = nation ? nation.callingCode[0] : "";
-        const mobileInformation = countryCode + phone;
-        getMobileCode(countryCode, phone);
-
         const registerInfo: RegisterInfo = {
             name: name,
             phone: phone,
@@ -61,7 +58,23 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
             confirmPassword: confirmPassword,
             countryCode: countryCode
         }
-        navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: Routes.Tabs, resetNavigationBoolean: true, functionName: MobileConfirmationFunctions.REGISTER, functionData: registerInfo });
+
+        const blockuntil = await getMobileCode(countryCode, phone);
+        if (!blockuntil) {
+            return;
+        }
+
+        navigation.navigate(Routes.MobileConfirmation,
+            {
+                phoneNr: phone,
+                countryCode: countryCode,
+                nextScreen: Routes.Tabs,
+                resetNavigationBoolean: true,
+                functionName: MobileConfirmationFunctions.REGISTER,
+                functionData: registerInfo,
+                blockUntil: blockuntil === 0 ? undefined : blockuntil,
+                resendFunction: MobileConfirmationFunctions.CONFIRMATION_CODE
+            });
     }
 
     return (

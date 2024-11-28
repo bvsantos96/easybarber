@@ -140,16 +140,20 @@ export default function Availability({ route, navigation }: Props) {
             onButtonPress={
                 async () => {
                     let _employeeId = (employeeId !== undefined && employeeId !== 0) ? employeeId : time?.employeeIds.length === 1 ? time?.employeeIds[0] : undefined;
-                    if (await getToken() === null) {
-                        alert({
-                            type: AlertType.Error, message: texts.login.required, buttonText: "Sign in", onPress: () => {
-                            }
-                        });
+                    if (_employeeId !== undefined) {
+                        if (await getToken() === null) {
+                            alert({
+                                type: AlertType.Error,
+                                message: texts.login.required,
+                                buttonText: texts.login.signIn,
+                                onPress: () => {
+                                    navigation.navigate(Routes.Sign);
+                                },
+                                buttonText2: texts.dismiss,
+                            });
 
-                        navigation.navigate(Routes.Sign);
-                        return;
-                    }
-                    else if (_employeeId !== undefined) {
+                            return;
+                        }
                         alert({ type: AlertType.Loading, message: "" });
                         const msg = await setAppointment({
                             id: 0,
@@ -177,7 +181,6 @@ export default function Availability({ route, navigation }: Props) {
                         }
                         return;
                     }
-                    alert({ type: AlertType.Loading, message: "" });
                     navigation.navigate(Routes.EmployeeSelection, { establishmentId, serviceId, date, startHour: time?.start, availableEmployees: time?.employeeIds });
                     return;
                 }

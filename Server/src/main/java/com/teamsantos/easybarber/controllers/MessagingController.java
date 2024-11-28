@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
+import com.teamsantos.easybarber.DTO.BaseTypedResponseDTO;
 import com.teamsantos.easybarber.DTO.sms.RequestConfirmationCode;
 import com.teamsantos.easybarber.DTO.sms.SmsDTO;
 import com.teamsantos.easybarber.services.MessagingService;
@@ -25,39 +26,36 @@ public class MessagingController {
         this.messagingService = messagingService;
     }
 
-    @PostMapping("/sms/test")
-    public ResponseEntity<String> test() {
-        return new ResponseEntity<>("hello world", HttpStatus.OK);
+    public ResponseEntity<BaseTypedResponseDTO<Long>> sendMobileConfirmationMessage(
+            @RequestBody RequestConfirmationCode sms,
+            final MessagingService.RequestType type, final String errorMessage) {
+        BaseTypedResponseDTO<Long> response = new BaseTypedResponseDTO<>();
+        try {
+            final String code = messagingService.generateCode();
+            Long requestBlockUntil = messagingService.saveVerificationCode(sms.getPhoneCountryCode() + sms.getPhoneNr(),
+                    code);
+            messagingService.verificationCodeMessage(code, sms, type);
+            response.setValue(requestBlockUntil);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.error("Failed to send confirmation message: " + e.getMessage());
+            response.setResponseMessage("Phone number not registered");
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping("/sms/confirmation")
-    public ResponseEntity<BaseResponseDTO> sendMobileConfirmationMessage(@RequestBody RequestConfirmationCode sms) {
-        BaseResponseDTO response = new BaseResponseDTO();
-        try {
-            final String code = messagingService.generateCode();
-            messagingService.saveVerificationCode(sms.getPhoneCountryCode() + sms.getPhoneNr(), code);
-            messagingService.verificationCodeMessage(code, sms);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            logger.error("Failed to send confirmation message: " + e.getMessage());
-            response.setResponseMessage("Failed to send confirmation message");
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<BaseTypedResponseDTO<Long>> sendMobileConfirmationMessage(
+            @RequestBody RequestConfirmationCode sms) {
+        return sendMobileConfirmationMessage(sms, MessagingService.RequestType.CONFIRMATION,
+                "Phone number not registered");
     }
 
     @PostMapping("/sms/resetpwd")
-    public ResponseEntity<BaseResponseDTO> sendResetPwdConfirmationMessage(@RequestBody RequestConfirmationCode sms) {
-        BaseResponseDTO response = new BaseResponseDTO();
-        try {
-            final String code = messagingService.generateCode();
-            messagingService.saveVerificationCode(sms.getPhoneCountryCode() + sms.getPhoneNr(), code);
-            messagingService.pwdRecoveryCodeMessage(code, sms);
-            return new ResponseEntity<>(response, HttpStatus.OK);
-        } catch (Exception e) {
-            logger.error("Failed to send confirmation message: " + e.getMessage());
-            response.setResponseMessage("Failed to send confirmation message");
-            return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<BaseTypedResponseDTO<Long>> sendResetPwdConfirmationMessage(
+            @RequestBody RequestConfirmationCode sms) {
+        return sendMobileConfirmationMessage(sms, MessagingService.RequestType.RESET_PWD,
+                "Phone number not registered");
     }
 
     @PostMapping("/sms/confirm")
