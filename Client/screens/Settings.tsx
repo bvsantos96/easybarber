@@ -2,13 +2,15 @@ import Pressable from "@components/Pressable";
 import React, { useEffect, useState } from "react";
 import { View, Text } from "react-native";
 
+import SecurityIcon from "@icons/security.svg";
 import texts from "@lang/en.json";
 import { getStyles } from "@styles/Settings";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-import { getToken } from "utils/ApiRequest";
+import { getMobileCodeResetPwd, getMobileInformation, getToken } from "utils/ApiRequest";
 import { Routes } from "@navigation/Router";
 import { resetNavigation } from "utils/Utils";
 import useAuthStore from "storage/stores/AuthStore";
+import SettingItem from "@components/SettingItem";
 
 export default function Settings({ navigation }: PropNavigation) {
     const { toggleDoLogout } = useAuthStore();
@@ -33,12 +35,26 @@ export default function Settings({ navigation }: PropNavigation) {
                     <MaterialIcons name="login" width={styles.logOutIcon.width} height={styles.logOutIcon.height} color={styles.logOutIcon.color} size={styles.logOutIcon.width} />
                     <Text style={styles.logOutText}>{texts.login.signIn}</Text>
                 </Pressable>
-            </View >
+            </View>
         );
     }
 
     return (
         <View style={styles.container}>
+            <SettingItem
+                text={texts.settings.resetPwd}
+                icon={< SecurityIcon />}
+                onPress={async () => {
+                    const phoneInfo = await getMobileInformation();
+                    if (!phoneInfo) {
+                        return;
+                    }
+                    const mobileInformation = phoneInfo.countryCode + phoneInfo.phone;
+                    getMobileCodeResetPwd(phoneInfo.countryCode, phoneInfo.phone);
+
+                    navigation.navigate(Routes.MobileConfirmation, { mobileInformation: mobileInformation, nextScreen: Routes.ResetPwd, resetNavigationBoolean: false });
+                }}
+            />
             <Pressable style={styles.logOutContainer} onPress={() => {
                 toggleDoLogout();
             }}
