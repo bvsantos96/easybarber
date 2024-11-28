@@ -19,3 +19,7 @@ export enum PageListType {
     BOTTOM_SHEET = "bottom_sheet",
     PAGERVIEW = "page_view"
 }
+
+export enum MobileConfirmationFunctions {
+    REGISTER = "register",
+}

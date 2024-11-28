@@ -7,7 +7,7 @@ import { PickerItem } from '../components/Picker';
 import { createPageable, parsePage } from './PageHandling';
 import { downloadToDevice } from '../storage/StorageUtils';
 import { API_URL, DEBUG_SERVER_REQUESTS } from './EnvVariables';
-import { FIRST_TIME, LOCATIONS_STORAGE_KEY, SECURE_STORAGE_LOGIN_KEY, TOKEN_STORAGE_KEY } from './Constants';
+import { FIRST_TIME, LOCATIONS_STORAGE_KEY, MOBILE_INFORMATION, SECURE_STORAGE_LOGIN_KEY, TOKEN_STORAGE_KEY } from './Constants';
 import useLocationStore from '../storage/stores/LocationStore';
 import { ResponseType } from '../enums';
 import { twoDigits } from './Utils';
@@ -62,13 +62,32 @@ const getData = async (key: string): Promise<string | null> => {
     }
 };
 
-export const removeData = async (key: string) => {
+const removeData = async (key: string) => {
     try {
         await AsyncStorage.removeItem(key);
     } catch (e) {
         console.error(`Error removing data(${key}): ${e}`);
         // error reading value
     }
+}
+
+const setMobileInformation = async (countryCode: string, phone: string) => {
+    await storeData(MOBILE_INFORMATION, JSON.stringify({
+        countryCode: countryCode,
+        phone: phone
+    }));
+}
+
+export const getMobileInformation = async (): Promise<{ countryCode: string, phone: string } | null> => {
+    const mobileInformation = await getData(MOBILE_INFORMATION);
+    if (mobileInformation === null) {
+        return null;
+    }
+    return JSON.parse(mobileInformation);
+}
+
+export const deleteMobileInformation = async () => {
+    await removeData(MOBILE_INFORMATION);
 }
 
 const setToken = async (token: string | null | undefined) => {
@@ -79,6 +98,10 @@ const setToken = async (token: string | null | undefined) => {
 
 export const getToken = async (): Promise<string | null> => {
     return await getData(TOKEN_STORAGE_KEY);
+}
+
+export const deleteToken = async () => {
+    await removeData(TOKEN_STORAGE_KEY);
 }
 
 export const isFirstTime = async (): Promise<boolean> => {
@@ -153,7 +176,9 @@ const _request = async<T>(url: string, method: string, body: any, successMessage
                     if (await refreshToken()) {
                         return _request<T>(url, method, body, successMessage, errorMessage, responseType, false);
                     } else {
-                        toggleDoLogout();
+                        if (token !== null) {
+                            toggleDoLogout();
+                        }
                         return { success: false, message: langs.apiMessages.unauthorized };
                     }
                 }
@@ -255,7 +280,7 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
 
     phone = phone.trim();
     phone = phone.replace(/\s/g, '');
-    const _countryCode = countryCode.startsWith('+') ? countryCode : `+${countryCode}`;
+    const _countryCode = parseCountryCode(countryCode);
     if (!isValidNumberString(`${_countryCode}${phone}`)) {
         return { success: false, message: langs.apiMessages.invalidPhone };
     }
@@ -281,6 +306,7 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
                 buttonText2: langs.notNow
             });
         }
+        setMobileInformation(countryCode, phone);
         setToken(result.message);
     }
 
@@ -290,7 +316,7 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
 export const validateRegister = async (countryCode: string, phone: string, password: string, confirmPassword: string, name: string): Promise<IResult<any>> => {
     phone = phone.trim();
     phone = phone.replace(/\s/g, '');
-    const _countryCode = countryCode.startsWith('+') ? countryCode : `+${countryCode}`;
+    const _countryCode = parseCountryCode(countryCode);
     if (name.length < 3) {
         return { success: false, message: langs.apiMessages.register.invalidName };
     }
@@ -312,7 +338,7 @@ export const doRegister = async (countryCode: string, phone: string, password: s
         return { success: false, message: langs.apiMessages.register.invalidName };
     const result = await request("register", "POST", { countryMobile: countryCode, mobile: phone, password, name }, langs.apiMessages.register.success, langs.apiMessages.register.failed, ResponseType.LIST);
     if (result.success)
-        doLogin(countryCode, phone, password);
+        await doLogin(countryCode, phone, password);
     return result;
 }
 
@@ -531,8 +557,18 @@ export const getApiVersion = async (): Promise<string> => {
     throw new Error(langs.apiMessages.failed);
 }
 
+const parseCountryCode = (countryCode: string): string => {
+    if (countryCode.startsWith('+'))
+        return countryCode;
+    return `+${countryCode}`;
+}
+
+const makeMobileInformation = (countryCode: string, phoneNr: string): string => {
+    return `${parseCountryCode(countryCode)}${phoneNr}`;
+}
+
 export const getMobileCode = async (phoneCountryCode: string, phoneNr: string): Promise<boolean> => {
-    const response = await request("/sms/confirmation", "POST", { phoneNr: phoneNr, phoneCountryCode: "+" + phoneCountryCode }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+    const response = await request("/sms/confirmation", "POST", { phoneNr: phoneNr, phoneCountryCode: parseCountryCode(phoneCountryCode) }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
@@ -540,7 +576,7 @@ export const getMobileCode = async (phoneCountryCode: string, phoneNr: string): 
 }
 
 export const confirmMobileCode = async (phoneNr: string, confirmationCode: string): Promise<boolean> => {
-    const response = await request("/sms/confirm", "POST", { phoneNr: "+" + phoneNr, confirmationCode: confirmationCode }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+    const response = await request("/sms/confirm", "POST", { phoneNr: parseCountryCode(phoneNr), confirmationCode: confirmationCode }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
@@ -548,7 +584,7 @@ export const confirmMobileCode = async (phoneNr: string, confirmationCode: strin
 }
 
 export const getMobileCodeResetPwd = async (phoneCountryCode: string, phoneNr: string): Promise<boolean> => {
-    const response = await request("/sms/resetpwd", "POST", { phoneNr: phoneNr, phoneCountryCode: "+" + phoneCountryCode }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+    const response = await request("/sms/resetpwd", "POST", { phoneNr: phoneNr, phoneCountryCode: parseCountryCode(phoneCountryCode) }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }
@@ -559,7 +595,7 @@ export const resetPwdRQ = async (phoneNr: string, confirmationCode: string, pass
     if (password != confirmPassword)
         return false;
 
-    const response = await request("/pwd/reset", "PUT", { phoneNr: "+" + phoneNr, confirmationCode: confirmationCode, newPassword: password }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
+    const response = await request("/pwd/reset", "PUT", { phoneNr: parseCountryCode(phoneNr), confirmationCode: confirmationCode, newPassword: password }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.STRING);
     if (response.success) {
         return true;
     }

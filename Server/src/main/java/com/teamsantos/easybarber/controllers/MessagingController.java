@@ -35,7 +35,7 @@ public class MessagingController {
         BaseResponseDTO response = new BaseResponseDTO();
         try {
             final String code = messagingService.generateCode();
-            messagingService.saveVerificationCode(sms.getPhoneCountryCode()+sms.getPhoneNr(), code);
+            messagingService.saveVerificationCode(sms.getPhoneCountryCode() + sms.getPhoneNr(), code);
             messagingService.verificationCodeMessage(code, sms);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
@@ -50,7 +50,7 @@ public class MessagingController {
         BaseResponseDTO response = new BaseResponseDTO();
         try {
             final String code = messagingService.generateCode();
-            messagingService.saveVerificationCode(sms.getPhoneCountryCode()+sms.getPhoneNr(), code);
+            messagingService.saveVerificationCode(sms.getPhoneCountryCode() + sms.getPhoneNr(), code);
             messagingService.pwdRecoveryCodeMessage(code, sms);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {

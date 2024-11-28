@@ -17,10 +17,10 @@ module.exports = function(api) {
                     root: ['./'],
                     alias: {
                         "@components": "./components",
+                        "@icons": "./assets/icons",
                         "@assets": "./assets",
                         "@screens": "./screens",
                         "@styles": "./styles",
-                        "@icons": "./components/icons",
                         "@lang": "./langs",
                     },
                     extensions: ['.js', '.jsx', '.ts', '.tsx', '.json', '.svg'],
