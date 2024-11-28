@@ -34,7 +34,6 @@ export default function ForgotPwd({ navigation }: PropNavigation) {
 
     const forgotPwd = async () => {
         const blockuntil = await getMobileCodeResetPwd(nation ? nation.callingCode[0] : "", phone);
-        console.log(blockuntil);
         if (!blockuntil) {
             return;
         }
