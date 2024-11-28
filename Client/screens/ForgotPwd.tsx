@@ -33,8 +33,8 @@ export default function ForgotPwd({ navigation }: PropNavigation) {
     }, []);
 
     const forgotPwd = async () => {
-        const blockuntil = await getMobileCodeResetPwd(nation ? nation.callingCode[0] : "", phone);
-        if (!blockuntil) {
+        const blockUntil = await getMobileCodeResetPwd(nation ? nation.callingCode[0] : "", phone);
+        if (blockUntil === undefined || blockUntil === null) {
             return;
         }
 
@@ -44,7 +44,7 @@ export default function ForgotPwd({ navigation }: PropNavigation) {
                 countryCode: nation ? nation.callingCode[0] : "",
                 nextScreen: "ResetPwd",
                 resetNavigationBoolean: false,
-                blockUntil: blockuntil === 0 ? undefined : blockuntil,
+                blockUntil: blockUntil === 0 ? undefined : blockUntil,
                 resendFunction: MobileConfirmationFunctions.RESET_PASSWORD
             });
     };

@@ -59,8 +59,8 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
             countryCode: countryCode
         }
 
-        const blockuntil = await getMobileCode(countryCode, phone);
-        if (!blockuntil) {
+        const blockUntil = await getMobileCode(countryCode, phone);
+        if (blockUntil === undefined || blockUntil === null) {
             return;
         }
 
@@ -72,7 +72,7 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
                 resetNavigationBoolean: true,
                 functionName: MobileConfirmationFunctions.REGISTER,
                 functionData: registerInfo,
-                blockUntil: blockuntil === 0 ? undefined : blockuntil,
+                blockUntil: blockUntil === 0 ? undefined : blockUntil,
                 resendFunction: MobileConfirmationFunctions.CONFIRMATION_CODE
             });
     }

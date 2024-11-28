@@ -190,14 +190,10 @@ const _request = async<T>(url: string, method: string, body: any, successMessage
                     }
                 }
                 if (data !== undefined && data !== null) {
-                    try {
-                        if (data.responseMessage) {
-                            return { success: false, message: data.responseMessage };
-                        }
-                        return { success: false, message: errorMessage };
-                    } catch (e) {
-                        return { success: false, message: response }
+                    if (data.responseMessage) {
+                        return { success: false, message: data.responseMessage, data: data.value };
                     }
+                    return { success: false, message: errorMessage, data: data };
                 } else
                     return { success: false, message: errorMessage };
             } catch (e) {
@@ -596,7 +592,6 @@ export const confirmMobileCode = async (phoneNr: string, confirmationCode: strin
 
 export const getMobileCodeResetPwd = async (phoneCountryCode: string, phoneNr: string): Promise<number | undefined> => {
     const response = await request<number>("/sms/resetpwd", "POST", { phoneNr: phoneNr, phoneCountryCode: parseCountryCode(phoneCountryCode) }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.VALUE);
-
     if (response.success) {
         return response.data;
     }

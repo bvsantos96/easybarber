@@ -50,8 +50,8 @@ export default function Settings({ navigation }: PropNavigation) {
                     if (!phoneInfo) {
                         return;
                     }
-                    const blockuntil = await getMobileCodeResetPwd(phoneInfo.countryCode, phoneInfo.phone);
-                    if (!blockuntil) {
+                    const blockUntil = await getMobileCodeResetPwd(phoneInfo.countryCode, phoneInfo.phone);
+                    if (blockUntil === undefined || blockUntil === null) {
                         return;
                     }
                     navigation.navigate(Routes.MobileConfirmation, {
@@ -59,7 +59,7 @@ export default function Settings({ navigation }: PropNavigation) {
                         countryCode: phoneInfo.countryCode,
                         nextScreen: Routes.ResetPwd,
                         resetNavigationBoolean: false,
-                        blockUntil: blockuntil === 0 ? undefined : blockuntil,
+                        blockUntil: blockUntil === 0 ? undefined : blockUntil,
                         resendFunction: MobileConfirmationFunctions.RESET_PASSWORD,
                     });
                 }}
