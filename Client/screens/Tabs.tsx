@@ -77,7 +77,7 @@ export default function Tabs({ navigation }: PropNavigation) {
                                                 message: texts.login.required,
                                                 buttonText: texts.login.signIn,
                                                 onPress: () => {
-                                                    resetNavigation(navigation, Routes.Sign);
+                                                    navigation.navigate(Routes.Sign);
                                                 },
                                                 onPress2: () => { },
                                                 buttonText2: texts.dismiss,

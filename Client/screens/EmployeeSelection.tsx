@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, FlatList } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { getEstablishmentServiceEmployees, getNowHourAndMinutes, getStartingHour, getUnavailableDates, setAppointment } from "../utils/ApiRequest";
+import { getEstablishmentServiceEmployees, getNowHourAndMinutes, getStartingHour, getToken, getUnavailableDates, setAppointment } from "../utils/ApiRequest";
 import { getStyles } from "../styles/ServiceSelection";
 import SelectionItem from "../components/SelectionItems";
 import Selection from "./Selection";
@@ -60,6 +60,19 @@ export default function EmployeeSelection({ navigation, route }: Props) {
             onButtonPress={
                 async () => {
                     if (date && startHour && selected != 0) {
+                        if (await getToken() === null) {
+                            alert({
+                                type: AlertType.Error,
+                                message: texts.login.required,
+                                buttonText: texts.login.signIn,
+                                onPress: () => {
+                                    navigation.navigate(Routes.Sign);
+                                },
+                                buttonText2: texts.dismiss,
+                            });
+
+                            return;
+                        }
                         alert({ type: AlertType.Loading, message: "" });
                         const msg = await setAppointment({
                             id: 0,

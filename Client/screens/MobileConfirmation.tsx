@@ -122,9 +122,15 @@ export default function MobileConfirmation({ route, navigation }: Props) {
         if (response) {
             if (functionName && !(await func())) {
                 navigation.goBack();
+                return;
             }
             if (resetNavigationBoolean) {
+                if (navigation.getState().index > 1) {
+                    navigation.pop(2);
+                    return;
+                }
                 resetNavigation(navigation, nextScreen);
+                return;
             }
             else {
                 setCode(['', '', '', '', '', '']);

@@ -90,13 +90,20 @@ export const deleteMobileInformation = async () => {
     await removeData(MOBILE_INFORMATION);
 }
 
-const setToken = async (token: string | null | undefined) => {
+const _setToken = async (token: string | null | undefined) => {
+    const { setToken } = useAuthStore.getState();
+
     if (token !== null && token !== undefined) {
+        setToken(token);
         await storeData(TOKEN_STORAGE_KEY, token);
     }
 }
 
 export const getToken = async (): Promise<string | null> => {
+    const { token } = useAuthStore.getState();
+    if (token) {
+        return token;
+    }
     return await getData(TOKEN_STORAGE_KEY);
 }
 
@@ -231,7 +238,7 @@ const _request = async<T>(url: string, method: string, body: any, successMessage
                 console.log(_response);
             }
 
-            setToken(response?.headers?.get("Authorization")?.split(" ")[1]);
+            _setToken(response?.headers?.get("Authorization")?.split(" ")[1]);
             return _response;
         }
         return { success: true, message: successMessage };
@@ -310,7 +317,7 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
             });
         }
         setMobileInformation(countryCode, phone);
-        setToken(result.message);
+        _setToken(result.message);
     }
 
     return result;
@@ -389,6 +396,10 @@ export const getLocationList = async (page: IPage<ILocation>, params?: Record<st
         locations,
         hasMoreLocations
     } = useLocationStore.getState();
+
+    if (await getToken() === null) {
+        return undefined;
+    }
 
     if (!hasMoreLocations) {
         page.hasNextPage = false;
@@ -673,6 +684,9 @@ export const makeRequest = async (url: string, method: string = "GET"): Promise<
 }
 
 export const getFavoriteIds = async (): Promise<number[]> => {
+    if (await getToken() === null) {
+        return [];
+    }
     const response = await request<number[]>("/favorites/establishments/ids", "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
     const favorites = getItemsFromRequest(response);
     const { setFavorites } = useFavoriteStore.getState();
@@ -681,6 +695,9 @@ export const getFavoriteIds = async (): Promise<number[]> => {
 }
 
 export const isFavorite = async (id: number): Promise<boolean> => {
+    if (await getToken() === null) {
+        return false;
+    }
     const { favorites } = useFavoriteStore.getState();
     let _favorites = favorites;
     if (favorites === undefined || favorites === null) {
@@ -690,6 +707,9 @@ export const isFavorite = async (id: number): Promise<boolean> => {
 }
 
 export const getFavorites = async (page?: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>, location?: ILocation): Promise<IPage<EstablishmentInfo> | undefined> => {
+    if (await getToken() === null) {
+        return undefined;
+    }
     if (params === undefined || params === null)
         params = {};
     if (location === undefined || location === null) {
