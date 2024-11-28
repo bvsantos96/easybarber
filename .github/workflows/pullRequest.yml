@@ -25,4 +25,11 @@ jobs:
       - name: Build with Maven
         run: |
           cd Server
-          mvn clean install 
+          mvn clean install -DskipTests -X
+          mvn clean test 
+
+      - name: Upload test reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-reports
+          path: target/surefire-reports/*.xml
