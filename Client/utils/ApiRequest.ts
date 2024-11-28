@@ -139,6 +139,7 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
 
 const _request = async<T>(url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed, responseType: ResponseType, first: boolean): Promise<IResult<T>> => {
     const { toggleDoLogout } = useAuthStore.getState();
+    const { alert } = useAlertStore.getState();
 
     let _url = apiUrlMaker(url);
     if (_url.length <= 0)
@@ -191,6 +192,7 @@ const _request = async<T>(url: string, method: string, body: any, successMessage
                 }
                 if (data !== undefined && data !== null) {
                     if (data.responseMessage) {
+                        alert({ type: AlertType.Error, message: data.responseMessage, buttonText: langs.dismiss });
                         return { success: false, message: data.responseMessage, data: data.value };
                     }
                     return { success: false, message: errorMessage, data: data };

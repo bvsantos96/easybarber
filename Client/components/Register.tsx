@@ -10,7 +10,7 @@ import Button from '../components/Button';
 
 import { getStyles } from '../styles/Sign';
 import { SignInProps } from '../screens/SignIn';
-import { doRegister, getMobileCode, validateRegister } from '../utils/ApiRequest';
+import { getMobileCode, validateRegister } from '../utils/ApiRequest';
 import { Country } from 'react-native-country-picker-modal';
 import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
@@ -20,9 +20,11 @@ import KeyboardAvoidingScrollView from './KeyboardAvoidingScrollView';
 import { AlertType } from './Alert';
 import useAlertStore from 'storage/stores/AlertStore';
 import { MobileConfirmationFunctions } from 'enums';
+import useMobileConfirmationStore from 'storage/stores/MobileConfirmationStore';
 
 export default function Register({ navigation, toggleNewUser, expand, collapse }: SignInProps) {
     const { alert } = useAlertStore();
+    const { setBlockTime, resetBlockTime } = useMobileConfirmationStore();
     const styles = getStyles();
     const [name, setName] = useState("");
     const [phone, setPhone] = useState("");
@@ -59,10 +61,10 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
             countryCode: countryCode
         }
 
-        const blockUntil = await getMobileCode(countryCode, phone);
-        if (blockUntil === undefined || blockUntil === null) {
-            return;
-        }
+        resetBlockTime();
+        getMobileCode(countryCode, phone).then((blockUntil) => {
+            setBlockTime(blockUntil);
+        });
 
         navigation.navigate(Routes.MobileConfirmation,
             {
@@ -72,7 +74,6 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
                 resetNavigationBoolean: true,
                 functionName: MobileConfirmationFunctions.REGISTER,
                 functionData: registerInfo,
-                blockUntil: blockUntil === 0 ? undefined : blockUntil,
                 resendFunction: MobileConfirmationFunctions.CONFIRMATION_CODE
             });
     }
