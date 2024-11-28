@@ -31,7 +31,7 @@ export default function ServiceSelection({ route, navigation }: Props) {
 
     useQuery({
         queryKey: [`establishment/${establishmentId}/service/${selected}/employees`, selected],
-        queryFn: async () => getEstablishmentServiceEmployees(establishmentId, Number.parseInt(`${selected}`)),
+        queryFn: async () => getEstablishmentServiceEmployees(establishmentId, +selected),
         enabled: (!!selected && selected !== 0 && selected !== ''),
         networkMode: 'offlineFirst',
         staleTime: 60000,

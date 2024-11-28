@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, FlatList } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
@@ -41,11 +41,10 @@ export default function EmployeeSelection({ navigation, route }: Props) {
     const month = today.getMonth() + 1;
     const year = today.getFullYear();
 
-
     useQuery({
         queryKey: [`getUnavailableDates`, establishmentId, serviceId, selected, year, month],
         queryFn: async () =>
-            await getUnavailableDates(establishmentId, serviceId, Number.parseInt(`${selected}`), year, month, getStartingHour(new Date(), getNowHourAndMinutes())),
+            await getUnavailableDates(establishmentId, serviceId, +selected, year, month, getStartingHour(new Date(), getNowHourAndMinutes())),
         enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0 && (availableEmployees == undefined || availableEmployees == null || availableEmployees.length == 0),
         networkMode: 'offlineFirst',
         staleTime: 60000
@@ -78,7 +77,7 @@ export default function EmployeeSelection({ navigation, route }: Props) {
                             id: 0,
                             establishmentId,
                             establishmentServiceId: serviceId,
-                            establishmentStaffId: Number.parseInt(`${selected}`),
+                            establishmentStaffId: +selected,
                             date,
                             time: startHour
                         });
@@ -109,7 +108,7 @@ export default function EmployeeSelection({ navigation, route }: Props) {
                     <FlatList
                         data={data.filter((e) => {
                             if (availableEmployees == undefined) return true;
-                            availableEmployees.includes(Number.parseInt("" + e.id))
+                            return availableEmployees.includes(+e.id);
                         }) || []}
                         renderItem={
                             ({ item }: { item: ImageEntity }) =>

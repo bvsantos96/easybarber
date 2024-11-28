@@ -181,7 +181,6 @@ export default function Availability({ route, navigation }: Props) {
                         }
                         return;
                     }
-                    alert({ type: AlertType.Loading, message: "" });
                     navigation.navigate(Routes.EmployeeSelection, { establishmentId, serviceId, date, startHour: time?.start, availableEmployees: time?.employeeIds });
                     return;
                 }
