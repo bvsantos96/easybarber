@@ -7,6 +7,9 @@
       "@components/*": [
         "./components/*"
       ],
+      "@icons/*": [
+        "./assets/icons/*"
+      ],
       "@assets/*": [
         "./assets/*"
       ],
@@ -15,9 +18,6 @@
       ],
       "@styles/*": [
         "./styles/*"
-      ],
-      "@icons/*": [
-        "./components/icons/*"
       ],
       "@lang/*": [
         "./langs/*"

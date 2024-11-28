@@ -7,15 +7,18 @@ import KeyImage from '@assets/images/key.svg';
 import ChatImage from '@assets/images/chat.svg';
 import Divider from '@components/Divider';
 import Button from '@components/Button';
-import { confirmMobileCode } from 'utils/ApiRequest';
+import { confirmMobileCode, doRegister } from 'utils/ApiRequest';
 import { resetNavigation } from 'utils/Utils';
 import { Params, Routes } from '@navigation/Router';
 import KeyboardAvoidingScrollView from '@components/KeyboardAvoidingScrollView';
+import { MobileConfirmationFunctions } from 'enums';
 
 export type Route = {
     mobileInformation: string,
     nextScreen: typeof Routes.ResetPwd,
-    resetNavigationBoolean: boolean
+    resetNavigationBoolean: boolean,
+    functionData?: Object,
+    functionName?: MobileConfirmationFunctions
 };
 
 type Props = NativeStackScreenProps<typeof Params, 'MobileConfirmation'>;
@@ -23,7 +26,7 @@ type Props = NativeStackScreenProps<typeof Params, 'MobileConfirmation'>;
 export default function MobileConfirmation({ route, navigation }: Props) {
     const styles = getStyles();
     const texts = require('@lang/en.json');
-    const { mobileInformation, nextScreen, resetNavigationBoolean } = route.params;
+    const { mobileInformation, nextScreen, resetNavigationBoolean, functionData, functionName } = route.params;
 
     const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
     const [errorMessage, setErrorMessage] = useState<string>('');
@@ -65,23 +68,39 @@ export default function MobileConfirmation({ route, navigation }: Props) {
 
     const tiltScreen = () => {
         Animated.sequence([
-            Animated.timing(tiltAnimation, { toValue: 0.1, duration: 100, useNativeDriver: true }),
-            Animated.timing(tiltAnimation, { toValue: -0.1, duration: 100, useNativeDriver: true }),
-            Animated.timing(tiltAnimation, { toValue: 0.1, duration: 100, useNativeDriver: true }),
-            Animated.timing(tiltAnimation, { toValue: 0, duration: 100, useNativeDriver: true })
+            Animated.timing(tiltAnimation, { toValue: 0.1, duration: 100, useNativeDriver: false }),
+            Animated.timing(tiltAnimation, { toValue: -0.1, duration: 100, useNativeDriver: false }),
+            Animated.timing(tiltAnimation, { toValue: 0.1, duration: 100, useNativeDriver: false }),
+            Animated.timing(tiltAnimation, { toValue: 0, duration: 100, useNativeDriver: false })
         ]).start();
     };
+
+    const func = async () => {
+        switch (functionName) {
+            case MobileConfirmationFunctions.REGISTER:
+                const data = functionData as RegisterInfo;
+                return await doRegister(data.countryCode, data.phone, data.password, data.confirmPassword, data.name)
+            default:
+                return true;
+        }
+    }
 
     const handleConfirmCode = async () => {
         const confirmationCode = code.join('');
         const response = await confirmMobileCode(mobileInformation, confirmationCode);
 
         if (response) {
-            if (resetNavigationBoolean) {
-                resetNavigation(navigation, nextScreen);
-            }
-            else {
-                navigation.navigate(nextScreen, { mobileInformation: mobileInformation, confirmationCode: confirmationCode });
+            if (functionName) {
+                if (await func()) {
+                    if (resetNavigationBoolean) {
+                        resetNavigation(navigation, nextScreen);
+                    }
+                    else {
+                        navigation.navigate(nextScreen, { mobileInformation: mobileInformation, confirmationCode: confirmationCode });
+                    }
+                } else {
+                    navigation.goBack();
+                }
             }
         } else {
             setErrorMessage(texts.code.verificationFailed);

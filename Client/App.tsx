@@ -8,8 +8,8 @@ import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Location from 'expo-location';
 
-import { getToken, isFirstTime, refreshToken, removeData, requestFeedback } from './utils/ApiRequest';
-import { TOKEN_STORAGE_KEY, getDefaultCountryString } from './utils/Constants';
+import { deleteMobileInformation, deleteToken, getToken, isFirstTime, refreshToken, requestFeedback } from './utils/ApiRequest';
+import { getDefaultCountryString } from './utils/Constants';
 import usePermissionStore from './storage/stores/PermissionStore';
 import texts from "@lang/en.json";
 
@@ -155,8 +155,9 @@ const Router = () => {
 
     useEffect(() => {
         if (doLogout === undefined) return;
-        removeData(TOKEN_STORAGE_KEY);
-        waitAndResetNavigation(Routes.Onboarding);
+        deleteToken();
+        deleteMobileInformation();
+        waitAndResetNavigation(Routes.Sign);
         queryClient.clear();
     }, [doLogout]);
 
