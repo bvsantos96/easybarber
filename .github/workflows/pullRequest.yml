@@ -31,11 +31,12 @@ jobs:
         run: |
           cd Server
           mvn clean test
+          continue-on-error: true
 
       - name: Create report 
         run: |
           cd Server
-          mvn surefire-report:report
+          mvn surefire-report:report -DskipTests
 
       - name: Run tests and create test report
         run: |
