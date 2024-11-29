@@ -12,11 +12,13 @@ import { resetNavigation } from "utils/Utils";
 import useAuthStore from "storage/stores/AuthStore";
 import SettingItem from "@components/SettingItem";
 import { MobileConfirmationFunctions } from "enums";
+import useMobileConfirmationStore from "storage/stores/MobileConfirmationStore";
 
 export default function Settings({ navigation }: PropNavigation) {
     const { toggleDoLogout } = useAuthStore();
     const styles = getStyles();
     const [authenticated, setAuthenticated] = useState(false);
+    const { setBlockTime, resetBlockTime } = useMobileConfirmationStore();
 
     useEffect(() => {
         const checkAuthentication = async () => {
@@ -50,16 +52,17 @@ export default function Settings({ navigation }: PropNavigation) {
                     if (!phoneInfo) {
                         return;
                     }
-                    const blockuntil = await getMobileCodeResetPwd(phoneInfo.countryCode, phoneInfo.phone);
-                    if (!blockuntil) {
-                        return;
-                    }
+
+                    resetBlockTime();
+                    getMobileCodeResetPwd(phoneInfo.countryCode, phoneInfo.phone).then((blockUntil) => {
+                        setBlockTime(blockUntil);
+                    });
+
                     navigation.navigate(Routes.MobileConfirmation, {
                         phoneNr: phoneInfo.phone,
                         countryCode: phoneInfo.countryCode,
                         nextScreen: Routes.ResetPwd,
                         resetNavigationBoolean: false,
-                        blockUntil: blockuntil === 0 ? undefined : blockuntil,
                         resendFunction: MobileConfirmationFunctions.RESET_PASSWORD,
                     });
                 }}
