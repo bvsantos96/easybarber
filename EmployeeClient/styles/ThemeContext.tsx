@@ -110,9 +110,11 @@ export const useTheme = (): Theme => {
     return context;
 };
 
+export const mainColor = '#2d4b7a';
+
 const defaultTheme: Theme = {
     colors: {
-        mainColor: '#2d4b7a',
+        mainColor: mainColor,
         successColor: '#6FC138',
         infoColor: '#2A74CC',
         backgroundColor: 'white',
@@ -124,14 +126,14 @@ const defaultTheme: Theme = {
             main: '#263238',
             secondary: 'rgba(0, 0, 0, 0.4)',
             alt: 'white',
-            link: '#2d4b7a',
+            link: mainColor,
             black: 'black',
             lightBlack: 'rgba(0, 0, 0, 0.66)',
             lightGray: 'rgba(0, 0, 0, 0.2)',
             darkBlueGray: '#263238'
         },
         button: {
-            main: '#2d4b7a',
+            main: mainColor,
             alt: 'white',
             border: 'rgba(0, 0, 0, 0.08)',
         },
