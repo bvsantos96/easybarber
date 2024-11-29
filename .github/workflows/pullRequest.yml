@@ -1,5 +1,4 @@
 name: Run tests for pull request
-
 on:
   pull_request:
     branches:
@@ -7,11 +6,9 @@ on:
     paths:
       - 'Server/**'
       - '.github/workflows/**'
-
 jobs:
   test:
     runs-on: self-hosted
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -27,20 +24,20 @@ jobs:
           cd Server
           mvn clean install -DskipTests -X
           mvn surefire-report:report
-
+      
       - name: Run Python script to generate report
         run: |
           python3 createTestReport.py
-
+      
       - name: Read the report content
         id: read_report
         run: |
           REPORT_CONTENT=$(cat report.md)
-          echo "::set-output name=report::$REPORT_CONTENT"
+          echo "report=${REPORT_CONTENT}" >> $GITHUB_OUTPUT
         
       - name: Post report as PR comment
         uses: peter-evans/create-or-update-comment@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          issue_number: ${{ github.event.pull_request.number }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
           body: ${{ steps.read_report.outputs.report }}
