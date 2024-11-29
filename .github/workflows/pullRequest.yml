@@ -9,6 +9,12 @@ on:
 jobs:
   test:
     runs-on: self-hosted
+    permissions:
+      contents: write
+      pull-requests: write
+      repository-projects: write
+      id-token: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -26,10 +32,15 @@ jobs:
           # Sanitize by removing angle brackets
           SANITIZED_CONTENT=$(echo "$REPORT_CONTENT" | sed 's/[<>]//g')
           echo "::set-output name=report::$SANITIZED_CONTENT"
-        
-      - name: Post report as PR comment
-        uses: peter-evans/create-or-update-comment@v3
+
+      - name: Comment 
+      - uses: actions/github-script@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ github.event.pull_request.number }}
-          body: ${{ steps.read_report.outputs.report }}
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '👋 Thanks for reporting!'
+            })
+        
