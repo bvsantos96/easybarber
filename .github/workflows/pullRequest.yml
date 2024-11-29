@@ -6,7 +6,6 @@ on:
     paths:
       - 'Server/**'
       - '.github/workflows/**'
-
 jobs:
   test:
     runs-on: self-hosted
@@ -30,8 +29,9 @@ jobs:
           SANITIZED_CONTENT=$(echo "$REPORT_CONTENT" | sed 's/[<>]//g')
           echo "::set-output name=report::$SANITIZED_CONTENT"
         
-      - name: Comment PR
-        uses: mshick/add-pr-comment@v2
+      - name: Post report as PR comment
+        uses: peter-evans/create-or-update-comment@v3
         with:
-          message: |
-            **Hello MAIN**
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: ${{ steps.read_report.outputs.report }}
