@@ -10,6 +10,7 @@ import com.teamsantos.easybarber.DTO.sms.RequestConfirmationCode;
 import com.teamsantos.easybarber.components.MessageLoader;
 import com.teamsantos.easybarber.entities.Appointment;
 import com.teamsantos.easybarber.entities.VerificationCode;
+import com.teamsantos.easybarber.exceptions.ExceptionWithValue;
 import com.teamsantos.easybarber.repositories.VerificationCodeRepository;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
@@ -57,7 +58,8 @@ public class MessagingService {
                 .orElse(new VerificationCode(phoneNumber));
         if (verificationCode.getAttempts() >= ATTEMPTS_BEFORE_RATE_LIMIT) {
             if (verificationCode.getLastAttempt() + RATE_LIMIT * 60000 > System.currentTimeMillis()) {
-                return verificationCode.getLastAttempt() + RATE_LIMIT * 60000;
+                throw new ExceptionWithValue("Rate limit exceeded",
+                        verificationCode.getLastAttempt() + RATE_LIMIT * 60000);
             }
         }
         verificationCode.changeCode(code);
@@ -69,6 +71,10 @@ public class MessagingService {
     }
 
     public void verifyCode(String phoneNumber, String code) throws Exception {
+        verifyCode(phoneNumber, code, true);
+    }
+
+    public void verifyCode(String phoneNumber, String code, boolean useCode) throws Exception {
         VerificationCode verificationCode = verificationCodeRepository.findById(phoneNumber)
                 .orElseThrow(() -> new Exception("Phone number does not have a code assigned"));
 
@@ -78,6 +84,10 @@ public class MessagingService {
 
         if (!verificationCode.getCode().isEmpty() && !verificationCode.getCode().equals(code)) {
             throw new Exception("Code does not match");
+        }
+
+        if (useCode) {
+            verificationCodeRepository.deleteById(phoneNumber);
         }
     }
 

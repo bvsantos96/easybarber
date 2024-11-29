@@ -1,0 +1,63 @@
+name: Pull Request Build and Test
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'Server/**'
+      - '.github/workflows/**'
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'zulu'
+
+      - name: Build with Maven
+        run: |
+          cd Server
+          mvn clean install -DskipTests -X
+
+      - name: Run tests
+        id: run-tests
+        continue-on-error: true
+        run: |
+          cd Server
+          mvn clean test
+
+      - name: Create report 
+        run: |
+          cd Server
+          mvn surefire-report:report -DskipTests
+
+      - name: Run tests and create test report
+        run: |
+          python3 createTestReport.py
+
+      - name: Read and sanitize the report content
+        id: read_report
+        run: |
+          REPORT_CONTENT=$(cat report.md)
+          echo "report<<EOF" >> $GITHUB_OUTPUT
+          echo "$REPORT_CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Post report as PR comment
+        uses: peter-evans/create-or-update-comment@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body: ${{ steps.read_report.outputs.report }}
+
+      - name: Check test result
+        if: steps.run-tests.outcome == 'failure'
+        run: exit 1

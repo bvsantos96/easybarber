@@ -13,6 +13,7 @@ import { getTimeDifferenceInMinutesAndSeconds, resetNavigation } from 'utils/Uti
 import { Params, Routes } from '@navigation/Router';
 import KeyboardAwareView from '@components/KeyboardAwareView';
 import texts from '@lang/en.json';
+import useMobileConfirmationStore from 'storage/stores/MobileConfirmationStore';
 
 export type Route = {
     phoneNr: string,
@@ -21,15 +22,15 @@ export type Route = {
     resetNavigationBoolean: boolean,
     functionData?: Object,
     functionName?: MobileConfirmationFunctions,
-    blockUntil?: number,
     resendFunction: MobileConfirmationFunctions
 };
 
 type Props = NativeStackScreenProps<typeof Params, 'MobileConfirmation'>;
 
 export default function MobileConfirmation({ route, navigation }: Props) {
+    const { blockTime: blockUntil } = useMobileConfirmationStore();
     const styles = getStyles();
-    const { phoneNr, countryCode, nextScreen, resetNavigationBoolean, functionData, functionName, blockUntil, resendFunction } = route.params;
+    const { phoneNr, countryCode, nextScreen, resetNavigationBoolean, functionData, functionName, resendFunction } = route.params;
     const mobileInformation = countryCode + phoneNr;
     const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
     const [errorMessage, setErrorMessage] = useState<string>('');
@@ -38,7 +39,14 @@ export default function MobileConfirmation({ route, navigation }: Props) {
     const [keyboardHeight, setKeyboardHeight] = useState<number>(0);
     const translateYAnimation = useRef(new Animated.Value(0)).current;
     const [blockTime, setBlockTime] = useState<string | undefined>(undefined);
-    const [blockUntilTimetamp, setBlockUntilTimestamp] = useState<number | undefined>(blockUntil);
+    const [blockUntilTimetamp, setBlockUntilTimestamp] = useState<number | undefined | null>(blockUntil);
+
+
+    useEffect(() => {
+        if (blockUntil !== null) {
+            setBlockUntilTimestamp(blockUntil)
+        }
+    }, [blockUntil]);
 
     useEffect(() => {
         inputRefs.current[0]?.focus();
@@ -79,9 +87,9 @@ export default function MobileConfirmation({ route, navigation }: Props) {
             Animated.timing(tiltAnimation, { toValue: 0, duration: 100, useNativeDriver: false })
         ]).start();
     };
-  
-    const updateBlockTimeFromTimestamp = async (time?: number) => {
-        if (time === undefined) {
+
+    const updateBlockTimeFromTimestamp = async (time?: number | undefined | null) => {
+        if (time === undefined || time === null) {
             setBlockTime(undefined);
             return;
         }

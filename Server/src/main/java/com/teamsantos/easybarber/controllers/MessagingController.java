@@ -13,6 +13,7 @@ import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.BaseTypedResponseDTO;
 import com.teamsantos.easybarber.DTO.sms.RequestConfirmationCode;
 import com.teamsantos.easybarber.DTO.sms.SmsDTO;
+import com.teamsantos.easybarber.exceptions.ExceptionWithValue;
 import com.teamsantos.easybarber.services.MessagingService;
 
 @RestController
@@ -37,6 +38,11 @@ public class MessagingController {
             messagingService.verificationCodeMessage(code, sms, type);
             response.setValue(requestBlockUntil);
             return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (ExceptionWithValue e) {
+            logger.error("Failed to send confirmation message: " + e.getMessage());
+            response.setResponseMessage(e.getMessage());
+            response.setValue(e.getValue(Long.class));
+            return new ResponseEntity<>(response, HttpStatus.BANDWIDTH_LIMIT_EXCEEDED);
         } catch (Exception e) {
             logger.error("Failed to send confirmation message: " + e.getMessage());
             response.setResponseMessage("Phone number not registered");
@@ -62,7 +68,7 @@ public class MessagingController {
     public ResponseEntity<BaseResponseDTO> confirmMobileCode(@RequestBody SmsDTO sms) {
         BaseResponseDTO response = new BaseResponseDTO();
         try {
-            messagingService.verifyCode(sms.getPhoneNr(), sms.getConfirmationCode());
+            messagingService.verifyCode(sms.getPhoneNr(), sms.getConfirmationCode(), false);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             logger.error("Failed to confirm code: " + e.getMessage());
