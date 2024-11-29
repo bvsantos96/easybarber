@@ -7,13 +7,11 @@ on:
       - 'Server/**'
       - '.github/workflows/**'
 
-permissions:
-  pull-requests: write
-  issues: write
-
 jobs:
   test:
     runs-on: self-hosted
+    permissions:
+      pull-requests: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -33,7 +31,7 @@ jobs:
           echo "::set-output name=report::$SANITIZED_CONTENT"
         
       - name: Comment PR
-      - uses: mshick/add-pr-comment@v2
+        uses: mshick/add-pr-comment@v2
         with:
           message: |
             **Hello MAIN**
