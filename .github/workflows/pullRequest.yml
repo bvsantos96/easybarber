@@ -26,10 +26,17 @@ jobs:
         run: |
           cd Server
           mvn clean install -DskipTests -X
-          mvn clean test 
+          mvn surefire-report:report
 
-      - name: Upload test reports
-        uses: actions/upload-artifact@v4
+      - name: Copy Surefire Report
+        run: |
+          mkdir -p ./src/main/resources/static
+          cp -r Server/target/reports/* ./src/main/resources/static/
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          name: test-reports
-          path: Server/target/surefire-reports/*.xml
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./src/main/resources/static
+          publish_branch: gh-pages
+          full_commit_message: Deploy static content
