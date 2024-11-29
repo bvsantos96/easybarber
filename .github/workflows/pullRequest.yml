@@ -32,9 +32,11 @@ jobs:
           # Read the content of the generated report
           REPORT_CONTENT=$(cat report.md)
           
+          # Optionally sanitize the content
+
           # Export the sanitized content for later steps
           echo "report<<EOF" >> $GITHUB_OUTPUT
-          echo "$SANITIZED_CONTENT" >> $GITHUB_OUTPUT
+          echo "$REPORT_CONTENT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
       - name: Post report as PR comment
