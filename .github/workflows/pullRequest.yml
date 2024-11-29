@@ -28,10 +28,11 @@ jobs:
           mvn clean install -DskipTests -X
 
       - name: Run tests
+        id: run-tests
+        continue-on-error: true
         run: |
           cd Server
           mvn clean test
-          continue-on-error: true
 
       - name: Create report 
         run: |
@@ -56,3 +57,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
           body: ${{ steps.read_report.outputs.report }}
+
+      - name: Check test result
+        if: steps.run-tests.outcome == 'failure'
+        run: exit 1
