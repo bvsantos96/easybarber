@@ -24,7 +24,6 @@ jobs:
 
       - name: Run tests and create test report
         run: |
-          cd Server
           python3 createTestReport.py
 
       - name: Read and sanitize the report content
