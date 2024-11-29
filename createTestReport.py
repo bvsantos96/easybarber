@@ -27,30 +27,34 @@ def generate_github_comment(test_results):
     
     if passed_tests:
         total_passed_tests = sum(suite['nTests'] for suite in passed_tests)
-        comment.append(f"<details>\n<summary>Tests passed (<span style=\"color: green;\">{total_passed_tests}</span>)</summary>\n\n")
+        comment.append(f"<details>\n<summary>Tests passed (✅{total_passed_tests})</summary>\n")
         
         for suite in passed_tests:
-            comment.append(f"  <details style=\"margin-left: 20px; font-size: 14px\"> \n  <summary>{suite['name']} (time: {suite['time']}, nTests: {suite['nTests']}, nErrors: {suite['nErrors']}, nFailures: {suite['nFailures']})</summary>\n\n")
-            
+            comment.append(f">   <details>")
+            comment.append(f">   <summary>{suite['name']} (time: {suite['time']}, nTests: {suite['nTests']}, nErrors: {suite['nErrors']}, nFailures: {suite['nFailures']})</summary>")
+            comment.append(f">")
             for test in suite['tests']:
-                comment.append(f"  - ✅ **{test['name']}** (time: {test['time']})")
+                comment.append(f">   - ✅ **{test['name']}** (time: {test['time']})")
             
-            comment.append("</details>")
+            comment.append("> </details>")
         comment.append("</details>\n")
     
     if failed_tests:
         total_failed_tests = sum(suite['nFailures'] + suite['nErrors'] for suite in failed_tests)
-        comment.append(f"\n<details>\n<summary>Tests Failed (<span style=\"color: red;\">{total_failed_tests}</span>)</summary>\n\n")
-        
+        comment.append(f"\n<details>\n<summary>Tests Failed (❌{total_failed_tests})</summary>\n")
         for suite in failed_tests:
-            comment.append(f"  <details style=\"margin-left: 20px; font-size: 14px\"> \n  <summary>{suite['name']} (time: {suite['time']}, nErrors: {suite['nErrors']}, nFailures: {suite['nFailures']})</summary>\n\n")
-            
+            comment.append(f">   <details>") 
+            comment.append(f">   <summary>{suite['name']} (time: {suite['time']}, nErrors: {suite['nErrors']}, nFailures: {suite['nFailures']})</summary>")
+            comment.append(f">")
             for test in suite['tests']:
                 if test['failure'] is not None:
-                    comment.append(f"  - ❌ {test['name']} (time: {test['time']})")
-                    comment.append(f"  ````java\n  {test['failure']['details']}\n  ````")
-            
-            comment.append("</details>")
+                    comment.append(f">   - ❌ {test['name']} (time: {test['time']})")
+                    details = test['failure']['details']
+                    formatted_details = "\n".join(f">  {line}" for line in details.splitlines())
+                    comment.append(f""">   ```java
+{formatted_details}
+>   ```""")
+            comment.append("> </details>")
         comment.append("</details>\n")
     
     return "\n".join(comment)
