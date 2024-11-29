@@ -28,15 +28,19 @@ jobs:
           mvn clean install -DskipTests -X
           mvn surefire-report:report
 
-      - name: Copy Surefire Report
+      - name: Run Python script to generate report
         run: |
-          mkdir -p ./src/main/resources/static
-          cp -r Server/target/reports/* ./src/main/resources/static/
+          python3 createTestReport.py
 
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Read the report content
+        id: read_report
+        run: |
+          REPORT_CONTENT=$(cat report.md)
+          echo "::set-output name=report::$REPORT_CONTENT"
+        
+      - name: Post report as PR comment
+        uses: peter-evans/create-or-update-comment@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./src/main/resources/static
-          publish_branch: gh-pages
-          full_commit_message: Deploy static content
+          issue_number: ${{ github.event.pull_request.number }}
+          body: ${{ steps.read_report.outputs.report }}
