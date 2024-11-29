@@ -112,7 +112,7 @@ export const useTheme = (): Theme => {
 
 const defaultTheme: Theme = {
     colors: {
-        mainColor: '#DF2238',
+        mainColor: '#2d4b7a',
         successColor: '#6FC138',
         infoColor: '#2A74CC',
         backgroundColor: 'white',
@@ -124,14 +124,14 @@ const defaultTheme: Theme = {
             main: '#263238',
             secondary: 'rgba(0, 0, 0, 0.4)',
             alt: 'white',
-            link: '#DF2238',
+            link: '#2d4b7a',
             black: 'black',
             lightBlack: 'rgba(0, 0, 0, 0.66)',
             lightGray: 'rgba(0, 0, 0, 0.2)',
             darkBlueGray: '#263238'
         },
         button: {
-            main: '#DF2238',
+            main: '#2d4b7a',
             alt: 'white',
             border: 'rgba(0, 0, 0, 0.08)',
         },
