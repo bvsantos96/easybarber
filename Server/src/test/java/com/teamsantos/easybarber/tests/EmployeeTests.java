@@ -207,6 +207,7 @@ public class EmployeeTests {
                     .filter(e -> EmployeeData.employeesEstablishments.get(employeeId).contains(e.getId())).toList());
             establishmentsDTO.sort(Comparator.comparingLong(BaseEstablishmentDTO::getId));
             assert establishments.equals(establishmentsDTO);
+            assert false == true;
         } catch (Exception e) {
             e.printStackTrace();
             org.junit.jupiter.api.Assertions.fail(e.getMessage());

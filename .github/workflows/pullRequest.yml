@@ -22,6 +22,12 @@ jobs:
           java-version: '17'
           distribution: 'zulu'
 
+      - name: Build with Maven
+        run: |
+          cd Server
+          mvn clean install -DskipTests -X
+          mvn surefire-report:report
+
       - name: Run tests and create test report
         run: |
           python3 createTestReport.py
@@ -29,12 +35,7 @@ jobs:
       - name: Read and sanitize the report content
         id: read_report
         run: |
-          # Read the content of the generated report
           REPORT_CONTENT=$(cat report.md)
-          
-          # Optionally sanitize the content
-
-          # Export the sanitized content for later steps
           echo "report<<EOF" >> $GITHUB_OUTPUT
           echo "$REPORT_CONTENT" >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
