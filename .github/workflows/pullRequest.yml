@@ -6,6 +6,11 @@ on:
     paths:
       - 'Server/**'
       - '.github/workflows/**'
+
+permissions:
+  pull-requests: write
+  issues: write
+
 jobs:
   test:
     runs-on: self-hosted
