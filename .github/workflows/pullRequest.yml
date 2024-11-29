@@ -26,6 +26,15 @@ jobs:
         run: |
           cd Server
           mvn clean install -DskipTests -X
+
+      - name: Run tests
+        run: |
+          cd Server
+          mvn clean test
+
+      - name: Create report 
+        run: |
+          cd Server
           mvn surefire-report:report
 
       - name: Run tests and create test report
