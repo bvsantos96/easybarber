@@ -1,17 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, Animated } from 'react-native';
+import { Country } from 'react-native-country-picker-modal';
+
+import { Routes } from '@navigation/Router';
+import useMobileConfirmationStore from 'storage/stores/MobileConfirmationStore';
+import { getStyles } from '../styles/InsertPhone';
 import LockImage from '@assets/images/lock.svg';
 import Button from '@components/Button';
-import { getStyles } from '../styles/InsertPhone';
-import PhoneInput from '@components/PhoneInput';
-import { Country } from 'react-native-country-picker-modal';
-import { getDefaultCountryAsync } from 'utils/Constants';
-import { Routes } from '@navigation/Router';
-import { getMobileCodeResetPwd } from 'utils/ApiRequest';
 import KeyboardAvoidingScrollView from '@components/KeyboardAvoidingScrollView';
+import PhoneInput from '@components/PhoneInput';
+import { getDefaultCountryAsync } from 'utils/Constants';
+import { getMobileCodeResetPwd } from 'utils/ApiRequest';
 import { MobileConfirmationFunctions } from 'enums';
 
 export default function ForgotPwd({ navigation }: PropNavigation) {
+    const { resetBlockTime, setBlockTime } = useMobileConfirmationStore();
     const styles = getStyles();
     const texts = require('@lang/en.json');
     const [nation, setNation] = useState<Country | null | undefined>();
@@ -33,10 +36,10 @@ export default function ForgotPwd({ navigation }: PropNavigation) {
     }, []);
 
     const forgotPwd = async () => {
-        const blockuntil = await getMobileCodeResetPwd(nation ? nation.callingCode[0] : "", phone);
-        if (!blockuntil) {
-            return;
-        }
+        resetBlockTime();
+        getMobileCodeResetPwd(nation ? nation.callingCode[0] : "", phone).then((blockUntil) => {
+            setBlockTime(blockUntil);
+        });
 
         navigation.navigate(Routes.MobileConfirmation,
             {
@@ -44,7 +47,6 @@ export default function ForgotPwd({ navigation }: PropNavigation) {
                 countryCode: nation ? nation.callingCode[0] : "",
                 nextScreen: "ResetPwd",
                 resetNavigationBoolean: false,
-                blockUntil: blockuntil === 0 ? undefined : blockuntil,
                 resendFunction: MobileConfirmationFunctions.RESET_PASSWORD
             });
     };
