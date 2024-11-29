@@ -1,4 +1,5 @@
-name: Run tests for pull request
+name: Pull Request Build and Test
+
 on:
   pull_request:
     branches:
@@ -6,11 +7,11 @@ on:
     paths:
       - 'Server/**'
       - '.github/workflows/**'
+
 jobs:
-  test:
+  build:
     runs-on: self-hosted
-    permissions:
-      pull-requests: write
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -20,15 +21,26 @@ jobs:
         with:
           java-version: '17'
           distribution: 'zulu'
-      
+
+      - name: Run tests and create test report
+        run: |
+          cd Server
+          python3 createTestReport.py
+
       - name: Read and sanitize the report content
         id: read_report
         run: |
-          REPORT_CONTENT=$(cat report.md)
-          # Sanitize by removing angle brackets
+          # Read the content of the generated report
+          REPORT_CONTENT=$(cat Server/report.md)
+          
+          # Optionally sanitize the content
           SANITIZED_CONTENT=$(echo "$REPORT_CONTENT" | sed 's/[<>]//g')
-          echo "::set-output name=report::$SANITIZED_CONTENT"
-        
+
+          # Export the sanitized content for later steps
+          echo "report<<EOF" >> $GITHUB_OUTPUT
+          echo "$SANITIZED_CONTENT" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
       - name: Post report as PR comment
         uses: peter-evans/create-or-update-comment@v3
         with:
