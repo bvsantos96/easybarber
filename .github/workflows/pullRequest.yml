@@ -30,7 +30,7 @@ jobs:
         id: read_report
         run: |
           # Read the content of the generated report
-          REPORT_CONTENT=$(cat Server/report.md)
+          REPORT_CONTENT=$(cat report.md)
           
           # Optionally sanitize the content
           SANITIZED_CONTENT=$(echo "$REPORT_CONTENT" | sed 's/[<>]//g')
