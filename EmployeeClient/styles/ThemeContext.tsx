@@ -118,10 +118,10 @@ const defaultTheme: Theme = {
         successColor: '#6FC138',
         infoColor: '#2A74CC',
         backgroundColor: 'white',
-        iconBackground: 'rgba(223, 34, 56, 0.1)',
-        imageBackground: "rgba(109, 4, 4, 0.10)",
+        iconBackground: 'rgba(45, 75, 122, 0.1)',
+        imageBackground: "rgba(45, 75, 122, 0.1)",
         statusBarOnHome: "light",
-        borderAlt: 'rgba(109, 4, 4, 0.1)',
+        borderAlt: 'rgba(45, 75, 122, 0.1)',
         text: {
             main: '#263238',
             secondary: 'rgba(0, 0, 0, 0.4)',
