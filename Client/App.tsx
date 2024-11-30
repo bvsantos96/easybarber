@@ -7,19 +7,16 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Location from 'expo-location';
+SplashScreen.preventAutoHideAsync();
+import { LogBox } from 'react-native';
+LogBox.ignoreLogs([
+    'Support for defaultProps will be removed from function components',
+]);
 
 import { deleteMobileInformation, deleteToken, getToken, isFirstTime, refreshToken, requestFeedback } from './utils/ApiRequest';
 import { getDefaultCountryString } from './utils/Constants';
 import usePermissionStore from './storage/stores/PermissionStore';
 import texts from "@lang/en.json";
-
-SplashScreen.preventAutoHideAsync();
-
-import { LogBox } from 'react-native';
-
-LogBox.ignoreLogs([
-    'Support for defaultProps will be removed from function components',
-]);
 
 //screens
 import { ThemeProvider, useTheme } from './styles/ThemeContext';
