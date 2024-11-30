@@ -1,0 +1,169 @@
+{
+  "appName": "EasyBarbers",
+  "yes": "Yes",
+  "no": "No",
+  "submit": "Submit",
+  "dismiss": "Dismiss",
+  "notNow" : "Not Now",
+  "reload": "Reload",
+  "logout": "Logout",
+  "logoutSuccess": "Logout Successful",
+  "at": "at",
+  "allow": "Allow",
+  "saveLogin": "Use Face ID / Fingerprint to quickly and securely log in next time.",
+  "enable": "Enable",
+  "notNow": "Not Now",
+  "usePasscode": "Use Passcode",
+  "loadingMore": "Loading More...",
+  "updateAvailable": "Update Available",
+  "updateAvailableMessage": "A minor update is available. Updating local data.",
+  "updateRequired": "Update Required",
+  "updateRequiredMessage": "A new version of the app is available. Please update to continue using the app.",
+  "errorWhileUpdating": "Error while updating",
+  "errorWhileUpdatingMessage": "An error occurred while updating the app. Please retry.",
+  "ok": "OK",
+  "update": "Update",
+  "close": "Close",
+  "continue": "Continue",
+  "appStoreLink": "https://apps.apple.com/",
+  "playStoreLink": "https://play.google.com/store/apps/details?id=",
+  "retry": "Retry",
+  "phoneNumber": "Phone Number",
+  "navigation": {
+    "locationRequest": {
+      "name": "Location Request"
+    },
+    "onBoarding": {
+      "name": "Onboarding"
+    },
+    "accountTypeSelection": {
+      "name": "Account Type Selection"
+    },
+    "sign": {
+      "name": "Sign"
+    },
+    "tabs": {
+      "name": "Tabs",
+      "homeNavigator": {
+        "name": "Home",
+        "favorites": {
+          "name": "Favorites"
+        },
+        "home": {
+          "name": "Home"
+        },
+        "establishmentDetails": {
+          "name": "Establishment Details"
+        },
+        "employeeSelection": {
+          "name": "Employees"
+        },
+        "serviceSelection": {
+          "name": "Services"
+        },
+        "schedule": {
+          "name": "Schedule"
+        },
+        "settings": {
+          "name": "Settings"
+        }
+      },
+      "appointments": {
+        "name": "Appointments"
+      },
+      "favorites": {
+        "name": "Favorites"
+      },
+    },
+    "loading": {
+      "name": "Loading"
+    },
+    "mobileConfirmation": {
+      "name": "Mobile Confirmation"
+    },
+    "forgotPwd": {
+      "name": "Forgot Password"
+    },
+    "resetPwd": {
+      "name": "Reset Password"
+    }
+  },
+  "errors": {
+    "defaultCountry": "Error fetching default country:",
+    "apiDownTitle": "Server Error",
+    "apiDown": "Connection to server failed. Please try again later.",
+    "versionCheckTitle": "Version Check Failed",
+    "versionCheckFailed": "Error checking application version, please try again later.",
+    "loadingMoreItemsTitle": "Error Loading More Items",
+    "loadingMoreItems": "An error occurred while loading more items. Please try again.",
+    "locationError": "Application doesn't have location permission",
+    "reverseGeocodingError": "An error as occured while trying to get the address from your current location. Please try again.",
+    "selectLocationError": "An error as occured while trying to update your location. Please try again.",
+    "saveLocationError": "An error as occured while trying to save a new location. Please try again.",
+    "fetchSuggestionsError": "Unable to parse your current location",
+    "locationPermissionError": "Location permission denied",
+    "openMapsError": "We could not open your devide map app, the address for the establishment was saved to your clipboard."
+  },
+  "apiMessages": {
+    "success": "Success in processing the request",
+    "failed": "Failed to process the request",
+    "unauthorized": "Unauthorized access",
+    "connectionError": "Cannot connect to the server",
+    "invalidCountry": "Country needs to be selected",
+    "invalidPhone": "Invalid Phone Number",
+    "login": {
+      "success": "Login Success",
+      "failed": "Login Failed",
+      "invalid": "Invalid Credentials"
+    },
+    "register": {
+      "success": "Register Success",
+      "failed": "Register Failed",
+      "invalidPassword": "Check if the password meets the following criteria: \n- At least 8 characters long \n- Contains at least one uppercase letter \n- Contains at least one lowercase letter \n- Contains at least one digit",
+      "passwordMismatch": "Password Mismatch",
+      "invalidName": "Invalid Name Format (name should be at least 3 characters long)"
+    }
+  },
+  "login": {
+    "title": "User Login",
+    "button": "Login",
+    "newUser": "Are you a new user?",
+    "loginWith": "Login with",
+    "google": "Google",
+    "apple": "Apple",
+    "guest": "Continue as guest",
+    "required": "You need to be logged in to perform this operation",
+    "sign": "Sign",
+    "signIn": "Sign In"
+  },
+  "register": {
+    "title": "Create Account",
+    "button": "Register",
+    "newUser": "Already a user?"
+  },
+  "code": {
+    "verifyPhone": "Verify Phone",
+    "resendCode": "Resend Code",
+    "codeNotReceived": "Not received yet?",
+    "enterCode": "Please enter the code sent to",
+    "verify": "Verify",
+    "successfullVerification": "Your phone has been verified successfully",
+    "getStarted": "Get Started",
+    "verificationFailed": "Verification failed. Please try again.",
+    "resendCodeIn": "Resend code in",
+  },
+  "pwdRecovery": {
+    "enterPhone": "Please enter your phone number on which your account is registered.",
+    "forgotPwd": "Forgot Password",
+    "setNewPwd": "Set a new password",
+    "setPwd": "Set new password",
+    "set": "set",
+    "pwdMustMatch": "Passwords must match",
+    "pwdResetSuccess": "Password reset successfully"
+  },
+  "phoneNumber": "Phone Number",
+  "password": "Password",
+  "forgotPassword": "Forgot password?",
+  "name": "Name",
+  "confirmPassword": "Confirm Password"
+}
