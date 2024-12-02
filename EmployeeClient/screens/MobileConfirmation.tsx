@@ -32,7 +32,7 @@ export default function MobileConfirmation({ route, navigation }: Props) {
     const styles = getStyles();
     const { phoneNr, countryCode, nextScreen, resetNavigationBoolean, functionData, functionName, resendFunction } = route.params;
     const mobileInformation = countryCode + phoneNr;
-    const [code, setCode] = useState<string[]>(['', '', '', '', '', '']);
+    const [code, _setCode] = useState<string[]>(['', '', '', '', '', '']);
     const [errorMessage, setErrorMessage] = useState<string>('');
     const inputRefs = useRef<(TextInput | null)[]>([]);
     const tiltAnimation = useRef(new Animated.Value(0)).current;
@@ -41,6 +41,12 @@ export default function MobileConfirmation({ route, navigation }: Props) {
     const [blockTime, setBlockTime] = useState<string | undefined>(undefined);
     const [blockUntilTimetamp, setBlockUntilTimestamp] = useState<number | undefined | null>(blockUntil);
 
+    const setCode = (newCode: string[]) => {
+        _setCode(newCode);
+        for (let i = 0; i < newCode.length; i++) {
+            inputRefs.current[i]?.setNativeProps({ text: newCode[i] });
+        }
+    }
 
     useEffect(() => {
         if (blockUntil !== null) {
@@ -74,8 +80,15 @@ export default function MobileConfirmation({ route, navigation }: Props) {
     };
 
     const handleKeyPress = (event: NativeSyntheticEvent<TextInputKeyPressEventData>, index: number): void => {
-        if (event.nativeEvent.key === 'Backspace' && index > 0 && code[index] === '') {
-            inputRefs.current[index - 1]?.focus();
+        const val = code[index];
+        if (event.nativeEvent.key === 'Backspace') {
+            code[index] = '';
+            inputRefs.current[index]?.setNativeProps({ text: '' });
+            if (index > 0 && val === '') {
+                code[index - 1] = '';
+                inputRefs.current[index - 1]?.setNativeProps({ text: '' });
+                inputRefs.current[index - 1]?.focus();
+            }
         }
     };
 
@@ -171,6 +184,15 @@ export default function MobileConfirmation({ route, navigation }: Props) {
         updateBlockTimeFromTimestamp(blockUntilTimetamp);
     }, [blockUntilTimetamp]);
 
+    const focusFirstEmptyInput = () => {
+        for (let i = 0; i < code.length; i++) {
+            if (code[i] === '') {
+                inputRefs.current[i]?.focus();
+                return;
+            }
+        }
+    }
+
     useEffect(() => {
         if (blockTime !== undefined && blockTime !== "...") {
             const timer = setInterval(() => {
@@ -218,11 +240,12 @@ export default function MobileConfirmation({ route, navigation }: Props) {
                             key={index}
                             style={styles.codeInput}
                             keyboardType="numeric"
-                            maxLength={6 - index}
+                            maxLength={6}
                             value={code[index]}
                             onChangeText={(text) => handleCodeChange(text, index)}
                             onKeyPress={(event) => handleKeyPress(event, index)}
                             ref={(ref) => (inputRefs.current[index] = ref)}
+                            onFocus={focusFirstEmptyInput}
                         />
                     ))}
                 </View>

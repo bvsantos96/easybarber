@@ -60,6 +60,7 @@ const Router = () => {
             if (defaultPage !== Routes.Sign) {
                 await waitAndResetNavigation(defaultPage);
             }
+            await waitAndNavigate(Routes.MobileConfirmation, { phoneNr: '962844407', countryCode: '351', nextScreen: Routes.Home, resetNavigation: false, resendFunction: "resendCode" });
             setIsLoading(false);
             await SplashScreen.hideAsync();
         };
@@ -84,7 +85,7 @@ const Router = () => {
             navigationRef.current.navigate(page, params);
             return;
         } else {
-            setTimeout(async () => await waitAndNavigate(page), 500);
+            setTimeout(async () => await waitAndNavigate(page, params), 500);
         }
     }
 
