@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,9 @@ import com.teamsantos.easybarber.services.UserService;
 
 @RestController
 public class AuthController {
+    @Value("${teamsantos.istest}")
+    private boolean isTestContext;
+
     private final UserService userService;
     private final MessagingService messagingService;
 
@@ -48,6 +52,10 @@ public class AuthController {
         HttpStatus status = HttpStatus.CREATED;
         try {
             userDTO.setMobile(userDTO.getMobile().replace(" ", ""));
+            if (!isTestContext) {
+                messagingService.verifyCode(userDTO.getMobileInformation(),
+                        userDTO.getConfirmationCode());
+            }
             return ResponseEntity.status(status).body(userService.createUser(userDTO));
         } catch (Exception e) {
             UserDTO response = new UserDTO();
