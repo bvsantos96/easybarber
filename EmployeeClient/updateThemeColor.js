@@ -31,13 +31,21 @@ function isIgnored(filePath) {
 }
 
 function replaceInFile(filePath, searchValue, replaceValue) {
+    const ignoredExtensions = ['otf', 'ttf', 'png', 'gif'];
+    const fileExtension = path.extname(filePath).slice(1);
+
+    if (ignoredExtensions.includes(fileExtension)) {
+        console.log(`Skipped: ${filePath} (ignored extension)`);
+        return;
+    }
+
     if (isIgnored(filePath)) {
         return;
     }
 
     try {
         const content = fs.readFileSync(filePath, 'utf8');
-        const updatedContent = content.replace(new RegExp(searchValue, 'g'), replaceValue);
+        const updatedContent = content.replace(new RegExp(searchValue, 'gi'), replaceValue);
         fs.writeFileSync(filePath, updatedContent, 'utf8');
         console.log(`Updated: ${filePath}`);
     } catch (error) {
@@ -77,6 +85,20 @@ function extractMainColor(themeFilePath) {
     }
 }
 
+function hexToRgb(hex) {
+    hex = hex.replace(/^#/, '');
+
+    if (hex.length === 3) {
+        hex = hex.split('').map(char => char + char).join('');
+    }
+
+    const r = parseInt(hex.slice(0, 2), 16);
+    const g = parseInt(hex.slice(2, 4), 16);
+    const b = parseInt(hex.slice(4, 6), 16);
+
+    return `rgba(${r}, ${g}, ${b}, 0.1)`;
+}
+
 const [replaceValue] = process.argv.slice(2);
 
 if (!replaceValue) {
@@ -94,3 +116,5 @@ if (!searchValue) {
 }
 
 processDirectory(process.cwd(), searchValue, replaceValue);
+processDirectory(process.cwd(), hexToRgb(searchValue), hexToRgb(replaceValue));
+processDirectory(process.cwd(), hexToRgb(searchValue).replace("0.1", "0.10"), hexToRgb(replaceValue));
