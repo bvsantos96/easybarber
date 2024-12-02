@@ -389,6 +389,7 @@ export const doRegister = async (countryCode: string, phone: string, password: s
     if (name.length < 3)
         return { success: false, message: langs.apiMessages.register.invalidName };
     const result = await request("employee", "POST", { countryMobile: countryCode, mobile: phone, password, name, confirmationCode }, langs.apiMessages.register.success, langs.apiMessages.register.failed, ResponseType.LIST);
+
     if (result.success)
         await doLogin(countryCode, phone, password);
     return result;

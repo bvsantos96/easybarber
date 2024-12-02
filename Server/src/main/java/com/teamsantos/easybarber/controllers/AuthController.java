@@ -35,13 +35,13 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> loginUser(@RequestBody UserCreateDTO userDTO,
-            @RequestParam(required = false) Boolean employeeOnly) {
+            @RequestParam(required = false) Boolean employee) {
         try {
             userDTO.setMobile(userDTO.getMobile().replace(" ", ""));
-            if (employeeOnly == null) {
-                employeeOnly = false;
+            if (employee == null) {
+                employee = false;
             }
-            return ResponseEntity.ok(userService.loginUser(userDTO, employeeOnly));
+            return ResponseEntity.ok(userService.loginUser(userDTO, employee));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
