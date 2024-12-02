@@ -75,10 +75,6 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
         }
     }
 
-    const guestLogin = () => {
-        resetNavigation(navigation, Routes.Home);
-    }
-
     return (
         <>
             <KeyboardAvoidingScrollView
