@@ -357,7 +357,7 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
     removeData(TOKEN_STORAGE_KEY);
     removeData(LOCATIONS_STORAGE_KEY);
 
-    const result = await request("login", "POST", { countryMobile: _countryCode, mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed, ResponseType.STRING);
+    const result = await request("login?employee=true", "POST", { countryMobile: _countryCode, mobile: phone, password }, langs.apiMessages.login.success, langs.apiMessages.login.failed, ResponseType.STRING);
 
     if (result.success) {
         const user = await loadSecureTokenFromStorage();
@@ -388,7 +388,7 @@ export const doRegister = async (countryCode: string, phone: string, password: s
     name = name.trim();
     if (name.length < 3)
         return { success: false, message: langs.apiMessages.register.invalidName };
-    const result = await request("register", "POST", { countryMobile: countryCode, mobile: phone, password, name }, langs.apiMessages.register.success, langs.apiMessages.register.failed, ResponseType.LIST);
+    const result = await request("employee", "POST", { countryMobile: countryCode, mobile: phone, password, name }, langs.apiMessages.register.success, langs.apiMessages.register.failed, ResponseType.LIST);
     if (result.success)
         await doLogin(countryCode, phone, password);
     return result;
