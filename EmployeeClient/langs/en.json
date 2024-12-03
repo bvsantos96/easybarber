@@ -144,5 +144,24 @@
   "password": "Password",
   "forgotPassword": "Forgot password?",
   "name": "Name",
-  "confirmPassword": "Confirm Password"
+  "confirmPassword": "Confirm Password",
+  "appointments": {
+    "feedback": "Rate your appointment with {employee} at {establishment}",
+    "feedBackThanks": "Thank you for sharing your thoughts!",
+    "seeAppointments": "See Appointments",
+    "upcomming": "Upcomming",
+    "book": "Book Appointment",
+    "selectBarber": "Select Barber",
+    "selectService": "Select service",
+    "schedule": "Schedule Date & Time",
+    "scheduleSelection": "Click on any date and check available slots.",
+    "slotsAvailable": "Slots Avalilable",
+    "noSlots": "No slots available for the selected day",
+    "past": "Past",
+    "failed": "Failed to schedule appointment, please try again on a different date.",
+    "success": "Your booking has been confirmed successfully.",
+    "cancel": "Are you sure you want to cancel this appointment?",
+    "signin": "Please sign in to see your appointments"
+  },
+  "noItems": "No items found."
 }

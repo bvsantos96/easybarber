@@ -9,6 +9,46 @@ import { LOCATIONS_STORAGE_KEY, MOBILE_INFORMATION, SECURE_STORAGE_LOGIN_KEY, TO
 import langs from '@lang/en.json';
 import { ResponseType } from 'enums';
 import { AlertType } from '@components/Alert';
+import { createPageable, parsePage } from './PageHandling';
+
+const getItemsFromRequest = <T>(result: IResult<T>): T => {
+    if (result.success) {
+        if (result.items !== undefined && result.items !== null) {
+            return result.items as T;
+        } else if (result.data !== undefined && result.data !== null) {
+            return result.data as T;
+        }
+    }
+    throw new Error(result.message ?? langs.apiMessages.failed);
+}
+
+const parsePathParams = (_path: string, params: Record<string, string | number | boolean>): string => {
+    let first = true;
+    for (const key in params) {
+        if (params[key] === null || params[key] === undefined)
+            continue;
+        _path += `${first ? '?' : '&'}${key}=${params[key]}`;
+        first = false;
+    }
+    return _path;
+}
+
+export const pageGet = async <T>(url: string, page?: IPage<T>, params?: Record<string, string | number | boolean>): Promise<IPage<T> | undefined> => {
+    if (page === undefined || page === null) {
+        page = createPageable();
+    } else if (!page.hasNextPage) {
+        page.content = [];
+        return page;
+    }
+    if (params === undefined || params === null)
+        params = {};
+    if (!params.hasOwnProperty("page"))
+        params["page"] = page.currentPage;
+    if (!params.hasOwnProperty("size"))
+        params["size"] = page.pageSize;
+    const result = await request<T>(parsePathParams(url, params), `GET`, null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
+    return result.items ? parsePage<T>(result.items) : page;
+}
 
 const storeData = async (key: string, value: string) => {
     try {
@@ -392,4 +432,33 @@ export const doRegister = async (countryCode: string, phone: string, password: s
     if (result.success)
         await doLogin(countryCode, phone, password);
     return result;
+}
+
+export const cancelAppointment = async (id: number, reason = ""): Promise<boolean> => {
+    const response = await request('/appointment/cancel', "PUT", { id, reason }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    if (response.success) {
+        return true;
+    }
+    return false;
+}
+
+export const getAppointmentCount = async (): Promise<AppointmentCounts> => {
+    if (await getToken() === null) {
+        return {
+            upcomming: 0,
+            past: 0
+        }
+    }
+    return getItemsFromRequest<AppointmentCounts>(await request<AppointmentCounts>(`appointment/count?userView=false`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT));
+}
+
+export const getAppointments = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter): Promise<IPage<AppointmentInfo> | undefined> => {
+    if (params === undefined || params === null)
+        params = {
+            future: true,
+            activeOnly: true,
+            userView: false
+        };
+    params.sort = "date,time";
+    return await pageGet<AppointmentInfo>("/appointment/list", page, params);
 }
