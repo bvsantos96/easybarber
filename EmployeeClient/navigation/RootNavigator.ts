@@ -5,6 +5,7 @@ import MobileConfirmation from "@screens/MobileConfirmation";
 import ForgotPwd from "@screens/ForgotPwd";
 import ResetPwd from "@screens/ResetPwd";
 import { Params } from "@navigation/Router";
+import Tabs from "@screens/Tabs";
 
 const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     Sign: {
@@ -37,10 +38,10 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         component: ResetPwd,
         containerizedComponent: false,
     },
-    Home: {
-        title: texts.navigation.tabs.homeNavigator.home.name,
-        hasHeader: true,
-        component: Loading,
+    Tabs: {
+        title: texts.navigation.tabs.name,
+        hasHeader: false,
+        component: Tabs,
         containerizedComponent: true,
     },
 };

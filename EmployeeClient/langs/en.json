@@ -44,35 +44,14 @@
     },
     "tabs": {
       "name": "Tabs",
-      "homeNavigator": {
-        "name": "Home",
-        "favorites": {
-          "name": "Favorites"
-        },
-        "home": {
-          "name": "Home"
-        },
-        "establishmentDetails": {
-          "name": "Establishment Details"
-        },
-        "employeeSelection": {
-          "name": "Employees"
-        },
-        "serviceSelection": {
-          "name": "Services"
-        },
-        "schedule": {
-          "name": "Schedule"
-        },
-        "settings": {
-          "name": "Settings"
-        }
+      "establishments": {
+        "name": "Establishments"
       },
       "appointments": {
         "name": "Appointments"
       },
-      "favorites": {
-        "name": "Favorites"
+      "schedules": {
+        "name": "Schedules"
       },
     },
     "loading": {

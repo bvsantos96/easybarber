@@ -7,7 +7,10 @@ export const Params = {
     MobileConfirmation: {} as MobileConfirmationRoute,
     ForgotPwd: undefined,
     ResetPwd: {} as ResetPwdRoute,
-    Home: undefined,
+    Tabs: undefined,
+    Establishments: undefined,
+    Schedules: undefined,
+    Appointments: undefined,
 } as const;
 
 export const Routes = {
@@ -16,5 +19,8 @@ export const Routes = {
     MobileConfirmation: "MobileConfirmation",
     ForgotPwd: "ForgotPwd",
     ResetPwd: "ResetPwd",
-    Home: "Home",
+    Tabs: "Tabs",
+    Establishments: "Establishments",
+    Schedules: "Schedules",
+    Appointments: "Appointments"
 } as const;

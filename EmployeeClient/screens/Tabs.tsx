@@ -1,33 +1,18 @@
-import React, { useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useTheme } from '../styles/ThemeContext';
-import SafeFullScreen from '../components/SafeFullScreen';
+import SafeFullScreen from '@components/SafeFullScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import TabsNav from '@navigation/TabsNavigator';
 import { Params, Routes } from '@navigation/Router';
-import { getToken, validateAppointments } from 'utils/ApiRequest';
-import { AlertType } from '@components/Alert';
-import useAlertStore from 'storage/stores/AlertStore';
-import { TouchableOpacity } from 'react-native';
-import texts from '@lang/en.json';
 
-export default function Tabs({ navigation }: PropNavigation) {
+export default function Tabs() {
     const Tab = createBottomTabNavigator<typeof Params>();
     const theme = useTheme();
     const inserts = useSafeAreaInsets();
-    const [authenticated, setAuthenticated] = useState(false);
-    const { alert } = useAlertStore();
-
-    useEffect(() => {
-        const checkAuthentication = async () => {
-            setAuthenticated(await getToken() !== null);
-        };
-        checkAuthentication();
-    }, []);
 
     return (
         <Tab.Navigator
-            initialRouteName={Routes.Home}
+            initialRouteName={Routes.Establishments}
             screenOptions={{
                 tabBarActiveTintColor: theme.colors.mainColor,
                 tabBarInactiveTintColor: theme.colors.text.main,
@@ -66,30 +51,6 @@ export default function Tabs({ navigation }: PropNavigation) {
                                 <tab.tabicon width={20 * theme.dimensions.absoluteWidth} height={20 * theme.dimensions.absoluteWidth} fill={theme.colors.mainColor} />
                             ),
                             tabBarLabel: tab.title,
-                            tabBarButton: (props) => (
-                                <TouchableOpacity
-                                    {...props}
-                                    onPress={(event) => {
-                                        if (tab.requiresAuth && !authenticated) {
-                                            alert({
-                                                type: AlertType.Error,
-                                                message: texts.login.required,
-                                                buttonText: texts.login.signIn,
-                                                onPress: () => {
-                                                    navigation.navigate(Routes.Sign);
-                                                },
-                                                onPress2: () => { },
-                                                buttonText2: texts.dismiss,
-                                            });
-                                        } else {
-                                            if (_key === Routes.Appointments) {
-                                                validateAppointments();
-                                            }
-                                            props.onPress?.(event);
-                                        }
-                                    }}
-                                />
-                            )
                         }}>
                         {(props) => (<SafeFullScreen><tab.component {...props} /></SafeFullScreen>)}
                     </Tab.Screen>

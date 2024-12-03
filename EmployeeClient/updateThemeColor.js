@@ -35,8 +35,7 @@ function replaceInFile(filePath, searchValue, replaceValue) {
     const fileExtension = path.extname(filePath).slice(1);
 
     if (ignoredExtensions.includes(fileExtension)) {
-        console.log(`Skipped: ${filePath} (ignored extension)`);
-        return;
+        rtgurn;
     }
 
     if (isIgnored(filePath)) {
@@ -47,7 +46,6 @@ function replaceInFile(filePath, searchValue, replaceValue) {
         const content = fs.readFileSync(filePath, 'utf8');
         const updatedContent = content.replace(new RegExp(searchValue, 'gi'), replaceValue);
         fs.writeFileSync(filePath, updatedContent, 'utf8');
-        console.log(`Updated: ${filePath}`);
     } catch (error) {
         console.error(`Failed to process ${filePath}: ${error.message}`);
     }
