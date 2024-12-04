@@ -5,8 +5,9 @@ import PageList, { PageListRef } from '@components/PageList';
 import EstablishmentItem from '@components/EstablishmentItem';
 import { useRef, useState } from 'react';
 import { getEstablishments } from 'utils/ApiRequest';
+import { Routes } from '@navigation/Router';
 
-const Establishments = () => {
+const Establishments = ({ navigation }: PropNavigation) => {
     const styles = getStyles();
     const [resetSearch, _] = useState(false);
     const pageListRef = useRef<PageListRef<EstablishmentInfo>>(null);
@@ -26,7 +27,7 @@ const Establishments = () => {
                         <EstablishmentItem
                             onPress={
                                 () => {
-                                    // navigation.navigate(Routes.EstablishmentDetails, item);
+                                    navigation.navigate(Routes.Establishment, item);
                                 }
                             }
                             establishment={item} />

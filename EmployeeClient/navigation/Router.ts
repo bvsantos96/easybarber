@@ -1,5 +1,6 @@
 import { Route as MobileConfirmationRoute } from '@screens/MobileConfirmation';
 import { Route as ResetPwdRoute } from '@screens/ResetPwd';
+import { Route as EstablishmentRoute } from '@screens/Establishment';
 
 export const Params = {
     Sign: undefined,
@@ -12,6 +13,7 @@ export const Params = {
     Schedules: undefined,
     Appointments: undefined,
     Settings: undefined,
+    Establishment: {} as EstablishmentRoute,
 } as const;
 
 export const Routes = {
@@ -25,4 +27,5 @@ export const Routes = {
     Schedules: "Schedules",
     Appointments: "Appointments",
     Settings: "Settings",
+    Establishment: "Establishment",
 } as const;

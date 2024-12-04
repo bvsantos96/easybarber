@@ -5,8 +5,8 @@ const TabIcon = ({ left, icon: Icon, text, func }: { left?: boolean, icon?: Reac
     const theme = useTheme();
     return (
         <TouchableOpacity style={[left ? { left: 20 * theme.dimensions.absoluteWidth } : { right: 20 * theme.dimensions.absoluteWidth }, { bottom: 5 * theme.dimensions.absoluteHeight, justifyContent: "center", alignItems: "center" }]} onPress={func}>
-            {Icon && <Icon width={27 * theme.dimensions.absoluteWidth} />}
-            {text && text.length > 0 && <Text>{text}</Text>}
+            {Icon && <Icon fill={theme.colors.mainColor} width={27 * theme.dimensions.absoluteWidth} />}
+            {text && text.length > 0 && <Text style={{ color: theme.colors.mainColor }}>{text}</Text>}
         </TouchableOpacity>
     );
 };

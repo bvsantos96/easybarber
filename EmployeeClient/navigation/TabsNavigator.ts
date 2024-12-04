@@ -9,6 +9,7 @@ import Schedules from "@screens/Schedules";
 import AppointmentsIcon from "@components/icons/AppointmentsIcon";
 import Settings from "@screens/Settings";
 import NewIcon from "@components/icons/NewIcon";
+import { NavigationProp } from "@react-navigation/native";
 
 const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
     Establishments: {
@@ -23,8 +24,9 @@ const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
         },
         leftText: texts.navigation.tabs.establishments.join,
         rightIcon: NewIcon,
-        rightAction: (navigation) => {
-            navigation.navigate(Routes.Settings);
+        rightAction: (navigation: NavigationProp<any, any>) => {
+            console.log(navigation.getState());
+            navigation.navigate(Routes.Establishment);
         },
         rightText: texts.navigation.tabs.establishments.new
     },
