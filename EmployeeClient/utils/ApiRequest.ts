@@ -462,3 +462,7 @@ export const getAppointments = async (page?: IPage<AppointmentInfo>, params?: Ap
     params.sort = "date,time";
     return await pageGet<AppointmentInfo>("/appointment/list", page, params);
 }
+
+export const getEstablishments = async (page?: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>): Promise<IPage<EstablishmentInfo> | undefined> => {
+    return await pageGet<EstablishmentInfo>("/employee/establishments", page, params);
+}

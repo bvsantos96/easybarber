@@ -13,7 +13,7 @@ export const getStyles = () => {
             position: "absolute",
             top: 70 * theme.dimensions.absoluteHeight,
             height: theme.dimensions.height - 142 * theme.dimensions.absoluteHeight - theme.dimensions.tabHeight,
-            width: theme.dimensions.width,
+            width: theme.dimensions.width ,
             bottom: 0,
             alignItems: "center",
             justifyContent: "center",
