@@ -53,6 +53,9 @@
       "schedules": {
         "name": "Schedules"
       },
+      "settings": {
+        "name": "Settings"
+      }
     },
     "loading": {
       "name": "Loading"
@@ -163,5 +166,8 @@
     "cancel": "Are you sure you want to cancel this appointment?",
     "signin": "Please sign in to see your appointments"
   },
-  "noItems": "No items found."
+  "noItems": "No items found.",
+  "settings": {
+    "resetPwd": "Reset Password"
+  }
 }

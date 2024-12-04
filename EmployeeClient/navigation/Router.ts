@@ -11,6 +11,7 @@ export const Params = {
     Establishments: undefined,
     Schedules: undefined,
     Appointments: undefined,
+    Settings: undefined,
 } as const;
 
 export const Routes = {
@@ -22,5 +23,6 @@ export const Routes = {
     Tabs: "Tabs",
     Establishments: "Establishments",
     Schedules: "Schedules",
-    Appointments: "Appointments"
+    Appointments: "Appointments",
+    Settigns: "Settings",
 } as const;

@@ -1,11 +1,13 @@
 import texts from "@lang/en.json";
 import EstablishmentsIcon from "@components/icons/EstablishmentsIcon";
 import SchedulesIcon from "@components/icons/SchedulesIcon";
+import SettingsIcon from "@components/icons/SettingsIcon";
 import { Params } from "@navigation/Router";
 import Appointments from "@screens/Appointments";
 import Establishments from "@screens/Establishments";
 import Schedules from "@screens/Schedules";
 import AppointmentsIcon from "@components/icons/AppointmentsIcon";
+import Settings from "@screens/Settings";
 
 const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
     Establishments: {
@@ -29,6 +31,13 @@ const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
         tabicon: AppointmentsIcon,
         requiresAuth: true
     },
+    Settings: {
+        title: texts.navigation.tabs.settings.name,
+        hasHeader: true,
+        component: Settings,
+        tabicon: SettingsIcon,
+        requiresAuth: true
+    }
 };
 
 export default TabsNav;
