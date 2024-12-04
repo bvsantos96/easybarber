@@ -24,5 +24,5 @@ export const Routes = {
     Establishments: "Establishments",
     Schedules: "Schedules",
     Appointments: "Appointments",
-    Settigns: "Settings",
+    Settings: "Settings",
 } as const;

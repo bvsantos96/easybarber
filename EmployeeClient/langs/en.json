@@ -45,7 +45,9 @@
     "tabs": {
       "name": "Tabs",
       "establishments": {
-        "name": "Establishments"
+        "name": "Establishments",
+        "new": "New",
+        "join": "Join"
       },
       "appointments": {
         "name": "Appointments"

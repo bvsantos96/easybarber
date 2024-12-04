@@ -20,6 +20,12 @@ declare type TabsInfo = {
     component: React.FC<any>;
     tabicon: React.FC<any>;
     requiresAuth?: boolean;
+    rightIcon?: React.FC<any>;
+    rightAction?: (navigation: NavigationProp<any, any>) => void;
+    rightText?: string;
+    leftIcon?: React.FC<any>;
+    leftAction?: (navigation: NavigationProp<any, any>) => void;
+    leftText?: string;
 }
 
 declare interface Pageable<T> {

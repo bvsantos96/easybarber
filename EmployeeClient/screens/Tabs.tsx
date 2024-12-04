@@ -4,8 +4,9 @@ import SafeFullScreen from '@components/SafeFullScreen';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import TabsNav from '@navigation/TabsNavigator';
 import { Params, Routes } from '@navigation/Router';
+import TabIcon from '@components/TabIcon';
 
-export default function Tabs() {
+export default function Tabs({ navigation }: PropNavigation) {
     const Tab = createBottomTabNavigator<typeof Params>();
     const theme = useTheme();
     const inserts = useSafeAreaInsets();
@@ -51,7 +52,23 @@ export default function Tabs() {
                                 <tab.tabicon width={20 * theme.dimensions.absoluteWidth} height={20 * theme.dimensions.absoluteWidth} fill={theme.colors.mainColor} />
                             ),
                             tabBarLabel: tab.title,
-                        }}>
+                            headerLeft: tab.leftIcon ? () => (
+                                <TabIcon
+                                    left
+                                    icon={tab.leftIcon}
+                                    func={() => tab.leftAction && tab.leftAction(navigation)}
+                                    text={tab.leftText}
+                                />
+                            ) : undefined,
+                            headerRight: tab.rightIcon ? () => (
+                                <TabIcon
+                                    icon={tab.rightIcon}
+                                    func={() => tab.rightAction && tab.rightAction(navigation)}
+                                    text={tab.rightText}
+                                />
+                            ) : undefined,
+                        }
+                        }>
                         {(props) => (<SafeFullScreen><tab.component {...props} /></SafeFullScreen>)}
                     </Tab.Screen>
                 );
