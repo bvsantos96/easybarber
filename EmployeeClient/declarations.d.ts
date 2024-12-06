@@ -220,6 +220,21 @@ declare interface EmployeeInfo extends Identifiable {
     images: IImage[];
 }
 
+declare interface EstablishmentInfo extends Identifiable {
+    id: number;
+    name: string;
+    description: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+    distance?: number;
+    nvotes: number;
+    sumVotes: number;
+    images: IImage[];
+    load?: boolean;
+    favorite?: boolean;
+}
+
 declare interface EstablishmentDetail extends Identifiable {
     name: string;
     description: string;

@@ -51,6 +51,12 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         component: Establishment,
         containerizedComponent: true,
     },
+    NewEstablishment: {
+        title: texts.navigation.establishment.newName,
+        hasHeader: true,
+        component: Establishment,
+        containerizedComponent: true,
+    },
 };
 
 export default RootNav;

@@ -25,8 +25,7 @@ const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
         leftText: texts.navigation.tabs.establishments.join,
         rightIcon: NewIcon,
         rightAction: (navigation: NavigationProp<any, any>) => {
-            console.log(navigation.getState());
-            navigation.navigate(Routes.Establishment);
+            navigation.navigate(Routes.NewEstablishment);
         },
         rightText: texts.navigation.tabs.establishments.new
     },

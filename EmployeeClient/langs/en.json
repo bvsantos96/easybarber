@@ -72,7 +72,8 @@
       "name": "Reset Password"
     },
     "establishment": {
-      "name": "Establishment"
+      "name": "Establishment",
+      "newName": "New Establishment"
     }
   },
   "errors": {
