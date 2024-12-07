@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.employee.EmployeeCreateDTO;
@@ -45,12 +44,13 @@ public class UserService {
     @Autowired
     public UserService(UserRepository userRepository,
             EmployeeRepository employeeRepository,
-            JwtUtils jwtUtils, EntityManager entityManager) {
+            EntityManager entityManager,
+            JwtUtils jwtUtils) {
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
         this.modelMapper = Utils.getModelMapper();
-        this.jwtUtils = jwtUtils;
         this.entityManager = entityManager;
+        this.jwtUtils = jwtUtils;
     }
 
     @Transactional(readOnly = true)
@@ -59,30 +59,29 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public String loginUser(UserCreateDTO userCreateDTO, boolean employeeOnly) throws Exception {
-        UserSignInDTO user = userRepository
-                .findUserSignInByMobileInformation(userCreateDTO.getMobileInformation())
+    public UserSignInDTO findUserSignIn(UserCreateDTO userCreateDTO) throws Exception {
+        UserSignInDTO user = userRepository.findUserSignInByMobileInformation(userCreateDTO.getMobileInformation())
                 .orElseThrow(UserNotFoundException::new);
-        // TODO: if we get 2 many users this might me moved to a string in the user
-        // table so that we can load them faster.
-        // This will make the user type change a bit slower but that is not that
-        // frequent of a request compared with the login that affects everyuser
-        if (employeeOnly && user.getEmployeeId() == null) {
-            createEmployeeRequireNewTransaction(user.getId());
-            user.addUserTypesId(UserTypeService.getUserType(UserTypeService.UserTypes.EMPLOYEE));
-        }
-        user.addUserTypesId(userRepository.getAllUserTypes(user.getId()));
-
         if (PasswordEncoding.getPasswordEncoder().matches(userCreateDTO.getPassword(), user.getPassword())) {
-            return jwtUtils.generateToken(user.getId(), user.getEmployeeId(),
-                    UserTypeService.getUserRoles(user.getUserTypeIds()));
+            // TODO: if we get 2 many users this might me moved to a string in the user
+            // table so that we can load them faster.
+            // This will make the user type change a bit slower but that is not that
+            // frequent of a request compared with the login that affects everyuser
+            user.addUserTypesId(userRepository.getAllUserTypes(user.getId()));
+            return user;
         } else {
             throw new IllegalArgumentException("Password is incorrect");
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    private void createEmployeeRequireNewTransaction(long userId) throws Exception {
+    @Transactional(readOnly = true)
+    public String loginUser(UserSignInDTO user) throws Exception {
+        return jwtUtils.generateToken(user.getId(), user.getEmployeeId(),
+                UserTypeService.getUserRoles(user.getUserTypeIds()));
+    }
+
+    @Transactional(readOnly = false)
+    public void createEmployee(Long userId) throws Exception {
         if (employeeRepository.existsByUserId(userId))
             throw new UserAlreadyExistsException();
         Employee employee = new Employee();

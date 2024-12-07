@@ -15,9 +15,11 @@ import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.user.ResetPwdDTO;
 import com.teamsantos.easybarber.DTO.user.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.user.UserDTO;
+import com.teamsantos.easybarber.DTO.user.UserSignInDTO;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.services.MessagingService;
 import com.teamsantos.easybarber.services.UserService;
+import com.teamsantos.easybarber.services.UserTypeService;
 
 @RestController
 public class AuthController {
@@ -41,7 +43,12 @@ public class AuthController {
             if (employee == null) {
                 employee = false;
             }
-            return ResponseEntity.ok(userService.loginUser(userDTO, employee));
+            UserSignInDTO userSignInDTO = userService.findUserSignIn(userDTO);
+            if (employee && userSignInDTO.getEmployeeId() == null) {
+                userService.createEmployee(userSignInDTO.getId());
+                userSignInDTO.addUserTypesId(UserTypeService.getUserType(UserTypeService.UserTypes.EMPLOYEE));
+            }
+            return ResponseEntity.ok(userService.loginUser(userSignInDTO));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
