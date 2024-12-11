@@ -3,6 +3,7 @@ package com.teamsantos.easybarber.controllers;
 import java.security.Principal;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +36,7 @@ import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.services.EmployeeService;
 import com.teamsantos.easybarber.services.EstablishmentService;
+import com.teamsantos.easybarber.services.MessagingService;
 import com.teamsantos.easybarber.services.SchedulesService;
 import com.teamsantos.easybarber.services.ServiceService;
 import com.teamsantos.easybarber.services.UserService;
@@ -43,21 +45,27 @@ import com.teamsantos.easybarber.services.UserTypeService;
 @RestController
 @RequestMapping("/employee")
 public class EmployeeController extends ImageController<Employee, EmployeeImage> {
+    @Value("${teamsantos.istest}")
+    private boolean isTestContext;
+
     private final EmployeeService employeeService;
     private final UserService userService;
     private final ServiceService serviceService;
     private final SchedulesService schedulesService;
     private final EstablishmentService establishmentService;
+    private final MessagingService messagingService;
 
     @Autowired
     public EmployeeController(EmployeeService employeeService, UserService userService, ServiceService serviceService,
-            SchedulesService schedulesService, EstablishmentService establishmentService) {
+            SchedulesService schedulesService, EstablishmentService establishmentService,
+            MessagingService messagingService) {
         super(employeeService);
         this.employeeService = employeeService;
         this.userService = userService;
         this.serviceService = serviceService;
         this.establishmentService = establishmentService;
         this.schedulesService = schedulesService;
+        this.messagingService = messagingService;
     }
 
     @PostMapping
@@ -65,8 +73,15 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
             Principal principal) {
         HttpStatus status = HttpStatus.CREATED;
         try {
-            if (principal != null && !userService.userChangePermissions(principal, employee.getMobileInformation()))
-                return ResponseEntity.badRequest().body(new BaseResponseDTO("You are not allowed to create this user"));
+            if (!isTestContext) {
+                messagingService.verifyCode(employee.getMobileInformation(),
+                        employee.getConfirmationCode());
+            }
+            if (principal != null) {
+                if (!userService.userChangePermissions(principal, employee.getMobileInformation()))
+                    return ResponseEntity.badRequest()
+                            .body(new BaseResponseDTO("You are not allowed to create this user"));
+            }
             BaseResponseDTO response = new BaseResponseDTO();
             response.setResponseMessage("Employee created successfully");
             response.setId(userService.createUser(employee, true).getId());

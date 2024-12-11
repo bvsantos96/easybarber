@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,12 +15,17 @@ import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.user.ResetPwdDTO;
 import com.teamsantos.easybarber.DTO.user.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.user.UserDTO;
+import com.teamsantos.easybarber.DTO.user.UserSignInDTO;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.services.MessagingService;
 import com.teamsantos.easybarber.services.UserService;
+import com.teamsantos.easybarber.services.UserTypeService;
 
 @RestController
 public class AuthController {
+    @Value("${teamsantos.istest}")
+    private boolean isTestContext;
+
     private final UserService userService;
     private final MessagingService messagingService;
 
@@ -37,7 +43,12 @@ public class AuthController {
             if (employee == null) {
                 employee = false;
             }
-            return ResponseEntity.ok(userService.loginUser(userDTO, employee));
+            UserSignInDTO userSignInDTO = userService.findUserSignIn(userDTO);
+            if (employee && userSignInDTO.getEmployeeId() == null) {
+                userService.createEmployee(userSignInDTO.getId());
+                userSignInDTO.addUserTypesId(UserTypeService.getUserType(UserTypeService.UserTypes.EMPLOYEE));
+            }
+            return ResponseEntity.ok(userService.loginUser(userSignInDTO));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }
@@ -48,6 +59,10 @@ public class AuthController {
         HttpStatus status = HttpStatus.CREATED;
         try {
             userDTO.setMobile(userDTO.getMobile().replace(" ", ""));
+            if (!isTestContext) {
+                messagingService.verifyCode(userDTO.getMobileInformation(),
+                        userDTO.getConfirmationCode());
+            }
             return ResponseEntity.status(status).body(userService.createUser(userDTO));
         } catch (Exception e) {
             UserDTO response = new UserDTO();
