@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.DTO.user;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import com.teamsantos.easybarber.DTO.BaseDTO;
@@ -20,5 +21,19 @@ public class UserSignInDTO extends BaseDTO {
         this.password = password;
         this.mobileInformation = mobileInformation;
         this.employeeId = employeeId;
+    }
+
+    public void addUserTypesId(long id) {
+        if (userTypeIds == null) {
+            userTypeIds = new HashSet<>();
+        }
+        userTypeIds.add(id);
+    }
+
+    public void addUserTypesId(Set<Long> ids) {
+        if (userTypeIds == null) {
+            userTypeIds = new HashSet<>();
+        }
+        userTypeIds.addAll(ids);
     }
 }
