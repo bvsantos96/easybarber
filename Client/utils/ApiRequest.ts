@@ -338,13 +338,13 @@ export const validateRegister = async (countryCode: string, phone: string, passw
     return { success: true, message: "" };
 }
 
-export const doRegister = async (countryCode: string, phone: string, password: string, confirmPassword: string, name: string): Promise<IResult<any>> => {
+export const doRegister = async (countryCode: string, phone: string, password: string, confirmPassword: string, name: string, confirmationCode: string): Promise<IResult<any>> => {
     phone = phone.trim();
     validateRegister(countryCode, phone, password, confirmPassword, name);
     name = name.trim();
     if (name.length < 3)
         return { success: false, message: langs.apiMessages.register.invalidName };
-    const result = await request("register", "POST", { countryMobile: countryCode, mobile: phone, password, name }, langs.apiMessages.register.success, langs.apiMessages.register.failed, ResponseType.LIST);
+    const result = await request("register", "POST", { countryMobile: countryCode, mobile: phone, password, name, confirmationCode }, langs.apiMessages.register.success, langs.apiMessages.register.failed, ResponseType.LIST);
     if (result.success)
         await doLogin(countryCode, phone, password);
     return result;

@@ -13,6 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserCreateDTO extends BaseDTO {
+    private String confirmationCode;
     private String countryMobile;
     private String mobile;
     private String password;
@@ -32,6 +33,16 @@ public class UserCreateDTO extends BaseDTO {
         this.mobile = mobile.replace(" ", "");
         this.password = password;
         this.name = name;
+        this.confirmationCode = null;
+    }
+
+    public UserCreateDTO(String countryMobile, String mobile, String password, String name) {
+        super(null);
+        this.countryMobile = countryMobile;
+        this.mobile = mobile.replace(" ", "");
+        this.password = password;
+        this.name = name;
+        this.confirmationCode = null;
     }
 
     @Override

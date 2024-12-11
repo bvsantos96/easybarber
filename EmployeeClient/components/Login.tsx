@@ -75,10 +75,6 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
         }
     }
 
-    const guestLogin = () => {
-        resetNavigation(navigation, Routes.Home);
-    }
-
     return (
         <>
             <KeyboardAvoidingScrollView
@@ -128,9 +124,6 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
                 <Text style={styles.newUserText}>{texts.login.newUser}</Text>
                 <Divider horizontal size={13} />
                 <Text style={styles.newUserRedText}>{texts.register.button}</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.newUserContainer} onPress={guestLogin}>
-                <Text style={styles.newUserRedText}>{texts.login.guest}</Text>
             </TouchableOpacity>
         </>
     )

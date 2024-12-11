@@ -102,7 +102,7 @@ const Router = () => {
             });
             return;
         } else {
-            setTimeout(async () => await waitAndResetNavigation(page), 500);
+            setTimeout(async () => await waitAndResetNavigation(page, params), 500);
         }
     }
 
@@ -111,7 +111,7 @@ const Router = () => {
             navigationRef.current.navigate(page, params);
             return;
         } else {
-            setTimeout(async () => await waitAndNavigate(page), 500);
+            setTimeout(async () => await waitAndNavigate(page, params), 500);
         }
     }
 
