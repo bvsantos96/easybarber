@@ -61,7 +61,7 @@ export default function Home({ navigation }: PropNavigation) {
 
     const replaceFilter = (filter: IFilterRequest) => {
         let req: ITimedRequest<EstablishmentInfo> = new TimedRequest(createPageable<EstablishmentInfo>(), 0, filter);
-        pageListRef?.current?.loadMoreItems(req);
+        pageListRef?.current?.reset(req);
         _setFilter(filter);
     }
 
