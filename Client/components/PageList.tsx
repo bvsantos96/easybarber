@@ -1,5 +1,5 @@
 import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
-import { FlatList, View, Text, ViewStyle, NativeSyntheticEvent } from "react-native";
+import { FlatList, View, Text, ViewStyle, NativeSyntheticEvent, ActivityIndicator } from "react-native";
 import PagerView from "react-native-pager-view";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet/src";
 
@@ -11,6 +11,7 @@ import { debounce } from "lodash";
 import texts from "@lang/en.json";
 import Button from "./Button";
 import Divider from "./Divider";
+import { useTheme } from "@styles/ThemeContext";
 
 interface PageListProps<T extends Identifiable> {
     renderItem: (item: { item: T, index: number }) => React.JSX.Element;
@@ -31,14 +32,16 @@ interface PageSwipeEvent {
     offset: number;
 }
 export interface PageListRef<T extends Identifiable> {
-    _loadMoreItems: () => void;
+    _loadMoreItems: (req?: ITimedRequest<T>) => void;
     loadMoreItems: (req: ITimedRequest<T>) => void;
     request: ITimedRequest<T>;
     setRequest: React.Dispatch<React.SetStateAction<ITimedRequest<any>>>;
     deleteItem: (id: number) => void;
+    reset: (req: ITimedRequest<T>) => void;
 }
 
 const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Ref<PageListRef<T>>) => {
+    const theme = useTheme();
     const { renderItem, requestFunction, loadCache, saveCache, resetCache, style, preload = true } = props;
     const type = props.type || PageListType.FLAT;
     const initialItems = props.initialItems || [];
@@ -46,6 +49,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     const styles = getStyles();
     const [request, setRequest] = useState<ITimedRequest<T>>(new TimedRequest(createPageable<T>(pageSize), 0));
     const [loadingMore, setLoadingMore] = useState(false);
+    const [reseting, setReseting] = useState(false);
     const firstEndReached = useRef(true);
     const pagerViewRef = React.useRef<PagerView>(null);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);;
@@ -74,10 +78,15 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
         } finally {
             setLoadingMore(false);
             setFirstLoad(false);
+            setReseting(false);
         }
     };
 
-    const _loadMoreItems = useRef(debounce(loadMoreItems, 300)).current;
+    const _loadMoreItems = useRef(
+        debounce((passedReq = request) => {
+            loadMoreItems(passedReq);
+        }, 300)
+    ).current;
 
     const deleteItem = (id: number) => {
         const newItems = request.page.content.filter((item) => item.id !== id);
@@ -91,6 +100,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
         request,
         setRequest,
         deleteItem,
+        reset: _resetList
     }));
 
     useEffect(() => {
@@ -112,9 +122,18 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
         };
     }, []);
 
-    const resetList = () => {
+    const resetList = (req?: ITimedRequest<T>) => {
+        setLoadingMore(true);
+        setFirstLoad(true);
+        setReseting(true);
         firstEndReached.current = true;
         if (resetCache) resetCache(); else { saveCache && saveCache([]); }
+        if (req) {
+            req.page.currentPage = 1;
+            setRequest(new TimedRequest(req.page, 0, req.pathParams));
+            loadMoreItems(req);
+            return;
+        }
         loadMoreItems(new TimedRequest(createPageable<T>(pageSize), 0));
         return;
     }
@@ -146,8 +165,12 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={() =>
-                        firstLoad ? (
-                            null
+                        loadingMore ? (
+                            reseting ? (
+                                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
+                                    <ActivityIndicator size="large" color={theme.colors.text.lightGray} />
+                                </View>
+                            ) : null
                         ) : (
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
                                 <View style={{ justifyContent: "center", alignItems: 'center' }}>
@@ -180,8 +203,12 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={() =>
-                        firstLoad ? (
-                            null
+                        loadingMore ? (
+                            reseting ? (
+                                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
+                                    <ActivityIndicator size="large" color={theme.colors.text.lightGray} />
+                                </View>
+                            ) : null
                         ) : (
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
                                 <View style={{ justifyContent: "center", alignItems: 'center' }}>
