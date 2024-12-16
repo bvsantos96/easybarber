@@ -181,6 +181,15 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                             </View>
                         )
                     }
+                    ListFooterComponent={
+                        loadingMore ? (
+                            (!firstLoad ? (
+                                <View style={{ paddingVertical: 20 }}>
+                                    <ActivityIndicator size="large" color={theme.colors.text.lightGray} />
+                                </View>
+                            ) : null)
+                        ) : null
+                    }
                 />
             );
         case PageListType.FLAT:
@@ -218,6 +227,15 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                                 </View>
                             </View>
                         )
+                    }
+                    ListFooterComponent={
+                        loadingMore ? (
+                            (!firstLoad ? (
+                                <View style={{ paddingVertical: 20 }}>
+                                    <ActivityIndicator size="large" color={theme.colors.text.lightGray} />
+                                </View>
+                            ) : null)
+                        ) : null
                     }
                 />);
         case PageListType.PAGERVIEW: return (
