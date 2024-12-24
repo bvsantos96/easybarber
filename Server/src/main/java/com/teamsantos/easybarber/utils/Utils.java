@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 
 import org.bouncycastle.jcajce.provider.digest.SHA256;
 import org.json.JSONArray;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 
@@ -80,6 +81,7 @@ public class Utils {
         // Type mapping for Establishment to EstablishmentDTO
         modelMapper.typeMap(Establishment.class, EstablishmentDTO.class)
                 .addMappings(mapper -> mapper.map(src -> src.getLocation(), EstablishmentDTO::setLocation));
+
         modelMapper.addMappings(new PropertyMap<User, UserDTO>() {
             @Override
             protected void configure() {
@@ -90,6 +92,16 @@ public class Utils {
                         .map(source.getUserTypes(), destination.getUserTypes());
             }
         });
+
+        Converter<Price, Double> toDouble = ctx -> ctx.getSource().getValue();
+        Converter<Double, Price> toPrice = ctx -> {
+            Price price = new Price(ctx.getSource());
+            return price;
+        };
+
+        modelMapper.addConverter(toDouble);
+        modelMapper.addConverter(toPrice);
+
         _modelMapper = modelMapper;
         return modelMapper;
     }

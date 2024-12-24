@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.services;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -416,5 +417,10 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
             }
             establishmentRepository.save(establishment);
         });
+    }
+
+    @Transactional(readOnly = true)
+    public double getActualPrice(double price, long establishmentServiceId, LocalDateTime dateTime) {
+        return price;
     }
 }
