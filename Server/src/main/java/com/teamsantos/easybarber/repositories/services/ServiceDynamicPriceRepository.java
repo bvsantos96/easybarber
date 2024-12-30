@@ -15,10 +15,10 @@ import com.teamsantos.easybarber.utils.Triple;
 @Repository
 public interface ServiceDynamicPriceRepository extends JpaRepository<ServiceDynamicPrice, ServiceDynamicPriceId> {
     @Query("""
-            SELECT *
+            SELECT CASE WHEN sdpe IS NOT NULL THEN sdpe ELSE sdp END
             FROM EstablishmentServiceEmployee ese
-            LEFT JOIN ServiceDynamicPrice sdpe ON sdpe.establishmentServiceEmployee.id = ese.id AND sdpe.from <= :date AND (sdpe.to IS NULL OR sdpe.to >= :date)
-            LEFT JOIN ServiceDynamicPrice sdp ON sdp.establishmentService.id = ese.service.id AND sdp.from <= :date AND (sdp.to IS NULL OR sdp.to >= :date) AND sdp.establishmentServiceEmployee IS NULL
+            LEFT JOIN ServiceDynamicPrice sdpe ON sdpe.establishmentServiceEmployee.id = ese.id AND sdpe.id.validFrom <= :date AND (sdpe.id.validTo IS NULL OR sdpe.id.validTo >= :date)
+            LEFT JOIN ServiceDynamicPrice sdp ON sdp.establishmentService.id = ese.service.id AND sdp.id.validFrom <= :date AND (sdp.id.validTo IS NULL OR sdp.id.validTo >= :date) AND sdp.establishmentServiceEmployee IS NULL
             WHERE
                 ese.establishment.id = :establishmentId
                 AND ese.service.service.id = :serviceId
@@ -28,7 +28,7 @@ public interface ServiceDynamicPriceRepository extends JpaRepository<ServiceDyna
             long employeeId, LocalDateTime date);
 
     @Query("""
-            SELECT dp.date
+            SELECT new com.teamsantos.easybarber.utils.Pair(dp.id.validFrom, dp.id.validTo)
             FROM ServiceDynamicPrice dp
             WHERE
                 (
@@ -36,14 +36,14 @@ public interface ServiceDynamicPriceRepository extends JpaRepository<ServiceDyna
                     OR
                     dp.establishmentServiceEmployee.id = :establishmentServiceEmployeeId
                 )
-                AND dp.from <= :from
-                AND (dp.to IS NULL OR dp.to >= :to)
+                AND dp.id.validFrom <= :from
+                AND (dp.id.validTo IS NULL OR dp.id.validTo >= :to)
             """)
-    List<LocalDateTime> list(long establishmentId, long establishmentServiceId, Long establishmentServiceEmployeeId,
+    List<Pair<LocalDateTime, LocalDateTime>> list(long establishmentServiceId, Long establishmentServiceEmployeeId,
             LocalDateTime from, LocalDateTime to);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.utils.Triple(dp.from, dp.to ,dp.price)
+            SELECT new com.teamsantos.easybarber.utils.Triple(dp.id.validFrom, dp.id.validTo ,dp.price)
             FROM ServiceDynamicPrice dp
             WHERE
                 (
@@ -51,8 +51,8 @@ public interface ServiceDynamicPriceRepository extends JpaRepository<ServiceDyna
                     OR
                     dp.establishmentServiceEmployee.id = :establishmentServiceEmployeeId
                 )
-                AND (:to IS NULL AND dp.from == :date)
-                AND (:to IS NOT NULL AND dp.from <= :date AND dp.to >= :to)
+                AND (:to IS NULL AND dp.id.validFrom = :from)
+                AND (:to IS NOT NULL AND dp.id.validFrom <= :from AND dp.id.validTo >= :to)
             """)
     Triple<LocalDateTime, LocalDateTime, Double> findPriceByEstablishmentServiceIdAndEstablishmentServiceEmployeeIdAndDates(
             long establishmentServiceId,
@@ -65,8 +65,8 @@ public interface ServiceDynamicPriceRepository extends JpaRepository<ServiceDyna
                 ELSE e.service.price
             END, dpe IS NOT NULL AND dp IS NOT NULL
             FROM EstablishmentServiceEmployee e
-            LEFT JOIN e.dynamicPrices dpe ON dpe.from <= :of AND dpe.to >= :of
-            LEFT JOIN e.service.dynamicPrices dp ON dp.from <= :of AND dp.to >= :of AND dp.establishmentServiceEmployee IS NULL
+            LEFT JOIN e.dynamicPrices dpe ON dpe.id.validFrom <= :of AND dpe.id.validTo >= :of
+            LEFT JOIN e.service.dynamicPrices dp ON dp.id.validFrom <= :of AND dp.id.validTo >= :of AND dp.establishmentServiceEmployee IS NULL
             WHERE e.service.id = :establishmentServiceId
                 AND e.employee.id = :establishmentStaffId
             """)

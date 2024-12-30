@@ -28,11 +28,8 @@ public class ServiceDynamicPrice {
     @Column(nullable = false)
     private double price;
 
-    @Column(nullable = false)
-    private LocalDateTime from;
-
-    @Column(nullable = false)
-    private LocalDateTime to;
+    @EmbeddedId
+    private ServiceDynamicPriceId id;
 
     @AssertTrue(message = "Either establishmentServiceEmployee or establishmentService must be set")
     private boolean isValidReference() {
@@ -42,12 +39,16 @@ public class ServiceDynamicPrice {
     @Embeddable
     @Data
     public static class ServiceDynamicPriceId implements Serializable {
+        @Column(name = "establishment_service_employee_id", insertable = false, updatable = false)
         private Long establishmentServiceEmployeeId;
+
+        @Column(name = "establishment_service_id", insertable = false, updatable = false)
         private Long establishmentServiceId;
+
+        @Column(name = "valid_from")
         private LocalDateTime validFrom;
+
+        @Column(name = "valid_to")
         private LocalDateTime validTo;
     }
-
-    @EmbeddedId
-    private ServiceDynamicPriceId id;
 }

@@ -6,3 +6,6 @@ run: clean
 
 test:
     mvn clean install
+
+versions:
+    java --version

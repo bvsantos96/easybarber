@@ -3,6 +3,8 @@ package com.teamsantos.easybarber.services;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -159,8 +161,12 @@ public class ServiceService extends
                 : establishmentServiceEmployeeRepository.getIdByEstablishmentServiceIdAndEstablishmentStaffId(
                         establishmentServiceId,
                         establishmentStaffId);
-        return serviceDynamicPriceRepository.list(establishmentId, establishmentServiceId,
-                establishmentServiceEmployeeId, from, to).stream().map(date -> date.toLocalDate().toString()).toList();
+        return serviceDynamicPriceRepository.list(establishmentServiceId, establishmentServiceEmployeeId, from, to)
+                .stream()
+                .flatMap(dates -> Stream.of(
+                        dates.getFirst().toLocalDate().toString(),
+                        dates.getSecond().toLocalDate().toString()))
+                .collect(Collectors.toList());
     }
 
     @Async
