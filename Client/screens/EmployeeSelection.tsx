@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, Text, FlatList } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
@@ -29,25 +29,16 @@ export default function EmployeeSelection({ navigation, route }: Props) {
     const { establishmentId, serviceId, date, startHour, availableEmployees } = route.params;
     const [selected, setSelected] = useState<number | string>(0);
     const [topPadding, setTopPadding] = useState(0);
-    const [oldDate, setOldDate] = useState(date);
-    const [oldStartHour, setOldStartHour] = useState(startHour);
     const { alert } = useAlertStore();
     const { data } = useQuery({
         queryKey: [`establishment/${establishmentId}/service/${serviceId}/employees`, serviceId, startHour, date],
         queryFn: async () => {
-            console.log("Fetching employees");
-            setOldDate(date);
-            setOldStartHour(startHour);
             return getEstablishmentServiceEmployees(establishmentId, serviceId, date, startHour)
         },
-        enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0 && (availableEmployees == undefined || availableEmployees == null || availableEmployees.length == 0 || oldDate !== date || oldStartHour !== startHour),
+        enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0 && (availableEmployees == undefined || availableEmployees == null || availableEmployees.length == 0),
         networkMode: 'offlineFirst',
         staleTime: 60000
     });
-
-    useEffect(() => {
-        console.log(data);
-    }, [data]);
 
     const today = new Date();
     const month = today.getMonth() + 1;
