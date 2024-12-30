@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.repositories.establishmentServices;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -7,7 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.teamsantos.easybarber.DTO.NameIdImageDTO;
+import com.teamsantos.easybarber.DTO.NameIdImagePriceDTO;
 import com.teamsantos.easybarber.entities.EstablishmentServiceEmployee;
 
 @Repository
@@ -24,16 +25,32 @@ public interface EstablishmentServiceEmployeeRepository extends JpaRepository<Es
             long employeeId);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.NameIdImageDTO(
+            SELECT new com.teamsantos.easybarber.DTO.NameIdImagePriceDTO(
                 e.employee.id,
                 e.employee.employee.user.name,
-                img.data
+                img.data,
+                CASE
+                    WHEN dpe IS NOT NULL THEN dpe.price
+                    WHEN dp IS NOT NULL THEN dp.price
+                    ELSE e.service.price
+                END
             )
             FROM EstablishmentServiceEmployee e
             JOIN EmployeeSchedule es ON es.employee.id = e.employee.id AND es.establishment.id = e.establishment.id
             LEFT JOIN e.employee.employee.images img ON img.isMain = true
+            LEFT JOIN e.dynamicPrices dpe ON dpe.from <= :date AND dpe.to >= :date ON dp.from <= :date AND dp.to >= :date
+            LEFT JOIN e.service.dynamicPrices dp ON dp.from <= :date AND dp.to >= :date AND dp.establishmentServiceEmployee IS NULL
             WHERE e.service.id = :establishmentServiceId
             GROUP BY e.employee.id, e.employee.employee.user.name, img.data
             """)
-    List<NameIdImageDTO> listEmployeesOfEstablishmentService(long establishmentServiceId);
+    List<NameIdImagePriceDTO> listEmployeesOfEstablishmentService(long establishmentServiceId, LocalDateTime date);
+
+    @Query("""
+            SELECT ese.id
+            FROM EstablishmentServiceEmployee ese
+            WHERE
+                ese.service.id = :establishmentServiceId
+                AND ese.employee.id = :establishmentStaffId
+            """)
+    Long getIdByEstablishmentServiceIdAndEstablishmentStaffId(long establishmentServiceId, long establishmentStaffId);
 }

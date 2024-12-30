@@ -1,11 +1,16 @@
 package com.teamsantos.easybarber.services;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
@@ -34,6 +39,7 @@ import com.teamsantos.easybarber.repositories.services.ServiceRepository;
 import com.teamsantos.easybarber.services.helper.AvailabilityCalculation;
 import com.teamsantos.easybarber.utils.PageDTO;
 import com.teamsantos.easybarber.utils.Pair;
+import com.teamsantos.easybarber.utils.Triple;
 import com.teamsantos.easybarber.utils.Utils;
 
 import jakarta.persistence.EntityManager;
@@ -43,6 +49,7 @@ public class SchedulesService {
     private final AppointmentRepository appointmentRepository;
     private final EmployeeScheduleRepository employeeScheduleRepository;
     private final ServiceRepository serviceRepository;
+    private final ServiceService serviceService;
     private final EstablishmentService establishmentService;
     private final ScheduleExceptionsRepository scheduleExceptionRepository;
     private final EstablishmentStaffRepository establishmentStaffRepository;
@@ -54,6 +61,7 @@ public class SchedulesService {
     public SchedulesService(EmployeeScheduleRepository employeeScheduleRepository,
             AppointmentRepository appointmentRepository,
             ServiceRepository serviceRepository,
+            ServiceService serviceService,
             ScheduleExceptionsRepository scheduleExceptionRepository,
             EstablishmentStaffRepository establishmentStaffRepository,
             EstablishmentServiceRepository establishmentServiceRepository,
@@ -66,6 +74,7 @@ public class SchedulesService {
         this.establishmentServiceRepository = establishmentServiceRepository;
         this.appointmentRepository = appointmentRepository;
         this.serviceRepository = serviceRepository;
+        this.serviceService = serviceService;
         this.modelMapper = modelMapper;
         this.entityManager = entityManager;
     }
@@ -187,9 +196,21 @@ public class SchedulesService {
     public TimeSlotsDTO getSchedulesByDay(ScheduleFilter filter) throws Exception {
         convertEstablishmentStaffAndServiceIds(filter);
         filter.parseDate();
+        CompletableFuture<Triple<LocalDateTime, LocalDateTime, Double>> pricesFuture = serviceService.getPrices(
+                filter.getEstablishmentServiceId(),
+                filter.getEstablishmentStaffId(),
+                LocalDateTime.of(filter.getTo(), filter.getEndHour()),
+                LocalDateTime.of(filter.getFrom(), filter.getStartHour()));
         AvailabilityCalculation availability = new AvailabilityCalculation(filter, employeeScheduleRepository,
                 scheduleExceptionRepository, appointmentRepository, serviceRepository);
-        return availability.getTimeSlots().sort();
+        TimeSlotsDTO timeSlots = availability.getTimeSlots().sort();
+        try {
+            Triple<LocalDateTime, LocalDateTime, Double> prices = pricesFuture.get(5, TimeUnit.SECONDS);
+            timeSlots.setPrices(prices);
+        } catch (InterruptedException | ExecutionException | TimeoutException e) {
+            throw new RuntimeException("Failed to retrieve price", e);
+        }
+        return timeSlots;
     }
 
     @Transactional(readOnly = true)
@@ -198,7 +219,6 @@ public class SchedulesService {
         filter.parseDate();
         AvailabilityCalculation availability = new AvailabilityCalculation(filter, employeeScheduleRepository,
                 scheduleExceptionRepository, appointmentRepository, serviceRepository);
-
         return availability.getUnavailableDates();
     }
 

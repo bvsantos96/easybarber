@@ -1,11 +1,14 @@
 package com.teamsantos.easybarber.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -94,6 +97,17 @@ public class ServiceController extends ImageController<Service, ServiceImage> {
             response.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
+    }
+
+    @GetMapping("/list/dynamicPrices")
+    public ResponseEntity<List<String>> listDynamicPrices(
+            @PathVariable Integer year,
+            @PathVariable Integer month,
+            @RequestParam(required = true) long establishmentId,
+            @RequestParam(required = true) long establishmentServiceId,
+            @RequestParam(required = false) Long establishmentStaffId) {
+        return ResponseEntity.ok(serviceService.listDynamicPrices(year, month, establishmentId, establishmentServiceId,
+                establishmentStaffId));
     }
 
     @Override

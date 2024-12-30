@@ -1,12 +1,15 @@
 package com.teamsantos.easybarber.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,10 +27,13 @@ import com.teamsantos.easybarber.entities.ServiceType;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.GenericNotFoundException;
 import com.teamsantos.easybarber.repositories.ServiceTypeRepository;
+import com.teamsantos.easybarber.repositories.establishmentServices.EstablishmentServiceEmployeeRepository;
 import com.teamsantos.easybarber.repositories.establishmentServices.EstablishmentServiceRepository;
 import com.teamsantos.easybarber.repositories.images.ServiceImageRepository;
+import com.teamsantos.easybarber.repositories.services.ServiceDynamicPriceRepository;
 import com.teamsantos.easybarber.repositories.services.ServiceRepository;
 import com.teamsantos.easybarber.security.utils.UserContext;
+import com.teamsantos.easybarber.utils.Triple;
 
 import jakarta.persistence.EntityManager;
 
@@ -37,6 +43,8 @@ public class ServiceService extends
     private final ServiceRepository serviceRepository;
     private final ServiceTypeRepository serviceTypeRepository;
     private final EstablishmentServiceRepository establishmentServiceRepository;
+    private final ServiceDynamicPriceRepository serviceDynamicPriceRepository;
+    private final EstablishmentServiceEmployeeRepository establishmentServiceEmployeeRepository;
     private final ModelMapper modelMapper;
     private final EntityManager entityManager;
 
@@ -44,6 +52,8 @@ public class ServiceService extends
     public ServiceService(ServiceRepository repository,
             EstablishmentServiceRepository establishmentServiceRepository,
             ServiceTypeRepository serviceTypeRepository,
+            ServiceDynamicPriceRepository serviceDynamicPriceRepository,
+            EstablishmentServiceEmployeeRepository establishmentServiceEmployeeRepository,
             ServiceImageRepository imageRepository,
             ModelMapper modelMapper,
             EntityManager entityManager) {
@@ -51,6 +61,8 @@ public class ServiceService extends
         this.serviceRepository = repository;
         this.establishmentServiceRepository = establishmentServiceRepository;
         this.serviceTypeRepository = serviceTypeRepository;
+        this.serviceDynamicPriceRepository = serviceDynamicPriceRepository;
+        this.establishmentServiceEmployeeRepository = establishmentServiceEmployeeRepository;
         this.modelMapper = modelMapper;
         this.entityManager = entityManager;
     }
@@ -136,5 +148,40 @@ public class ServiceService extends
             return true;
         }
         return false;
+    }
+
+    public List<String> listDynamicPrices(int year, int month, long establishmentId,
+            long establishmentServiceId,
+            Long establishmentStaffId) {
+        LocalDateTime from = LocalDateTime.of(year, month, 1, 0, 0);
+        LocalDateTime to = from.plusMonths(1);
+        Long establishmentServiceEmployeeId = establishmentStaffId == null ? null
+                : establishmentServiceEmployeeRepository.getIdByEstablishmentServiceIdAndEstablishmentStaffId(
+                        establishmentServiceId,
+                        establishmentStaffId);
+        return serviceDynamicPriceRepository.list(establishmentId, establishmentServiceId,
+                establishmentServiceEmployeeId, from, to).stream().map(date -> date.toLocalDate().toString()).toList();
+    }
+
+    @Async
+    public CompletableFuture<Triple<LocalDateTime, LocalDateTime, Double>> getPrice(long establishmentServiceId,
+            Long establishmentServiceEmployeeId,
+            LocalDateTime date) {
+        return CompletableFuture.completedFuture(
+                serviceDynamicPriceRepository
+                        .findPriceByEstablishmentServiceIdAndEstablishmentServiceEmployeeIdAndDates(
+                                establishmentServiceId,
+                                establishmentServiceEmployeeId, date, null));
+    }
+
+    @Async
+    public CompletableFuture<Triple<LocalDateTime, LocalDateTime, Double>> getPrices(long establishmentServiceId,
+            Long establishmentServiceEmployeeId,
+            LocalDateTime from, LocalDateTime to) {
+        return CompletableFuture.completedFuture(
+                serviceDynamicPriceRepository
+                        .findPriceByEstablishmentServiceIdAndEstablishmentServiceEmployeeIdAndDates(
+                                establishmentServiceId,
+                                establishmentServiceEmployeeId, from, to));
     }
 }

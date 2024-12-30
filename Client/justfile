@@ -1,0 +1,26 @@
+cleanstart:
+    npm run cleanstart
+
+prebuild type:
+    #!/usr/bin/env bash
+    if [[ "{{type}}" == "ios" ]]; then \
+        npx expo prebuild --platform ios && \
+        pod install --project-directory=./ios --clean-install && \
+        rm -rf android; \
+    elif [[ "{{type}}" == "android" ]]; then \
+        npx expo prebuild --platform android; \
+    else \
+        npx expo prebuild --platform all; \
+    fi
+
+start type:
+    #!/usr/bin/env bash
+    if [[ "{{type}}" == "clean" ]]; then \
+        npx expo start -c; \
+    elif [[ "{{type}}" == "release" ]]; then \
+        npx expo start -c --tunnel --no-dev --minify; \
+    elif [[ "{{type}}" == "tunnel" ]]; then \
+        npx expo start --tunnel; \
+    else \
+        npx expo start; \
+    fi

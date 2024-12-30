@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.repositories.establishmentServices;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,10 +15,10 @@ import com.teamsantos.easybarber.DTO.NameIdImageDTO;
 import com.teamsantos.easybarber.DTO.establishment.service.EstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentServiceFilter;
 import com.teamsantos.easybarber.DTO.service.ServiceDTO;
+import com.teamsantos.easybarber.DTO.service.ServiceDynamicPriceDTO;
 import com.teamsantos.easybarber.DTO.service.ServiceFullDTO;
 import com.teamsantos.easybarber.DTO.service.ServiceListDTO;
 import com.teamsantos.easybarber.entities.EstablishmentService;
-import com.teamsantos.easybarber.utils.Pair;
 
 import jakarta.persistence.Tuple;
 
@@ -39,13 +40,29 @@ public interface EstablishmentServiceRepository
     Integer getDurationOfService(long establishmentId, long serviceId);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.utils.Pair(es.id, es.service.duration)
-            FROM EstablishmentService es
+            SELECT new com.teamsantos.easybarber.DTO.service.ServiceDynamicPriceDTO(
+                ese.service.id,
+                ese.service.duration,
+                CASE
+                    WHEN sdpe IS NOT NULL THEN sdpe.price
+                    WHEN sdp IS NOT NULL THEN sdp.price
+                    ELSE ese.service.price
+                END,
+                sdpe IS NOT NULL AND sdp IS NOT NULL
+            )
+            FROM EstablishmentServiceEmployee ese
+            LEFT JOIN ese.dynamicPrices sdpe ON sdpe.from <= :date AND (sdpe.to IS NULL OR sdpe.to >= :date)
+            LEFT JOIN ese.service.dynamicPrices sdp ON sdp.from <= :date AND (sdp.to IS NULL OR sdp.to >= :date) AND sdp.establishmentServiceEmployee IS NULL
             WHERE
-                es.establishment.id = :establishmentId
-                AND es.service.id = :serviceId
+                ese.establishment.id = :establishmentId
+                AND ese.service.service.id = :serviceId
+                AND ese.employee.id = :employeeId
             """)
-    Pair<Long, Integer> getIdAndDuration(long establishmentId, long serviceId);
+    ServiceDynamicPriceDTO getIdAndDurationAndPrice(
+            long establishmentId,
+            long serviceId,
+            long employeeId,
+            LocalDateTime date);
 
     @Query("""
             SELECT EXISTS (
@@ -91,14 +108,19 @@ public interface EstablishmentServiceRepository
     Page<EstablishmentServiceDTO> findAll(@Param("filter") EstablishmentServiceFilter filter, Pageable pageable);
 
     @Query("""
-                SELECT new com.teamsantos.easybarber.DTO.service.ServiceDTO(ess.service.id, ess.service.employee.id, ess.service.serviceType.id, ess.service.name, ess.service.description, ess.price, ess.service.duration)
-                FROM EstablishmentService ess
-                WHERE (:#{#filter.establishmentId} is null or ess.establishment.id = :#{#filter.establishmentId})
-                AND (:#{#filter.employeeId} is null or ess.service.employee.id = :#{#filter.employeeId})
-                AND (:#{#filter.serviceTypeId} is null or ess.service.serviceType.id = :#{#filter.serviceTypeId})
-                AND (:#{#filter.establishmentId} is null or ess.establishment.id = :#{#filter.establishmentId})
-                AND (:#{#filter.name} is null or lower(ess.service.name) like lower(concat('%', :#{#filter.name}, '%')))
-                AND (:#{#filter.description} is null or lower(ess.service.description) like lower(concat('%', :#{#filter.description}, '%')))
+            SELECT new com.teamsantos.easybarber.DTO.service.ServiceDTO(ess.service.id, ess.service.employee.id, ess.service.serviceType.id, ess.service.name, ess.service.description,
+            CASE
+                WHEN dp IS NOT NULL THEN dp.price
+                ELSE ess.price
+            END , ess.service.duration)
+            FROM EstablishmentService ess
+            LEFT JOIN ess.dynamicPrices dp ON dp.from <= :#{#filter.date} AND (dp.to IS NULL OR dp.to >= :#{filter.date}) AND dp.establishmentServiceEmployee IS NULL
+            WHERE (:#{#filter.establishmentId} is null or ess.establishment.id = :#{#filter.establishmentId})
+            AND (:#{#filter.employeeId} is null or ess.service.employee.id = :#{#filter.employeeId})
+            AND (:#{#filter.serviceTypeId} is null or ess.service.serviceType.id = :#{#filter.serviceTypeId})
+            AND (:#{#filter.establishmentId} is null or ess.establishment.id = :#{#filter.establishmentId})
+            AND (:#{#filter.name} is null or lower(ess.service.name) like lower(concat('%', :#{#filter.name}, '%')))
+            AND (:#{#filter.description} is null or lower(ess.service.description) like lower(concat('%', :#{#filter.description}, '%')))
             """)
     Page<ServiceDTO> findAllServiceDTO(EstablishmentServiceFilter filter, Pageable pageable);
 
@@ -171,26 +193,30 @@ public interface EstablishmentServiceRepository
                 se.service.serviceType.id,
                 se.service.name,
                 se.service.description,
-                se.price,
+                CASE
+                    WHEN dpe IS NOT NULL THEN dpe.price
+                    ELSE se.price
+                END,
                 img
             )
             FROM EstablishmentService se
             LEFT JOIN se.service.images img ON img.isMain = true
+            LEFT JOIN se.dynamicPrices dpe ON dpe.from <= :date AND (dpe.to IS NULL OR dpe.to >= :date) AND dpe.establishmentServiceEmployee IS NULL
             WHERE se.establishment.id = :establishmentId
             """)
-    List<ServiceListDTO> listServices(long establishmentId);
+    List<ServiceListDTO> listServices(long establishmentId, LocalDateTime date);
 
     @Query("""
-                SELECT new com.teamsantos.easybarber.DTO.NameIdImageDTO(
-                        es.service.employee.id,
-                        es.service.employee.user.name,
-                        i.data
-                    )
-                    FROM EstablishmentService es
-                    LEFT JOIN es.service.employee.images i
-                    WHERE es.establishment.id = :establishmentId
-                    AND es.service.id = :serviceId
-                    AND i.isMain = true
+            SELECT new com.teamsantos.easybarber.DTO.NameIdImageDTO(
+                    es.service.employee.id,
+                    es.service.employee.user.name,
+                    i.data
+                )
+                FROM EstablishmentService es
+                LEFT JOIN es.service.employee.images i
+                WHERE es.establishment.id = :establishmentId
+                AND es.service.id = :serviceId
+                AND i.isMain = true
             """)
     List<NameIdImageDTO> listEmployeesOfEstablishmentService(Long establishmentId, Long serviceId);
 

@@ -1,5 +1,7 @@
 package com.teamsantos.easybarber.DTO.filters;
 
+import java.time.LocalDateTime;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,4 +14,5 @@ import lombok.Setter;
 public class EstablishmentServiceFilter extends ServiceWithEmployeeFilter {
     private Long establishmentId;
     private boolean includeEstablishmentImage = true;
+    private LocalDateTime date;
 }
