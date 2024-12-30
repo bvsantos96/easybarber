@@ -12,6 +12,7 @@ import texts from "@lang/en.json";
 import { useQuery } from "@tanstack/react-query";
 import { Params, Routes } from "@navigation/Router";
 import Divider from "@components/Divider";
+import { buildCurrencyString } from "utils/Utils";
 
 export type Route = {
     establishmentId: number;
@@ -28,14 +29,25 @@ export default function EmployeeSelection({ navigation, route }: Props) {
     const { establishmentId, serviceId, date, startHour, availableEmployees } = route.params;
     const [selected, setSelected] = useState<number | string>(0);
     const [topPadding, setTopPadding] = useState(0);
+    const [oldDate, setOldDate] = useState(date);
+    const [oldStartHour, setOldStartHour] = useState(startHour);
     const { alert } = useAlertStore();
     const { data } = useQuery({
-        queryKey: [`establishment/${establishmentId}/service/${serviceId}/employees`, serviceId],
-        queryFn: async () => getEstablishmentServiceEmployees(establishmentId, serviceId),
-        enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0 && (availableEmployees == undefined || availableEmployees == null || availableEmployees.length == 0),
+        queryKey: [`establishment/${establishmentId}/service/${serviceId}/employees`, serviceId, startHour, date],
+        queryFn: async () => {
+            console.log("Fetching employees");
+            setOldDate(date);
+            setOldStartHour(startHour);
+            return getEstablishmentServiceEmployees(establishmentId, serviceId, date, startHour)
+        },
+        enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0 && (availableEmployees == undefined || availableEmployees == null || availableEmployees.length == 0 || oldDate !== date || oldStartHour !== startHour),
         networkMode: 'offlineFirst',
         staleTime: 60000
     });
+
+    useEffect(() => {
+        console.log(data);
+    }, [data]);
 
     const today = new Date();
     const month = today.getMonth() + 1;
@@ -111,7 +123,7 @@ export default function EmployeeSelection({ navigation, route }: Props) {
                             return availableEmployees.includes(+e.id);
                         }) || []}
                         renderItem={
-                            ({ item }: { item: ImageEntity }) =>
+                            ({ item }: { item: EmployeeEntity }) =>
                                 <SelectionItem
                                     key={item.id}
                                     image={item.image}
@@ -129,6 +141,7 @@ export default function EmployeeSelection({ navigation, route }: Props) {
                                             height: styles.titleContainer.height
                                         }}>
                                             <Text style={styles.singleTitle}>{item.name}</Text>
+                                            <Text style={styles.description}>{`${buildCurrencyString(item.price)}`}</Text>
                                         </View>
                                     </View>
                                 </SelectionItem>

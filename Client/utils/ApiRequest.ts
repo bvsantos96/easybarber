@@ -484,9 +484,10 @@ export const getAvailability = async (establishmentId: number, serviceId: number
     }
 }
 
-export const getEstablishmentServiceEmployees = async (establishmentId: number, establishmentServiceId: number): Promise<ImageEntity[]> => {
-    const result = await request<ImageEntity[]>(`establishment/${establishmentId}/service/${establishmentServiceId}/employees`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
-    return getItemsFromRequest<ImageEntity[]>(result);
+export const getEstablishmentServiceEmployees = async (establishmentId: number, establishmentServiceId: number, date?: string, time?: string): Promise<EmployeeEntity[]> => {
+    const dateTime = `${date}T${time}`;
+    const result = await request<EmployeeEntity[]>(`establishment/${establishmentId}/service/${establishmentServiceId}/employees${(date && time) ? "?date=" + dateTime : ""}`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
+    return getItemsFromRequest<EmployeeEntity[]>(result);
 }
 
 export const getEstablishmentServices = async (establishementId: number): Promise<ServiceInfo[]> => {

@@ -2,6 +2,7 @@ package com.teamsantos.easybarber.services;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -199,7 +200,7 @@ public class SchedulesService {
         CompletableFuture<Triple<LocalDateTime, LocalDateTime, Double>> pricesFuture = serviceService.getPrices(
                 filter.getEstablishmentServiceId(),
                 filter.getEstablishmentStaffId(),
-                LocalDateTime.of(filter.getTo(), filter.getEndHour()),
+                LocalDateTime.of(filter.getTo(), LocalTime.MAX),
                 LocalDateTime.of(filter.getFrom(), filter.getStartHour()));
         AvailabilityCalculation availability = new AvailabilityCalculation(filter, employeeScheduleRepository,
                 scheduleExceptionRepository, appointmentRepository, serviceRepository);

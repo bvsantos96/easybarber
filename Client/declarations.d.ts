@@ -234,6 +234,10 @@ declare interface ImageEntity extends Identifiable {
     image: string;
 }
 
+declare interface EmployeeEntity extends ImageEntity {
+    price: number;
+}
+
 declare interface TimeSlots {
     slots: TimeSlot[];
 }

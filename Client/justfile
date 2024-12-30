@@ -24,3 +24,15 @@ start type:
     else \
         npx expo start; \
     fi
+
+run type:
+    #!/usr/bin/env bash
+    if [[ "{{type}}" == "clean" ]]; then \
+        npx expo start -c; \
+    elif [[ "{{type}}" == "release" ]]; then \
+        npx expo start -c --tunnel --no-dev --minify; \
+    elif [[ "{{type}}" == "tunnel" ]]; then \
+        npx expo start --tunnel; \
+    else \
+        npx expo start; \
+    fi
