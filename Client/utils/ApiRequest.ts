@@ -465,6 +465,23 @@ export const setAppointment = async (appointment: AppointmentCreate): Promise<st
     }
 }
 
+export const getDynamicSlots = async (establishmentId: number, serviceId: number, employeeId: number, date: string, startHour: string): Promise<String[]> => {
+    const params = {
+        establishmentId: establishmentId,
+        establishmentServiceId: serviceId,
+        from: date,
+        startHour: startHour,
+        ...(employeeId == 0 ? {} : { establishmentStaffId: employeeId }),
+    };
+    const url = parsePathParams("service/list/dynamicprices/day", params);
+    const result = await request<String[]>(url, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
+    try {
+        return getItemsFromRequest<String[]>(result);
+    } catch (e) {
+        return [];
+    }
+}
+
 export const getAvailability = async (establishmentId: number, serviceId: number, employeeId: number, date: string, startHour: string): Promise<TimeSlots> => {
     const params = {
         establishmentId: establishmentId,

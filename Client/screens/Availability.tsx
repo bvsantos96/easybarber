@@ -11,7 +11,7 @@ import { useTheme } from "@styles/ThemeContext";
 import { MarkedDates } from "react-native-calendars/src/types";
 import { Underline } from "@components/Underline";
 import TimeSlotView from "@components/TimeSlotView";
-import { getAvailability, getStartingHour, getToken, getUnavailableDates, setAppointment } from "utils/ApiRequest";
+import { getAvailability, getDynamicSlots, getStartingHour, getToken, getUnavailableDates, setAppointment } from "utils/ApiRequest";
 import useAlertStore from "storage/stores/AlertStore";
 import { AlertType } from "@components/Alert";
 import texts from "@lang/en.json";
@@ -87,12 +87,25 @@ export default function Availability({ route, navigation }: Props) {
 
     const fetchAvailability = async () => {
         const today = new Date();
-        let availability: TimeSlots = await getAvailability(establishmentId, serviceId, employeeId, date, getStartingHour(today, date));
-        if (availability?.slots === null || availability?.slots === undefined) {
-            availability.slots = [];
-        }
-        setTimeSlots(buildTimeSlotViews(availability.slots));
-        setLoading(false);
+        getDynamicSlots(establishmentId, serviceId, employeeId, date, getStartingHour(today, date))
+            .then((prices: String[]) => {
+                console.log(prices);
+            })
+            .catch((error: String) => {
+                console.error(error);
+            });
+        getAvailability(establishmentId, serviceId, employeeId, date, getStartingHour(today, date))
+            .then((availability: TimeSlots) => {
+                if (availability?.slots === null || availability?.slots === undefined) {
+                    availability.slots = [];
+                }
+                setTimeSlots(buildTimeSlotViews(availability.slots));
+                setLoading(false);
+            }).catch((error) => {
+                console.error(error);
+                setTimeSlots(buildTimeSlotViews([]));
+                setLoading(false);
+            });
     }
 
     useEffect(() => {

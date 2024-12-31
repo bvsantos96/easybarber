@@ -152,6 +152,7 @@ public class ServiceService extends
         return false;
     }
 
+    // TODO: Create similar methods that for a given day returns the price and if it was dynamically set
     public List<String> listDynamicPrices(int year, int month, long establishmentId,
             long establishmentServiceId,
             Long establishmentStaffId) {
@@ -161,6 +162,7 @@ public class ServiceService extends
                 : establishmentServiceEmployeeRepository.getIdByEstablishmentServiceIdAndEstablishmentStaffId(
                         establishmentServiceId,
                         establishmentStaffId);
+        // TODO: this should return a set of every day that has a price set
         return serviceDynamicPriceRepository.list(establishmentServiceId, establishmentServiceEmployeeId, from, to)
                 .stream()
                 .flatMap(dates -> Stream.of(

@@ -5,7 +5,7 @@ import { StatusBarStyle } from 'expo-status-bar';
 
 const getStatusBarHeight = (): number => {
     if (Platform.OS === 'ios') {
-        return StatusBar.currentHeight || 25; // Default iOS status bar height
+        return Constants.statusBarHeight || 25;
     } else if (Platform.OS === 'android') {
         return StatusBar.currentHeight || StatusBar.currentHeight === 0 || StatusBar.currentHeight === undefined ? 24 : StatusBar.currentHeight;
     }

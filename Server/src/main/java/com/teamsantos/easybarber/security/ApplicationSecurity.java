@@ -77,6 +77,8 @@ public class ApplicationSecurity {
             "/service/types",
             "/icons/**",
             "/schedules/**",
+            "/service/list/dynamicprices/**",
+            "/list/dynamicprices/day/**",
             "/sms/**",
             "/establishment/image/**");
 
