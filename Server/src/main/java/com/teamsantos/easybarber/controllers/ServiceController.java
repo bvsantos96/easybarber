@@ -1,6 +1,5 @@
 package com.teamsantos.easybarber.controllers;
 
-import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
-import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.DTO.filters.ServiceWithEmployeeFilter;
 import com.teamsantos.easybarber.DTO.service.ServiceTypeDTO;
 import com.teamsantos.easybarber.DTO.service.ServiceWithImagesDTO;
@@ -102,31 +99,22 @@ public class ServiceController extends ImageController<Service, ServiceImage> {
         }
     }
 
-    @GetMapping("/list/dynamicprices/day")
-    public ResponseEntity<List<String>> listSchedulesByDay(@ModelAttribute ScheduleFilter filter) {
-        try {
-            if (filter.getFrom() == null) {
-                throw new IllegalArgumentException("From date needs to be provided");
-            }
-            LocalDate from = filter.getFrom();
-            return ResponseEntity.ok(serviceService.listDynamicPrices(from.getYear(), from.getMonthValue(),
-                    filter.getEstablishmentId(), filter.getEstablishmentServiceId(), filter.getEstablishmentStaffId()));
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(List.of(e.getMessage()));
-        }
-    }
-
-    @GetMapping("/list/dynamicprices/{year}/{month}")
+    @GetMapping("/list/dynamicprices/year/{year}/month/{month}")
     public ResponseEntity<List<String>> listDynamicPrices(
             @PathVariable Integer year,
             @PathVariable Integer month,
             @RequestParam(required = true) long establishmentId,
             @RequestParam(required = true) long establishmentServiceId,
-            @RequestParam(required = false) Long establishmentStaffId) {
+            @RequestParam(required = false) Long establishmentStaffId,
+            @RequestParam(required = false) Boolean future) {
         try {
+            if (future == null) {
+                future = false;
+            }
+
             return ResponseEntity
                     .ok(serviceService.listDynamicPrices(year, month, establishmentId, establishmentServiceId,
-                            establishmentStaffId));
+                            establishmentStaffId, future));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(List.of(e.getMessage()));
         }

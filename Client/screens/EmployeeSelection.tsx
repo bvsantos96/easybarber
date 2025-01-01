@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, FlatList } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { getEstablishmentServiceEmployees, getNowHourAndMinutes, getStartingHour, getToken, getUnavailableDates, setAppointment } from "../utils/ApiRequest";
+import { getDynamicSlots, getEstablishmentServiceEmployees, getNowHourAndMinutes, getStartingHour, getToken, getUnavailableDates, setAppointment } from "../utils/ApiRequest";
 import { getStyles } from "../styles/ServiceSelection";
 import SelectionItem from "../components/SelectionItems";
 import Selection from "./Selection";
@@ -43,6 +43,13 @@ export default function EmployeeSelection({ navigation, route }: Props) {
     const today = new Date();
     const month = today.getMonth() + 1;
     const year = today.getFullYear();
+
+    useQuery({
+        queryKey: [`getDynamicSlots`, establishmentId, serviceId, selected, year, month],
+        queryFn: async () => await getDynamicSlots(establishmentId, serviceId, +selected, year, month),
+        enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0 && (availableEmployees == undefined || availableEmployees == null || availableEmployees.length == 0),
+        staleTime: 60000
+    });
 
     useQuery({
         queryKey: [`getUnavailableDates`, establishmentId, serviceId, selected, year, month],

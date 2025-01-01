@@ -51,8 +51,8 @@ public interface EstablishmentServiceRepository
                 sdpe IS NOT NULL AND sdp IS NOT NULL
             )
             FROM EstablishmentServiceEmployee ese
-            LEFT JOIN ese.dynamicPrices sdpe ON sdpe.id.validFrom <= :date AND (sdpe.id.validTo IS NULL OR sdpe.id.validTo >= :date)
-            LEFT JOIN ese.service.dynamicPrices sdp ON sdp.id.validFrom <= :date AND (sdp.id.validTo IS NULL OR sdp.id.validTo >= :date) AND sdp.establishmentServiceEmployee IS NULL
+            LEFT JOIN ese.dynamicPrices sdpe ON sdpe.validFrom <= :date AND (sdpe.validTo IS NULL OR sdpe.validTo >= :date)
+            LEFT JOIN ese.service.dynamicPrices sdp ON sdp.validFrom <= :date AND (sdp.validTo IS NULL OR sdp.validTo >= :date) AND sdp.establishmentServiceEmployee IS NULL
             WHERE
                 ese.establishment.id = :establishmentId
                 AND ese.service.service.id = :serviceId
@@ -114,7 +114,7 @@ public interface EstablishmentServiceRepository
                 ELSE ess.price
             END , ess.service.duration)
             FROM EstablishmentService ess
-            LEFT JOIN ess.dynamicPrices dp ON dp.id.validFrom <= :#{#filter.date} AND (dp.id.validTo IS NULL OR dp.id.validTo >= :#{filter.date}) AND dp.establishmentServiceEmployee IS NULL
+            LEFT JOIN ess.dynamicPrices dp ON dp.validFrom <= :#{#filter.date} AND (dp.validTo IS NULL OR dp.validTo >= :#{filter.date}) AND dp.establishmentServiceEmployee IS NULL
             WHERE (:#{#filter.establishmentId} is null or ess.establishment.id = :#{#filter.establishmentId})
             AND (:#{#filter.employeeId} is null or ess.service.employee.id = :#{#filter.employeeId})
             AND (:#{#filter.serviceTypeId} is null or ess.service.serviceType.id = :#{#filter.serviceTypeId})
@@ -201,7 +201,7 @@ public interface EstablishmentServiceRepository
             )
             FROM EstablishmentService se
             LEFT JOIN se.service.images img ON img.isMain = true
-            LEFT JOIN se.dynamicPrices dpe ON dpe.id.validFrom <= :date AND (dpe.id.validTo IS NULL OR dpe.id.validTo >= :date) AND dpe.establishmentServiceEmployee IS NULL
+            LEFT JOIN se.dynamicPrices dpe ON dpe.validFrom <= :date AND (dpe.validTo IS NULL OR dpe.validTo >= :date) AND dpe.establishmentServiceEmployee IS NULL
             WHERE se.establishment.id = :establishmentId
             """)
     List<ServiceListDTO> listServices(long establishmentId, LocalDateTime date);

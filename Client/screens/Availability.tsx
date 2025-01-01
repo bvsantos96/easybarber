@@ -37,9 +37,17 @@ export default function Availability({ route, navigation }: Props) {
     const disableDates = (dates: string[]): MarkedDates => {
         let disabled: MarkedDates = {};
         dates.forEach(d => {
-            disabled[d] = { selected: false, disabled: true, disableTouchEvent: true };
+            disabled[d] = { selected: false, disabled: true, disableTouchEvent: true }
         });
         return disabled;
+    }
+
+    const markDates = (dates: string[]): MarkedDates => {
+        let marked: MarkedDates = {};
+        dates.forEach(d => {
+            marked[d] = { startingDay: true, endingDay: true, color: theme.colors.dynamicPrice };
+        });
+        return marked;
     }
 
     const disableUntilToday = (): MarkedDates => {
@@ -59,6 +67,7 @@ export default function Availability({ route, navigation }: Props) {
         return disabled;
     }
 
+    const [dynamicPrices, setDynamicPrices] = useState<MarkedDates>({});
     const [unSelectable, setUnSelectable] = useState<MarkedDates>(disableUntilToday());
     const [calculatedMonth, setCalculatedMonth] = useState<Set<string>>(new Set());
     const [month, setMonth] = useState<number>(0);
@@ -87,13 +96,6 @@ export default function Availability({ route, navigation }: Props) {
 
     const fetchAvailability = async () => {
         const today = new Date();
-        getDynamicSlots(establishmentId, serviceId, employeeId, date, getStartingHour(today, date))
-            .then((prices: String[]) => {
-                console.log(prices);
-            })
-            .catch((error: String) => {
-                console.error(error);
-            });
         getAvailability(establishmentId, serviceId, employeeId, date, getStartingHour(today, date))
             .then((availability: TimeSlots) => {
                 if (availability?.slots === null || availability?.slots === undefined) {
@@ -125,6 +127,20 @@ export default function Availability({ route, navigation }: Props) {
         enabled: month > 0 && year > 0 && !calculatedMonth.has(`${month}-${year}`),
         staleTime: 60000
     });
+
+    const { data: dynamicSlots } = useQuery({
+        queryKey: [`getDynamicSlots`, establishmentId, serviceId, employeeId, date],
+        queryFn: async () => await getDynamicSlots(establishmentId, serviceId, employeeId, year, month),
+        enabled: month > 0 && year > 0 && !calculatedMonth.has(`${month}-${year}`),
+        staleTime: 60000
+    });
+
+    useEffect(() => {
+        if (!!dynamicSlots) {
+            const _dynamicSlots = { ...dynamicPrices, ...markDates(dynamicSlots) };
+            setDynamicPrices(_dynamicSlots);
+        }
+    }, [dynamicSlots]);
 
     useEffect(() => {
         if (!!data) {
@@ -210,9 +226,11 @@ export default function Availability({ route, navigation }: Props) {
                             setTime(undefined);
                         }
                     }}
+                    markingType={'period'}
                     markedDates={{
                         [date]: { selected: true, disableTouchEvent: true },
-                        ...unSelectable
+                        ...unSelectable,
+                        ...dynamicPrices
                     }}
                     theme={{
                         arrowColor: theme.colors.text.lightBlack,

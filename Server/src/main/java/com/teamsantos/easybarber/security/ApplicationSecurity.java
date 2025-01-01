@@ -60,8 +60,8 @@ public class ApplicationSecurity {
             "/establishment/image/**",
             "/createheavydb",
             "/v3/api-docs/**",
-            "/swagger-ui/**",
             "/swagger-ui.html",
+            "/swagger-ui/**",
             "/version",
             "/establishment/list",
             "/employee/{id}/services",
@@ -77,8 +77,7 @@ public class ApplicationSecurity {
             "/service/types",
             "/icons/**",
             "/schedules/**",
-            "/service/list/dynamicprices/**",
-            "/list/dynamicprices/day/**",
+            "/service/list/dynamicprices/year/{year}/month/{month}",
             "/sms/**",
             "/establishment/image/**");
 

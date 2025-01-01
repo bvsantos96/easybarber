@@ -8,17 +8,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.teamsantos.easybarber.entities.ServiceDynamicPrice;
-import com.teamsantos.easybarber.entities.ServiceDynamicPrice.ServiceDynamicPriceId;
 import com.teamsantos.easybarber.utils.Pair;
 import com.teamsantos.easybarber.utils.Triple;
 
 @Repository
-public interface ServiceDynamicPriceRepository extends JpaRepository<ServiceDynamicPrice, ServiceDynamicPriceId> {
+public interface ServiceDynamicPriceRepository extends JpaRepository<ServiceDynamicPrice, Long> {
     @Query("""
             SELECT CASE WHEN sdpe IS NOT NULL THEN sdpe ELSE sdp END
             FROM EstablishmentServiceEmployee ese
-            LEFT JOIN ServiceDynamicPrice sdpe ON sdpe.establishmentServiceEmployee.id = ese.id AND sdpe.id.validFrom <= :date AND (sdpe.id.validTo IS NULL OR sdpe.id.validTo >= :date)
-            LEFT JOIN ServiceDynamicPrice sdp ON sdp.establishmentService.id = ese.service.id AND sdp.id.validFrom <= :date AND (sdp.id.validTo IS NULL OR sdp.id.validTo >= :date) AND sdp.establishmentServiceEmployee IS NULL
+            LEFT JOIN ServiceDynamicPrice sdpe ON sdpe.establishmentServiceEmployee.id = ese.id AND sdpe.validFrom <= :date AND (sdpe.validTo IS NULL OR sdpe.validTo >= :date)
+            LEFT JOIN ServiceDynamicPrice sdp ON sdp.establishmentService.id = ese.service.id AND sdp.validFrom <= :date AND (sdp.validTo IS NULL OR sdp.validTo >= :date) AND sdp.establishmentServiceEmployee IS NULL
             WHERE
                 ese.establishment.id = :establishmentId
                 AND ese.service.service.id = :serviceId
@@ -28,31 +27,29 @@ public interface ServiceDynamicPriceRepository extends JpaRepository<ServiceDyna
             long employeeId, LocalDateTime date);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.utils.Pair(dp.id.validFrom, dp.id.validTo)
+            SELECT new com.teamsantos.easybarber.utils.Pair(dp.validFrom, dp.validTo)
             FROM ServiceDynamicPrice dp
             WHERE
                 (
                     (dp.establishmentService.id = :establishmentServiceId AND dp.establishmentServiceEmployee IS NULL)
                     OR
-                    dp.establishmentServiceEmployee.id = :establishmentServiceEmployeeId
+                    (:establishmentServiceEmployeeId IS NOT NULL AND dp.establishmentServiceEmployee.id = :establishmentServiceEmployeeId)
                 )
-                AND dp.id.validFrom <= :from
-                AND (dp.id.validTo IS NULL OR dp.id.validTo >= :to)
+                AND dp.validFrom BETWEEN :from AND :to OR dp.validTo BETWEEN :from AND :to
             """)
     List<Pair<LocalDateTime, LocalDateTime>> list(long establishmentServiceId, Long establishmentServiceEmployeeId,
             LocalDateTime from, LocalDateTime to);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.utils.Triple(dp.id.validFrom, dp.id.validTo ,dp.price)
+            SELECT new com.teamsantos.easybarber.utils.Triple(dp.validFrom, dp.validTo ,dp.price)
             FROM ServiceDynamicPrice dp
             WHERE
                 (
                     (dp.establishmentService.id = :establishmentServiceId AND dp.establishmentServiceEmployee IS NULL)
                     OR
-                    dp.establishmentServiceEmployee.id = :establishmentServiceEmployeeId
+                    (:establishmentServiceEmployeeId IS NOT NULL AND dp.establishmentServiceEmployee.id = :establishmentServiceEmployeeId)
                 )
-                AND (:to IS NULL AND dp.id.validFrom = :from)
-                AND (:to IS NOT NULL AND dp.id.validFrom <= :from AND dp.id.validTo >= :to)
+                AND dp.validFrom BETWEEN :from AND :to OR dp.validTo BETWEEN :from AND :to
             """)
     Triple<LocalDateTime, LocalDateTime, Double> findPriceByEstablishmentServiceIdAndEstablishmentServiceEmployeeIdAndDates(
             long establishmentServiceId,
@@ -65,8 +62,8 @@ public interface ServiceDynamicPriceRepository extends JpaRepository<ServiceDyna
                 ELSE e.service.price
             END, dpe IS NOT NULL AND dp IS NOT NULL
             FROM EstablishmentServiceEmployee e
-            LEFT JOIN e.dynamicPrices dpe ON dpe.id.validFrom <= :of AND dpe.id.validTo >= :of
-            LEFT JOIN e.service.dynamicPrices dp ON dp.id.validFrom <= :of AND dp.id.validTo >= :of AND dp.establishmentServiceEmployee IS NULL
+            LEFT JOIN e.dynamicPrices dpe ON dpe.validFrom <= :of AND dpe.validTo >= :of
+            LEFT JOIN e.service.dynamicPrices dp ON dp.validFrom <= :of AND dp.validTo >= :of AND dp.establishmentServiceEmployee IS NULL
             WHERE e.service.id = :establishmentServiceId
                 AND e.employee.id = :establishmentStaffId
             """)

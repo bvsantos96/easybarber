@@ -1,10 +1,12 @@
 package com.teamsantos.easybarber.services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,7 @@ import com.teamsantos.easybarber.repositories.images.ServiceImageRepository;
 import com.teamsantos.easybarber.repositories.services.ServiceDynamicPriceRepository;
 import com.teamsantos.easybarber.repositories.services.ServiceRepository;
 import com.teamsantos.easybarber.security.utils.UserContext;
+import com.teamsantos.easybarber.utils.Pair;
 import com.teamsantos.easybarber.utils.Triple;
 
 import jakarta.persistence.EntityManager;
@@ -152,23 +155,50 @@ public class ServiceService extends
         return false;
     }
 
-    // TODO: Create similar methods that for a given day returns the price and if it was dynamically set
-    public List<String> listDynamicPrices(int year, int month, long establishmentId,
-            long establishmentServiceId,
-            Long establishmentStaffId) {
+    private List<String> parseDaysByAvailability(List<Pair<LocalDateTime, LocalDateTime>> dates) {
+        Set<LocalDate> daysParsed = new HashSet<>();
+        List<String> days = new ArrayList<>();
+
+        for (Pair<LocalDateTime, LocalDateTime> date : dates) {
+            LocalDate from;
+            LocalDate to;
+            if (date.getFirst().isAfter(date.getSecond())) {
+                from = date.getSecond().toLocalDate();
+                to = date.getFirst().toLocalDate();
+            } else {
+                from = date.getFirst().toLocalDate();
+                to = date.getSecond().toLocalDate();
+            }
+            while (!from.isAfter(to)) {
+                if (daysParsed.add(from)) {
+                    days.add(from.toString());
+                }
+                from = from.plusDays(1);
+            }
+        }
+
+        return days;
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> listDynamicPrices(int year, int month, long establishmentId, long establishmentServiceId,
+            Long establishmentStaffId, boolean futureOnly) {
         LocalDateTime from = LocalDateTime.of(year, month, 1, 0, 0);
         LocalDateTime to = from.plusMonths(1);
+        if (futureOnly) {
+            if (to.isBefore(LocalDateTime.now())) {
+                return List.of();
+            }
+            if (from.isBefore(LocalDateTime.now())) {
+                from = LocalDateTime.now();
+            }
+        }
         Long establishmentServiceEmployeeId = establishmentStaffId == null ? null
                 : establishmentServiceEmployeeRepository.getIdByEstablishmentServiceIdAndEstablishmentStaffId(
                         establishmentServiceId,
                         establishmentStaffId);
-        // TODO: this should return a set of every day that has a price set
-        return serviceDynamicPriceRepository.list(establishmentServiceId, establishmentServiceEmployeeId, from, to)
-                .stream()
-                .flatMap(dates -> Stream.of(
-                        dates.getFirst().toLocalDate().toString(),
-                        dates.getSecond().toLocalDate().toString()))
-                .collect(Collectors.toList());
+        return parseDaysByAvailability(serviceDynamicPriceRepository.list(establishmentServiceId,
+                establishmentServiceEmployeeId, from, to));
     }
 
     @Async
