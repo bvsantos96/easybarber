@@ -16,6 +16,7 @@ import useAlertStore from "storage/stores/AlertStore";
 import { AlertType } from "@components/Alert";
 import texts from "@lang/en.json";
 import { Params, Routes } from "@navigation/Router";
+import { BannerType } from "@components/Banner";
 
 export type Route = {
     establishmentId: number;
@@ -32,7 +33,7 @@ export default function Availability({ route, navigation }: Props) {
     const { establishmentId, serviceId, employeeId } = route.params;
     const [date, setDate] = useState<string>("");
     const [time, setTime] = useState<TimeSlot>();
-    const { alert } = useAlertStore();
+    const { alert, banner } = useAlertStore();
     const [loading, setLoading] = useState<boolean>(false);
     const disableDates = (dates: string[]): MarkedDates => {
         let disabled: MarkedDates = {};
@@ -222,15 +223,28 @@ export default function Availability({ route, navigation }: Props) {
                     onMonthChange={date => { setYear(date.year); setMonth(date.month); }}
                     onDayPress={day => {
                         if (day.dateString !== date) {
+                            if (day.dateString in dynamicPrices) {
+                                banner({
+                                    message: texts.appointments.dynamicPrice,
+                                    type: BannerType.Warning,
+                                    showAlertOnPull: true,
+                                });
+                            }
                             setDate(day.dateString);
                             setTime(undefined);
                         }
                     }}
                     markingType={'period'}
                     markedDates={{
-                        [date]: { selected: true, disableTouchEvent: true },
                         ...unSelectable,
-                        ...dynamicPrices
+                        ...dynamicPrices,
+                        [date]: {
+                            selected: true,
+                            disableTouchEvent: true,
+                            color: date in dynamicPrices ? theme.colors.dynamicPriceSelected : theme.colors.mainColor,
+                            startingDay: true,
+                            endingDay: true
+                        },
                     }}
                     theme={{
                         arrowColor: theme.colors.text.lightBlack,

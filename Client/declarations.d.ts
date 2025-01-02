@@ -243,6 +243,7 @@ declare interface ImageEntity extends Identifiable {
 
 declare interface EmployeeEntity extends ImageEntity {
     price: number;
+    oldPrice: number;
 }
 
 declare interface TimeSlots {

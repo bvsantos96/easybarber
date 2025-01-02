@@ -25,6 +25,7 @@ interface Colors {
     iconBackground: string;
     imageBackground: string;
     dynamicPrice: string;
+    dynamicPriceSelected: string;
     statusBarOnHome: StatusBarStyle;
     borderAlt: string;
     text: {
@@ -120,6 +121,7 @@ const defaultTheme: Theme = {
         iconBackground: 'rgba(223, 34, 56, 0.1)',
         imageBackground: "rgba(109, 4, 4, 0.10)",
         dynamicPrice: 'rgba(255, 140, 50, 0.6)',
+        dynamicPriceSelected: 'rgb(255, 140, 50)',
         statusBarOnHome: "light",
         borderAlt: 'rgba(109, 4, 4, 0.1)',
         text: {

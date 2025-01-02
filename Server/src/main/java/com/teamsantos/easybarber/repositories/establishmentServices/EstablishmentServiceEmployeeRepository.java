@@ -33,7 +33,8 @@ public interface EstablishmentServiceEmployeeRepository extends JpaRepository<Es
                     WHEN dpe IS NOT NULL THEN dpe.price
                     WHEN dp IS NOT NULL THEN dp.price
                     ELSE e.service.price
-                END AS price
+                END AS price,
+                e.service.price AS oldPrice
             )
             FROM EstablishmentServiceEmployee e
             JOIN EmployeeSchedule es ON es.employee.id = e.employee.id AND es.establishment.id = e.establishment.id
@@ -41,7 +42,7 @@ public interface EstablishmentServiceEmployeeRepository extends JpaRepository<Es
             LEFT JOIN e.dynamicPrices dpe ON dpe.validFrom <= :date AND dpe.validTo >= :date
             LEFT JOIN e.service.dynamicPrices dp ON dp.validFrom <= :date AND dp.validTo >= :date AND dp.establishmentServiceEmployee IS NULL
             WHERE e.service.id = :establishmentServiceId
-            GROUP BY e.employee.id, e.employee.employee.user.name, img.data, price
+            GROUP BY e.employee.id, e.employee.employee.user.name, img.data, price, e.service.price
             """)
     List<NameIdImagePriceDTO> listEmployeesOfEstablishmentService(long establishmentServiceId, LocalDateTime date);
 
