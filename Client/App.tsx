@@ -28,7 +28,7 @@ import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
 import { DEBUG_AUTO_LOGIN } from './utils/EnvVariables';
 import CustomAlert, { AlertType } from './components/Alert';
-import CustomBanner, { BannerType } from './components/Banner';
+import CustomBanner from './components/Banner';
 import Header from '@components/Header';
 import { getSelectedLocation } from 'utils/Location';
 import useAlertStore from 'storage/stores/AlertStore';
