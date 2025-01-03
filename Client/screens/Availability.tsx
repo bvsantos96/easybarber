@@ -11,12 +11,13 @@ import { useTheme } from "@styles/ThemeContext";
 import { MarkedDates } from "react-native-calendars/src/types";
 import { Underline } from "@components/Underline";
 import TimeSlotView from "@components/TimeSlotView";
-import { getAvailability, getDynamicSlots, getStartingHour, getToken, getUnavailableDates, setAppointment } from "utils/ApiRequest";
+import { getAvailability, getDynamicSlots, getStartingHour, getToken, getUnavailableDates, hasDynamicPrice, setAppointment } from "utils/ApiRequest";
 import useAlertStore from "storage/stores/AlertStore";
 import { AlertType } from "@components/Alert";
 import texts from "@lang/en.json";
 import { Params, Routes } from "@navigation/Router";
 import { BannerType } from "@components/Banner";
+import { buildCurrencyString } from "utils/Utils";
 
 export type Route = {
     establishmentId: number;
@@ -33,7 +34,7 @@ export default function Availability({ route, navigation }: Props) {
     const { establishmentId, serviceId, employeeId } = route.params;
     const [date, setDate] = useState<string>("");
     const [time, setTime] = useState<TimeSlot>();
-    const { alert, banner } = useAlertStore();
+    const { alert, setAlertVisible, banner } = useAlertStore();
     const [loading, setLoading] = useState<boolean>(false);
     const disableDates = (dates: string[]): MarkedDates => {
         let disabled: MarkedDates = {};
@@ -163,6 +164,40 @@ export default function Availability({ route, navigation }: Props) {
         }
     }, [month, year]);
 
+    const scheduleAppointment = async (_employeeId: number) => {
+        alert({ type: AlertType.Loading, message: "" });
+        const msg = await setAppointment({
+            id: 0,
+            establishmentId: establishmentId,
+            establishmentServiceId: serviceId,
+            establishmentStaffId: _employeeId,
+            date: date,
+            time: time?.start || ""
+        });
+        if (msg.length === 0) {
+            setAlertVisible(false);
+            alert({
+                type: AlertType.Success,
+                message: texts.appointments.success,
+                buttonText: texts.dismiss,
+                onPress: () => {
+                    navigation.navigate(Routes.Appointments);
+                }
+            });
+        } else {
+            setAlertVisible(false);
+            alert({
+                type: AlertType.Error, message: msg,
+                buttonText: texts.dismiss, onPress: () => {
+                    fetchAvailability();
+                }
+            });
+            return;
+        }
+        navigation.navigate(Routes.EmployeeSelection, { establishmentId, serviceId, date, startHour: time?.start, availableEmployees: time?.employeeIds });
+        return;
+    }
+
     return (
         <Selection
             buttonText={texts.appointments.book}
@@ -184,32 +219,22 @@ export default function Availability({ route, navigation }: Props) {
 
                             return;
                         }
-                        alert({ type: AlertType.Loading, message: "" });
-                        const msg = await setAppointment({
-                            id: 0,
-                            establishmentId: establishmentId,
-                            establishmentServiceId: serviceId,
-                            establishmentStaffId: _employeeId,
-                            date: date,
-                            time: time?.start || ""
-                        });
-                        if (msg.length === 0) {
-                            alert({ type: AlertType.Loading, message: "" });
+                        const dynamicPrice = await hasDynamicPrice(serviceId, _employeeId, date, time?.start || "");
+                        if (!!dynamicPrice) {
                             alert({
-                                type: AlertType.Success, message: texts.appointments.success, buttonText: texts.dismiss, onPress: () => {
-                                    navigation.navigate(Routes.Appointments);
-                                }
+                                type: AlertType.Info,
+                                message: texts.appointments.dynamicPriceConfirmation.replace("{price}", buildCurrencyString(dynamicPrice)),
+                                onPress: async () => {
+                                    scheduleAppointment(_employeeId || 0);
+                                },
+                                buttonText: texts.confirm,
+                                onPress2: () => { }
                             });
+                            return;
                         } else {
-                            alert({ type: AlertType.Loading, message: "" });
-                            alert({
-                                type: AlertType.Error, message: msg,
-                                buttonText: texts.dismiss, onPress: () => {
-                                    fetchAvailability();
-                                }
-                            });
+                            scheduleAppointment(_employeeId || 0);
+                            return;
                         }
-                        return;
                     }
                     navigation.navigate(Routes.EmployeeSelection, { establishmentId, serviceId, date, startHour: time?.start, availableEmployees: time?.employeeIds });
                     return;

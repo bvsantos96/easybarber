@@ -6,6 +6,7 @@ interface AlertState {
     alertProps: AlertProps;
     alert: (alertProps: AlertProps) => void;
     alertVisible: boolean;
+    setAlertVisible: (visible: boolean) => void;
     bannerProps: BannerProps;
     banner: (bannerProps: BannerProps) => void;
     bannerVisible: boolean;
@@ -25,6 +26,10 @@ const useAlertStore = create<AlertState>()(
                 return { alertVisible: !state.alertVisible, alertProps: _alertProps };
             }),
         alertVisible: false,
+        setAlertVisible: (visible: boolean) =>
+            set(() => {
+                return { alertVisible: visible };
+            }),
         bannerProps: {
             message: "message",
             visible: false,

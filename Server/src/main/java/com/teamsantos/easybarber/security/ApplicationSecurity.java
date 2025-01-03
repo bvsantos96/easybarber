@@ -73,6 +73,7 @@ public class ApplicationSecurity {
             "/establishment/{id}/services/list",
             "/establishment/{id}/employees",
             "/establishment/{establishmentId}/service/{serviceId}/employees",
+            "/dynamicprice/validate",
             "/service/list",
             "/service/types",
             "/icons/**",

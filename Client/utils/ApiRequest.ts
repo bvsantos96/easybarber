@@ -465,6 +465,22 @@ export const setAppointment = async (appointment: AppointmentCreate): Promise<st
     }
 }
 
+export const hasDynamicPrice = async (serviceId: number, employeeId: number, date: string, time: string): Promise<number> => {
+    const params = {
+        establishmentServiceId: serviceId,
+        establishmentStaffId: employeeId,
+        date: date,
+        time: time
+    };
+    const url = parsePathParams("dynamicprice/validate", params);
+    const result = await request<number>(url, "GET", params, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    try {
+        return getItemsFromRequest<number>(result);
+    } catch (e) {
+        return 0;
+    }
+}
+
 export const getDynamicSlots = async (establishmentId: number, serviceId: number, employeeId: number, year: number, month: number): Promise<string[]> => {
     const params = {
         establishmentId: establishmentId,

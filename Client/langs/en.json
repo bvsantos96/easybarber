@@ -4,6 +4,7 @@
     "no": "No",
     "submit": "Submit",
     "dismiss": "Dismiss",
+    "confirm": "Confirm",
     "notNow" : "Not Now",
     "reload": "Reload",
     "logout": "Logout",
@@ -238,7 +239,8 @@
         "success": "Your booking has been confirmed successfully.",
         "cancel": "Are you sure you want to cancel this appointment?",
         "signin": "Please sign in to see your appointments",
-        "dynamicPrice": "The service price may have been adjusted due to high demand on the selected day."
+        "dynamicPrice": "The service price may have been adjusted due to high demand on the selected day.",
+        "dynamicPriceConfirmation": "The price for this appointment as been adjusted to {price}, due to high demand. Do you want to continue?",
     },
     "services": {
         "title": "Services",

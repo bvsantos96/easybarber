@@ -56,17 +56,29 @@ public interface ServiceDynamicPriceRepository extends JpaRepository<ServiceDyna
             Long establishmentServiceEmployeeId, LocalDateTime from, LocalDateTime to);
 
     @Query("""
-            SELECT CASE
-                WHEN dpe IS NOT NULL THEN dpe.price
-                WHEN dp IS NOT NULL THEN dp.price
-                ELSE e.service.price
-            END, dpe IS NOT NULL AND dp IS NOT NULL
-            FROM EstablishmentServiceEmployee e
-            LEFT JOIN e.dynamicPrices dpe ON dpe.validFrom <= :of AND dpe.validTo >= :of
-            LEFT JOIN e.service.dynamicPrices dp ON dp.validFrom <= :of AND dp.validTo >= :of AND dp.establishmentServiceEmployee IS NULL
-            WHERE e.service.id = :establishmentServiceId
-                AND e.employee.id = :establishmentStaffId
+            SELECT EXISTS (
+                SELECT 1
+                FROM ServiceDynamicPrice dp
+                WHERE (
+                        (dp.establishmentService.id = :establishmentServiceId AND dp.establishmentServiceEmployee IS NULL)
+                        OR
+                        (dp.establishmentServiceEmployee.id = :establishmentServiceEmployeeId)
+                    )
+                    AND :date BETWEEN dp.validFrom AND dp.validTo
+                )
             """)
-    Pair<Double, Boolean> getPriceWithValidation(Long establishmentServiceId, Long establishmentStaffId,
-            LocalDateTime of);
+    boolean exists(long establishmentServiceId, Long establishmentServiceEmployeeId, LocalDateTime date);
+
+    @Query("""
+                SELECT dp.price
+                FROM ServiceDynamicPrice dp
+                WHERE (
+                        (dp.establishmentService.id = :establishmentServiceId AND dp.establishmentServiceEmployee IS NULL)
+                        OR
+                        (dp.establishmentServiceEmployee.id = :establishmentServiceEmployeeId)
+                    )
+                    AND :date BETWEEN dp.validFrom AND dp.validTo
+            """)
+    Double getDynamicPrice(long establishmentServiceId,
+            Long establishmentServiceEmployeeId, LocalDateTime date);
 }
