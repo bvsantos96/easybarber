@@ -50,8 +50,20 @@ public interface EstablishmentServiceEmployeeRepository extends JpaRepository<Es
             SELECT ese.id
             FROM EstablishmentServiceEmployee ese
             WHERE
-                ese.service.id = :establishmentServiceId
-                AND ese.employee.id = :establishmentStaffId
+        ese.service.id = :establishmentServiceId
+        AND ese.employee.id = :establishmentStaffId
             """)
     Long getIdByEstablishmentServiceIdAndEstablishmentStaffId(long establishmentServiceId, long establishmentStaffId);
+
+    @Query("""
+                SELECT EXISTS (
+                SELECT 1
+                FROM EstablishmentServiceEmployee ese
+                JOIN ese.employee.employee e
+                WHERE
+                    ese.id = :establishmentServiceEmployeeId
+                    AND e.id = :employeeId
+                )
+            """)
+    boolean canModifyEstablishmentServiceEmployee(long employeeId, long establishmentServiceEmployeeId);
 }

@@ -12,12 +12,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.AssertTrue;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Entity
 @Data
 @Table(name = "service_dynamic_price", uniqueConstraints = @UniqueConstraint(columnNames = {
         "establishment_service_employee_id", "establishment_service_id", "valid_from", "valid_to" }))
+@AllArgsConstructor
 public class ServiceDynamicPrice {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

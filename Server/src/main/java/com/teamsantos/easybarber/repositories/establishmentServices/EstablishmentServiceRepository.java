@@ -248,4 +248,29 @@ public interface EstablishmentServiceRepository
                     es.id = :establishmentServiceId
             """)
     Long getServiceId(Long establishmentServiceId);
+
+    @Query("""
+                SELECT EXISTS (
+                SELECT 1
+                FROM EstablishmentService es
+                JOIN es.establishment.staff.employee e
+                WHERE
+                    es.id = :establishmentServiceId
+                    AND e.id = :employeeId
+                )
+            """)
+    boolean canModifyEstablishmentService(long employeeId, long establishmentServiceId);
+
+    @Query("""
+            SELECT EXISTS(
+                SELECT 1
+                FROM EstablishmentService es
+                JOIN es.establishment.staff e
+                WHERE
+                    es.id = :establishmentServiceId
+                    AND e.employee.id = :employeeId
+                    AND e.admin = true
+            )
+            """)
+    boolean isEstablishmentOwner(long employeeId, long establishmentServiceId);
 }

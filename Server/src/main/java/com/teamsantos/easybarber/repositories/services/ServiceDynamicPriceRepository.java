@@ -3,10 +3,14 @@ package com.teamsantos.easybarber.repositories.services;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.teamsantos.easybarber.DTO.filters.ServiceDynamicFilter;
+import com.teamsantos.easybarber.DTO.service.ServiceDynamicPriceDTO;
 import com.teamsantos.easybarber.entities.ServiceDynamicPrice;
 import com.teamsantos.easybarber.utils.Pair;
 import com.teamsantos.easybarber.utils.Triple;
@@ -81,4 +85,45 @@ public interface ServiceDynamicPriceRepository extends JpaRepository<ServiceDyna
             """)
     Double getDynamicPrice(long establishmentServiceId,
             Long establishmentServiceEmployeeId, LocalDateTime date);
+
+    @Query("""
+                SELECT new com.teamsantos.easybarber.DTO.service.ServiceDynamicPriceDTO(
+                    dp.id,
+                    dp.price,
+                    dp.validFrom,
+                    dp.validTo,
+                    dp.establishmentServiceEmployee.id,
+                    dp.establishmentService.id
+                )
+                FROM ServiceDynamicPrice dp
+                WHERE (
+                    (:#{#filter.establishmentServiceId} IS NOT NULL AND dp.establishmentService.id = :#{#filter.establishmentServiceId} AND dp.establishmentServiceEmployee IS NULL)
+                    OR
+                    (:#{#filter.establishmentServiceEmployeeId} IS NOT NULL AND dp.establishmentServiceEmployee.id = :#{#filter.establishmentServiceEmployeeId})
+                    OR
+                    (:#{#filter.establishmentServiceId} IS NULL AND :#{#filter.establishmentServiceEmployeeId} IS NULL)
+                )
+                AND (
+                    :#{#filter.establishmentEmployeeId} IS NULL
+                    OR dp.establishmentServiceEmployee.employee.id = :#{#filter.establishmentEmployeeId}
+                )
+                AND (
+                    :#{#filter.establishmentId} IS NULL
+                    OR dp.establishmentService.establishment.id = :#{#filter.establishmentId}
+                )
+                AND (
+                    (:#{#filter.from} IS NULL AND :#{#filter.to} IS NULL)
+                    OR
+                    (:#{#filter.from} IS NOT NULL AND :#{#filter.to} IS NOT NULL
+                        AND (dp.validFrom BETWEEN :#{#filter.from} AND :#{#filter.to}
+                             OR dp.validTo BETWEEN :#{#filter.from} AND :#{#filter.to}))
+                    OR
+                    (:#{#filter.from} IS NOT NULL AND :#{#filter.to} IS NULL
+                        AND (dp.validFrom >= :#{#filter.from} OR dp.validTo >= :#{#filter.from}))
+                    OR
+                    (:#{#filter.to} IS NOT NULL
+                        AND (dp.validTo <= :#{#filter.to} OR dp.validFrom <= :#{#filter.to}))
+                )
+            """)
+    Page<ServiceDynamicPriceDTO> findAllDTO(ServiceDynamicFilter filter, Pageable pageable);
 }

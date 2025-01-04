@@ -1,5 +1,12 @@
 package com.teamsantos.easybarber.DTO.service;
 
+import java.time.LocalDateTime;
+
+import com.teamsantos.easybarber.entities.EstablishmentService;
+import com.teamsantos.easybarber.entities.EstablishmentServiceEmployee;
+import com.teamsantos.easybarber.entities.ServiceDynamicPrice;
+
+import jakarta.persistence.EntityManager;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,4 +21,16 @@ public class ServiceDynamicPriceDTO {
     private Integer duration;
     private Double price;
     private Boolean usingDynamicPrice;
+    private LocalDateTime validFrom;
+    private LocalDateTime validTo;
+    private Long establishmentServiceEmployeeId;
+    private Long establishmentServiceId;
+
+    public ServiceDynamicPrice toEntity(EntityManager entityManager) {
+        return new ServiceDynamicPrice(id,
+                entityManager.getReference(EstablishmentServiceEmployee.class, establishmentServiceEmployeeId),
+                entityManager.getReference(EstablishmentService.class, establishmentServiceId),
+                validFrom, validTo,
+                price);
+    }
 }
