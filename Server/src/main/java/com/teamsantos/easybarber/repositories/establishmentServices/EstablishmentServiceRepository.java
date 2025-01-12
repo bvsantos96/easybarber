@@ -47,8 +47,8 @@ public interface EstablishmentServiceRepository
                     WHEN sdpe IS NOT NULL THEN sdpe.price
                     WHEN sdp IS NOT NULL THEN sdp.price
                     ELSE ese.service.price
-                END,
-                sdpe IS NOT NULL AND sdp IS NOT NULL
+                END AS price,
+                sdpe IS NOT NULL AND sdp IS NOT NULL as usingDynamicPrice
             )
             FROM EstablishmentServiceEmployee ese
             LEFT JOIN ese.dynamicPrices sdpe ON sdpe.validFrom <= :date AND (sdpe.validTo IS NULL OR sdpe.validTo >= :date)
@@ -108,21 +108,32 @@ public interface EstablishmentServiceRepository
     Page<EstablishmentServiceDTO> findAll(@Param("filter") EstablishmentServiceFilter filter, Pageable pageable);
 
     @Query("""
-            SELECT new com.teamsantos.easybarber.DTO.service.ServiceDTO(ess.service.id, ess.service.employee.id, ess.service.serviceType.id, ess.service.name, ess.service.description,
-            CASE
-                WHEN dp IS NOT NULL THEN dp.price
-                ELSE ess.price
-            END , ess.service.duration)
+            SELECT new com.teamsantos.easybarber.DTO.service.ServiceDTO(
+                ess.service.id,
+                ess.service.employee.id,
+                ess.service.serviceType.id,
+                ess.service.name,
+                ess.service.description,
+                CASE
+                    WHEN dp IS NOT NULL THEN dp.price
+                    ELSE ess.price
+                END,
+                ess.service.duration)
             FROM EstablishmentService ess
-            LEFT JOIN ess.dynamicPrices dp ON dp.validFrom <= :#{#filter.date} AND (dp.validTo IS NULL OR dp.validTo >= :#{filter.date}) AND dp.establishmentServiceEmployee IS NULL
-            WHERE (:#{#filter.establishmentId} is null or ess.establishment.id = :#{#filter.establishmentId})
-            AND (:#{#filter.employeeId} is null or ess.service.employee.id = :#{#filter.employeeId})
-            AND (:#{#filter.serviceTypeId} is null or ess.service.serviceType.id = :#{#filter.serviceTypeId})
-            AND (:#{#filter.establishmentId} is null or ess.establishment.id = :#{#filter.establishmentId})
-            AND (:#{#filter.name} is null or lower(ess.service.name) like lower(concat('%', :#{#filter.name}, '%')))
-            AND (:#{#filter.description} is null or lower(ess.service.description) like lower(concat('%', :#{#filter.description}, '%')))
+            LEFT JOIN ess.dynamicPrices dp
+                ON dp.validFrom <= :date
+                AND (dp.validTo IS NULL OR dp.validTo >= :date)
+                AND dp.establishmentServiceEmployee IS NULL
+            WHERE (:establishmentId IS NULL OR ess.establishment.id = :establishmentId)
+            AND (:employeeId IS NULL OR ess.service.employee.id = :employeeId)
+            AND (:serviceTypeId IS NULL OR ess.service.serviceType.id = :serviceTypeId)
+            AND (:name IS NULL OR LOWER(ess.service.name) LIKE LOWER(CONCAT('%', :name, '%')))
+            AND (:description IS NULL OR LOWER(ess.service.description) LIKE LOWER(CONCAT('%', :description, '%')))
             """)
-    Page<ServiceDTO> findAllServiceDTO(EstablishmentServiceFilter filter, Pageable pageable);
+    Page<ServiceDTO> findAllServiceDTO(@Param("establishmentId") Long establishmentId,
+            @Param("employeeId") Long employeeId, @Param("serviceTypeId") Long serviceTypeId,
+            @Param("name") String name, @Param("description") String description, @Param("date") LocalDateTime date,
+            Pageable pageable);
 
     @Query(value = """
             SELECT
@@ -150,6 +161,7 @@ public interface EstablishmentServiceRepository
             WHERE es.establishment_id = :establishmentId AND s.employee_id = :employeeId
             GROUP BY s.employee_id;
             """, nativeQuery = true)
+
     Optional<Tuple> findEmployeeInformation(long establishmentId, long employeeId);
 
     @Query(value = """

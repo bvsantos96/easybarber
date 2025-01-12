@@ -203,7 +203,8 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         if (date != null) {
             filter.setDate(date);
         }
-        return establishmentServiceRepository.findAllServiceDTO(filter, pageable);
+        return establishmentServiceRepository.findAllServiceDTO(filter.getEstablishmentId(), filter.getEmployeeId(),
+                filter.getServiceTypeId(), filter.getName(), filter.getDescription(), filter.getDate(), pageable);
     }
 
     public Long addService(Long id, CreateEstablishmentServiceDTO serviceDTO)

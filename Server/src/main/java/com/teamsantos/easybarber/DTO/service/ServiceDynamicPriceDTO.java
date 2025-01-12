@@ -26,6 +26,13 @@ public class ServiceDynamicPriceDTO {
     private Long establishmentServiceEmployeeId;
     private Long establishmentServiceId;
 
+    public ServiceDynamicPriceDTO(Long id, Integer duration, Double price, Boolean usingDynamicPrice) {
+        this.id = id;
+        this.duration = duration;
+        this.price = price;
+        this.usingDynamicPrice = usingDynamicPrice || false;
+    }
+
     public ServiceDynamicPrice toEntity(EntityManager entityManager) {
         return new ServiceDynamicPrice(id,
                 entityManager.getReference(EstablishmentServiceEmployee.class, establishmentServiceEmployeeId),
