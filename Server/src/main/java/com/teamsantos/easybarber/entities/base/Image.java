@@ -30,7 +30,7 @@ public class Image<T extends EntityWithImages<T, E>, E extends Image<T, E>> {
     @JoinColumn(nullable = false, name = "entity_id", referencedColumnName = "id")
     private T entity;
     @Column
-    private String data; //data here is actually the url but will stay as data because all the image architecture was mounted expecting data and would require too much effort to change and data in this context is fine i think
+    private String data;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isMain;
 
