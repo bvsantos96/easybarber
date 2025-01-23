@@ -61,6 +61,8 @@ public class Appointment {
     private Boolean feedbackAsked = false;
     @Column
     private Integer feedback;
+    @Column
+    private double price;
 
     @Override
     public final boolean equals(Object o) {

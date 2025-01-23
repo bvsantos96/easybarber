@@ -26,6 +26,7 @@ import com.teamsantos.easybarber.exceptions.ForbidenException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.services.AppointmentService;
+import com.teamsantos.easybarber.utils.Pair;
 
 @RestController
 public class AppointmentController {
@@ -39,8 +40,14 @@ public class AppointmentController {
     @PostMapping("/appointment")
     public ResponseEntity<BaseResponseDTO> create(@RequestBody AppointmentDTO appointment) {
         try {
+            Pair<Long, Double> appointmentIdAndPrice = appointmentService.create(appointment);
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new BaseResponseDTO(appointmentService.create(appointment)));
+                    .body(new BaseResponseDTO(appointmentIdAndPrice.getFirst(),
+                            appointmentIdAndPrice.getSecond() != null
+                                    ? String.format(
+                                            "Please note that due to a high volume of appointments on the selected day, the price for this service has been adjusted to %.2f€. Would you like to proceed with scheduling this appointment?",
+                                            appointmentIdAndPrice.getSecond())
+                                    : null));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
         }

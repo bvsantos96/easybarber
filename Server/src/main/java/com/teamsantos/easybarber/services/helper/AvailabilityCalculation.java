@@ -110,7 +110,6 @@ public class AvailabilityCalculation {
                 }
                 schedulesMerged.add(dayDTO);
             }
-
         } else {
             calculateAvailability(RETURN_TYPE.SCHEDULES_MERGED);
         }

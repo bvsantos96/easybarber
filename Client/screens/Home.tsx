@@ -20,8 +20,13 @@ import { getSelectedLocation } from 'utils/Location';
 import Pressable from '@components/Pressable';
 import { Routes } from '@navigation/Router';
 import CategoryList from '@components/CategoryList';
+import useAlertStore from 'storage/stores/AlertStore';
+import { BannerType } from '@components/Banner';
 
 export default function Home({ navigation }: PropNavigation) {
+    const {
+        banner
+    } = useAlertStore()
     const topBarStyles = topBarGetStyles();
     const homeStyles = getHomeGetStyles();
     const expandedStyles = getExpandedGetStyles();
@@ -61,7 +66,7 @@ export default function Home({ navigation }: PropNavigation) {
 
     const replaceFilter = (filter: IFilterRequest) => {
         let req: ITimedRequest<EstablishmentInfo> = new TimedRequest(createPageable<EstablishmentInfo>(), 0, filter);
-        pageListRef?.current?.loadMoreItems(req);
+        pageListRef?.current?.reset(req);
         _setFilter(filter);
     }
 

@@ -44,12 +44,13 @@ public class UserService {
     @Autowired
     public UserService(UserRepository userRepository,
             EmployeeRepository employeeRepository,
-            JwtUtils jwtUtils, EntityManager entityManager) {
+            EntityManager entityManager,
+            JwtUtils jwtUtils) {
         this.userRepository = userRepository;
         this.employeeRepository = employeeRepository;
         this.modelMapper = Utils.getModelMapper();
-        this.jwtUtils = jwtUtils;
         this.entityManager = entityManager;
+        this.jwtUtils = jwtUtils;
     }
 
     @Transactional(readOnly = true)
@@ -72,18 +73,49 @@ public class UserService {
         user.setUserTypeIds(userRepository.getAllUserTypes(user.getId()));
 
         if (PasswordEncoding.getPasswordEncoder().matches(userCreateDTO.getPassword(), user.getPassword())) {
-            return jwtUtils.generateToken(user.getId(), user.getEmployeeId(),
-                    UserTypeService.getUserRoles(user.getUserTypeIds()));
+            // TODO: if we get 2 many users this might me moved to a string in the user
+            // table so that we can load them faster.
+            // This will make the user type change a bit slower but that is not that
+            // frequent of a request compared with the login that affects everyuser
+            user.addUserTypesId(userRepository.getAllUserTypes(user.getId()));
+            return user;
         } else {
             throw new IllegalArgumentException("Password is incorrect");
         }
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
+    public String loginUser(UserSignInDTO user) throws Exception {
+        return jwtUtils.generateToken(user.getId(), user.getEmployeeId(),
+                UserTypeService.getUserRoles(user.getUserTypeIds()));
+    }
+
+    @Transactional(readOnly = false)
+    public void createEmployee(Long userId) throws Exception {
+        if (employeeRepository.existsByUserId(userId))
+            throw new UserAlreadyExistsException();
+        Employee employee = new Employee();
+        employee.setEnabled(true);
+        employee.setUser(entityManager.getReference(User.class, userId));
+        employeeRepository.save(employee);
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        user.addUserType(entityManager.getReference(UserType.class,
+                UserTypeService.getUserType(UserTypeService.UserTypes.EMPLOYEE)));
+    }
+
     public UserDTO createUser(UserCreateDTO userCreateDTO) throws Exception {
         return createUser(userCreateDTO, false);
     }
 
+    public UserDTO createUser(UserCreateDTO userCreateDTO, boolean isEmployee) throws Exception {
+        return createUser(userCreateDTO, isEmployee, false);
+    }
+
+    public UserDTO createAdmin(UserCreateDTO userCreateDTO) throws Exception {
+        return createUser(userCreateDTO, false, true);
+    }
+
+    @Transactional
     private Employee createEmployee(EmployeeCreateDTO employeeDTO, long userId) throws UserAlreadyExistsException {
         if (employeeRepository.existsByUserId(userId))
             throw new UserAlreadyExistsException();
@@ -91,10 +123,6 @@ public class UserService {
         employee.setEnabled(true);
         employee.setUser(entityManager.getReference(User.class, userId));
         return employeeRepository.save(employee);
-    }
-
-    public UserDTO createUser(UserCreateDTO userCreateDTO, boolean isEmployee) throws Exception {
-        return createUser(userCreateDTO, isEmployee, false);
     }
 
     @Transactional
@@ -146,11 +174,6 @@ public class UserService {
     }
 
     @Transactional
-    public UserDTO createAdmin(UserCreateDTO userCreateDTO) throws Exception {
-        return createUser(userCreateDTO, false, true);
-    }
-
-    @Transactional
     public void deleteUser(Long id) {
         if (employeeRepository.existsByUserId(id))
             employeeRepository.deleteByUserId(id);
@@ -179,7 +202,7 @@ public class UserService {
         return userRepository.existsByMobileInformation(mobileInformation);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<UserDTO> getAllUsersByType(String userType, Pageable pageable) {
         return userRepository
                 .findByUserTypeId(UserTypeService.getUserType(userType), pageable)

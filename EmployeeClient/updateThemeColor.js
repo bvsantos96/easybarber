@@ -35,7 +35,7 @@ function replaceInFile(filePath, searchValue, replaceValue) {
     const fileExtension = path.extname(filePath).slice(1);
 
     if (ignoredExtensions.includes(fileExtension)) {
-        rtgurn;
+        return;
     }
 
     if (isIgnored(filePath)) {
