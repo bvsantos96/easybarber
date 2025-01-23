@@ -53,7 +53,7 @@ const Router = () => {
                 if (await getToken() === null && !await refreshToken()) {
                     defaultPage = Routes.Sign;
                 } else {
-                    defaultPage = Routes.Home;
+                    defaultPage = Routes.Tabs;
                 }
             }
 
@@ -76,7 +76,7 @@ const Router = () => {
             });
             return;
         } else {
-            setTimeout(async () => await waitAndResetNavigation(page), 500);
+            setTimeout(async () => await waitAndResetNavigation(page, params), 500);
         }
     }
 

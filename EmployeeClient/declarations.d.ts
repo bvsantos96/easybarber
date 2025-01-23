@@ -20,6 +20,12 @@ declare type TabsInfo = {
     component: React.FC<any>;
     tabicon: React.FC<any>;
     requiresAuth?: boolean;
+    rightIcon?: React.FC<any>;
+    rightAction?: (navigation: NavigationProp<any, any>) => void;
+    rightText?: string;
+    leftIcon?: React.FC<any>;
+    leftAction?: (navigation: NavigationProp<any, any>) => void;
+    leftText?: string;
 }
 
 declare interface Pageable<T> {
@@ -212,6 +218,21 @@ declare interface EmployeeInfo extends Identifiable {
     rating: number;
     nvotes: number;
     images: IImage[];
+}
+
+declare interface EstablishmentInfo extends Identifiable {
+    id: number;
+    name: string;
+    description: string;
+    address: string;
+    latitude: number;
+    longitude: number;
+    distance?: number;
+    nvotes: number;
+    sumVotes: number;
+    images: IImage[];
+    load?: boolean;
+    favorite?: boolean;
 }
 
 declare interface EstablishmentDetail extends Identifiable {
