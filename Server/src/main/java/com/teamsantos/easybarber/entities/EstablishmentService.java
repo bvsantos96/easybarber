@@ -47,6 +47,10 @@ public class EstablishmentService {
     @ToString.Exclude
     @BatchSize(size = 10)
     private Set<EstablishmentServiceEmployee> establishmentServiceEmployee;
+    @OneToMany(mappedBy = "establishmentService", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @BatchSize(size = 10)
+    private Set<ServiceDynamicPrice> dynamicPrices;
 
     @PrePersist
     public void prePersist() {

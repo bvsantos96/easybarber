@@ -28,6 +28,7 @@ import { validateVersion } from './utils/VersionValidation';
 import { UpdateType } from './enums';
 import { DEBUG_AUTO_LOGIN } from './utils/EnvVariables';
 import CustomAlert, { AlertType } from './components/Alert';
+import CustomBanner from './components/Banner';
 import Header from '@components/Header';
 import { getSelectedLocation } from 'utils/Location';
 import useAlertStore from 'storage/stores/AlertStore';
@@ -236,7 +237,10 @@ export default function App() {
     const {
         alertVisible,
         alert,
-        alertProps
+        alertProps,
+        bannerVisible,
+        setBannerVisible,
+        bannerProps
     } = useAlertStore();
 
     const handleMajorUpdate = () => {
@@ -284,6 +288,11 @@ export default function App() {
             <SafeAreaProvider style={{ flex: 1 }}>
                 <ThemeProvider>
                     <DismissKeyboard>
+                        <CustomBanner
+                            {...bannerProps}
+                            visible={bannerVisible}
+                            setVisible={setBannerVisible}
+                        />
                         <CustomAlert
                             {...alertProps}
                             visible={alertVisible}
@@ -294,6 +303,6 @@ export default function App() {
                     </DismissKeyboard>
                 </ThemeProvider>
             </SafeAreaProvider>
-        </QueryClientProvider>
+        </QueryClientProvider >
     );
 }

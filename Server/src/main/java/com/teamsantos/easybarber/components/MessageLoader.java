@@ -1,11 +1,5 @@
 package com.teamsantos.easybarber.components;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.ResourcePatternResolver;
-import org.springframework.stereotype.Component;
-
-import jakarta.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,6 +8,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.stereotype.Component;
+
+import jakarta.annotation.PostConstruct;
 
 @Component
 public class MessageLoader {
@@ -38,7 +39,7 @@ public class MessageLoader {
 
                     Properties properties = new Properties();
                     try (InputStream inputStream = resource.getInputStream();
-                        InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
+                            InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
                         properties.load(reader);
                     }
 
@@ -46,8 +47,7 @@ public class MessageLoader {
                             .stream()
                             .collect(Collectors.toMap(
                                     e -> e.getKey().toString(),
-                                    e -> e.getValue().toString()
-                            ));
+                                    e -> e.getValue().toString()));
                     messagesMap.put(baseFileName, fileMap);
                 }
             }

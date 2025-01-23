@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { View, Text, FlatList } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { getEstablishmentServiceEmployees, getNowHourAndMinutes, getStartingHour, getToken, getUnavailableDates, setAppointment } from "../utils/ApiRequest";
+import { getDynamicSlots, getEstablishmentServiceEmployees, getNowHourAndMinutes, getStartingHour, getToken, getUnavailableDates, setAppointment } from "../utils/ApiRequest";
 import { getStyles } from "../styles/ServiceSelection";
 import SelectionItem from "../components/SelectionItems";
 import Selection from "./Selection";
@@ -12,6 +12,7 @@ import texts from "@lang/en.json";
 import { useQuery } from "@tanstack/react-query";
 import { Params, Routes } from "@navigation/Router";
 import Divider from "@components/Divider";
+import { buildCurrencyString } from "utils/Utils";
 
 export type Route = {
     establishmentId: number;
@@ -30,9 +31,11 @@ export default function EmployeeSelection({ navigation, route }: Props) {
     const [topPadding, setTopPadding] = useState(0);
     const { alert } = useAlertStore();
     const { data } = useQuery({
-        queryKey: [`establishment/${establishmentId}/service/${serviceId}/employees`, serviceId],
-        queryFn: async () => getEstablishmentServiceEmployees(establishmentId, serviceId),
-        enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0 && (availableEmployees == undefined || availableEmployees == null || availableEmployees.length == 0),
+        queryKey: [`establishment/${establishmentId}/service/${serviceId}/employees`, serviceId, startHour, date],
+        queryFn: async () => {
+            return getEstablishmentServiceEmployees(establishmentId, serviceId, date, startHour)
+        },
+        enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0,
         networkMode: 'offlineFirst',
         staleTime: 60000
     });
@@ -40,6 +43,13 @@ export default function EmployeeSelection({ navigation, route }: Props) {
     const today = new Date();
     const month = today.getMonth() + 1;
     const year = today.getFullYear();
+
+    useQuery({
+        queryKey: [`getDynamicSlots`, establishmentId, serviceId, selected, year, month],
+        queryFn: async () => await getDynamicSlots(establishmentId, serviceId, +selected, year, month),
+        enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0 && (availableEmployees == undefined || availableEmployees == null || availableEmployees.length == 0),
+        staleTime: 60000
+    });
 
     useQuery({
         queryKey: [`getUnavailableDates`, establishmentId, serviceId, selected, year, month],
@@ -111,7 +121,7 @@ export default function EmployeeSelection({ navigation, route }: Props) {
                             return availableEmployees.includes(+e.id);
                         }) || []}
                         renderItem={
-                            ({ item }: { item: ImageEntity }) =>
+                            ({ item }: { item: EmployeeEntity }) =>
                                 <SelectionItem
                                     key={item.id}
                                     image={item.image}
@@ -129,6 +139,12 @@ export default function EmployeeSelection({ navigation, route }: Props) {
                                             height: styles.titleContainer.height
                                         }}>
                                             <Text style={styles.singleTitle}>{item.name}</Text>
+                                            <View style={{ flexDirection: 'row' }}>
+                                                {item.oldPrice && item.oldPrice > 0 && (
+                                                    <Text style={[styles.description, { textDecorationLine: "line-through" }]}>{`${buildCurrencyString(item.oldPrice)} `}</Text>
+                                                )}
+                                                <Text style={styles.description}>{`${buildCurrencyString(item.price)}`}</Text>
+                                            </View>
                                         </View>
                                     </View>
                                 </SelectionItem>

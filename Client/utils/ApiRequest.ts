@@ -465,6 +465,34 @@ export const setAppointment = async (appointment: AppointmentCreate): Promise<st
     }
 }
 
+export const hasDynamicPrice = async (serviceId: number, employeeId: number, date: string, time: string): Promise<number> => {
+    const params = {
+        establishmentServiceId: serviceId,
+        establishmentStaffId: employeeId,
+        date: date,
+        time: time
+    };
+    const url = parsePathParams("dynamicprice/validate", params);
+    const result = await request<number>(url, "GET", params, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    try {
+        return getItemsFromRequest<number>(result);
+    } catch (e) {
+        return 0;
+    }
+}
+
+export const getDynamicSlots = async (establishmentId: number, serviceId: number, employeeId: number, year: number, month: number): Promise<string[]> => {
+    const params = {
+        establishmentId: establishmentId,
+        establishmentServiceId: serviceId,
+        ...(employeeId == 0 ? {} : { establishmentStaffId: employeeId }),
+        future: true
+    };
+    const url = parsePathParams(`service/list/dynamicprices/year/${year}/month/${month}`, params);
+    const result = await request<string[]>(url, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    return getItemsFromRequest<string[]>(result);
+}
+
 export const getAvailability = async (establishmentId: number, serviceId: number, employeeId: number, date: string, startHour: string): Promise<TimeSlots> => {
     const params = {
         establishmentId: establishmentId,
@@ -484,9 +512,10 @@ export const getAvailability = async (establishmentId: number, serviceId: number
     }
 }
 
-export const getEstablishmentServiceEmployees = async (establishmentId: number, establishmentServiceId: number): Promise<ImageEntity[]> => {
-    const result = await request<ImageEntity[]>(`establishment/${establishmentId}/service/${establishmentServiceId}/employees`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
-    return getItemsFromRequest<ImageEntity[]>(result);
+export const getEstablishmentServiceEmployees = async (establishmentId: number, establishmentServiceId: number, date?: string, time?: string): Promise<EmployeeEntity[]> => {
+    const dateTime = `${date}T${time}`;
+    const result = await request<EmployeeEntity[]>(`establishment/${establishmentId}/service/${establishmentServiceId}/employees${(date && time) ? "?date=" + dateTime : ""}`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
+    return getItemsFromRequest<EmployeeEntity[]>(result);
 }
 
 export const getEstablishmentServices = async (establishementId: number): Promise<ServiceInfo[]> => {

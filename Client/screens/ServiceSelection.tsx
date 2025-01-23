@@ -30,7 +30,7 @@ export default function ServiceSelection({ route, navigation }: Props) {
     });
 
     useQuery({
-        queryKey: [`establishment/${establishmentId}/service/${selected}/employees`, selected],
+        queryKey: [`establishment/${establishmentId}/service/${selected}/employees`, selected, undefined, undefined],
         queryFn: async () => getEstablishmentServiceEmployees(establishmentId, +selected),
         enabled: (!!selected && selected !== 0 && selected !== ''),
         networkMode: 'offlineFirst',

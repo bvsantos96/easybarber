@@ -11,11 +11,13 @@ import { useTheme } from "@styles/ThemeContext";
 import { MarkedDates } from "react-native-calendars/src/types";
 import { Underline } from "@components/Underline";
 import TimeSlotView from "@components/TimeSlotView";
-import { getAvailability, getStartingHour, getToken, getUnavailableDates, setAppointment } from "utils/ApiRequest";
+import { getAvailability, getDynamicSlots, getStartingHour, getToken, getUnavailableDates, hasDynamicPrice, setAppointment } from "utils/ApiRequest";
 import useAlertStore from "storage/stores/AlertStore";
 import { AlertType } from "@components/Alert";
 import texts from "@lang/en.json";
 import { Params, Routes } from "@navigation/Router";
+import { BannerType } from "@components/Banner";
+import { buildCurrencyString } from "utils/Utils";
 
 export type Route = {
     establishmentId: number;
@@ -32,14 +34,22 @@ export default function Availability({ route, navigation }: Props) {
     const { establishmentId, serviceId, employeeId } = route.params;
     const [date, setDate] = useState<string>("");
     const [time, setTime] = useState<TimeSlot>();
-    const { alert } = useAlertStore();
+    const { alert, setAlertVisible, banner } = useAlertStore();
     const [loading, setLoading] = useState<boolean>(false);
     const disableDates = (dates: string[]): MarkedDates => {
         let disabled: MarkedDates = {};
         dates.forEach(d => {
-            disabled[d] = { selected: false, disabled: true, disableTouchEvent: true };
+            disabled[d] = { selected: false, disabled: true, disableTouchEvent: true }
         });
         return disabled;
+    }
+
+    const markDates = (dates: string[]): MarkedDates => {
+        let marked: MarkedDates = {};
+        dates.forEach(d => {
+            marked[d] = { startingDay: true, endingDay: true, color: theme.colors.dynamicPrice };
+        });
+        return marked;
     }
 
     const disableUntilToday = (): MarkedDates => {
@@ -59,6 +69,7 @@ export default function Availability({ route, navigation }: Props) {
         return disabled;
     }
 
+    const [dynamicPrices, setDynamicPrices] = useState<MarkedDates>({});
     const [unSelectable, setUnSelectable] = useState<MarkedDates>(disableUntilToday());
     const [calculatedMonth, setCalculatedMonth] = useState<Set<string>>(new Set());
     const [month, setMonth] = useState<number>(0);
@@ -87,12 +98,18 @@ export default function Availability({ route, navigation }: Props) {
 
     const fetchAvailability = async () => {
         const today = new Date();
-        let availability: TimeSlots = await getAvailability(establishmentId, serviceId, employeeId, date, getStartingHour(today, date));
-        if (availability?.slots === null || availability?.slots === undefined) {
-            availability.slots = [];
-        }
-        setTimeSlots(buildTimeSlotViews(availability.slots));
-        setLoading(false);
+        getAvailability(establishmentId, serviceId, employeeId, date, getStartingHour(today, date))
+            .then((availability: TimeSlots) => {
+                if (availability?.slots === null || availability?.slots === undefined) {
+                    availability.slots = [];
+                }
+                setTimeSlots(buildTimeSlotViews(availability.slots));
+                setLoading(false);
+            }).catch((error) => {
+                console.error(error);
+                setTimeSlots(buildTimeSlotViews([]));
+                setLoading(false);
+            });
     }
 
     useEffect(() => {
@@ -113,6 +130,20 @@ export default function Availability({ route, navigation }: Props) {
         staleTime: 60000
     });
 
+    const { data: dynamicSlots } = useQuery({
+        queryKey: [`getDynamicSlots`, establishmentId, serviceId, employeeId, date],
+        queryFn: async () => await getDynamicSlots(establishmentId, serviceId, employeeId, year, month),
+        enabled: month > 0 && year > 0 && !calculatedMonth.has(`${month}-${year}`),
+        staleTime: 60000
+    });
+
+    useEffect(() => {
+        if (!!dynamicSlots) {
+            const _dynamicSlots = { ...dynamicPrices, ...markDates(dynamicSlots) };
+            setDynamicPrices(_dynamicSlots);
+        }
+    }, [dynamicSlots]);
+
     useEffect(() => {
         if (!!data) {
             const _disabledDates = { ...unSelectable, ...disableDates(data) };
@@ -132,6 +163,40 @@ export default function Availability({ route, navigation }: Props) {
             setCalculatedMonth(new Set([...calculatedMonth, monthYearStr]));
         }
     }, [month, year]);
+
+    const scheduleAppointment = async (_employeeId: number) => {
+        alert({ type: AlertType.Loading, message: "" });
+        const msg = await setAppointment({
+            id: 0,
+            establishmentId: establishmentId,
+            establishmentServiceId: serviceId,
+            establishmentStaffId: _employeeId,
+            date: date,
+            time: time?.start || ""
+        });
+        if (msg.length === 0) {
+            setAlertVisible(false);
+            alert({
+                type: AlertType.Success,
+                message: texts.appointments.success,
+                buttonText: texts.dismiss,
+                onPress: () => {
+                    navigation.navigate(Routes.Appointments);
+                }
+            });
+        } else {
+            setAlertVisible(false);
+            alert({
+                type: AlertType.Error, message: msg,
+                buttonText: texts.dismiss, onPress: () => {
+                    fetchAvailability();
+                }
+            });
+            return;
+        }
+        navigation.navigate(Routes.EmployeeSelection, { establishmentId, serviceId, date, startHour: time?.start, availableEmployees: time?.employeeIds });
+        return;
+    }
 
     return (
         <Selection
@@ -154,32 +219,22 @@ export default function Availability({ route, navigation }: Props) {
 
                             return;
                         }
-                        alert({ type: AlertType.Loading, message: "" });
-                        const msg = await setAppointment({
-                            id: 0,
-                            establishmentId: establishmentId,
-                            establishmentServiceId: serviceId,
-                            establishmentStaffId: _employeeId,
-                            date: date,
-                            time: time?.start || ""
-                        });
-                        if (msg.length === 0) {
-                            alert({ type: AlertType.Loading, message: "" });
+                        const dynamicPrice = await hasDynamicPrice(serviceId, _employeeId, date, time?.start || "");
+                        if (!!dynamicPrice) {
                             alert({
-                                type: AlertType.Success, message: texts.appointments.success, buttonText: texts.dismiss, onPress: () => {
-                                    navigation.navigate(Routes.Appointments);
-                                }
+                                type: AlertType.Info,
+                                message: texts.appointments.dynamicPriceConfirmation.replace("{price}", buildCurrencyString(dynamicPrice)),
+                                onPress: async () => {
+                                    scheduleAppointment(_employeeId || 0);
+                                },
+                                buttonText: texts.confirm,
+                                onPress2: () => { }
                             });
+                            return;
                         } else {
-                            alert({ type: AlertType.Loading, message: "" });
-                            alert({
-                                type: AlertType.Error, message: msg,
-                                buttonText: texts.dismiss, onPress: () => {
-                                    fetchAvailability();
-                                }
-                            });
+                            scheduleAppointment(_employeeId || 0);
+                            return;
                         }
-                        return;
                     }
                     navigation.navigate(Routes.EmployeeSelection, { establishmentId, serviceId, date, startHour: time?.start, availableEmployees: time?.employeeIds });
                     return;
@@ -193,13 +248,28 @@ export default function Availability({ route, navigation }: Props) {
                     onMonthChange={date => { setYear(date.year); setMonth(date.month); }}
                     onDayPress={day => {
                         if (day.dateString !== date) {
+                            if (day.dateString in dynamicPrices) {
+                                banner({
+                                    message: texts.appointments.dynamicPrice,
+                                    type: BannerType.Warning,
+                                    showAlertOnPull: true,
+                                });
+                            }
                             setDate(day.dateString);
                             setTime(undefined);
                         }
                     }}
+                    markingType={'period'}
                     markedDates={{
-                        [date]: { selected: true, disableTouchEvent: true },
-                        ...unSelectable
+                        ...unSelectable,
+                        ...dynamicPrices,
+                        [date]: {
+                            selected: true,
+                            disableTouchEvent: true,
+                            color: date in dynamicPrices ? theme.colors.dynamicPriceSelected : theme.colors.mainColor,
+                            startingDay: true,
+                            endingDay: true
+                        },
                     }}
                     theme={{
                         arrowColor: theme.colors.text.lightBlack,
