@@ -59,19 +59,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public String loginUser(UserCreateDTO userCreateDTO, boolean employeeOnly) throws Exception {
-        UserSignInDTO user = userRepository
-                .findUserSignInByMobileInformation(userCreateDTO.getMobileInformation())
+    public UserSignInDTO findUserSignIn(UserCreateDTO userCreateDTO) throws Exception {
+        UserSignInDTO user = userRepository.findUserSignInByMobileInformation(userCreateDTO.getMobileInformation())
                 .orElseThrow(UserNotFoundException::new);
-        // TODO: if we get 2 many users this might me moved to a string in the user
-        // table so that we can load them faster.
-        // This will make the user type change a bit slower but that is not that
-        // frequent of a request compared with the login that affects everyuser
-        if (employeeOnly && user.getEmployeeId() == null) {
-            createUser(userCreateDTO, true);
-        }
-        user.setUserTypeIds(userRepository.getAllUserTypes(user.getId()));
-
         if (PasswordEncoding.getPasswordEncoder().matches(userCreateDTO.getPassword(), user.getPassword())) {
             // TODO: if we get 2 many users this might me moved to a string in the user
             // table so that we can load them faster.
