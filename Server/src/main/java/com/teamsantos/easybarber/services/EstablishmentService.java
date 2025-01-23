@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.services;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -14,7 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.teamsantos.easybarber.DTO.NameIdImageDTO;
+import com.teamsantos.easybarber.DTO.NameIdImagePriceDTO;
 import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.employee.EmployeeInformationDTO;
 import com.teamsantos.easybarber.DTO.establishment.BaseEstablishmentDTO;
@@ -25,6 +26,7 @@ import com.teamsantos.easybarber.DTO.establishment.service.EstablishmentServiceD
 import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentServiceFilter;
 import com.teamsantos.easybarber.DTO.service.ServiceDTO;
+import com.teamsantos.easybarber.DTO.service.ServiceDynamicPriceDTO;
 import com.teamsantos.easybarber.DTO.service.ServiceFullDTO;
 import com.teamsantos.easybarber.DTO.service.ServiceListDTO;
 import com.teamsantos.easybarber.entities.Employee;
@@ -45,7 +47,6 @@ import com.teamsantos.easybarber.repositories.services.ServiceRepository;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.utils.GeometryUtils;
 import com.teamsantos.easybarber.utils.PageDTO;
-import com.teamsantos.easybarber.utils.Pair;
 import com.teamsantos.easybarber.utils.Utils;
 
 import jakarta.persistence.EntityManager;
@@ -195,11 +196,15 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     }
 
     @Transactional(readOnly = true)
-    public Page<ServiceDTO> getServices(long id, Pageable pageable) {
+    public Page<ServiceDTO> getServices(long id, LocalDateTime date, Pageable pageable) {
         EstablishmentServiceFilter filter = new EstablishmentServiceFilter();
         filter.setEstablishmentId(id);
         filter.setIncludeEstablishmentImage(false);
-        return establishmentServiceRepository.findAllServiceDTO(filter, pageable);
+        if (date != null) {
+            filter.setDate(date);
+        }
+        return establishmentServiceRepository.findAllServiceDTO(filter.getEstablishmentId(), filter.getEmployeeId(),
+                filter.getServiceTypeId(), filter.getName(), filter.getDescription(), filter.getDate(), pageable);
     }
 
     public Long addService(Long id, CreateEstablishmentServiceDTO serviceDTO)
@@ -308,10 +313,14 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     }
 
     @Transactional(readOnly = true)
-    public Pair<Long, Integer> getDurationOfService(long establishmentId, long serviceId)
+    public ServiceDynamicPriceDTO getDurationAndPriceOfService(long establishmentId, long serviceId,
+            long employeeId, LocalDateTime date)
             throws GenericNotFoundException {
-        Pair<Long, Integer> establishmentService = establishmentServiceRepository.getIdAndDuration(establishmentId,
-                serviceId);
+        ServiceDynamicPriceDTO establishmentService = establishmentServiceRepository.getIdAndDurationAndPrice(
+                establishmentId,
+                serviceId,
+                employeeId,
+                date);
         if (establishmentService == null) {
             throw new GenericNotFoundException("Establishment service");
         }
@@ -347,16 +356,17 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     }
 
     @Transactional(readOnly = true)
-    public List<ServiceListDTO> listServices(long establishmentId) {
-        return establishmentServiceRepository.listServices(establishmentId);
+    public List<ServiceListDTO> listServices(long establishmentId, LocalDateTime date) {
+        return establishmentServiceRepository.listServices(establishmentId, date);
     }
 
     @Transactional(readOnly = true)
-    public List<NameIdImageDTO> listEmployeesOfEstablishmentService(Long establishmentId, Long serviceId)
+    public List<NameIdImagePriceDTO> listEmployeesOfEstablishmentService(Long establishmentId, Long serviceId,
+            LocalDateTime date)
             throws NotFoundException {
         long establishmentServiceId = establishmentServiceRepository.findIdByEstablishmentAndService(establishmentId,
                 serviceId).orElseThrow(NotFoundException::new);
-        return establishmentServiceEmployeeRepository.listEmployeesOfEstablishmentService(establishmentServiceId);
+        return establishmentServiceEmployeeRepository.listEmployeesOfEstablishmentService(establishmentServiceId, date);
     }
 
     @Transactional

@@ -1,12 +1,19 @@
 package com.teamsantos.easybarber.services;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,10 +31,14 @@ import com.teamsantos.easybarber.entities.ServiceType;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.GenericNotFoundException;
 import com.teamsantos.easybarber.repositories.ServiceTypeRepository;
+import com.teamsantos.easybarber.repositories.establishmentServices.EstablishmentServiceEmployeeRepository;
 import com.teamsantos.easybarber.repositories.establishmentServices.EstablishmentServiceRepository;
 import com.teamsantos.easybarber.repositories.images.ServiceImageRepository;
+import com.teamsantos.easybarber.repositories.services.ServiceDynamicPriceRepository;
 import com.teamsantos.easybarber.repositories.services.ServiceRepository;
 import com.teamsantos.easybarber.security.utils.UserContext;
+import com.teamsantos.easybarber.utils.Pair;
+import com.teamsantos.easybarber.utils.Triple;
 
 import jakarta.persistence.EntityManager;
 
@@ -37,6 +48,8 @@ public class ServiceService extends
     private final ServiceRepository serviceRepository;
     private final ServiceTypeRepository serviceTypeRepository;
     private final EstablishmentServiceRepository establishmentServiceRepository;
+    private final ServiceDynamicPriceRepository serviceDynamicPriceRepository;
+    private final EstablishmentServiceEmployeeRepository establishmentServiceEmployeeRepository;
     private final ModelMapper modelMapper;
     private final EntityManager entityManager;
 
@@ -44,6 +57,8 @@ public class ServiceService extends
     public ServiceService(ServiceRepository repository,
             EstablishmentServiceRepository establishmentServiceRepository,
             ServiceTypeRepository serviceTypeRepository,
+            ServiceDynamicPriceRepository serviceDynamicPriceRepository,
+            EstablishmentServiceEmployeeRepository establishmentServiceEmployeeRepository,
             ServiceImageRepository imageRepository,
             ModelMapper modelMapper,
             EntityManager entityManager) {
@@ -51,6 +66,8 @@ public class ServiceService extends
         this.serviceRepository = repository;
         this.establishmentServiceRepository = establishmentServiceRepository;
         this.serviceTypeRepository = serviceTypeRepository;
+        this.serviceDynamicPriceRepository = serviceDynamicPriceRepository;
+        this.establishmentServiceEmployeeRepository = establishmentServiceEmployeeRepository;
         this.modelMapper = modelMapper;
         this.entityManager = entityManager;
     }
@@ -136,5 +153,73 @@ public class ServiceService extends
             return true;
         }
         return false;
+    }
+
+    private List<String> parseDaysByAvailability(List<Pair<LocalDateTime, LocalDateTime>> dates) {
+        Set<LocalDate> daysParsed = new HashSet<>();
+        List<String> days = new ArrayList<>();
+
+        for (Pair<LocalDateTime, LocalDateTime> date : dates) {
+            LocalDate from;
+            LocalDate to;
+            if (date.getFirst().isAfter(date.getSecond())) {
+                from = date.getSecond().toLocalDate();
+                to = date.getFirst().toLocalDate();
+            } else {
+                from = date.getFirst().toLocalDate();
+                to = date.getSecond().toLocalDate();
+            }
+            while (!from.isAfter(to)) {
+                if (daysParsed.add(from)) {
+                    days.add(from.toString());
+                }
+                from = from.plusDays(1);
+            }
+        }
+
+        return days;
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> listDynamicPrices(int year, int month, long establishmentId, long establishmentServiceId,
+            Long establishmentStaffId, boolean futureOnly) {
+        LocalDateTime from = LocalDateTime.of(year, month, 1, 0, 0);
+        LocalDateTime to = from.plusMonths(1);
+        if (futureOnly) {
+            if (to.isBefore(LocalDateTime.now())) {
+                return List.of();
+            }
+            if (from.isBefore(LocalDateTime.now())) {
+                from = LocalDateTime.now();
+            }
+        }
+        Long establishmentServiceEmployeeId = establishmentStaffId == null ? null
+                : establishmentServiceEmployeeRepository.getIdByEstablishmentServiceIdAndEstablishmentStaffId(
+                        establishmentServiceId,
+                        establishmentStaffId);
+        return parseDaysByAvailability(serviceDynamicPriceRepository.list(establishmentServiceId,
+                establishmentServiceEmployeeId, from, to));
+    }
+
+    @Async
+    public CompletableFuture<Triple<LocalDateTime, LocalDateTime, Double>> getPrice(long establishmentServiceId,
+            Long establishmentServiceEmployeeId,
+            LocalDateTime date) {
+        return CompletableFuture.completedFuture(
+                serviceDynamicPriceRepository
+                        .findPriceByEstablishmentServiceIdAndEstablishmentServiceEmployeeIdAndDates(
+                                establishmentServiceId,
+                                establishmentServiceEmployeeId, date, null));
+    }
+
+    @Async
+    public CompletableFuture<Triple<LocalDateTime, LocalDateTime, Double>> getPrices(long establishmentServiceId,
+            Long establishmentServiceEmployeeId,
+            LocalDateTime from, LocalDateTime to) {
+        return CompletableFuture.completedFuture(
+                serviceDynamicPriceRepository
+                        .findPriceByEstablishmentServiceIdAndEstablishmentServiceEmployeeIdAndDates(
+                                establishmentServiceId,
+                                establishmentServiceEmployeeId, from, to));
     }
 }

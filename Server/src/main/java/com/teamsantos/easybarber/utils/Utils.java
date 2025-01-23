@@ -4,6 +4,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -77,17 +78,21 @@ public class Utils {
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setAmbiguityIgnored(true)
                 .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
-        // Type mapping for Establishment to EstablishmentDTO
         modelMapper.typeMap(Establishment.class, EstablishmentDTO.class)
                 .addMappings(mapper -> mapper.map(src -> src.getLocation(), EstablishmentDTO::setLocation));
         modelMapper.addMappings(new PropertyMap<User, UserDTO>() {
             @Override
             protected void configure() {
-                using(ctx -> ((Set<UserType>) ctx.getSource())
-                        .stream()
-                        .map(UserType::getId)
-                        .collect(Collectors.toSet()))
-                        .map(source.getUserTypes(), destination.getUserTypes());
+                using(ctx -> {
+                    Object source = ctx.getSource();
+                    if (source instanceof Set) {
+                        return ((Set<?>) source).stream()
+                                .filter(UserType.class::isInstance)
+                                .map(userType -> ((UserType) userType).getId())
+                                .collect(Collectors.toSet());
+                    }
+                    return Collections.emptySet();
+                }).map(source.getUserTypes(), destination.getUserTypes());
             }
         });
         _modelMapper = modelMapper;

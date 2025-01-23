@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.controllers;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
-import com.teamsantos.easybarber.DTO.NameIdImageDTO;
+import com.teamsantos.easybarber.DTO.NameIdImagePriceDTO;
 import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.establishment.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
@@ -159,10 +160,11 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     }
 
     @GetMapping("/{id}/services/list")
-    public ResponseEntity<BaseListDTO<ServiceListDTO>> listServices(@PathVariable Long id) {
+    public ResponseEntity<BaseListDTO<ServiceListDTO>> listServices(@PathVariable Long id,
+            @RequestParam(required = false) LocalDateTime date) {
         BaseListDTO<ServiceListDTO> response = new BaseListDTO<>();
         try {
-            response.setItems(establishmentService.listServices(id));
+            response.setItems(establishmentService.listServices(id, date));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.setResponseMessage(e.getMessage());
@@ -172,10 +174,10 @@ public class EstablishmentController extends ImageController<Establishment, Esta
 
     @GetMapping("/{id}/services")
     public ResponseEntity<BasePageDTO<ServiceDTO>> getServices(
-            @PathVariable Long id, Pageable pageable) {
+            @PathVariable Long id, @RequestParam(required = false) LocalDateTime date, Pageable pageable) {
         BasePageDTO<ServiceDTO> listDTO = new BasePageDTO<>();
         try {
-            listDTO.setItems(establishmentService.getServices(id, pageable));
+            listDTO.setItems(establishmentService.getServices(id, date, pageable));
             return ResponseEntity.ok(listDTO);
         } catch (Exception e) {
             listDTO.setResponseMessage(e.getMessage());
@@ -267,12 +269,14 @@ public class EstablishmentController extends ImageController<Establishment, Esta
      *         returned is the establishmentStaffId and not the employee id.
      */
     @GetMapping("/{establishmentId}/service/{establishmentServiceId}/employees")
-    public ResponseEntity<BaseListDTO<NameIdImageDTO>> listEmployeesOfEstablishmentService(
-            @PathVariable Long establishmentId, @PathVariable Long establishmentServiceId) {
-        BaseListDTO<NameIdImageDTO> response = new BaseListDTO<>();
+    public ResponseEntity<BaseListDTO<NameIdImagePriceDTO>> listEmployeesOfEstablishmentService(
+            @PathVariable Long establishmentId, @PathVariable Long establishmentServiceId,
+            @RequestParam(required = false) LocalDateTime date) {
+        BaseListDTO<NameIdImagePriceDTO> response = new BaseListDTO<>();
         try {
             response.setItems(
-                    establishmentService.listEmployeesOfEstablishmentService(establishmentId, establishmentServiceId));
+                    establishmentService.listEmployeesOfEstablishmentService(establishmentId, establishmentServiceId,
+                            date));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.setResponseMessage(e.getMessage());

@@ -11,8 +11,11 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class EstablishmentServiceFilter extends ServiceWithEmployeeFilter {
+public class ServiceDynamicFilter {
     private Long establishmentId;
-    private boolean includeEstablishmentImage = true;
-    private LocalDateTime date;
+    private Long establishmentServiceEmployeeId;
+    private Long establishmentEmployeeId;
+    private Long establishmentServiveId;
+    private LocalDateTime from;
+    private LocalDateTime to;
 }

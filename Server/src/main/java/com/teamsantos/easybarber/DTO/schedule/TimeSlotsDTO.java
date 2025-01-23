@@ -1,11 +1,13 @@
 package com.teamsantos.easybarber.DTO.schedule;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.teamsantos.easybarber.utils.Triple;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +19,7 @@ import lombok.Setter;
 public class TimeSlotsDTO {
     private String responseMessage;
     private List<TimeSlotDTO> slots;
+    private Triple<LocalDateTime, LocalDateTime, Double> prices;
 
     @JsonIgnore
     private Map<String, Integer> slotsMap;

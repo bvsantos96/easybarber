@@ -3,10 +3,7 @@ import { useTheme } from './ThemeContext';
 
 export const getStyles = () => {
     const theme = useTheme();
-    const heightCalc = (px: number): number => {
-        return px * theme.dimensions.absoluteHeight + theme.dimensions.statusBarHeight;
-    }
-    const topBarHeight = heightCalc(170);
+    const topBarHeight = 150 * theme.dimensions.absoluteHeight + theme.dimensions.statusBarHeight;
     return StyleSheet.create({
         container: {
             position: 'absolute',
@@ -19,14 +16,14 @@ export const getStyles = () => {
         },
         elementsContainer: {
             position: 'absolute',
-            top: heightCalc(5),
+            top: theme.dimensions.statusBarHeight,
             left: 20 * theme.dimensions.absoluteWidth,
             bottom: 23 * theme.dimensions.absoluteHeight,
             width: 350 * theme.dimensions.absoluteWidth,
         },
         topElements: {
             position: 'absolute',
-            top: heightCalc(0),
+            top: 15 * theme.dimensions.absoluteHeight,
             width: "100%",
             height: 50 * theme.dimensions.absoluteHeight,
             justifyContent: "center",

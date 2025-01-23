@@ -21,6 +21,7 @@ import com.teamsantos.easybarber.DTO.appointment.AppointmentsHashDTO;
 import com.teamsantos.easybarber.DTO.appointment.CancelAppointmentDTO;
 import com.teamsantos.easybarber.DTO.appointment.FeedbackDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
+import com.teamsantos.easybarber.DTO.service.ServiceDynamicPriceDTO;
 import com.teamsantos.easybarber.entities.Appointment;
 import com.teamsantos.easybarber.repositories.AppointmentRepository;
 import com.teamsantos.easybarber.security.utils.UserContext;
@@ -52,7 +53,7 @@ public class AppointmentService {
         this.messagingService = messagingService;
     }
 
-    public Long create(AppointmentDTO appointmentDTO) throws Exception {
+    public Pair<Long, Double> create(AppointmentDTO appointmentDTO) throws Exception {
         if (appointmentDTO.getId() != null) {
             appointmentDTO.setId(null);
         }
@@ -105,14 +106,21 @@ public class AppointmentService {
             throw new IllegalArgumentException("An appointment must be associated with a service");
         }
 
-        Pair<Long, Integer> _establishmentService = establishmentService.getDurationOfService(
+        ServiceDynamicPriceDTO _establishmentService = establishmentService.getDurationAndPriceOfService(
                 appointmentDTO.getEstablishmentId(),
-                appointmentDTO.getServiceId());
-        if (!scheduleService.isAppointmentDateTimeValid(appointmentDTO, _establishmentService.getSecond())) {
+                appointmentDTO.getServiceId(),
+                appointmentDTO.getEmployeeId(),
+                appointmentDTO.getDate().atTime(appointmentDTO.getTime()));
+
+        if (!scheduleService.isAppointmentDateTimeValid(appointmentDTO, _establishmentService.getDuration())) {
             throw new IllegalArgumentException("Appointment date must be within the employee's schedule");
         }
-        appointmentDTO.setServiceId(_establishmentService.getFirst());
-        return appointmentRepository.save(appointmentDTO.toEntity(entityManager)).getId();
+        appointmentDTO.setServiceId(_establishmentService.getId());
+        Appointment appointment = appointmentDTO.toEntity(entityManager);
+
+        appointment.setPrice(_establishmentService.getPrice());
+        return new Pair<>(appointmentRepository.save(appointment).getId(),
+                _establishmentService.getUsingDynamicPrice() ? _establishmentService.getPrice() : null);
     }
 
     @Transactional(readOnly = true)

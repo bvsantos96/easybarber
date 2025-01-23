@@ -46,7 +46,8 @@ export class TimedRequest<T extends Identifiable> implements ITimedRequest<T> {
         }
         try {
             this.loadingMore = true;
-            const result = await func(this.pageToRequest(), this.pathParams);
+            const params = this.pathParams;
+            const result = await func(this.pageToRequest(), params);
             this.loadingMore = false;
             if (!result || !result.content || result.content.length === 0) {
                 this.lastRequest = Date.now();
