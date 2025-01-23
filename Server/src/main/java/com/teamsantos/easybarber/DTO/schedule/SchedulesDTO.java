@@ -25,6 +25,7 @@ public class SchedulesDTO {
     private Map<Long, List<EmployeeScheduleDTO>> schedulesMap;
     private LocalDate date;
     private DAY_OF_WEEK dayOfWeek;
+    private Double price;
 
     // TODO: Performance analysis
     public void addSchedule(EmployeeScheduleDTO newSchedule) {

@@ -1,3 +1,10 @@
+declare module '*.svg' {
+    import React from 'react';
+    import { SvgProps } from 'react-native-svg';
+    const content: React.FC<SvgProps>;
+    export default content;
+}
+
 declare type StackInfo = {
     title: string;
     component: React.FC<any>;
@@ -232,6 +239,11 @@ declare interface ServiceInfo extends Identifiable {
 declare interface ImageEntity extends Identifiable {
     name: string;
     image: string;
+}
+
+declare interface EmployeeEntity extends ImageEntity {
+    price: number;
+    oldPrice: number;
 }
 
 declare interface TimeSlots {

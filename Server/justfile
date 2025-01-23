@@ -1,0 +1,11 @@
+clean:
+    mvn clean install -DskipTests 2>&1
+
+run: clean
+    mvn spring-boot:run
+
+test:
+    mvn clean install
+
+versions:
+    java --version
