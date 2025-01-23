@@ -35,7 +35,7 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
         const fakeLogin = async () => {
             const result: IResult<IAPIResponse> = await doLogin("351", DEBUG_AUTO_LOGIN_PHONE, DEBUG_AUTO_LOGIN_PASSWORD);
             if (result.success)
-                resetNavigation(navigation, Routes.Home);
+                resetNavigation(navigation, Routes.Tabs);
             else {
                 console.error(result.message);
             }
@@ -68,7 +68,7 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
             if (navigation.getState().index > 0) {
                 navigation.goBack();
             } else {
-                resetNavigation(navigation, Routes.Home);
+                resetNavigation(navigation, Routes.Tabs);
             }
         } else {
             alert({ type: AlertType.Error, message: `${texts.apiMessages.login.failed}\n${result.message}` });
