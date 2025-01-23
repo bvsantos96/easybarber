@@ -70,7 +70,7 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
             {
                 phoneNr: phone,
                 countryCode: countryCode,
-                nextScreen: Routes.Home,
+                nextScreen: Routes.Tabs,
                 resetNavigationBoolean: true,
                 functionName: MobileConfirmationFunctions.REGISTER,
                 functionData: registerInfo,
