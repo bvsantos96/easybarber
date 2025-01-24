@@ -268,30 +268,25 @@ public interface AppointmentRepository
                         pq.appointment.establishment.name,
                         java.time.LocalDateTime.of(pq.appointment.date, pq.appointment.time)
                     ),
-                    (SELECT new java.util.ArrayList<com.teamsantos.easybarber.DTO.product.ProductDTO>(
-                        new com.teamsantos.easybarber.DTO.product.ProductDTO(
+                    (SELECT new com.teamsantos.easybarber.DTO.product.ProductDTO(
                             p.id,
                             p.establishment.id,
                             p.employee.id,
-                            (SELECT new java.util.HashSet<Long>(pt.id)
-                             FROM ProductType pt
-                             WHERE pt MEMBER OF p.productTypes),
+                            (SELECT pt.id FROM p.productTypes pt),
                             p.name,
                             p.description,
                             p.price,
                             i.data
                         )
-                        FROM Product p
+                        FROM pq.products p
                         LEFT JOIN ProductImage i ON i.isMain = true AND i.entity.id = p.id
-                        WHERE p MEMBER OF pq.products
-                        )
                     )
                 )
                 FROM ProductRequest pq
                 WHERE (:#{#filter.appointmentId} IS NULL OR pq.appointment.id = :#{#filter.appointmentId})
                     AND (:#{#filter.employeeId} IS NULL OR pq.appointment.employee.id = :#{#filter.employeeId})
                     AND (:#{#filter.establishmentId} IS NULL OR pq.appointment.establishment.id = :#{#filter.establishmentId})
-                    AND (:#{#filter.productId} IS NULL OR :#{#filter.productId}) MEMBER OF pq.products)
+                    AND (:#{#filter.productId} IS NULL OR :#{#filter.productId} IN (SELECT p.id FROM pq.products p))
             """)
     List<ProductRequestsDTO> getProductRequests(ProductRequestFilter filter);
 }
