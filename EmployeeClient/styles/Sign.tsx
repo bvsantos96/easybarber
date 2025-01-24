@@ -5,7 +5,7 @@ export const getStyles = () => {
     const theme = useTheme();
     return StyleSheet.create({
         shadow: {
-            ...theme.shadow as any,
+            ...theme.strongShadow as any,
         },
         container: {
             flex: 1,
@@ -19,7 +19,7 @@ export const getStyles = () => {
             top: (42 + theme.dimensions.statusBarHeight) * theme.dimensions.absoluteHeight,
             width: 113 * theme.dimensions.absoluteWidth,
             height: 113 * theme.dimensions.absoluteHeight,
-            backgroundColor: theme.colors.backgroundColor,
+            backgroundColor: theme.colors.logoBackgound,
             borderRadius: 15,
             alignItems: 'center',
             justifyContent: 'center',
