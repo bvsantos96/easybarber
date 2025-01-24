@@ -20,6 +20,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -35,13 +36,15 @@ public class Product extends EntityWithImages<Product, ProductImage> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "establishment", referencedColumnName = "id")
     private Establishment establishment;
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "product_type_ids", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "user_type_id"))
+    @JoinTable(name = "product_types", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "product_type_id"))
     @BatchSize(size = 10)
     private Set<ProductType> productTypes = new HashSet<>();
-    @Column(nullable = true)
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "employee", referencedColumnName = "id")
     private Employee employee;
     @Column(nullable = false)
     private String name;
