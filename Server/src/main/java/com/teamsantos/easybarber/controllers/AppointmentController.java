@@ -1,5 +1,7 @@
 package com.teamsantos.easybarber.controllers;
 
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentCountDTO;
@@ -22,19 +25,24 @@ import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.appointment.CancelAppointmentDTO;
 import com.teamsantos.easybarber.DTO.appointment.FeedbackDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
+import com.teamsantos.easybarber.DTO.filters.ProductRequestFilter;
+import com.teamsantos.easybarber.DTO.product.ProductRequestsDTO;
 import com.teamsantos.easybarber.exceptions.ForbidenException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.services.AppointmentService;
+import com.teamsantos.easybarber.services.ProductService;
 import com.teamsantos.easybarber.utils.Pair;
 
 @RestController
 public class AppointmentController {
     private final AppointmentService appointmentService;
+    private final ProductService productService;
 
     @Autowired
-    public AppointmentController(AppointmentService appointmentService) {
+    public AppointmentController(AppointmentService appointmentService, ProductService productService) {
         this.appointmentService = appointmentService;
+        this.productService = productService;
     }
 
     @PostMapping("/appointment")
@@ -160,6 +168,47 @@ public class AppointmentController {
                     .body(appointmentService.validateAppointments(userView));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("");
+        }
+    }
+
+    @PostMapping("/{appointmentId}/suggest/product")
+    @PreAuthorize(PrePermissionEvaluator.HAS_APPOINTMENT_CHANGE_PERMISSION)
+    public ResponseEntity<BaseResponseDTO> suggestProducts(@RequestBody Set<Long> productIds,
+            @PathVariable("appointmentId") Long appointmentId) {
+        try {
+            Long userId = appointmentService.getUserIdByAppointmentId(appointmentId);
+            if (userId == null) {
+                return ResponseEntity.badRequest().body(new BaseResponseDTO("User of appointment not found"));
+            }
+            productService.addSuggestionToClient(productIds, userId);
+            return ResponseEntity.ok(new BaseResponseDTO("Products suggested successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/{appointmentId}/request/product")
+    @PreAuthorize(PrePermissionEvaluator.HAS_APPOINTMENT_CHANGE_PERMISSION)
+    public ResponseEntity<BaseResponseDTO> requestProducts(@RequestBody Set<Long> productIds,
+            @PathVariable("appointmentId") Long appointmentId) {
+        try {
+            productService.requestProduct(productIds, appointmentId);
+            return ResponseEntity.ok(new BaseResponseDTO("Products requested successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/{appointmentId}/products")
+    @PreAuthorize(PrePermissionEvaluator.HAS_APPOINTMENT_CHANGE_PERMISSION)
+    public ResponseEntity<BaseListDTO<ProductRequestsDTO>> getProducts(
+            @PathVariable("appointmentId") Long appointmentId) {
+        try {
+            ProductRequestFilter filter = new ProductRequestFilter();
+            filter.setAppointmentId(appointmentId);
+            return ResponseEntity.ok(new BaseListDTO<>(appointmentService.getProductRequests(filter)));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BaseListDTO<>(e.getMessage()));
         }
     }
 }

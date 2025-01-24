@@ -17,6 +17,7 @@ import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.location.LocationDTO;
+import com.teamsantos.easybarber.DTO.product.ProductDTO;
 import com.teamsantos.easybarber.DTO.user.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.user.UserDTO;
 import com.teamsantos.easybarber.security.utils.UserContext;
@@ -106,6 +107,15 @@ public class UserController {
         try {
             return ResponseEntity
                     .ok(new BaseListDTO<Long>(userService.getFavoriteEstablishmentsIds(UserContext.getUserId())));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BaseListDTO<>());
+        }
+    }
+
+    @GetMapping("/products")
+    public ResponseEntity<BaseListDTO<ProductDTO>> getProductSuggestions() {
+        try {
+            return ResponseEntity.ok(new BaseListDTO<>(userService.getProductSuggestions(UserContext.getUserId())));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseListDTO<>());
         }

@@ -50,8 +50,6 @@ public class ServiceService extends
     private final EstablishmentServiceRepository establishmentServiceRepository;
     private final ServiceDynamicPriceRepository serviceDynamicPriceRepository;
     private final EstablishmentServiceEmployeeRepository establishmentServiceEmployeeRepository;
-    private final ModelMapper modelMapper;
-    private final EntityManager entityManager;
 
     @Autowired
     public ServiceService(ServiceRepository repository,
@@ -68,8 +66,6 @@ public class ServiceService extends
         this.serviceTypeRepository = serviceTypeRepository;
         this.serviceDynamicPriceRepository = serviceDynamicPriceRepository;
         this.establishmentServiceEmployeeRepository = establishmentServiceEmployeeRepository;
-        this.modelMapper = modelMapper;
-        this.entityManager = entityManager;
     }
 
     @Transactional
