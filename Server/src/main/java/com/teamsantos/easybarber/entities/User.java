@@ -70,6 +70,10 @@ public class User {
     @JoinTable(name = "user_favorite", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "establishment_id"))
     @BatchSize(size = 10)
     private Set<Establishment> favoriteEstablishments = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @BatchSize(size = 10)
+    private Set<ProductSuggestions> suggestions;
 
     public void addFavoriteEstablishment(Establishment establishment) {
         if (favoriteEstablishments == null) {

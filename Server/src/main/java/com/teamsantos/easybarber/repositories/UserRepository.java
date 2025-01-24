@@ -8,13 +8,17 @@ import org.locationtech.jts.geom.Point;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
+import com.teamsantos.easybarber.DTO.product.ProductDTO;
 import com.teamsantos.easybarber.DTO.user.UserSignInDTO;
 import com.teamsantos.easybarber.entities.User;
+
+import jakarta.transaction.Transactional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -80,5 +84,27 @@ public interface UserRepository extends JpaRepository<User, Long> {
             JOIN u.favoriteEstablishments e
             WHERE u.id = :userId
             """)
-	List<Long> getFavoriteEstablishmentsIds(Long userId);
+    List<Long> getFavoriteEstablishmentsIds(Long userId);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO product_suggestions (user_id, product_id) VALUES (:userId, :productId)", nativeQuery = true)
+    void createSuggestion(@Param("userId") Long userId, @Param("productId") Long productId);
+
+    @Query("""
+                SELECT new com.teamsantos.easybarber.DTO.product.ProductDTO(
+                    ps.product.id,
+                    ps.product.establishment.id,
+                    ps.product.employee.id,
+                    (SELECT pt.id FROM ps.product.productTypes pt),
+                    ps.product.name,
+                    ps.product.description,
+                    ps.product.price,
+                    i.data
+                )
+                FROM ProductSuggestions ps
+                LEFT JOIN ProductImage i ON i.isMain = true AND i.entity.id = ps.product.id
+                WHERE ps.user.id = :userId
+            """)
+    List<ProductDTO> getProductSuggestions(long userId);
 }
