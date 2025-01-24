@@ -3,6 +3,7 @@ package com.teamsantos.easybarber.services;
 import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.locationtech.jts.geom.Point;
 import org.modelmapper.ModelMapper;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.employee.EmployeeCreateDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
+import com.teamsantos.easybarber.DTO.product.ProductDTO;
 import com.teamsantos.easybarber.DTO.user.UserCreateDTO;
 import com.teamsantos.easybarber.DTO.user.UserDTO;
 import com.teamsantos.easybarber.DTO.user.UserSignInDTO;
@@ -262,5 +264,17 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<Long> getFavoriteEstablishmentsIds(Long userId) {
         return userRepository.getFavoriteEstablishmentsIds(userId);
+    }
+
+    @Transactional(readOnly = false)
+    public void addSuggestionToUser(Long userId, Set<Long> productIds) {
+        for (Long productId : productIds) {
+            userRepository.createSuggestion(userId, productId);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductDTO> getProductSuggestions(long userId) {
+        return userRepository.getProductSuggestions(userId);
     }
 }
