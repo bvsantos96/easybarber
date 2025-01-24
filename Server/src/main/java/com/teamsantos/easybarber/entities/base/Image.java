@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.entities.base;
 
+
 import com.teamsantos.easybarber.DTO.image.ImageDTO;
 
 import jakarta.persistence.Column;
@@ -29,6 +30,8 @@ public class Image<T extends EntityWithImages<T, E>, E extends Image<T, E>> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "entity_id", referencedColumnName = "id")
     private T entity;
+    @Column
+    private String fileName; //s3 bucket file name
     @Column
     private String data;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
