@@ -269,4 +269,9 @@ public class AppointmentService {
     public List<ProductRequestsDTO> getProductRequests(ProductRequestFilter filter) {
         return appointmentRepository.getProductRequests(filter);
     }
+
+    @Transactional(readOnly = true)
+    public Long getUserIdByAppointmentId(Long appointmentId) {
+        return appointmentRepository.getUserIdByAppointmentId(appointmentId);
+    }
 }
