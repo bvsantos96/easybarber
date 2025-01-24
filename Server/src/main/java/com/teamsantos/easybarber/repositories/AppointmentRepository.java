@@ -289,4 +289,11 @@ public interface AppointmentRepository
                     AND (:#{#filter.productId} IS NULL OR :#{#filter.productId} IN (SELECT p.id FROM pq.products p))
             """)
     List<ProductRequestsDTO> getProductRequests(ProductRequestFilter filter);
+
+    @Query("""
+                SELECT a.user.id
+                FROM Appointment a
+                WHERE a.id = :appointmentId
+            """)
+    Long getUserIdByAppointmentId(Long appointmentId);
 }

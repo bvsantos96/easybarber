@@ -30,7 +30,9 @@ import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentInformationDTO;
 import com.teamsantos.easybarber.DTO.establishment.service.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
+import com.teamsantos.easybarber.DTO.filters.ProductFilter;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
+import com.teamsantos.easybarber.DTO.product.ProductDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.service.ServiceDTO;
 import com.teamsantos.easybarber.DTO.service.ServiceListDTO;
@@ -42,6 +44,7 @@ import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.security.filters.EstablishmentSecurityExpressionRoot;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.services.EstablishmentService;
+import com.teamsantos.easybarber.services.ProductService;
 import com.teamsantos.easybarber.services.SchedulesService;
 import com.teamsantos.easybarber.services.UserService;
 import com.teamsantos.easybarber.utils.Utils;
@@ -52,14 +55,16 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     private final SchedulesService schedulesService;
     private final EstablishmentService establishmentService;
     private final UserService userService;
+    private final ProductService productService;
 
     @Autowired
     public EstablishmentController(EstablishmentService service, SchedulesService schedulesService,
-            UserService userService) {
+            UserService userService, ProductService productService) {
         super(service);
         this.establishmentService = service;
         this.schedulesService = schedulesService;
         this.userService = userService;
+        this.productService = productService;
     }
 
     @GetMapping("/{id}")
@@ -360,6 +365,54 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         } catch (Exception e) {
             response.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(false);
+        }
+    }
+
+    @PostMapping("/{establishmentId}/product")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    public ResponseEntity<BaseResponseDTO> addProduct(@PathVariable Long establishmentId,
+            @RequestBody ProductDTO product) {
+        BaseResponseDTO response = new BaseResponseDTO();
+        try {
+            product.setEstablishmentId(establishmentId);
+            response.setId(productService.create(product));
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @PutMapping("/{establishmentId}/product/{productId}")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    public ResponseEntity<BaseResponseDTO> disableProduct(@PathVariable Long establishmentId,
+            @PathVariable Long productId) {
+        BaseResponseDTO response = new BaseResponseDTO();
+        try {
+            productService.disableProduct(Set.of(productId));
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @GetMapping("/{establishmentId}/products")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_EMPLOYEE)
+    public ResponseEntity<BasePageDTO<ProductDTO>> listProducts(@PathVariable Long establishmentId,
+            @RequestBody ProductFilter filter, Pageable pageable) {
+        BasePageDTO<ProductDTO> response = new BasePageDTO<>();
+        try {
+            if (filter == null) {
+                filter = new ProductFilter();
+            }
+
+            filter.setEstablishmentId(establishmentId);
+            response.setItems(productService.getProducts(filter, pageable));
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 }
