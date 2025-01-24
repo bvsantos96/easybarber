@@ -44,7 +44,7 @@ public class ProductService extends ServiceWithImages<Product, ProductImage> {
     }
 
     @Transactional(readOnly = false)
-    public Long create(ProductDTO productDTO) {
+    public Long create(ProductDTO productDTO) throws Exception {
         Product product = modelMapper.map(productDTO, Product.class);
         for (Long ids : productDTO.getProductTypeIds()) {
             product.addProductType(entityManager.getReference(ProductType.class, ids));
