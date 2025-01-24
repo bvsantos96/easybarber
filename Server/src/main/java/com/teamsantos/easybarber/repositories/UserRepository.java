@@ -96,9 +96,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
                     ps.product.id,
                     ps.product.establishment.id,
                     ps.product.employee.id,
-                    (SELECT new java.util.HashSet<Long>(pt.id)
-                     FROM ProductType pt
-                     WHERE pt MEMBER OF ps.product.productTypes),
+                    (SELECT pt.id FROM ps.product.productTypes pt),
                     ps.product.name,
                     ps.product.description,
                     ps.product.price,

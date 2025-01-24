@@ -15,13 +15,11 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Index;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -30,8 +28,6 @@ import lombok.ToString;
 @Setter
 @ToString
 @Entity
-@Table(indexes = { @Index(columnList = "establishment_id"), @Index(columnList = "employee_id"),
-        @Index(columnList = "product_type_ids"), @Index(columnList = "price"), @Index(columnList = "name") })
 public class Product extends EntityWithImages<Product, ProductImage> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,10 +54,6 @@ public class Product extends EntityWithImages<Product, ProductImage> {
     @ToString.Exclude
     @BatchSize(size = 10)
     private Set<ProductSuggestions> suggestions;
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @BatchSize(size = 10)
-    private Set<ProductRequest> requests;
 
     @Override
     public Product getEntity() {
