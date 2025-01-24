@@ -11,7 +11,10 @@ import {
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@styles/ThemeContext';
 
+
+const theme = useTheme();
 const PictureUploadForm: React.FC = () => {
     const [name, setName] = useState<string>('');
     const [description, setDescription] = useState<string>('');
@@ -173,7 +176,7 @@ const styles = StyleSheet.create({
         position: 'absolute',
         top: 5,
         right: 5,
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: theme.colors.text.lightBlack,
         borderRadius: 15,
         padding: 2,
     },

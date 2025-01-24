@@ -14,7 +14,7 @@ export const getStyles = () => {
             flexDirection: 'row',
             alignItems: 'center',
             borderWidth: 1,
-            borderColor: 'rgba(0, 0, 0, 0.29)',
+            borderColor: theme.colors.text.lightGray,
             borderRadius: 50,
             borderStyle: 'solid',
         },
@@ -38,7 +38,7 @@ export const getStyles = () => {
             zIndex: 9999
         },
         textInput: {
-            width: theme.dimensions.input.width-(0.8 * theme.dimensions.input.height),
+            width: theme.dimensions.input.width - (0.8 * theme.dimensions.input.height),
             height: 40 * theme.dimensions.absoluteHeight,
             borderWidth: 0,
             color: theme.colors.text.main,
@@ -47,7 +47,7 @@ export const getStyles = () => {
             fontWeight: '400',
         },
         textInputWithShowPasswordIcon: {
-            width: theme.dimensions.input.width-(1.6 * theme.dimensions.input.height)-10 * theme.dimensions.absoluteHeight-20 * theme.dimensions.absoluteWidth,
+            width: theme.dimensions.input.width - (1.6 * theme.dimensions.input.height) - 10 * theme.dimensions.absoluteHeight - 20 * theme.dimensions.absoluteWidth,
             height: 40 * theme.dimensions.absoluteHeight,
             borderWidth: 0,
             color: theme.colors.text.main,
