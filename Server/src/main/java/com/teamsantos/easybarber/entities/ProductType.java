@@ -28,9 +28,9 @@ public class ProductType {
     @Column
     private String imageURL;
     @ManyToMany(mappedBy = "productTypes")
-    private Set<Product> students = new HashSet<>();
-    @ManyToMany(mappedBy = "parentTypes")
-    private Set<ProductType> childTypes = new HashSet<>();
-    @ManyToMany(mappedBy = "childTypes")
-    private Set<ProductType> parentTypes = new HashSet<>();
+    private Set<Product> products = new HashSet<>();
+    // @ManyToMany(mappedBy = "parentTypes")
+    // private Set<ProductType> childTypes = new HashSet<>();
+    // @ManyToMany(mappedBy = "childTypes")
+    // private Set<ProductType> parentTypes = new HashSet<>();
 }
