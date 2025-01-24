@@ -16,7 +16,7 @@ import com.teamsantos.easybarber.DTO.filters.ProductRequestFilter;
 import com.teamsantos.easybarber.DTO.product.ProductDTO;
 import com.teamsantos.easybarber.DTO.product.ProductRequestsDTO;
 import com.teamsantos.easybarber.entities.Product;
-import com.teamsantos.easybarber.entities.ProductTypes;
+import com.teamsantos.easybarber.entities.ProductType;
 import com.teamsantos.easybarber.entities.images.ProductImage;
 import com.teamsantos.easybarber.exceptions.GenericNotFoundException;
 import com.teamsantos.easybarber.repositories.ProductRepository;
@@ -47,7 +47,7 @@ public class ProductService extends ServiceWithImages<Product, ProductImage> {
     public Long create(ProductDTO productDTO) {
         Product product = modelMapper.map(productDTO, Product.class);
         for (Long ids : productDTO.getProductTypeIds()) {
-            product.addProductType(entityManager.getReference(ProductTypes.class, ids));
+            product.addProductType(entityManager.getReference(ProductType.class, ids));
         }
         product = repository.save(product);
         this.saveImages(product.getId(), productDTO.getImages());
