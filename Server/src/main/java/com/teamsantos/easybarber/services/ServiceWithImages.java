@@ -75,11 +75,7 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
 
     // TODO: limit the amount of images updloaded
     @Transactional
-<<<<<<< HEAD
-    public List<Long> saveImages(long entityId, List<ImageDTO> images) throws Exception {
-=======
-    public List<Long> saveImages(long entityId, Collection<ImageDTO> images) {
->>>>>>> filipe/productRecommendation
+    public List<Long> saveImages(long entityId, Collection<ImageDTO> images) throws Exception {
         List<E> imagesToAdd = new ArrayList<>();
         boolean newMain = false;
 
@@ -151,12 +147,11 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
                 .orElseThrow(() -> new GenericNotFoundException("Image not found"));
     }
 
-
     /////////////////////////////////////////////////////////////////////////////////////////
     // 🚀 Private Methods Section🛠️
     /////////////////////////////////////////////////////////////////////////////////////////
 
-    private String addImageToBucket(String base64Data, String fileName) throws Exception{
+    private String addImageToBucket(String base64Data, String fileName) throws Exception {
         S3Client s3Client = null;
         try {
             byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
@@ -201,7 +196,7 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
         S3Client s3Client = null;
         try {
             s3Client = S3Client.builder()
-                    .region(Region.of(region)) 
+                    .region(Region.of(region))
                     .credentialsProvider(StaticCredentialsProvider.create(
                             AwsBasicCredentials.create(accessKeyId, secretKey)))
                     .build();
