@@ -67,6 +67,12 @@ function processDirectory(directory, searchValue, replaceValue) {
     });
 }
 
+function isValidHexColor(str) {
+    const hexRegex = /^#([0-9A-Fa-f]{3}){1,2}([0-9A-Fa-f]{2})?$|^#([0-9A-Fa-f]{6})([0-9A-Fa-f]{2})?$/;
+
+    return hexRegex.test(str);
+}
+
 function extractMainColor(themeFilePath) {
     try {
         const fileContent = fs.readFileSync(themeFilePath, 'utf8');
@@ -83,6 +89,20 @@ function extractMainColor(themeFilePath) {
     }
 }
 
+function hexToRgbValues(hex) {
+    hex = hex.replace(/^#/, '');
+
+    if (hex.length === 3) {
+        hex = hex.split('').map(char => char + char).join('');
+    }
+
+    const r = parseInt(hex.slice(0, 2), 16);
+    const g = parseInt(hex.slice(2, 4), 16);
+    const b = parseInt(hex.slice(4, 6), 16);
+
+    return `${r}, ${g}, ${b}`;
+}
+
 function hexToRgb(hex) {
     hex = hex.replace(/^#/, '');
 
@@ -97,11 +117,25 @@ function hexToRgb(hex) {
     return `rgba(${r}, ${g}, ${b}, 0.1)`;
 }
 
+function rgbToHex(r, g, b) {
+    r = Math.max(0, Math.min(255, +r));
+    g = Math.max(0, Math.min(255, +g));
+    b = Math.max(0, Math.min(255, +b));
+
+    const toHex = (n) => n.toString(16).padStart(2, '0');
+
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
 const [replaceValue] = process.argv.slice(2);
 
 if (!replaceValue) {
     console.error('This script runs like this: node updateThemeColor.js <new-color>');
     process.exit(1);
+}
+
+if (!isValidHexColor(replaceValue)) {
+    replaceValue = rgbToHex(...replaceValue.split(", "));
 }
 
 loadGitignore();
@@ -113,6 +147,9 @@ if (!searchValue) {
     process.exit(1);
 }
 
+if (!isValidHexColor(searchValue)) {
+    searchValue = rgbToHex(...searchValue.split(", "));
+}
+
 processDirectory(process.cwd(), searchValue, replaceValue);
-processDirectory(process.cwd(), hexToRgb(searchValue), hexToRgb(replaceValue));
-processDirectory(process.cwd(), hexToRgb(searchValue).replace("0.1", "0.10"), hexToRgb(replaceValue));
+processDirectory(process.cwd(), hexToRgbValues(searchValue), hexToRgbValues(replaceValue));
