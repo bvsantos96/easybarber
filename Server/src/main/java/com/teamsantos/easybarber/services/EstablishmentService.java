@@ -53,7 +53,6 @@ import jakarta.persistence.EntityManager;
 
 @Service
 public class EstablishmentService extends ServiceWithImages<Establishment, EstablishmentImage> {
-    private final ModelMapper modelMapper;
     private final EmployeeRepository employeeRepository;
     private final ServiceRepository serviceRepository;
     private final EstablishmentServiceRepository establishmentServiceRepository;
@@ -71,7 +70,6 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
             ModelMapper modelMapper, EntityManager entityManager) {
         super(repository, imageRepository, modelMapper, entityManager);
         this.establishmentRepository = repository;
-        this.modelMapper = modelMapper;
         this.establishmentServiceRepository = establishmentServiceRepository;
         this.employeeRepository = employeeRepository;
         this.serviceRepository = serviceRepository;

@@ -10,6 +10,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -18,11 +19,14 @@ import com.teamsantos.easybarber.DTO.appointment.AppointmentListDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentReminderDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentsHashDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
+import com.teamsantos.easybarber.DTO.filters.ProductRequestFilter;
+import com.teamsantos.easybarber.DTO.product.ProductRequestsDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.entities.Appointment;
 import com.teamsantos.easybarber.entities.ScheduleException;
 
 import jakarta.persistence.Tuple;
+import jakarta.transaction.Transactional;
 
 @Repository
 public interface AppointmentRepository
@@ -247,4 +251,49 @@ public interface AppointmentRepository
                     AND a.confirmed = true
             """)
     List<AppointmentsHashDTO> findAllAppointmentsHash(long userId, boolean userView);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO product_request (appointment_id, product_id) VALUES (:appointmentId, :productId)", nativeQuery = true)
+    void createProductRequest(@Param("appointmentId") Long appointmentId, @Param("productId") Long productId);
+
+    @Query("""
+                SELECT new com.teamsantos.easybarber.DTO.product.ProductRequestsDTO(
+                    pq.id,
+                    new com.teamsantos.easybarber.DTO.appointment.AppointmentUserInfoDTO(
+                        pq.appointment.id,
+                        pq.appointment.user.id,
+                        pq.appointment.user.name,
+                        pq.appointment.user.mobileInformation,
+                        pq.appointment.establishment.name,
+                        java.time.LocalDateTime.of(pq.appointment.date, pq.appointment.time)
+                    ),
+                    (SELECT new com.teamsantos.easybarber.DTO.product.ProductDTO(
+                            p.id,
+                            p.establishment.id,
+                            p.employee.id,
+                            (SELECT pt.id FROM p.productTypes pt),
+                            p.name,
+                            p.description,
+                            p.price,
+                            i.data
+                        )
+                        FROM pq.products p
+                        LEFT JOIN ProductImage i ON i.isMain = true AND i.entity.id = p.id
+                    )
+                )
+                FROM ProductRequest pq
+                WHERE (:#{#filter.appointmentId} IS NULL OR pq.appointment.id = :#{#filter.appointmentId})
+                    AND (:#{#filter.employeeId} IS NULL OR pq.appointment.employee.id = :#{#filter.employeeId})
+                    AND (:#{#filter.establishmentId} IS NULL OR pq.appointment.establishment.id = :#{#filter.establishmentId})
+                    AND (:#{#filter.productId} IS NULL OR :#{#filter.productId} IN (SELECT p.id FROM pq.products p))
+            """)
+    List<ProductRequestsDTO> getProductRequests(ProductRequestFilter filter);
+
+    @Query("""
+                SELECT a.user.id
+                FROM Appointment a
+                WHERE a.id = :appointmentId
+            """)
+    Long getUserIdByAppointmentId(Long appointmentId);
 }
