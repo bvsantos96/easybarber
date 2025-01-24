@@ -19,16 +19,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                     p.id,
                     p.establishment.id,
                     p.employee.id,
-                    (SELECT new java.util.HashSet<Long>(pt.id)
-                     FROM ProductType pt
-                     WHERE pt MEMBER OF p.productTypes),
+                    (SELECT pt.id FROM p.productTypes pt),
                     p.name,
                     p.description,
                     p.price,
                     i.data
                 )
                 FROM Product p
-                LEFT JOIN ProductImages i ON i.isMain = true and i.entity.id = p.id
+                LEFT JOIN ProductImage i ON i.isMain = true and i.entity.id = p.id
                 WHERE (:#{#filter.employeeId} is null or p.employee.id = :#{#filter.employeeId})
                 AND (:#{#filter.establishmentId} is null or p.establishment.id = :#{#filter.establishmentId})
                 AND (:#{#filter.name} is null or lower(p.name) like lower(:#{#filter.name}))
