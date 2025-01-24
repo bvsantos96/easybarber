@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -21,8 +22,11 @@ import com.teamsantos.easybarber.DTO.appointment.AppointmentsHashDTO;
 import com.teamsantos.easybarber.DTO.appointment.CancelAppointmentDTO;
 import com.teamsantos.easybarber.DTO.appointment.FeedbackDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
+import com.teamsantos.easybarber.DTO.filters.ProductRequestFilter;
+import com.teamsantos.easybarber.DTO.product.ProductRequestsDTO;
 import com.teamsantos.easybarber.DTO.service.ServiceDynamicPriceDTO;
 import com.teamsantos.easybarber.entities.Appointment;
+import com.teamsantos.easybarber.exceptions.GenericNotFoundException;
 import com.teamsantos.easybarber.repositories.AppointmentRepository;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.utils.Pair;
@@ -248,5 +252,26 @@ public class AppointmentService {
         }
 
         return Utils.hash(hash);
+    }
+
+    @Transactional(readOnly = false)
+    public void createProductRequest(Long appointmentId, Set<Long> productIds) throws GenericNotFoundException {
+        Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
+        if (!appointment.isPresent()) {
+            throw new GenericNotFoundException("Appointment");
+        }
+        for (Long productId : productIds) {
+            appointmentRepository.createProductRequest(appointmentId, productId);
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProductRequestsDTO> getProductRequests(ProductRequestFilter filter) {
+        return appointmentRepository.getProductRequests(filter);
+    }
+
+    @Transactional(readOnly = true)
+    public Long getUserIdByAppointmentId(Long appointmentId) {
+        return appointmentRepository.getUserIdByAppointmentId(appointmentId);
     }
 }
