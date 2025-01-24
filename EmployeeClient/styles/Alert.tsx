@@ -17,7 +17,7 @@ export const getStyles = () => {
             left: 0,
             width: theme.dimensions.width,
             height: theme.dimensions.height,
-            backgroundColor: 'rgba(0,0,0,0.7)',
+            backgroundColor: theme.colors.text.lightBlack,
             justifyContent: 'center',
             alignItems: 'center',
             elevation: 100,
