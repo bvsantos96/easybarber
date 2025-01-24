@@ -3,7 +3,6 @@ package com.teamsantos.easybarber.controllers;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -24,27 +23,8 @@ import com.teamsantos.easybarber.entities.base.Image;
 import com.teamsantos.easybarber.exceptions.GenericNotFoundException;
 import com.teamsantos.easybarber.services.ServiceWithImages;
 
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
-import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
-
 public abstract class ImageController<T extends EntityWithImages<T, E>, E extends Image<T, E>> {
     protected ServiceWithImages<T, E> service;
-
-    @Value("${aws.accessKeyId}")
-    private String accessKeyId;
-
-    @Value("${aws.secretKey}")
-    private String secretKey;
-
-    @Value("${aws.s3.region}")
-    private String region;
-
-    @Value("${aws.s3.bucket}")
-    private String bucketName;
 
     public ImageController(ServiceWithImages<T, E> service) {
         this.service = service;
@@ -139,42 +119,6 @@ public abstract class ImageController<T extends EntityWithImages<T, E>, E extend
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @GetMapping("/image/test")
-    public ResponseEntity<String> test() {
-        System.out.println("olaaa");
-        S3Client s3Client = null;
-        try {
-            AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(
-                    accessKeyId,
-                    secretKey);
-
-            s3Client = S3Client.builder()
-                    .region(Region.of(region))
-                    .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
-                    .build();
-
-            ListObjectsV2Request listReq = ListObjectsV2Request.builder()
-                    .bucket(bucketName)
-                    .maxKeys(1)
-                    .build();
-
-            ListObjectsV2Response listRes = s3Client.listObjectsV2(listReq);
-
-            return ResponseEntity.ok(String.format(
-                    "Successfully connected to S3 bucket '%s'. Found %d objects.",
-                    bucketName,
-                    listRes.keyCount()));
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(
-                    String.format("Failed to access S3 bucket: %s", e.getMessage()));
-        } finally {
-            if (s3Client != null) {
-                s3Client.close();
-            }
         }
     }
 }

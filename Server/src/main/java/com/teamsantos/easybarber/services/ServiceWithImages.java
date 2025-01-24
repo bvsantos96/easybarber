@@ -1,5 +1,7 @@
 package com.teamsantos.easybarber.services;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -23,6 +25,7 @@ import com.teamsantos.easybarber.repositories.base.ImageRepository;
 import com.teamsantos.easybarber.utils.Utils;
 
 import jakarta.persistence.EntityManager;
+import net.coobird.thumbnailator.Thumbnails;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -71,14 +74,11 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
 
     //TODO: limit the amount of images updloaded
     @Transactional
-    public List<Long> saveImages(long entityId, List<ImageDTO> images) {
+    public List<Long> saveImages(long entityId, List<ImageDTO> images) throws Exception {
         List<E> imagesToAdd = new ArrayList<>();
         boolean newMain = false;
 
         for (ImageDTO image : images) {
-            if (image.getId() != null) {
-                image.setId(null);
-            }
             if ((image.getData() != null && !image.getData().isEmpty())) {
                 if (image.getMain() != null && image.getMain()) {
                     if (newMain) {
@@ -87,9 +87,14 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
                         newMain = true;
                     }
                 }
+
+                // Generate a unique file name
+                String fileName = UUID.randomUUID().toString() + ".jpg";
+
                 E imageEntity = Utils.getModelMapper().map(image, imageClass);
                 imageEntity.setEntity(entityManager.getReference(entityClass, entityId));
-                imageEntity.setData(addImageToBucket(image.getData()));
+                imageEntity.setFileName(fileName);
+                imageEntity.setData(addImageToBucket(image.getData(), fileName));
                 imagesToAdd.add(imageEntity);
             }
         }
@@ -110,7 +115,9 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
     @Transactional
     public void deleteImages(long entityId, Set<Long> imageIds) {
         boolean mainDeleted = imageRepository.isAnyMainImage(entityId, imageIds);
+
         imageRepository.deleteImages(entityId, imageIds);
+
         if (mainDeleted) {
             Long id = imageRepository.findOldestImageId(entityId);
             if (id != null) {
@@ -140,61 +147,73 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
     }
 
 
-    //Private methods
-    private String addImageToBucket(String _base64Data) {
-    S3Client s3Client = null;
-    try {
-        byte[] decodedBytes = Base64.getDecoder().decode(_base64Data);
-        
-        String fileName = UUID.randomUUID().toString() + ".jpg"; //todo, generate proper name. implementing this in next iteration after pr
+    /////////////////////////////////////////////////////////////////////////////////////////
+    // 🚀 Private Methods Section🛠️
+    /////////////////////////////////////////////////////////////////////////////////////////
 
-        s3Client = S3Client.builder()
-                .region(Region.of(region))
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(accessKeyId, secretKey)))
-                .build();
+    private String addImageToBucket(String base64Data, String fileName) throws Exception{
+        S3Client s3Client = null;
+        try {
+            byte[] decodedBytes = Base64.getDecoder().decode(base64Data);
 
-        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
-                .key(fileName)
-                .contentType("image/jpeg")
-                .build();
+            // Compress and resize the image
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            Thumbnails.of(new ByteArrayInputStream(decodedBytes))
+                    .size(1080, 1080)
+                    .outputQuality(1)
+                    .outputFormat("jpg")
+                    .toOutputStream(outputStream);
 
-        s3Client.putObject(putObjectRequest, RequestBody.fromBytes(decodedBytes));
+            byte[] compressedBytes = outputStream.toByteArray();
 
-        return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, fileName);
+            // Upload to S3
+            s3Client = S3Client.builder()
+                    .region(Region.of(region))
+                    .credentialsProvider(StaticCredentialsProvider.create(
+                            AwsBasicCredentials.create(accessKeyId, secretKey)))
+                    .build();
 
-    } catch (Exception e) {
-        throw new RuntimeException("Failed to upload image to S3 bucket", e);
-    } finally {
-        if (s3Client != null) {
-            s3Client.close();
+            PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileName)
+                    .contentType("image/jpeg")
+                    .build();
+
+            s3Client.putObject(putObjectRequest, RequestBody.fromBytes(compressedBytes));
+
+            return String.format("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, fileName);
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to upload image to S3 bucket", e);
+        } finally {
+            if (s3Client != null) {
+                s3Client.close();
+            }
         }
     }
-}
 
-private void deleteImageFromBucket(String fileName) {
-    S3Client s3Client = null;
-    try {
-        s3Client = S3Client.builder()
-                .region(Region.of(region)) 
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(accessKeyId, secretKey)))
-                .build();
+    private void deleteImageFromBucket(String fileName) {
+        S3Client s3Client = null;
+        try {
+            s3Client = S3Client.builder()
+                    .region(Region.of(region)) 
+                    .credentialsProvider(StaticCredentialsProvider.create(
+                            AwsBasicCredentials.create(accessKeyId, secretKey)))
+                    .build();
 
-        DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                .bucket(bucketName)
-                .key(fileName)
-                .build();
+            DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
+                    .bucket(bucketName)
+                    .key(fileName)
+                    .build();
 
-        s3Client.deleteObject(deleteObjectRequest);
+            s3Client.deleteObject(deleteObjectRequest);
 
-    } catch (Exception e) {
-        throw new RuntimeException("Failed to delete image from S3 bucket", e);
-    } finally {
-        if (s3Client != null) {
-            s3Client.close();
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to delete image from S3 bucket", e);
+        } finally {
+            if (s3Client != null) {
+                s3Client.close();
+            }
         }
     }
-}
 }
