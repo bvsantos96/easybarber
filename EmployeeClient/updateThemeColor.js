@@ -127,20 +127,23 @@ function rgbToHex(r, g, b) {
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
-const [replaceValue] = process.argv.slice(2);
+let [replaceValue] = process.argv.slice(2);
 
 if (!replaceValue) {
     console.error('This script runs like this: node updateThemeColor.js <new-color>');
     process.exit(1);
 }
 
+console.log(replaceValue);
 if (!isValidHexColor(replaceValue)) {
-    replaceValue = rgbToHex(...replaceValue.split(", "));
+    const [r, g, b] = replaceValue.split(', ');
+    console.log(r, g, b);
+    replaceValue = rgbToHex(r, g, b);
 }
 
 loadGitignore();
 
-const searchValue = extractMainColor('./styles/ThemeContext.tsx');
+let searchValue = extractMainColor('./styles/ThemeContext.tsx');
 
 if (!searchValue) {
     console.error('Could not determine the current mainColor.');
@@ -148,7 +151,8 @@ if (!searchValue) {
 }
 
 if (!isValidHexColor(searchValue)) {
-    searchValue = rgbToHex(...searchValue.split(", "));
+    const [r, g, b] = searchValue.split(', ');
+    searchValue = rgbToHex(r, g, b);
 }
 
 processDirectory(process.cwd(), searchValue, replaceValue);

@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Pressable as DefaultPressable, StyleProp, ViewStyle, LayoutChangeEvent } from 'react-native';
 import { useTheme } from '../styles/ThemeContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 interface MyPressableProps {
     style?: StyleProp<ViewStyle>;
@@ -24,14 +25,19 @@ export default function Pressable({
         <DefaultPressable
             disabled={disabled}
             style={({ pressed }) => [
-                style,
                 { opacity: (disabled || pressed) ? 0.5 : 1 },
-                shadow ? theme.shadow : undefined,
             ]}
             onPress={onPress}
             onLayout={onLayout}
         >
-            {children}
+            <LinearGradient
+                start={[0, 1]}
+                end={[1, 0]}
+                colors={theme.colors.gradientColors}
+                style={[style, shadow ? theme.shadow : undefined]}
+            >
+                {children}
+            </LinearGradient>
         </DefaultPressable>
     );
 }

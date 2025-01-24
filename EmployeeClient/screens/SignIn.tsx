@@ -8,6 +8,7 @@ import { getStyles } from '@styles/Sign';
 import { useRef, useState } from 'react';
 import { NavigationProp } from '@react-navigation/native';
 import { useTheme } from '@styles/ThemeContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export type SignInProps = {
     navigation: NavigationProp<any, any>,
@@ -52,7 +53,11 @@ export default function SignIn({ navigation }: SignInProps) {
     }
 
     return (
-        <View style={styles.container} >
+        <LinearGradient
+            start={{ x: 0.5, y: 0 }}
+            end={{ x: 0.5, y: 0.2 }}
+            colors={theme.colors.gradientColors}
+            style={styles.container} >
             <View style={[styles.logoContainer, styles.shadow]} >
                 <LogoSmall width={styles.logo.width} height={styles.logo.height} />
             </View>
@@ -91,6 +96,6 @@ export default function SignIn({ navigation }: SignInProps) {
                     />
                 }
             </Animated.View>
-        </View >
+        </LinearGradient>
     );
 }

@@ -19,6 +19,7 @@ const tabHeight = 50 * height / 844;
 
 interface Colors {
     mainColor: string;
+    gradientColors: string[];
     successColor: string;
     infoColor: string;
     backgroundColor: string;
@@ -35,6 +36,7 @@ interface Colors {
         black: string;
         lightBlack: string;
         lightGray: string;
+        lightWhite: string;
         darkBlueGray: string;
     };
     button: {
@@ -121,17 +123,19 @@ function rgbToHex(r: number, g: number, b: number): string {
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
-export const mainColor = '54, 75, 122';
+export const mainColor = '3, 217, 153';
+export const gradientColors = [`rgb(${mainColor})`, `rgb(3, 217, 186)`];
 export const backgroundColor = "0, 0, 0";
 export const textColor = '255, 255, 255';
 const textColors = textColor.split(', ');
 const shadowColor = rgbToHex(+textColors[0], +textColors[1], +textColors[2]);
-
 export const theme = "light";
+export const borderColor = "255, 255, 255";
 
 const defaultTheme: Theme = {
     colors: {
         mainColor: `rgb(${mainColor})`,
+        gradientColors: gradientColors,
         successColor: '#6FC138',
         backgroundColor: `rgb(${backgroundColor})`,
         infoColor: '#2A74CC',
@@ -139,7 +143,7 @@ const defaultTheme: Theme = {
         imageBackground: `rgba(${mainColor}, 0.1)`,
         statusBarOnHome: theme,
         logoBackgound: "white",
-        borderAlt: `rgba(${mainColor}, 0.1)`,
+        borderAlt: `rgba(${borderColor}, 0.1)`,
         text: {
             main: `rgb(${mainColor})`,
             secondary: `rgba(${textColor}, 0.4)`,
@@ -148,12 +152,13 @@ const defaultTheme: Theme = {
             black: `rgb(${textColor})`,
             lightBlack: `rgba(${textColor}, 0.66)`,
             lightGray: `rgba(${textColor}, 0.2)`,
+            lightWhite: `rgba(${textColor}, 0.4)`,
             darkBlueGray: `rgba(${mainColor}, 0.1)`
         },
         button: {
             main: `rgb(${mainColor})`,
             alt: `rgb(${backgroundColor})`,
-            border: `rgba(${textColor}, 0.08)`,
+            border: `rgba(${borderColor}, 1)`,
         },
     },
     dimensions: {
