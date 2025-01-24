@@ -40,7 +40,7 @@ public class Product extends EntityWithImages<Product, ProductImage> {
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "product_type_ids", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "user_type_id"))
     @BatchSize(size = 10)
-    private Set<ProductTypes> productTypes = new HashSet<>();
+    private Set<ProductType> productTypes = new HashSet<>();
     @Column(nullable = true)
     private Employee employee;
     @Column(nullable = false)
@@ -65,7 +65,7 @@ public class Product extends EntityWithImages<Product, ProductImage> {
         return this;
     }
 
-    public void addProductType(ProductTypes productType) {
+    public void addProductType(ProductType productType) {
         if (productTypes == null) {
             productTypes = new HashSet<>();
         }
