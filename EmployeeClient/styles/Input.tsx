@@ -14,7 +14,7 @@ export const getStyles = () => {
             flexDirection: 'row',
             alignItems: 'center',
             borderWidth: 1,
-            borderColor: theme.colors.text.lightGray,
+            borderColor: theme.colors.text.lightWhite,
             borderRadius: 50,
             borderStyle: 'solid',
         },
