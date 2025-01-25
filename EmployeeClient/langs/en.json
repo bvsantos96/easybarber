@@ -12,7 +12,6 @@
   "allow": "Allow",
   "saveLogin": "Use Face ID / Fingerprint to quickly and securely log in next time.",
   "enable": "Enable",
-  "notNow": "Not Now",
   "usePasscode": "Use Passcode",
   "loadingMore": "Loading More...",
   "updateAvailable": "Update Available",
@@ -74,6 +73,9 @@
     "establishment": {
       "name": "Establishment",
       "newName": "New Establishment"
+    },
+    "product": {
+      "name": "Product list"
     }
   },
   "errors": {
@@ -138,7 +140,7 @@
     "successfullVerification": "Your phone has been verified successfully",
     "getStarted": "Get Started",
     "verificationFailed": "Verification failed. Please try again.",
-    "resendCodeIn": "Resend code in",
+    "resendCodeIn": "Resend code in"
   },
   "pwdRecovery": {
     "enterPhone": "Please enter your phone number on which your account is registered.",
@@ -149,7 +151,6 @@
     "pwdMustMatch": "Passwords must match",
     "pwdResetSuccess": "Password reset successfully"
   },
-  "phoneNumber": "Phone Number",
   "password": "Password",
   "forgotPassword": "Forgot password?",
   "name": "Name",
@@ -175,5 +176,6 @@
   "noItems": "No items found.",
   "settings": {
     "resetPwd": "Reset Password"
-  }
+  },
+  "currency": "€"
 }

@@ -315,3 +315,13 @@ declare interface RegisterInfo {
     confirmPassword: string;
     name: string;
 }
+
+declare interface ImageEntity extends Identifiable {
+    image: string;
+}
+
+declare interface ProductEntity extends ImageEntity {
+    name: string;
+    description: string;
+    price: number;
+}

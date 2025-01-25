@@ -15,6 +15,7 @@ export const Params = {
     Settings: undefined,
     Establishment: {} as EstablishmentRoute,
     NewEstablishment: undefined,
+    ProductList: undefined
 } as const;
 
 export const Routes = {
@@ -30,4 +31,5 @@ export const Routes = {
     Settings: "Settings",
     Establishment: "Establishment",
     NewEstablishment: "NewEstablishment",
+    ProductList: "ProductList"
 } as const;

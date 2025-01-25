@@ -7,6 +7,7 @@ import ResetPwd from "@screens/ResetPwd";
 import { Params } from "@navigation/Router";
 import Tabs from "@screens/Tabs";
 import Establishment from "@screens/Establishment";
+import ProductList from "@screens/ProductList";
 
 const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     Sign: {
@@ -55,6 +56,12 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         title: texts.navigation.establishment.newName,
         hasHeader: true,
         component: Establishment,
+        containerizedComponent: true,
+    },
+    ProductList: {
+        title: texts.navigation.product.name,
+        hasHeader: true,
+        component: ProductList,
         containerizedComponent: true,
     },
 };

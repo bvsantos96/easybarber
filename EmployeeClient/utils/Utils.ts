@@ -1,4 +1,5 @@
 import { NavigationProp } from "@react-navigation/native";
+import texts from "@lang/en.json";
 
 export const getDateTimeAsString = (date: Date) => {
     return `${twoDigits(date.getDate())}/${twoDigits(date.getMonth() + 1)} ${twoDigits(date.getHours())}:${twoDigits(date.getMinutes())}`;
@@ -14,6 +15,10 @@ export const getFullDateAsString = (date: Date) => {
 
 export const getDateAsString = (date: Date) => {
     return `${twoDigits(date.getDate())}/${twoDigits(date.getMonth() + 1)}${date.getFullYear() === new Date().getFullYear() ? '' : '/' + date.getFullYear().toString().substring(2, 4)}`;
+}
+
+export const buildCurrencyString = (value: number | string) => {
+    return `${parseFloat(value.toString()).toFixed(2)} ${texts.currency}`;
 }
 
 export const twoDigits = (value: number) => {
