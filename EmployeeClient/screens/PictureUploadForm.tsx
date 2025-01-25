@@ -181,9 +181,9 @@ const styles = StyleSheet.create({
         padding: 2,
     },
     input: {
-        backgroundColor: 'white',
+        backgroundColor: theme.colors.backgroundColor,
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: theme.colors.button.border,
         borderRadius: 10,
         padding: 15,
         marginBottom: 15,

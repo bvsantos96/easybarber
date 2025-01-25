@@ -19,12 +19,14 @@ const tabHeight = 50 * height / 844;
 
 interface Colors {
     mainColor: string;
+    gradientColors: string[];
     successColor: string;
     infoColor: string;
     backgroundColor: string;
     iconBackground: string;
     imageBackground: string;
     statusBarOnHome: StatusBarStyle;
+    logoBackgound: string;
     borderAlt: string;
     text: {
         main: string;
@@ -34,6 +36,7 @@ interface Colors {
         black: string;
         lightBlack: string;
         lightGray: string;
+        lightWhite: string;
         darkBlueGray: string;
     };
     button: {
@@ -110,32 +113,52 @@ export const useTheme = (): Theme => {
     return context;
 };
 
-export const mainColor = '#2d4b7a';
+function rgbToHex(r: number, g: number, b: number): string {
+    r = Math.max(0, Math.min(255, +r));
+    g = Math.max(0, Math.min(255, +g));
+    b = Math.max(0, Math.min(255, +b));
+
+    const toHex = (n: number) => n.toString(16).padStart(2, '0');
+
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+export const mainColor = '3, 217, 153';
+export const gradientColors = [`rgb(${mainColor})`, `rgb(3, 217, 186)`];
+export const backgroundColor = "0, 0, 0";
+export const textColor = '255, 255, 255';
+const textColors = textColor.split(', ');
+const shadowColor = rgbToHex(+textColors[0], +textColors[1], +textColors[2]);
+export const theme = "light";
+export const borderColor = "255, 255, 255";
 
 const defaultTheme: Theme = {
     colors: {
-        mainColor: mainColor,
+        mainColor: `rgb(${mainColor})`,
+        gradientColors: gradientColors,
         successColor: '#6FC138',
+        backgroundColor: `rgb(${backgroundColor})`,
         infoColor: '#2A74CC',
-        backgroundColor: 'white',
-        iconBackground: 'rgba(45, 75, 122, 0.1)',
-        imageBackground: "rgba(45, 75, 122, 0.1)",
-        statusBarOnHome: "light",
-        borderAlt: 'rgba(45, 75, 122, 0.1)',
+        iconBackground: `rgba(${mainColor}, 0.1)`,
+        imageBackground: `rgba(${mainColor}, 0.1)`,
+        statusBarOnHome: theme,
+        logoBackgound: "white",
+        borderAlt: `rgba(${borderColor}, 0.1)`,
         text: {
-            main: '#263238',
-            secondary: 'rgba(0, 0, 0, 0.4)',
-            alt: 'white',
-            link: mainColor,
-            black: 'black',
-            lightBlack: 'rgba(0, 0, 0, 0.66)',
-            lightGray: 'rgba(0, 0, 0, 0.2)',
-            darkBlueGray: '#263238'
+            main: `rgb(${mainColor})`,
+            secondary: `rgba(${textColor}, 0.4)`,
+            alt: `rgb(${backgroundColor})`,
+            link: `rgb(${mainColor})`,
+            black: `rgb(${textColor})`,
+            lightBlack: `rgba(${textColor}, 0.66)`,
+            lightGray: `rgba(${textColor}, 0.2)`,
+            lightWhite: `rgba(${textColor}, 0.4)`,
+            darkBlueGray: `rgba(${mainColor}, 0.1)`
         },
         button: {
-            main: mainColor,
-            alt: 'white',
-            border: 'rgba(0, 0, 0, 0.08)',
+            main: `rgb(${mainColor})`,
+            alt: `rgb(${backgroundColor})`,
+            border: `rgba(${borderColor}, 1)`,
         },
     },
     dimensions: {
@@ -156,7 +179,7 @@ const defaultTheme: Theme = {
     },
     strongShadow: {
         elevation: 8,
-        shadowColor: '#000',
+        shadowColor: shadowColor,
         shadowOffset: {
             width: 5,
             height: 5,
@@ -166,7 +189,7 @@ const defaultTheme: Theme = {
     },
     shadow: {
         elevation: 8,
-        shadowColor: '#000',
+        shadowColor: shadowColor,
         shadowOffset: {
             width: 0,
             height: 2,
