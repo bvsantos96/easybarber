@@ -22,8 +22,10 @@ import useAlertStore from 'storage/stores/AlertStore';
 import { Routes } from '@navigation/Router';
 import { resetNavigation } from 'utils/Utils';
 import KeyboardAvoidingScrollView from './KeyboardAvoidingScrollView';
+import { useTheme } from '@styles/ThemeContext';
 
 export default function Login({ navigation, toggleNewUser, expand, collapse }: SignInProps) {
+    const theme = useTheme();
     const styles = getStyles();
     const [phone, setPhone] = useState("");
     const [nation, setNation] = useState<Country | null>();
@@ -89,7 +91,7 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
                 }
                 fixedBottomComponent={
                     <View style={styles.buttonContainer}>
-                        <Button title={texts.login.button} onPress={login} />
+                        <Button title={texts.login.button} onPress={login} borderColor={theme.colors.text.lightWhite} />
                     </View>
 
                 }

@@ -21,8 +21,10 @@ import { AlertType } from './Alert';
 import useAlertStore from 'storage/stores/AlertStore';
 import { MobileConfirmationFunctions } from 'enums';
 import useMobileConfirmationStore from 'storage/stores/MobileConfirmationStore';
+import { useTheme } from '@styles/ThemeContext';
 
 export default function Register({ navigation, toggleNewUser, expand, collapse }: SignInProps) {
+    const theme = useTheme();
     const { alert } = useAlertStore();
     const { setBlockTime, resetBlockTime } = useMobileConfirmationStore();
     const styles = getStyles();
@@ -93,7 +95,7 @@ export default function Register({ navigation, toggleNewUser, expand, collapse }
                 fixedBottomComponent={
                     <View style={styles.buttonContainer}>
                         <Divider size={25} />
-                        <Button title={texts.register.button} onPress={register} />
+                        <Button title={texts.register.button} onPress={register} borderColor={theme.colors.text.lightWhite} />
                         <Divider size={20} />
                         <TouchableOpacity style={styles.alreadyRegisteredContainer} onPress={toggleNewUser}>
                             <Text style={styles.newUserText}>{texts.register.newUser}</Text>
