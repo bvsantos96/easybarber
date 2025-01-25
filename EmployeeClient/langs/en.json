@@ -200,5 +200,11 @@
       "Saturday",
       "Sunday"
     ]
-  }
+  },
+  "timeSelect": {
+    "title": "Select Time",
+    "button": "Set schedule"
+  },
+  "from": "From",
+  "to": "To",
 }

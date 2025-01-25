@@ -28,6 +28,7 @@ import { getDefaultCountryString } from 'utils/Constants';
 import DismissKeyboard from '@components/DismissKeyboard';
 import { deleteMobileInformation, deleteToken, getToken, refreshToken } from 'utils/ApiRequest';
 import { validateVersion } from 'utils/VersionValidation';
+import SafeFullScreen from '@components/SafeFullScreen';
 
 const Router = () => {
     const queryClient = useQueryClient()
@@ -56,6 +57,8 @@ const Router = () => {
                     defaultPage = Routes.Tabs;
                 }
             }
+
+            defaultPage = Routes.TimeSheet;
 
             if (defaultPage !== Routes.Sign) {
                 await waitAndResetNavigation(defaultPage);
@@ -126,7 +129,7 @@ const Router = () => {
                         >
 
                             {(props) => (
-                                <nav.component {...props} />
+                                nav.containerizedComponent ? (<SafeFullScreen><nav.component {...props} /></SafeFullScreen>) : (<nav.component {...props} />)
                             )}
                         </Stack.Screen>);
                     })}

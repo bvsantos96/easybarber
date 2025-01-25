@@ -25,13 +25,15 @@ interface PageListProps<T extends Identifiable> {
     initialItems?: T[];
     pageSize?: number;
     preload?: boolean;
-    itemMaxWidth?:number;
+    itemMaxWidth?: number;
+    dontDisplayLoadMore?: boolean;
 }
 
 interface PageSwipeEvent {
     position: number;
     offset: number;
 }
+
 export interface PageListRef<T extends Identifiable> {
     _loadMoreItems: () => void;
     loadMoreItems: (req: ITimedRequest<T>) => void;
@@ -41,7 +43,7 @@ export interface PageListRef<T extends Identifiable> {
 }
 
 const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Ref<PageListRef<T>>) => {
-    const { renderItem, requestFunction, loadCache, saveCache, resetCache, style, preload = true, itemMaxWidth} = props;
+    const { renderItem, requestFunction, loadCache, saveCache, resetCache, style, preload = true, itemMaxWidth, dontDisplayLoadMore = false } = props;
     const type = props.type || PageListType.FLAT;
     const theme = useTheme();
     const initialItems = props.initialItems || [];
@@ -133,7 +135,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     const [columns, setColumns] = useState(1);
 
     const calculateColumns = useCallback(() => {
-        if(!itemMaxWidth){
+        if (!itemMaxWidth) {
             return 1;
         }
         const screenWidth = theme.dimensions.width;
@@ -164,7 +166,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={() =>
-                        firstLoad ? (
+                        (dontDisplayLoadMore || firstLoad) ? (
                             null
                         ) : (
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
@@ -198,7 +200,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={() =>
-                        firstLoad ? (
+                        (dontDisplayLoadMore || firstLoad) ? (
                             null
                         ) : (
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>

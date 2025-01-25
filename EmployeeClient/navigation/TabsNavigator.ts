@@ -49,7 +49,7 @@ const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
         component: Settings,
         tabicon: SettingsIcon,
         requiresAuth: true
-    }
+    },
 };
 
 export default TabsNav;
