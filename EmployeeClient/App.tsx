@@ -51,9 +51,9 @@ const Router = () => {
                 defaultPage = Routes.Sign;
             } else {
                 if (await getToken() === null && !await refreshToken()) {
-                    defaultPage = Routes.ProductList;
+                    defaultPage = Routes.Sign;
                 } else {
-                    defaultPage = Routes.ProductList;
+                    defaultPage = Routes.Tabs;
                 }
             }
 
