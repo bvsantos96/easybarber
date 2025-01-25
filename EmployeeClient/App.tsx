@@ -57,9 +57,6 @@ const Router = () => {
                 }
             }
 
-            // TODO: Remove
-            defaultPage = Routes.TimeSheet;
-
             if (defaultPage !== Routes.Sign) {
                 await waitAndResetNavigation(defaultPage);
             }
