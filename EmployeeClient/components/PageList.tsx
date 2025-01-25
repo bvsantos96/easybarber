@@ -137,7 +137,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
             return 1;
         }
         const screenWidth = theme.dimensions.width;
-        const calculatedColumns = Math.floor(screenWidth / itemMaxWidth);
+        const calculatedColumns = Math.floor(screenWidth / (itemMaxWidth + 32 * theme.dimensions.absoluteWidth));
         return calculatedColumns > 0 ? calculatedColumns : 1;
     }, [itemMaxWidth]);
 
@@ -229,58 +229,60 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                 })}
             </PagerView>
         );
-        case PageListType.MULTI_COL_LIST: return (
+        case PageListType.MULTI_COL_LIST: return ( //TODO: scrolling on gaps is not working
             <FlatList
-            key={columns} // Force re-render when columns change
-            refreshing={loadingMore}
-            onRefresh={_resetList}
-            data={(request?.page?.content && request.page.content.length > 0) ? request.page.content : initialItems}
-            numColumns={columns}
-            horizontal={false}
-            style={[styles.homeListContainer, { ...style }]}
-            contentContainerStyle={{ 
-                paddingBottom: styles.listBottom.paddingBottom, 
-                minHeight: '100%' 
-            }}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id.toString()}
-            onEndReached={() => {
-                if (loadingMore) return;
-                if (preload || (!preload && !firstEndReached.current)) {
-                    _loadMoreItems();
-                }
-            }}
-            onEndReachedThreshold={0.3}
-            showsVerticalScrollIndicator={false}
-            showsHorizontalScrollIndicator={false}
-            onLayout={updateColumns}
-            ListEmptyComponent={() =>
-                firstLoad ? null : (
-                    <View style={{ 
-                        flex: 1, 
-                        justifyContent: 'center', 
-                        alignItems: 'center', 
-                        padding: 10 
-                    }}>
+                key={columns}
+                refreshing={loadingMore}
+                onRefresh={_resetList}
+                data={(request?.page?.content && request.page.content.length > 0) ? request.page.content : initialItems}
+                numColumns={columns}
+                horizontal={false}
+                style={[styles.homeListContainer, { ...style }]}
+                contentContainerStyle={{ 
+                    paddingBottom: styles.listBottom.paddingBottom, 
+                    minHeight: '100%',
+                    gap: 5 * theme.dimensions.absoluteHeight
+                }}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id.toString()}
+                onEndReached={() => {
+                    if (loadingMore) return;
+                    if (preload || (!preload && !firstEndReached.current)) {
+                        _loadMoreItems();
+                    }
+                }}
+                columnWrapperStyle={columns > 1 ? { gap: 32 * theme.dimensions.absoluteWidth } : undefined}
+                onEndReachedThreshold={0.3}
+                showsVerticalScrollIndicator={false}
+                showsHorizontalScrollIndicator={false}
+                onLayout={updateColumns}
+                ListEmptyComponent={() =>
+                    firstLoad ? null : (
                         <View style={{ 
-                            justifyContent: "center", 
-                            alignItems: 'center' 
+                            flex: 1, 
+                            justifyContent: 'center', 
+                            alignItems: 'center', 
+                            padding: 10 
                         }}>
-                            <Text>{texts.noItems}</Text>
-                            <Divider size={10} horizontal={false} />
-                            <Button 
-                                stylesInput={{ 
-                                    maxHeight: "50%", 
-                                    minWidth: "25%" 
-                                }} 
-                                title={texts.reload} 
-                                onPress={_resetList} 
-                            />
+                            <View style={{ 
+                                justifyContent: "center", 
+                                alignItems: 'center' 
+                            }}>
+                                <Text>{texts.noItems}</Text>
+                                <Divider size={10} horizontal={false} />
+                                <Button 
+                                    stylesInput={{ 
+                                        maxHeight: "50%", 
+                                        minWidth: "25%" 
+                                    }} 
+                                    title={texts.reload} 
+                                    onPress={_resetList} 
+                                />
+                            </View>
                         </View>
-                    </View>
-                )
-            }
-        />);
+                    )
+                }
+            />);
         default:
             return <></>;
 
