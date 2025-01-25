@@ -125,11 +125,11 @@ function rgbToHex(r: number, g: number, b: number): string {
 
 export const mainColor = '3, 217, 153';
 export const gradientColors = [`rgb(${mainColor})`, `rgb(3, 217, 186)`];
-export const backgroundColor = "0, 0, 0";
-export const textColor = '255, 255, 255';
+export const textColor = "0, 0, 0";
+export const  backgroundColor = '255, 255, 255';
 const textColors = textColor.split(', ');
 const shadowColor = rgbToHex(+textColors[0], +textColors[1], +textColors[2]);
-export const theme = "light";
+export const theme = "dark";
 export const borderColor = "255, 255, 255";
 
 const defaultTheme: Theme = {
