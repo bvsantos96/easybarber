@@ -5,8 +5,8 @@ export const getStyles = () => {
     const theme = useTheme();
     return StyleSheet.create({
         container: {
-            width: theme.dimensions.input.width,
-            height: theme.dimensions.input.height,
+            width: '100%',
+            height: '100%'
         },
         inputView: {
             width: '100%',

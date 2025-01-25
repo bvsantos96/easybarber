@@ -78,7 +78,8 @@
       "newName": "New Establishment"
     },
     "product": {
-      "name": "Product list"
+      "name": "Product list",
+      "create": "Product create"
     }
   },
   "errors": {
