@@ -10,6 +10,7 @@ interface MyPressableProps {
     shadow?: boolean;
     disabled?: boolean;
     onLayout?: (event: LayoutChangeEvent) => void;
+    useGradient?: boolean;
 }
 
 export default function Pressable({
@@ -19,25 +20,36 @@ export default function Pressable({
     shadow = false,
     disabled = false,
     onLayout,
+    useGradient = true
 }: MyPressableProps) {
     const theme = useTheme();
     return (
         <DefaultPressable
             disabled={disabled}
             style={({ pressed }) => [
-                { opacity: (disabled || pressed) ? 0.5 : 1 },
+                { opacity: disabled || pressed ? 0.5 : 1 },
+                !useGradient && style,
+                !useGradient && shadow ? theme.shadow : undefined,
             ]}
             onPress={onPress}
             onLayout={onLayout}
         >
-            <LinearGradient
-                start={[0, 1]}
-                end={[1, 0]}
-                colors={theme.colors.gradientColors}
-                style={[style, shadow ? theme.shadow : undefined]}
-            >
-                {children}
-            </LinearGradient>
+            {!useGradient ?
+                (
+                    children
+                )
+                :
+                (
+                    <LinearGradient
+                        start={[0, 1]}
+                        end={[1, 0]}
+                        colors={theme.colors.gradientColors}
+                        style={[style, shadow ? theme.shadow : undefined]}
+                    >
+                        {children}
+                    </LinearGradient>
+                )
+            }
         </DefaultPressable>
     );
 }
