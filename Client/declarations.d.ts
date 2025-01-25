@@ -237,11 +237,11 @@ declare interface ServiceInfo extends Identifiable {
 }
 
 declare interface ImageEntity extends Identifiable {
-    name: string;
     image: string;
 }
 
 declare interface EmployeeEntity extends ImageEntity {
+    name: string;
     price: number;
     oldPrice: number;
 }
