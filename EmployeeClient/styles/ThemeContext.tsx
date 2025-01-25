@@ -123,7 +123,7 @@ function rgbToHex(r: number, g: number, b: number): string {
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
 
-export const mainColor = '3, 217, 153';
+export const mainColor = '45, 75, 122';
 export const gradientColors = [`rgb(${mainColor})`, `rgb(3, 217, 186)`];
 export const textColor = "0, 0, 0";
 export const  backgroundColor = '255, 255, 255';
