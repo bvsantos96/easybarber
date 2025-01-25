@@ -18,7 +18,8 @@ export enum ResponseType {
 export enum PageListType {
     FLAT = "flat",
     BOTTOM_SHEET = "bottom_sheet",
-    PAGERVIEW = "page_view"
+    PAGERVIEW = "page_view",
+    MULTI_COL_LIST = "multi_col_list"
 }
 
 export enum MobileConfirmationFunctions {

@@ -1,4 +1,4 @@
-import React, { useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { FlatList, View, Text, ViewStyle, NativeSyntheticEvent } from "react-native";
 import PagerView from "react-native-pager-view";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet/src";
@@ -11,6 +11,7 @@ import { debounce } from "lodash";
 import texts from "@lang/en.json";
 import Button from "./Button";
 import Divider from "./Divider";
+import { useTheme } from "@styles/ThemeContext";
 
 interface PageListProps<T extends Identifiable> {
     renderItem: (item: { item: T, index: number }) => React.JSX.Element;
@@ -24,6 +25,7 @@ interface PageListProps<T extends Identifiable> {
     initialItems?: T[];
     pageSize?: number;
     preload?: boolean;
+    itemMaxWidth?:number;
 }
 
 interface PageSwipeEvent {
@@ -39,8 +41,9 @@ export interface PageListRef<T extends Identifiable> {
 }
 
 const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Ref<PageListRef<T>>) => {
-    const { renderItem, requestFunction, loadCache, saveCache, resetCache, style, preload = true } = props;
+    const { renderItem, requestFunction, loadCache, saveCache, resetCache, style, preload = true, itemMaxWidth} = props;
     const type = props.type || PageListType.FLAT;
+    const theme = useTheme();
     const initialItems = props.initialItems || [];
     const pageSize = props.pageSize || 10;
     const styles = getStyles();
@@ -127,6 +130,21 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
         }
     }, [props.reset]);
 
+    const [columns, setColumns] = useState(1);
+
+    const calculateColumns = useCallback(() => {
+        if(!itemMaxWidth){
+            return 1;
+        }
+        const screenWidth = theme.dimensions.width;
+        const calculatedColumns = Math.floor(screenWidth / itemMaxWidth);
+        return calculatedColumns > 0 ? calculatedColumns : 1;
+    }, [itemMaxWidth]);
+
+    const updateColumns = () => {
+        setColumns(calculateColumns());
+    };
+
     switch (type) {
         case PageListType.BOTTOM_SHEET:
             return (
@@ -211,6 +229,58 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                 })}
             </PagerView>
         );
+        case PageListType.MULTI_COL_LIST: return (
+            <FlatList
+            key={columns} // Force re-render when columns change
+            refreshing={loadingMore}
+            onRefresh={_resetList}
+            data={(request?.page?.content && request.page.content.length > 0) ? request.page.content : initialItems}
+            numColumns={columns}
+            horizontal={false}
+            style={[styles.homeListContainer, { ...style }]}
+            contentContainerStyle={{ 
+                paddingBottom: styles.listBottom.paddingBottom, 
+                minHeight: '100%' 
+            }}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+            onEndReached={() => {
+                if (loadingMore) return;
+                if (preload || (!preload && !firstEndReached.current)) {
+                    _loadMoreItems();
+                }
+            }}
+            onEndReachedThreshold={0.3}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+            onLayout={updateColumns}
+            ListEmptyComponent={() =>
+                firstLoad ? null : (
+                    <View style={{ 
+                        flex: 1, 
+                        justifyContent: 'center', 
+                        alignItems: 'center', 
+                        padding: 10 
+                    }}>
+                        <View style={{ 
+                            justifyContent: "center", 
+                            alignItems: 'center' 
+                        }}>
+                            <Text>{texts.noItems}</Text>
+                            <Divider size={10} horizontal={false} />
+                            <Button 
+                                stylesInput={{ 
+                                    maxHeight: "50%", 
+                                    minWidth: "25%" 
+                                }} 
+                                title={texts.reload} 
+                                onPress={_resetList} 
+                            />
+                        </View>
+                    </View>
+                )
+            }
+        />);
         default:
             return <></>;
 
