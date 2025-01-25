@@ -25,6 +25,7 @@ interface Colors {
     backgroundColor: string;
     iconBackground: string;
     imageBackground: string;
+    modalBackdrop: string;
     statusBarOnHome: StatusBarStyle;
     logoBackgound: string;
     borderAlt: string;
@@ -124,9 +125,10 @@ function rgbToHex(r: number, g: number, b: number): string {
 }
 
 export const mainColor = '45, 75, 122';
-export const gradientColors = [`rgb(${mainColor})`, `rgb(3, 217, 186)`];
+// export const gradientColors = [`rgb(${mainColor})`, `rgb(3, 217, 186)`];
+export const gradientColors = [`rgb(${mainColor})`, `rgb(${mainColor})`];
 export const textColor = "0, 0, 0";
-export const  backgroundColor = '255, 255, 255';
+export const backgroundColor = '255, 255, 255';
 const textColors = textColor.split(', ');
 const shadowColor = rgbToHex(+textColors[0], +textColors[1], +textColors[2]);
 export const theme = "dark";
@@ -141,6 +143,7 @@ const defaultTheme: Theme = {
         infoColor: '#2A74CC',
         iconBackground: `rgba(${mainColor}, 0.1)`,
         imageBackground: `rgba(${mainColor}, 0.1)`,
+        modalBackdrop: `rgba(${mainColor}, 0.3)`,
         statusBarOnHome: theme,
         logoBackgound: "white",
         borderAlt: `rgba(${borderColor}, 0.1)`,
