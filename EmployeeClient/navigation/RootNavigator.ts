@@ -8,6 +8,7 @@ import { Params } from "@navigation/Router";
 import Tabs from "@screens/Tabs";
 import Establishment from "@screens/Establishment";
 import ProductList from "@screens/ProductList";
+import Product from "@screens/Product";
 import TimeSheet from "@screens/Timesheet";
 
 const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
@@ -63,6 +64,12 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     title: texts.navigation.product.name,
     hasHeader: true,
     component: ProductList,
+    containerizedComponent: true,
+  },
+  Product: {
+    title: texts.navigation.product.create,
+    hasHeader: true,
+    component: Product,
     containerizedComponent: true,
   },
   TimeSheet: {
