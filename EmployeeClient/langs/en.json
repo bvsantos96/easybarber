@@ -29,6 +29,9 @@
   "retry": "Retry",
   "phoneNumber": "Phone Number",
   "navigation": {
+    "timeSheet": {
+      "name": "Timesheet"
+    },
     "locationRequest": {
       "name": "Location Request"
     },
@@ -177,5 +180,25 @@
   "settings": {
     "resetPwd": "Reset Password"
   },
-  "currency": "€"
+  "currency": "€",
+  "weekday" : {
+    "short": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat",
+      "Sun"
+    ], 
+    "long": [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday"
+    ]
+  }
 }
