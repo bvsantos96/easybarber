@@ -82,7 +82,6 @@ export const getStyles = () => {
             minHeight: 217 * theme.dimensions.absoluteHeight,
             maxHeight: 417 * theme.dimensions.absoluteHeight,
             alignSelf: 'center',
-            marginTop: 10 * theme.dimensions.absoluteHeight,
         },
         addButton: {
             alignSelf: 'center',
