@@ -1,14 +1,17 @@
-import { View, Text, KeyboardAvoidingView, Pressable } from 'react-native';
+import { View, Text, KeyboardAvoidingView, Pressable, TextInput } from 'react-native';
 import { Calendar } from "react-native-calendars";
 import { useTheme } from '@styles/ThemeContext';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MarkedDates } from 'react-native-calendars/src/types';
-import { getCalendarReadyDate } from 'utils/Utils';
+import { getCalendarReadyDate, getTimeAsString } from 'utils/Utils';
 import { getStyles } from '@styles/SchedulesStyles';
 import PageList from '@components/PageList';
 import Entypo from '@expo/vector-icons/Entypo';
 import texts from '@lang/en.json';
 import Button from '@components/Button';
+import CustomModal, { CustomModalRef } from '@components/CustomModal';
+import Input from '@components/Input';
+import DatePicker from 'react-native-date-picker';
 
 const AppointmentItem = ({ item }: { item: AppointmentInfo }) => {
     const styles = getStyles();
@@ -33,6 +36,15 @@ const Schedules = () => {
     const [month, setMonth] = useState(new Date().getMonth() + 1);
     const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
     const [markedDates, setMarkedDates] = useState<MarkedDates>({});
+    const [type, setType] = useState('');
+    const [message, setMessage] = useState('');
+    const [from, setFrom] = useState<Date | undefined>(undefined);
+    const [to, setTo] = useState<Date | undefined>(undefined);
+    const fromInputRef = useRef<TextInput>(null);
+    const toInputRef = useRef<TextInput>(null);
+    const [openFrom, setOpenFrom] = useState(false);
+    const [openTo, setOpenTo] = useState(false);
+    const modalRef = useRef<CustomModalRef>(null);
 
     const markDates = (dates: DailyAppointments[]): MarkedDates => {
         let marked: MarkedDates = {};
@@ -123,7 +135,22 @@ const Schedules = () => {
     }, [date]);
 
     const setAbsence = () => {
-        // TODO: pop up a modal to set absence
+    }
+
+    const openModal = () => {
+        const selectedDate = new Date(date);
+        const today = new Date();
+        if (selectedDate.getFullYear() === today.getFullYear() && selectedDate.getMonth() === today.getMonth() && selectedDate.getDate() === today.getDate()) {
+            setFrom(today);
+        } else {
+            selectedDate.setMinutes(0);
+            selectedDate.setHours(0);
+            setFrom(selectedDate);
+        }
+        selectedDate.setHours(23);
+        selectedDate.setMinutes(59);
+        setTo(selectedDate);
+        modalRef.current?.toggleModal();
     }
 
     return (
@@ -151,8 +178,8 @@ const Schedules = () => {
                 theme={{
                     arrowColor: theme.colors.text.lightBlack,
                     backgroundColor: theme.colors.backgroundColor,
-                    calendarBackground: theme.colors.backgroundColor,
                     textSectionTitleColor: theme.colors.text.lightBlack,
+                    calendarBackground: theme.colors.backgroundColor,
                     selectedDayBackgroundColor: theme.colors.mainColor,
                     selectedDayTextColor: theme.colors.backgroundColor,
                     todayTextColor: theme.colors.mainColor,
@@ -167,8 +194,69 @@ const Schedules = () => {
                     requestFunction={loadUpcomming}
                 />
             </View>
+
+            <CustomModal
+                ref={modalRef}
+                modalHeight={styles.modal.height}
+                snapPoints={[styles.modal.height]}
+                modalContent={
+                    <View style={styles.modal}>
+                        <Text style={styles.modalTitle}>{texts.setAbsence}</Text>
+                        <View style={styles.modalContent}>
+                            <Input hideTitleIfNoValue title={texts.type} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.type} onInputChange={setType} />
+                            <Input hideTitleIfNoValue title={texts.messageForClients} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.messageForClients} onInputChange={setMessage} />
+                            <Input preventPaste onFocus={() => { setOpenTo(false); setOpenFrom(true); fromInputRef.current?.blur() }} hideTitleIfNoValue title={texts.from} defaultValue={getTimeAsString(from || new Date())} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.absenceFrom} ref={fromInputRef} />
+                            <Input preventPaste onFocus={() => { setOpenFrom(false); setOpenTo(true); toInputRef.current?.blur() }} hideTitleIfNoValue title={texts.to} defaultValue={getTimeAsString(to || new Date())} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.absenceTo} ref={toInputRef} />
+                            <DatePicker
+                                modal
+                                mode="time"
+                                open={openFrom}
+                                date={from || new Date()}
+                                onConfirm={(date) => {
+                                    setFrom(date);
+                                    fromInputRef.current?.setNativeProps({ text: date.toISOString().split('T')[1].split('.')[0] });
+                                    fromInputRef.current?.blur();
+                                    setOpenFrom(false);
+                                    if (to && date > to) {
+                                        setTo(date);
+                                        toInputRef.current?.setNativeProps({ text: date.toISOString().split('T')[1].split('.')[0] });
+                                    }
+                                }}
+                                onCancel={() => {
+                                    fromInputRef.current?.blur();
+                                    setOpenFrom(false)
+                                }}
+                            />
+                            <DatePicker
+                                modal
+                                mode="time"
+                                open={openTo}
+                                date={to || new Date()}
+                                minimumDate={from}
+                                onConfirm={(date) => {
+                                    setTo(date);
+                                    toInputRef.current?.setNativeProps({ text: date.toISOString().split('T')[1].split('.')[0] });
+                                    if (from && date < from) {
+                                        setFrom(date);
+                                        fromInputRef.current?.setNativeProps({ text: date.toISOString().split('T')[1].split('.')[0] });
+                                    }
+                                    toInputRef.current?.blur();
+                                    setOpenTo(false);
+                                }}
+                                onCancel={() => {
+                                    toInputRef.current?.blur();
+                                    setOpenTo(false)
+                                }}
+                            />
+                        </View>
+                        <View style={styles.modalButton}>
+                            <Button title={texts.setAbsence} onPress={setAbsence} />
+                        </View>
+                    </View>
+                }
+            />
             <View style={styles.buttonContainer}>
-                <Button title={texts.setAbsence} onPress={setAbsence} />
+                <Button title={texts.setAbsence} onPress={openModal} />
             </View>
         </View >
     );
