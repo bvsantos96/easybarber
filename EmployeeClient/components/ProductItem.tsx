@@ -11,7 +11,7 @@ export default function SelectionItem({ product, onPress }: { product:ProductEnt
     const theme = useTheme();
 
     return (
-        <Pressable useGradient={false} style={[styles.container, theme.shadow]} onPress={onPress? onPress: ()=> console.log("test")}>
+        <Pressable style={[styles.container, theme.shadow]} onPress={onPress? onPress: ()=> console.log("test")}>
             <Image source={{ uri: product.image }} style={styles.image} />
             <EditIcon style={styles.editIcon} />
             <View style={styles.textContainer} >
