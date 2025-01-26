@@ -251,10 +251,15 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     paddingBottom: styles.listBottom.paddingBottom,
                     justifyContent: 'space-between',
                     alignItems: "center",
+                    rowGap: gap * theme.dimensions.absoluteHeight
                 }}
                 renderItem={(item) => {
                     return (columns > 1 ? (
-                        <View style={{ width: (listWidth / columns) + gap * theme.dimensions.absoluteWidth, alignItems: "center", justifyContent: "center" }}>
+                        <View style={{
+                            width: (listWidth / columns) + gap * theme.dimensions.absoluteWidth,
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}>
                             {renderItem(item)}
                         </View>
                     ) : (
