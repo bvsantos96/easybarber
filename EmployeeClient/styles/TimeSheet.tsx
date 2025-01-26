@@ -19,22 +19,24 @@ export const getStyles = () => {
         weekdayContainer: {
             width: 48 * theme.dimensions.absoluteWidth,
             height: 79 * theme.dimensions.absoluteHeight,
-            backgroundColor: theme.colors.imageBackground,
+            backgroundColor: theme.colors.backgroundColor,
             borderRadius: 10 * theme.dimensions.absoluteWidth,
             alignItems: 'center',
             justifyContent: 'center',
         },
         weekdaySelected: {
-            backgroundColor: theme.colors.mainColor,
+            backgroundColor: theme.colors.imageBackground,
         },
         weekdayText: {
-            color: theme.colors.mainColor,
+            color: theme.colors.text.main,
             fontSize: theme.fonts.size._15,
             fontFamily: 'Mazzard',
-            fontWeight: "900",
+            fontWeight: "600",
         },
         weekdayTextSelected: {
-            color: theme.colors.text.alt,
+            color: theme.colors.mainColor,
+            fontSize: theme.fonts.size._17,
+            fontWeight: "900",
         },
         timeSheetItemContainer: {
             width: 327 * theme.dimensions.absoluteWidth,
