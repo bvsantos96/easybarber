@@ -60,8 +60,8 @@ export const getStyles = () => {
         listContainer: {
             top: 20 * theme.dimensions.absoluteHeight,
             width: theme.dimensions.width,
+            minHeight: 226 * theme.dimensions.absoluteHeight,
             maxHeight: 226 * theme.dimensions.absoluteHeight,
-            alignSelf: 'center',
         },
     });
 }
