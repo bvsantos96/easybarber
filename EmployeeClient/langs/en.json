@@ -200,5 +200,16 @@
       "Saturday",
       "Sunday"
     ]
-  }
+  },
+  "timeSelect": {
+    "title": "Select Time",
+    "button": "Set schedule"
+  },
+  "from": "From",
+  "to": "To",
+  "setAbsence": "Set Absence",
+  "type": "Type",
+  "messageForClients": "Message for clients",
+  "absenceFrom": "Absent from",
+  "absenceTo": "Absent to",
 }

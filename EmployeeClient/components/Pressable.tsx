@@ -20,7 +20,7 @@ export default function Pressable({
     shadow = false,
     disabled = false,
     onLayout,
-    useGradient = true
+    useGradient = false
 }: MyPressableProps) {
     const theme = useTheme();
     return (
@@ -29,7 +29,7 @@ export default function Pressable({
             style={({ pressed }) => [
                 { opacity: disabled || pressed ? 0.5 : 1 },
                 !useGradient && style,
-                !useGradient && shadow ? theme.shadow : undefined,
+                shadow ? theme.shadow : undefined,
             ]}
             onPress={onPress}
             onLayout={onLayout}
@@ -44,7 +44,7 @@ export default function Pressable({
                         start={[0, 1]}
                         end={[1, 0]}
                         colors={theme.colors.gradientColors}
-                        style={[style, shadow ? theme.shadow : undefined]}
+                        style={style}
                     >
                         {children}
                     </LinearGradient>

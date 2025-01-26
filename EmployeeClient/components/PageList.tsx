@@ -25,13 +25,16 @@ interface PageListProps<T extends Identifiable> {
     initialItems?: T[];
     pageSize?: number;
     preload?: boolean;
-    itemMaxWidth?:number;
+    itemMaxWidth?: number;
+    dontDisplayLoadMore?: boolean;
+    gap?: number;
 }
 
 interface PageSwipeEvent {
     position: number;
     offset: number;
 }
+
 export interface PageListRef<T extends Identifiable> {
     _loadMoreItems: () => void;
     loadMoreItems: (req: ITimedRequest<T>) => void;
@@ -41,7 +44,7 @@ export interface PageListRef<T extends Identifiable> {
 }
 
 const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Ref<PageListRef<T>>) => {
-    const { renderItem, requestFunction, loadCache, saveCache, resetCache, style, preload = true, itemMaxWidth} = props;
+    const { renderItem, requestFunction, loadCache, saveCache, resetCache, style, preload = true, itemMaxWidth, dontDisplayLoadMore = false, gap = 5 } = props;
     const type = props.type || PageListType.FLAT;
     const theme = useTheme();
     const initialItems = props.initialItems || [];
@@ -132,18 +135,24 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
 
     const [columns, setColumns] = useState(1);
 
-    const calculateColumns = useCallback(() => {
-        if(!itemMaxWidth){
+    const calculateColumns = useCallback((width = theme.dimensions.width) => {
+        if (!itemMaxWidth) {
             return 1;
         }
-        const screenWidth = theme.dimensions.width;
-        const calculatedColumns = Math.floor(screenWidth / (itemMaxWidth + 32 * theme.dimensions.absoluteWidth));
+        const calculatedColumns = Math.round(width / (itemMaxWidth + gap * 2 * theme.dimensions.absoluteWidth));
         return calculatedColumns > 0 ? calculatedColumns : 1;
     }, [itemMaxWidth]);
 
-    const updateColumns = () => {
-        setColumns(calculateColumns());
+    const [listWidth, setListWidth] = useState(theme.dimensions.width);
+    const updateColumns = (event: any) => {
+        const { width } = event.nativeEvent.layout;
+        setListWidth(width);
+        setColumns(calculateColumns(width));
     };
+
+    useEffect(() => {
+        setColumns(calculateColumns());
+    }, [itemMaxWidth, theme.dimensions.width]);
 
     switch (type) {
         case PageListType.BOTTOM_SHEET:
@@ -164,7 +173,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={() =>
-                        firstLoad ? (
+                        (dontDisplayLoadMore || firstLoad) ? (
                             null
                         ) : (
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
@@ -187,6 +196,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     style={[styles.homeListContainer, { ...style }]}
                     contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom, minHeight: '100%' }}
                     renderItem={renderItem}
+                    nestedScrollEnabled={true}
                     keyExtractor={(item) => item.id.toString()}
                     onEndReached={() => {
                         if (loadingMore) return;
@@ -195,10 +205,10 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                         }
                     }}
                     onEndReachedThreshold={0.3}
-                    showsVerticalScrollIndicator={false}
+                    showsVerticalScrollIndicator={true}
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={() =>
-                        firstLoad ? (
+                        (dontDisplayLoadMore || firstLoad) ? (
                             null
                         ) : (
                             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 10 }}>
@@ -238,12 +248,25 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                 numColumns={columns}
                 horizontal={false}
                 style={[styles.homeListContainer, { ...style }]}
-                contentContainerStyle={{ 
-                    paddingBottom: styles.listBottom.paddingBottom, 
-                    minHeight: '100%',
-                    gap: 5 * theme.dimensions.absoluteHeight
+                contentContainerStyle={{
+                    paddingBottom: styles.listBottom.paddingBottom,
+                    justifyContent: 'space-between',
+                    alignItems: "center",
+                    rowGap: gap * theme.dimensions.absoluteHeight
                 }}
-                renderItem={renderItem}
+                renderItem={(item) => {
+                    return (columns > 1 ? (
+                        <View style={{
+                            width: (listWidth / columns) + gap * theme.dimensions.absoluteWidth,
+                            alignItems: "center",
+                            justifyContent: "center"
+                        }}>
+                            {renderItem(item)}
+                        </View>
+                    ) : (
+                        renderItem(item)
+                    ));
+                }}
                 keyExtractor={(item) => item.id.toString()}
                 onEndReached={() => {
                     if (loadingMore) return;
@@ -251,32 +274,31 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                         _loadMoreItems();
                     }
                 }}
-                columnWrapperStyle={columns > 1 ? { gap: 32 * theme.dimensions.absoluteWidth } : undefined}
                 onEndReachedThreshold={0.3}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}
                 onLayout={updateColumns}
                 ListEmptyComponent={() =>
-                    firstLoad ? null : (
-                        <View style={{ 
-                            flex: 1, 
-                            justifyContent: 'center', 
-                            alignItems: 'center', 
-                            padding: 10 
+                    (dontDisplayLoadMore || firstLoad) ? null : (
+                        <View style={{
+                            flex: 1,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: 10
                         }}>
-                            <View style={{ 
-                                justifyContent: "center", 
-                                alignItems: 'center' 
+                            <View style={{
+                                justifyContent: "center",
+                                alignItems: 'center'
                             }}>
                                 <Text>{texts.noItems}</Text>
                                 <Divider size={10} horizontal={false} />
-                                <Button 
-                                    stylesInput={{ 
-                                        maxHeight: "50%", 
-                                        minWidth: "25%" 
-                                    }} 
-                                    title={texts.reload} 
-                                    onPress={_resetList} 
+                                <Button
+                                    stylesInput={{
+                                        maxHeight: "50%",
+                                        minWidth: "25%"
+                                    }}
+                                    title={texts.reload}
+                                    onPress={_resetList}
                                 />
                             </View>
                         </View>
