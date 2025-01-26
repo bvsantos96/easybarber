@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native';
 import { getStyles } from '@styles/TimeSheet';
 import texts from '@lang/en.json';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Pressable from '@components/Pressable';
 import PageList from '@components/PageList';
 import { PageListType } from 'enums';
@@ -85,11 +85,11 @@ const TimeSheetDay = ({ text, selected = false, select }: { text: string, select
     );
 }
 
-const TimeSheetComponent = ({ key, item, maxWidth }: { key: number, item: TimeSheetItem, maxWidth: number }) => {
+const TimeSheetComponent = ({ item, maxWidth }: { item: TimeSheetItem, maxWidth: number }) => {
     const styles = getStyles();
     const theme = useTheme();
     return (
-        <View style={[styles.timeSheetItemContainer, { width: maxWidth }]} key={key}>
+        <View style={[styles.timeSheetItemContainer, { width: maxWidth }]} >
             <View style={styles.timeSheetItemInnerContainer}>
                 <Feather name="calendar" size={styles.timeSheetItemIcon.width} color={theme.colors.backgroundColor} />
                 <Divider horizontal size={maxWidth === styles.timeSheetItemContainer.width ? 25 : 10} />
@@ -114,7 +114,7 @@ const TimeSheet = () => {
     const filterModalRef = useRef<CustomModalRef>(null);
 
     const toggleRefresh = (day: number) => {
-        setMaxWidth(timeSheets[day]?.length > 3 ? styles.timeSheetItemContainer.width / 2 : styles.timeSheetItemContainer.width);
+        setMaxWidth(timeSheets[day]?.length > 5 ? (styles.timeSheetItemContainer.width / 2 - 2 * theme.dimensions.absoluteWidth) : styles.timeSheetItemContainer.width);
         setRefresh(!refresh);
     }
 
@@ -166,12 +166,16 @@ const TimeSheet = () => {
             <Divider size={40} />
             <View style={styles.timeSheetListContainer}>
                 <PageList<TimeSheetItem>
+                    gap={5}
                     type={PageListType.MULTI_COL_LIST}
-                    reset={refresh}
                     renderItem={({ item, index }: { item: TimeSheetItem, index: number }) =>
-                        <TimeSheetComponent key={index} item={item} maxWidth={maxWidth} />
+                        <View key={index}>
+                            <TimeSheetComponent item={item} maxWidth={maxWidth} />
+                        </View>
                     }
                     itemMaxWidth={maxWidth}
+                    preload={false}
+                    initialItems={timeSheets[selectedDay] || []}
                     requestFunction={load}
                     dontDisplayLoadMore
                 />
