@@ -13,7 +13,7 @@ export default function Tabs({ navigation }: PropNavigation) {
 
     return (
         <Tab.Navigator
-            initialRouteName={Routes.Establishments}
+            initialRouteName={Routes.Schedules}
             screenOptions={{
                 tabBarActiveTintColor: theme.colors.mainColor,
                 tabBarInactiveTintColor: theme.colors.text.main,
