@@ -58,8 +58,6 @@ const Router = () => {
                 }
             }
 
-            defaultPage = Routes.TimeSheet;
-
             if (defaultPage !== Routes.Sign) {
                 await waitAndResetNavigation(defaultPage);
             }

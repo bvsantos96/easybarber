@@ -45,7 +45,7 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         title: texts.navigation.tabs.name,
         hasHeader: false,
         component: Tabs,
-        containerizedComponent: true,
+        containerizedComponent: false,
     },
     Establishment: {
         title: texts.navigation.establishment.name,
