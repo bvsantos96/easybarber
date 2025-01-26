@@ -19,7 +19,7 @@ export type Route = {
 
 type Props = NativeStackScreenProps<typeof Params, 'ProductList'>;
 
-export default function EmployeeSelection({ navigation, route }: Props) {
+export default function ProductList({ navigation, route }: Props) {
     const styles = getStyles();
     const stylesProduct = getProductStyles();
 
