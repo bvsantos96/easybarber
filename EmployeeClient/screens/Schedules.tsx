@@ -1,4 +1,4 @@
-import { View, Text, KeyboardAvoidingView } from 'react-native';
+import { View, Text, KeyboardAvoidingView, Pressable } from 'react-native';
 import { Calendar } from "react-native-calendars";
 import { useTheme } from '@styles/ThemeContext';
 import { useEffect, useState } from 'react';
@@ -13,7 +13,7 @@ import Button from '@components/Button';
 const AppointmentItem = ({ item }: { item: AppointmentInfo }) => {
     const styles = getStyles();
     return (
-        <View style={[styles.appointmentController, styles.shadow]}>
+        <Pressable style={[styles.appointmentController, styles.shadow]}>
             <View style={styles.icon}>
                 <Entypo name="dots-three-horizontal" size={styles.icon.width} color={styles.icon.color} />
             </View>
@@ -22,7 +22,7 @@ const AppointmentItem = ({ item }: { item: AppointmentInfo }) => {
                 <Text style={styles.titleText}>{item.entityName}</Text>
                 <Text style={styles.subTitleText}>{item.serviceName}</Text>
             </View>
-        </View >
+        </Pressable >
     );
 }
 
@@ -160,16 +160,17 @@ const Schedules = () => {
                     textDisabledColor: theme.colors.text.lightGray,
                 }}
             />
-            <PageList<AppointmentInfo>
-                style={styles.listContainer}
-                key="upcomming"
-                renderItem={({ item, index }) => <View key={index}><AppointmentItem item={item} /></View>}
-                requestFunction={loadUpcomming}
-            />
+            <View style={styles.listContainer}>
+                <PageList<AppointmentInfo>
+                    key="upcomming"
+                    renderItem={({ item, index }) => <AppointmentItem key={index} item={item} />}
+                    requestFunction={loadUpcomming}
+                />
+            </View>
             <View style={styles.buttonContainer}>
                 <Button title={texts.setAbsence} onPress={setAbsence} />
             </View>
-        </View>
+        </View >
     );
 }
 
