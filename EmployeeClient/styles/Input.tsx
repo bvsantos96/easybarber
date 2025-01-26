@@ -8,6 +8,17 @@ export const getStyles = () => {
             width: theme.dimensions.input.width,
             height: theme.dimensions.input.height,
         },
+        inputSmallBorderRadius: {
+            borderRadius: 10 * theme.dimensions.absoluteHeight,
+        },
+        title: {
+            position: 'absolute',
+            top: -10 * theme.dimensions.absoluteHeight,
+            left: 10 * theme.dimensions.absoluteWidth,
+            backgroundColor: theme.colors.backgroundColor,
+            paddingHorizontal: 5 * theme.dimensions.absoluteWidth,
+            zIndex: 1,
+        },
         inputView: {
             width: '100%',
             height: '100%',

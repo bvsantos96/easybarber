@@ -207,5 +207,9 @@
   },
   "from": "From",
   "to": "To",
-  "setAbsence": "Set Absence"
+  "setAbsence": "Set Absence",
+  "type": "Type",
+  "messageForClients": "Message for clients",
+  "absenceFrom": "Absent from",
+  "absenceTo": "Absent to",
 }

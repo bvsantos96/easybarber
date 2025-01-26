@@ -63,5 +63,37 @@ export const getStyles = () => {
             minHeight: 226 * theme.dimensions.absoluteHeight,
             maxHeight: 226 * theme.dimensions.absoluteHeight,
         },
+        modal: {
+            flex: 1,
+            width: theme.dimensions.width,
+            height: 473 * theme.dimensions.absoluteHeight,
+            alignItems: 'center',
+        },
+        modalTitle: {
+            position: 'absolute',
+            top: 19 * theme.dimensions.absoluteHeight,
+            textAlign: 'center',
+            fontSize: theme.fonts.size._18,
+            fontWeight: 'bold',
+        },
+        modalContent: {
+            position: 'absolute',
+            alignSelf: 'center',
+            justifyContent: 'space-evenly',
+            top: 62 * theme.dimensions.absoluteHeight,
+            height: 300 * theme.dimensions.absoluteHeight,
+        },
+        modalButton: {
+            position: 'absolute',
+            bottom: 55 * theme.dimensions.absoluteHeight,
+            alignItems: 'center',
+            width: theme.dimensions.width,
+            height: 60 * theme.dimensions.absoluteHeight,
+        },
+        modalInput: {
+            borderWidth: 1,
+            borderColor: theme.colors.text.lightGray,
+            color: theme.colors.text.lightBlack,
+        },
     });
 }
