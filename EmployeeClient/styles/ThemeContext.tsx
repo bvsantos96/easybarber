@@ -22,6 +22,8 @@ interface Colors {
     gradientColors: string[];
     successColor: string;
     infoColor: string;
+    errorColor: string;
+    warningColor: string;
     backgroundColor: string;
     iconBackground: string;
     imageBackground: string;
@@ -139,8 +141,10 @@ const defaultTheme: Theme = {
         mainColor: `rgb(${mainColor})`,
         gradientColors: gradientColors,
         successColor: '#6FC138',
-        backgroundColor: `rgb(${backgroundColor})`,
         infoColor: '#2A74CC',
+        errorColor: '#FF0000',
+        warningColor: '#FFA500',
+        backgroundColor: `rgb(${backgroundColor})`,
         iconBackground: `rgba(${mainColor}, 0.1)`,
         imageBackground: `rgba(${mainColor}, 0.1)`,
         modalBackdrop: `rgba(${mainColor}, 0.3)`,

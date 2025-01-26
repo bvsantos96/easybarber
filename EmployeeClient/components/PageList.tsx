@@ -196,6 +196,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     style={[styles.homeListContainer, { ...style }]}
                     contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom, minHeight: '100%' }}
                     renderItem={renderItem}
+                    nestedScrollEnabled={true}
                     keyExtractor={(item) => item.id.toString()}
                     onEndReached={() => {
                         if (loadingMore) return;

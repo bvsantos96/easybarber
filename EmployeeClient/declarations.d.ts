@@ -332,3 +332,8 @@ declare interface TimeSheetItem extends Identifiable {
         endTime: Date;
     };
 }
+
+declare interface DailyAppointments {
+    date: Date;
+    occupancy: number;
+}
