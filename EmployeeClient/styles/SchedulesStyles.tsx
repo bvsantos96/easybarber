@@ -66,7 +66,7 @@ export const getStyles = () => {
         modal: {
             flex: 1,
             width: theme.dimensions.width,
-            height: 473 * theme.dimensions.absoluteHeight,
+            height: 393 * theme.dimensions.absoluteHeight,
             alignItems: 'center',
         },
         modalTitle: {
@@ -79,13 +79,14 @@ export const getStyles = () => {
         modalContent: {
             position: 'absolute',
             alignSelf: 'center',
-            justifyContent: 'space-evenly',
+            alignItems: 'center',
+            width: 358 * theme.dimensions.absoluteWidth,
             top: 62 * theme.dimensions.absoluteHeight,
-            height: 300 * theme.dimensions.absoluteHeight,
+            height: 200 * theme.dimensions.absoluteHeight,
         },
         modalButton: {
             position: 'absolute',
-            bottom: 55 * theme.dimensions.absoluteHeight,
+            bottom: 135 * theme.dimensions.absoluteHeight,
             alignItems: 'center',
             width: theme.dimensions.width,
             height: 60 * theme.dimensions.absoluteHeight,
@@ -95,5 +96,14 @@ export const getStyles = () => {
             borderColor: theme.colors.text.lightGray,
             color: theme.colors.text.lightBlack,
         },
+        inputIcon: {
+            width: 18 * theme.dimensions.absoluteWidth,
+            color: theme.colors.text.lightWhite,
+        },
+        timeInput: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+        }
     });
 }
