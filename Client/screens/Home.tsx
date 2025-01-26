@@ -20,13 +20,8 @@ import { getSelectedLocation } from 'utils/Location';
 import Pressable from '@components/Pressable';
 import { Routes } from '@navigation/Router';
 import CategoryList from '@components/CategoryList';
-import useAlertStore from 'storage/stores/AlertStore';
-import { BannerType } from '@components/Banner';
 
 export default function Home({ navigation }: PropNavigation) {
-    const {
-        banner
-    } = useAlertStore()
     const topBarStyles = topBarGetStyles();
     const homeStyles = getHomeGetStyles();
     const expandedStyles = getExpandedGetStyles();

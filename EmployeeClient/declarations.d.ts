@@ -326,3 +326,15 @@ declare interface ProductEntity extends ImageEntity {
     description: string;
     price: number;
 }
+
+declare interface TimeSheetItem extends Identifiable {
+    time: {
+        startTime: Date;
+        endTime: Date;
+    };
+}
+
+declare interface DailyAppointments {
+    date: Date;
+    occupancy: number;
+}

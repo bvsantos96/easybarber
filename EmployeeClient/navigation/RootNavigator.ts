@@ -12,6 +12,7 @@ import Product from "@screens/Product";
 import TimeSheet from "@screens/Timesheet";
 
 const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
+
   Sign: {
     title: texts.navigation.sign.name,
     hasHeader: false,
@@ -77,7 +78,7 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     hasHeader: true,
     component: TimeSheet,
     containerizedComponent: true,
-  },
+  }
 };
 
 export default RootNav;
