@@ -44,7 +44,6 @@ export const getStyles = () => {
             alignSelf: 'center',
             alignItems: 'center',
             justifyContent: 'center',
-            marginTop: 10 * theme.dimensions.absoluteHeight,
         },
         timeSheetItemIcon: {
             alignSelf: 'center',
@@ -156,6 +155,22 @@ export const getStyles = () => {
             fontSize: theme.fonts.size._18,
             fontFamily: 'Mazzard',
             fontWeight: "900",
-        }
+        },
+        icon: {
+            zIndex: 3,
+            elevation: 2,
+            borderWidth: 1,
+            borderRadius: 50 * theme.dimensions.absoluteWidth,
+            padding: 10 * theme.dimensions.absoluteWidth,
+            height: 50 * theme.dimensions.absoluteWidth,
+            width: 50 * theme.dimensions.absoluteWidth,
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 24 * theme.dimensions.absoluteWidth,
+        },
+        redIcon: {
+            backgroundColor: theme.colors.mainColor,
+            borderColor: theme.colors.mainColor,
+        },
     });
 }

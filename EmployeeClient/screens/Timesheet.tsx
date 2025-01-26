@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native';
 import { getStyles } from '@styles/TimeSheet';
 import texts from '@lang/en.json';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import Pressable from '@components/Pressable';
 import PageList from '@components/PageList';
 import { PageListType } from 'enums';
@@ -11,6 +11,8 @@ import Divider from '@components/Divider';
 import CustomModal, { CustomModalRef } from '@components/CustomModal';
 import DatePicker from 'react-native-date-picker';
 import { getTimeAsString } from 'utils/Utils';
+import SlidingItem from '@components/SlidingItem';
+import Fontisto from '@expo/vector-icons/Fontisto';
 
 const SelectTimeShett = ({ day, save }: { day: number, save: (day: number, from: Date, to: Date) => void }) => {
     const styles = getStyles();
@@ -85,21 +87,29 @@ const TimeSheetDay = ({ text, selected = false, select }: { text: string, select
     );
 }
 
-const TimeSheetComponent = ({ item, maxWidth }: { item: TimeSheetItem, maxWidth: number }) => {
+const TimeSheetComponent = ({ item, maxWidth, deleteItem }: { item: TimeSheetItem, maxWidth: number, deleteItem: () => void }) => {
     const styles = getStyles();
     const theme = useTheme();
     return (
-        <View style={[styles.timeSheetItemContainer, { width: maxWidth }]} >
-            <View style={styles.timeSheetItemInnerContainer}>
-                <Feather name="calendar" size={styles.timeSheetItemIcon.width} color={theme.colors.backgroundColor} />
-                <Divider horizontal size={maxWidth === styles.timeSheetItemContainer.width ? 25 : 10} />
-                <View style={styles.timeSheetItemTextContainer}>
-                    <Feather name="clock" size={styles.timeSheetItemSmallIcon.width} color={theme.colors.backgroundColor} />
-                    <Divider horizontal size={5} />
-                    <Text style={styles.timeSheetItemText}>{`${getTimeAsString(item.time.startTime)} - ${getTimeAsString(item.time.endTime)}`}</Text>
+        <SlidingItem
+            items={
+                <Pressable onPress={async () => { deleteItem(); }} style={[styles.icon, styles.redIcon]}>
+                    <Fontisto name="trash" size={styles.icon.fontSize} color={theme.colors.backgroundColor} />
+                </Pressable>
+            }
+        >
+            <View style={[styles.timeSheetItemContainer, { width: maxWidth }]} >
+                <View style={styles.timeSheetItemInnerContainer}>
+                    <Feather name="calendar" size={styles.timeSheetItemIcon.width} color={theme.colors.backgroundColor} />
+                    <Divider horizontal size={maxWidth === styles.timeSheetItemContainer.width ? 25 : 10} />
+                    <View style={styles.timeSheetItemTextContainer}>
+                        <Feather name="clock" size={styles.timeSheetItemSmallIcon.width} color={theme.colors.backgroundColor} />
+                        <Divider horizontal size={5} />
+                        <Text style={styles.timeSheetItemText}>{`${getTimeAsString(item.time.startTime)} - ${getTimeAsString(item.time.endTime)}`}</Text>
+                    </View>
                 </View>
             </View>
-        </View>
+        </SlidingItem>
     );
 }
 
@@ -156,6 +166,15 @@ const TimeSheet = () => {
         toggleRefresh(day);
     }
 
+    const deleteItem = (day: number, id: number) => {
+        const newTimeSheet = timeSheets;
+        if (newTimeSheet[day]) {
+            newTimeSheet[day] = newTimeSheet[day].filter((item) => item.id !== id);
+            setTimeSheets(newTimeSheet);
+            toggleRefresh(day);
+        }
+    }
+
     return (
         <>
             <View style={styles.weekdaysContainer}>
@@ -170,7 +189,7 @@ const TimeSheet = () => {
                     type={PageListType.MULTI_COL_LIST}
                     renderItem={({ item, index }: { item: TimeSheetItem, index: number }) =>
                         <View key={index}>
-                            <TimeSheetComponent item={item} maxWidth={maxWidth} />
+                            <TimeSheetComponent item={item} maxWidth={maxWidth} deleteItem={() => { deleteItem(selectedDay, +item.id) }} />
                         </View>
                     }
                     itemMaxWidth={maxWidth}
