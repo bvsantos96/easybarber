@@ -29,6 +29,9 @@
   "retry": "Retry",
   "phoneNumber": "Phone Number",
   "navigation": {
+    "weekView": {
+      "name": "Week View"
+    },
     "timeSheet": {
       "name": "Timesheet"
     },

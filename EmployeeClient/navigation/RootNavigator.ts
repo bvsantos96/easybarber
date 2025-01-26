@@ -9,6 +9,7 @@ import Tabs from "@screens/Tabs";
 import Establishment from "@screens/Establishment";
 import ProductList from "@screens/ProductList";
 import TimeSheet from "@screens/Timesheet";
+import WeekView from "@screens/WeekView";
 
 const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     Sign: {
@@ -71,6 +72,12 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         component: TimeSheet,
         containerizedComponent: true,
     },
+    WeekView: {
+        title: texts.navigation.weekView.name,
+        hasHeader: true,
+        component: WeekView,
+        containerizedComponent: true,
+    }
 };
 
 export default RootNav;
