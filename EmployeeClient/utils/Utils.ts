@@ -13,6 +13,10 @@ export const getFullDateAsString = (date: Date) => {
     return `${twoDigits(date.getDate())}/${twoDigits(date.getMonth() + 1)}/${date.getFullYear()}`;
 }
 
+export const getCalendarReadyDate = (date: Date) => {
+    return `${date.getFullYear()}-${twoDigits(date.getMonth() + 1)}-${twoDigits(date.getDate())}`;
+}
+
 export const getDateAsString = (date: Date) => {
     return `${twoDigits(date.getDate())}/${twoDigits(date.getMonth() + 1)}${date.getFullYear() === new Date().getFullYear() ? '' : '/' + date.getFullYear().toString().substring(2, 4)}`;
 }

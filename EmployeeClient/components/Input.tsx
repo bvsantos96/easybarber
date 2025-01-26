@@ -1,7 +1,8 @@
-import React, { useRef, useState } from 'react';
-import { Pressable, View, TextInput, InputModeOptions, ReturnKeyTypeOptions, NativeSyntheticEvent, TextInputSubmitEditingEventData, TextInputFocusEventData } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Text, Pressable, View, TextInput, InputModeOptions, ReturnKeyTypeOptions, NativeSyntheticEvent, TextInputSubmitEditingEventData, TextInputFocusEventData, ViewStyle } from 'react-native';
 import { getStyles } from '../styles/Input';
 import { useTheme } from '../styles/ThemeContext';
+import Divider from './Divider';
 
 type InputProps = {
     onBlur?: | ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void) | undefined;
@@ -72,8 +73,18 @@ type InputProps = {
     password?: boolean,
     username?: boolean,
     rightIcon?: JSX.Element[],
+    singleRightIcon?: JSX.Element,
     onSubmitEditing?: | ((e: NativeSyntheticEvent<TextInputSubmitEditingEventData>) => void) | undefined;
     returnKeyType?: ReturnKeyTypeOptions | undefined;
+    round?: boolean;
+    containerStyle?: ViewStyle;
+    placeholderTextColor?: string;
+    defaultValue?: string;
+    title?: string;
+    hideTitleIfNoValue?: boolean;
+    preventPaste?: boolean;
+    nInputs?: number;
+    iconBackgroundColor?: string;
 }
 
 // types can be found here: https://reactnative.dev/docs/textinput#autocomplete
@@ -90,18 +101,38 @@ const Input = React.forwardRef<TextInput, InputProps>(({
     autoComplete,
     username = false,
     password = false,
-    rightIcon = []
+    rightIcon = [],
+    singleRightIcon,
+    round = true,
+    containerStyle,
+    placeholderTextColor,
+    defaultValue,
+    title,
+    hideTitleIfNoValue = false,
+    preventPaste = false,
+    nInputs = 1,
+    iconBackgroundColor
 }, ref) => {
     const theme = useTheme();
-    const styles = getStyles();
+    const styles = getStyles(nInputs);
     const [showPassword, setShowPassword] = useState(!password);
     const textInputRef = useRef<TextInput>(null);
+    const [showTitle, setShowTitle] = useState(title && (defaultValue || !hideTitleIfNoValue));
+
+    (!iconBackgroundColor) && (iconBackgroundColor = styles.iconView.backgroundColor);
 
     const handleViewPress = () => {
         textInputRef.current?.focus();
     };
 
     const handleChangeText = (text: string) => {
+        if (title) {
+            if (text.length > 0) {
+                setShowTitle(true);
+            } else {
+                setShowTitle(!hideTitleIfNoValue);
+            }
+        }
         if (onInputChange) {
             onInputChange(text);
         }
@@ -111,20 +142,33 @@ const Input = React.forwardRef<TextInput, InputProps>(({
         setShowPassword(!showPassword);
     };
 
+    const [nIcons, setNIcons] = useState(0);
+
+    useEffect(() => {
+        const count = +!!leftIcon + +(rightIcon && rightIcon.length > 0) + +!!singleRightIcon;
+        setNIcons(count);
+    }, [leftIcon, rightIcon, singleRightIcon]);
+
     return (
         <Pressable
             ref={ref}
             style={styles.container} onPress={handleViewPress}>
-            <View style={styles.inputView}>
-                {leftIcon && <View style={styles.iconView}>
-                    {leftIcon}
-                </View>}
+            <View style={[styles.inputView, !round && styles.inputSmallBorderRadius, containerStyle && { ...containerStyle }]}>
+                {title && showTitle && <Text style={styles.title}>{title}</Text>}
+                {leftIcon ? (
+                    <View style={[styles.iconView, !round && styles.inputSmallBorderRadius, { backgroundColor: iconBackgroundColor }]}>
+                        {leftIcon}
+                    </View>
+                ) : (
+                    <Divider horizontal size={styles.iconView.margin + styles.iconView.marginRight} />
+                )}
                 <TextInput
                     ref={textInputRef}
+                    contextMenuHidden={preventPaste}
                     onFocus={onFocus}
-                    style={rightIcon ? styles.textInputWithShowPasswordIcon : styles.textInput}
+                    style={(nIcons === 2) ? styles.textInputWithTwoIcons : (nIcons === 1) ? styles.textInputWithOneIcon : styles.textInput}
                     placeholder={placeholder}
-                    placeholderTextColor={theme.colors.text.lightBlack}
+                    placeholderTextColor={placeholderTextColor || theme.colors.text.lightBlack}
                     onBlur={onBlur}
                     onChangeText={handleChangeText}
                     secureTextEntry={!showPassword}
@@ -132,13 +176,21 @@ const Input = React.forwardRef<TextInput, InputProps>(({
                     {...(password ? { autoCompleteType: 'password' } : { autoComplete: autoComplete })}
                     textContentType={password ? 'password' : username ? 'username' : 'none'}
                     inputMode={type}
+                    defaultValue={defaultValue}
                     onSubmitEditing={onSubmitEditing}
                     returnKeyType={returnKeyType ? returnKeyType : 'default'}
                 />
-                {rightIcon && rightIcon.length >= 0 && (
+
+                {singleRightIcon ? (
+                    <View style={[styles.iconViewRight, !round && styles.inputSmallBorderRadius, { backgroundColor: iconBackgroundColor }]}>
+                        {singleRightIcon}
+                    </View>
+                ) : (rightIcon && rightIcon.length >= 0) ? (
                     <Pressable style={styles.showPasswordIcon} onPress={handleShowPasswordPress}>
                         {rightIcon[+showPassword]}
                     </Pressable>
+                ) : (
+                    <Divider horizontal size={styles.iconView.margin + styles.iconView.marginRight} />
                 )}
             </View>
         </Pressable>
@@ -146,4 +198,3 @@ const Input = React.forwardRef<TextInput, InputProps>(({
 });
 
 export default Input;
-
