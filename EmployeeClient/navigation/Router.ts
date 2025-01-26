@@ -17,6 +17,7 @@ export const Params = {
   NewEstablishment: undefined,
   ProductList: undefined,
   TimeSheet: undefined,
+  Product: undefined
 } as const;
 
 export const Routes = {
@@ -34,4 +35,5 @@ export const Routes = {
   NewEstablishment: "NewEstablishment",
   ProductList: "ProductList",
   TimeSheet: "TimeSheet",
+  Product: "Product",
 } as const;
