@@ -322,6 +322,7 @@ declare interface ImageEntity extends Identifiable {
 
 declare interface ProductEntity extends ImageEntity {
     name: string;
+    brand:string;
     description: string;
     price: number;
 }
