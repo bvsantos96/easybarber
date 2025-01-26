@@ -1,11 +1,12 @@
 import { StyleSheet } from 'react-native';
 import { useTheme } from './ThemeContext';
 
-export const getStyles = () => {
+export const getStyles = (nInputs: number = 1) => {
     const theme = useTheme();
+    const inputWidth = theme.dimensions.input.width / nInputs;
     return StyleSheet.create({
         container: {
-            width: theme.dimensions.input.width,
+            width: inputWidth,
             height: theme.dimensions.input.height,
         },
         inputSmallBorderRadius: {
@@ -30,8 +31,18 @@ export const getStyles = () => {
             borderStyle: 'solid',
         },
         iconView: {
-            width: 0.8 * theme.dimensions.input.height,
-            height: 0.8 * theme.dimensions.input.height,
+            width: 0.7 * theme.dimensions.input.height,
+            height: 0.7 * theme.dimensions.input.height,
+            borderRadius: 0.4 * theme.dimensions.input.height,
+            backgroundColor: theme.colors.imageBackground,
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: 5 * theme.dimensions.absoluteHeight,
+            marginRight: 10 * theme.dimensions.absoluteWidth,
+        },
+        iconViewRight: {
+            width: 0.7 * theme.dimensions.input.height,
+            height: 0.7 * theme.dimensions.input.height,
             borderRadius: 0.4 * theme.dimensions.input.height,
             backgroundColor: theme.colors.imageBackground,
             alignItems: 'center',
@@ -49,7 +60,7 @@ export const getStyles = () => {
             zIndex: 9999
         },
         textInput: {
-            width: theme.dimensions.input.width - (0.8 * theme.dimensions.input.height),
+            width: inputWidth - (30 * theme.dimensions.absoluteWidth),
             height: 40 * theme.dimensions.absoluteHeight,
             borderWidth: 0,
             color: theme.colors.text.main,
@@ -57,8 +68,17 @@ export const getStyles = () => {
             fontFamily: 'Mazzard',
             fontWeight: '400',
         },
-        textInputWithShowPasswordIcon: {
-            width: theme.dimensions.input.width - (1.6 * theme.dimensions.input.height) - 10 * theme.dimensions.absoluteHeight - 20 * theme.dimensions.absoluteWidth,
+        textInputWithOneIcon: {
+            width: inputWidth - theme.dimensions.input.height - 10 * theme.dimensions.absoluteWidth,
+            height: 40 * theme.dimensions.absoluteHeight,
+            borderWidth: 0,
+            color: theme.colors.text.main,
+            fontSize: theme.fonts.size._15,
+            fontFamily: 'Mazzard',
+            fontWeight: '400',
+        },
+        textInputWithTwoIcons: {
+            width: inputWidth - (1.6 * theme.dimensions.input.height) - 10 * theme.dimensions.absoluteHeight - 20 * theme.dimensions.absoluteWidth,
             height: 40 * theme.dimensions.absoluteHeight,
             borderWidth: 0,
             color: theme.colors.text.main,

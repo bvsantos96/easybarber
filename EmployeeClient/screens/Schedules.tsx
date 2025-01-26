@@ -12,6 +12,8 @@ import Button from '@components/Button';
 import CustomModal, { CustomModalRef } from '@components/CustomModal';
 import Input from '@components/Input';
 import DatePicker from 'react-native-date-picker';
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import Divider from '@components/Divider';
 
 const AppointmentItem = ({ item }: { item: AppointmentInfo }) => {
     const styles = getStyles();
@@ -36,6 +38,7 @@ const Schedules = () => {
     const [month, setMonth] = useState(new Date().getMonth() + 1);
     const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
     const [markedDates, setMarkedDates] = useState<MarkedDates>({});
+    const [absenceDates, setAbsenceDates] = useState<MarkedDates>({});
     const [type, setType] = useState('');
     const [message, setMessage] = useState('');
     const [from, setFrom] = useState<Date | undefined>(undefined);
@@ -45,6 +48,20 @@ const Schedules = () => {
     const [openFrom, setOpenFrom] = useState(false);
     const [openTo, setOpenTo] = useState(false);
     const modalRef = useRef<CustomModalRef>(null);
+
+    const markAbsence = (dates: Date[]): MarkedDates => {
+        let marked: MarkedDates = {};
+        dates.forEach(d => {
+            marked[getCalendarReadyDate(d)] = {
+                startingDay: true,
+                endingDay: true,
+                textColor: theme.colors.text.black,
+                selectedColor: theme.colors.text.lightGray,
+                selected: true
+            };
+        });
+        return marked;
+    }
 
     const markDates = (dates: DailyAppointments[]): MarkedDates => {
         let marked: MarkedDates = {};
@@ -56,11 +73,7 @@ const Schedules = () => {
         return marked;
     }
 
-    // const loadUpcomming = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter) => {
-    //     return await getAppointments(page, { ...params, future: true, activeOnly: true });
-    // }
-
-    const loadUpcomming = async (_page?: IPage<AppointmentInfo>, _params?: AppointmentFilter) => {
+    const loadAppointmentsByDay = async (_page?: IPage<AppointmentInfo>, _params?: AppointmentFilter) => {
         const nItems = 3;
         const arr = Array(nItems).fill(null).map(() => (
             {
@@ -125,8 +138,21 @@ const Schedules = () => {
         ]));
     }
 
+    const loadAbsences = () => {
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const twoDaysFromNow = new Date();
+        twoDaysFromNow.setDate(tomorrow.getDate() + 1);
+        setAbsenceDates(markAbsence([
+            tomorrow
+        ]));
+    }
+
     useEffect(() => {
         loadMoreAppointments();
+        loadAbsences();
     }, [year, month]);
 
     useEffect(() => {
@@ -135,6 +161,7 @@ const Schedules = () => {
     }, [date]);
 
     const setAbsence = () => {
+        //TODO: Send info to server
     }
 
     const openModal = () => {
@@ -167,6 +194,7 @@ const Schedules = () => {
                 markingType={'multi-dot'}
                 markedDates={{
                     ...markedDates,
+                    ...absenceDates,
                     [date]: {
                         selected: true,
                         disableTouchEvent: true,
@@ -191,7 +219,7 @@ const Schedules = () => {
                 <PageList<AppointmentInfo>
                     key="upcomming"
                     renderItem={({ item, index }) => <AppointmentItem key={index} item={item} />}
-                    requestFunction={loadUpcomming}
+                    requestFunction={loadAppointmentsByDay}
                 />
             </View>
 
@@ -204,9 +232,14 @@ const Schedules = () => {
                         <Text style={styles.modalTitle}>{texts.setAbsence}</Text>
                         <View style={styles.modalContent}>
                             <Input hideTitleIfNoValue title={texts.type} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.type} onInputChange={setType} />
+                            <Divider size={20} />
                             <Input hideTitleIfNoValue title={texts.messageForClients} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.messageForClients} onInputChange={setMessage} />
-                            <Input preventPaste onFocus={() => { setOpenTo(false); setOpenFrom(true); fromInputRef.current?.blur() }} hideTitleIfNoValue title={texts.from} defaultValue={getTimeAsString(from || new Date())} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.absenceFrom} ref={fromInputRef} />
-                            <Input preventPaste onFocus={() => { setOpenFrom(false); setOpenTo(true); toInputRef.current?.blur() }} hideTitleIfNoValue title={texts.to} defaultValue={getTimeAsString(to || new Date())} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.absenceTo} ref={toInputRef} />
+                            <Divider size={20} />
+                            <View style={styles.timeInput}>
+                                <Input iconBackgroundColor={"transparent"} nInputs={2} leftIcon={<FontAwesome6 name="clock" size={styles.inputIcon.width} color={styles.inputIcon.color} />} preventPaste onFocus={() => { setOpenTo(false); setOpenFrom(true); fromInputRef.current?.blur() }} hideTitleIfNoValue title={texts.from} defaultValue={getTimeAsString(from || new Date())} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.absenceFrom} ref={fromInputRef} />
+                                <Divider horizontal size={5} />
+                                <Input iconBackgroundColor={"transparent"} nInputs={2} leftIcon={<FontAwesome6 name="clock" size={styles.inputIcon.width} color={styles.inputIcon.color} />} preventPaste onFocus={() => { setOpenFrom(false); setOpenTo(true); toInputRef.current?.blur() }} hideTitleIfNoValue title={texts.to} defaultValue={getTimeAsString(to || new Date())} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.absenceTo} ref={toInputRef} />
+                            </View>
                             <DatePicker
                                 modal
                                 mode="time"
