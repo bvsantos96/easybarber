@@ -153,6 +153,14 @@ export const getStyles = () => {
         weekDayContainer: {
             flex: 1,
             top: -20 * theme.dimensions.absoluteHeight,
+        },
+        eventBlock: {
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: theme.colors.mainColor,
         }
     });
 }

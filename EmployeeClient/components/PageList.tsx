@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { FlatList, View, Text, ViewStyle, NativeSyntheticEvent } from "react-native";
+import { FlatList, View, Text, ViewStyle, NativeSyntheticEvent, LayoutChangeEvent } from "react-native";
 import PagerView from "react-native-pager-view";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet/src";
 
@@ -144,7 +144,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     }, [itemMaxWidth]);
 
     const [listWidth, setListWidth] = useState(theme.dimensions.width);
-    const updateColumns = (event: any) => {
+    const updateColumns = (event: LayoutChangeEvent) => {
         const { width } = event.nativeEvent.layout;
         setListWidth(width);
         setColumns(calculateColumns(width));
