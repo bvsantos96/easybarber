@@ -1,5 +1,16 @@
 import { NavigationProp } from "@react-navigation/native";
 import texts from "@lang/en.json";
+import { DateData } from "react-native-calendars";
+
+export const getDateData = (date: Date): DateData => {
+    return {
+        month: date.getMonth() + 1,
+        year: date.getFullYear(),
+        day: date.getDate(),
+        dateString: getCalendarReadyDate(date),
+        timestamp: date.getTime(),
+    };
+}
 
 export const getDateTimeAsString = (date: Date) => {
     return `${twoDigits(date.getDate())}/${twoDigits(date.getMonth() + 1)} ${twoDigits(date.getHours())}:${twoDigits(date.getMinutes())}`;
@@ -15,6 +26,13 @@ export const getFullDateAsString = (date: Date) => {
 
 export const getCalendarReadyDate = (date: Date) => {
     return `${date.getFullYear()}-${twoDigits(date.getMonth() + 1)}-${twoDigits(date.getDate())}`;
+}
+
+export const getCalendarReadyTime = (date: Date) => {
+    return {
+        hour: date.getHours(),
+        minutes: date.getMinutes(),
+    };
 }
 
 export const getDateAsString = (date: Date) => {

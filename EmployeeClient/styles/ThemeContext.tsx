@@ -41,6 +41,7 @@ interface Colors {
         lightGray: string;
         lightWhite: string;
         darkBlueGray: string;
+        altWithColor: string;
     };
     button: {
         main: string;
@@ -160,7 +161,8 @@ const defaultTheme: Theme = {
             lightBlack: `rgba(${textColor}, 0.66)`,
             lightGray: `rgba(${textColor}, 0.2)`,
             lightWhite: `rgba(${textColor}, 0.4)`,
-            darkBlueGray: `rgba(${mainColor}, 0.1)`
+            darkBlueGray: `rgba(${mainColor}, 0.1)`,
+            altWithColor: `rgba(${mainColor}, 0.4)`
         },
         button: {
             main: `rgb(${mainColor})`,

@@ -4,6 +4,9 @@ import { useTheme } from "./ThemeContext";
 export const getStyles = () => {
     const theme = useTheme();
     return StyleSheet.create({
+        main: {
+            color: theme.colors.text.altWithColor
+        },
         container: {
             flex: 1,
         },
@@ -104,6 +107,52 @@ export const getStyles = () => {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
+        },
+        monthContainer: {
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            top: 40 * theme.dimensions.absoluteHeight,
+        },
+        monthText: {
+            color: theme.colors.mainColor,
+            fontSize: theme.fonts.size._24,
+            fontWeight: 'bold',
+            fontFamily: 'Mazzard',
+        },
+        yearText: {
+            fontFamily: 'Mazzard',
+            color: theme.colors.text.altWithColor,
+            fontSize: theme.fonts.size._24,
+            marginLeft: 10 * theme.dimensions.absoluteWidth,
+        },
+        dayContainer: {
+            flex: 1,
+            paddingHorizontal: 5 * theme.dimensions.absoluteWidth,
+            alignItems: 'center',
+            borderRadius: 20 * theme.dimensions.absoluteWidth,
+            justifyContent: 'center',
+            width: 50 * theme.dimensions.absoluteWidth,
+            height: 65 * theme.dimensions.absoluteHeight,
+        },
+        dayContainerSelected: {
+            backgroundColor: theme.colors.imageBackground,
+        },
+        dayNumber: {
+            color: theme.colors.text.main,
+            fontWeight: 'bold',
+            fontSize: theme.fonts.size._17,
+            fontFamily: 'Mazzard',
+        },
+        dayStr: {
+            color: theme.colors.text.altWithColor,
+            fontSize: theme.fonts.size._12,
+            fontWeight: 'normal',
+            fontFamily: 'Mazzard',
+        },
+        weekDayContainer: {
+            flex: 1,
+            top: -20 * theme.dimensions.absoluteHeight,
         }
     });
 }

@@ -58,6 +58,8 @@ const Router = () => {
                 }
             }
 
+            defaultPage = Routes.WeekView;
+
             if (defaultPage !== Routes.Sign) {
                 await waitAndResetNavigation(defaultPage);
             }
