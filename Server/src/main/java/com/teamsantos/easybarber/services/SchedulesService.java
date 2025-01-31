@@ -126,7 +126,8 @@ public class SchedulesService {
                         employee,
                         schedule.getDays(), schedule.getStartHour(), schedule.getEndHour(), true)) {
             if (!forceSave) {
-                throw new IllegalArgumentException("Employee already has a schedule for this day/hours");
+                throw new IllegalArgumentException(
+                        "Employee already has a schedule that overlaps with this day/hours combination.");
             } else {
                 response = "Employee already has a schedule for this day/hours;";
                 if (replaceExisting) {

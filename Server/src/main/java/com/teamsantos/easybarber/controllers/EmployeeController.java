@@ -247,11 +247,11 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
             @RequestParam(required = false) Boolean replaceExisting) {
         try {
             if (forceSave == null) {
-                forceSave = true;
+                forceSave = false;
             }
 
             if (replaceExisting == null) {
-                replaceExisting = true;
+                replaceExisting = false;
             }
 
             obj.setEmployeeId(UserContext.getEmployeeId());

@@ -83,7 +83,7 @@ export const getClientDayOfWeekFromString = (dayOfWeek: string): number => {
     return -1;
 }
 
-export const getClientDayOfWeek = (index: number) => {
+export const getServerDayOfWeek = (index: number) => {
     switch (index) {
         case 6:
             return 0;
@@ -92,7 +92,7 @@ export const getClientDayOfWeek = (index: number) => {
     }
 }
 
-export const getServerDayOfWeek = (index: number) => {
+export const getClientDayOfWeek = (index: number) => {
     switch (index) {
         case 0:
             return 6;

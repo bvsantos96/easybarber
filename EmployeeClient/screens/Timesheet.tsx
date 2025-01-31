@@ -154,17 +154,42 @@ export default function TimeSheet({ route, navigation }: Props) {
         }
     }
 
-    const load = async (_page?: IPage<TimeSheetItem>, _params?: Record<string, string | number | boolean>): Promise<IPage<TimeSheetItem>> => {
+    const requestFunction = async (_page?: IPage<TimeSheetItem>, _params?: Record<string, string | number | boolean>): Promise<IPage<TimeSheetItem>> => {
+        return Promise.resolve({
+            content: timeSheets[selectedDay] || [],
+            totalPages: 1,
+            totalElements: timeSheets[selectedDay]?.length || 0,
+            currentPage: 1,
+            pageSize: timeSheets[selectedDay]?.length || 0,
+            hasNextPage: false,
+            hasPreviousPage: false
+        });
+    }
+
+    const load = async () => {
         let items = await getTimesheets(undefined, undefined, establishmentId);
-        if (!items) return Promise.resolve(createEmptyPage());
-        return Promise.resolve(items);
+        if (!items || items.content.length <= 0) return;
+        let newTimeSheet: { [key: number]: TimeSheetItem[] } = {};
+        items.content.forEach((item: TimeSheetItem) => {
+            if (item.day && item.day.length >= 0) {
+                const day = getClientDayOfWeekFromString(item.day);
+                if (!newTimeSheet[day]) {
+                    newTimeSheet[day] = [];
+                }
+                newTimeSheet[day].push(item);
+            }
+        });
+        setTimeSheets(newTimeSheet);
+        toggleRefresh(selectedDay);
     }
 
     const addNewTimesheet = async (day: number, from: Date, to: Date) => {
+        const serverDay = getServerDayOfWeek(day);
         let timeSheet: TimeSheetItem = {
             id: 0,
             establishmentId: establishmentId,
-            days: [getServerDayOfWeek(day)],
+            day: texts.weekdays[day].toUpperCase(),
+            days: [serverDay],
             endHour: getTimeAsString(to),
             startHour: getTimeAsString(from)
         };
@@ -191,6 +216,10 @@ export default function TimeSheet({ route, navigation }: Props) {
         toggleRefresh(day);
     }
 
+    useEffect(() => {
+        load();
+    }, []);
+
     return (
         <>
             <View style={styles.weekdaysContainer}>
@@ -207,9 +236,11 @@ export default function TimeSheet({ route, navigation }: Props) {
                         <TimeSheetComponent key={index} item={item} maxWidth={maxWidth} deleteItem={() => { deleteItem(selectedDay, +item.id) }} />
                     }
                     itemMaxWidth={maxWidth}
-                    reset={refresh}
-                    requestFunction={load}
+                    preload={false}
+                    initialItems={timeSheets[selectedDay] || []}
+                    requestFunction={requestFunction}
                     dontDisplayLoadMore
+                    reset={refresh}
                 />
             </View>
             <CustomModal

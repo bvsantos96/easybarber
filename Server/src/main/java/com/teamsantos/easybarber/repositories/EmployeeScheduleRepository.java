@@ -37,9 +37,8 @@ public interface EmployeeScheduleRepository
                 FROM EmployeeSchedule es
                 WHERE es.employee.id = :id
                 AND es.day IN :days
-                AND es.startHour <= :startHour
-                AND es.endHour >= :endHour
                 AND es.active = :active
+                AND (es.startHour <= :endHour AND es.endHour >= :startHour)
             )
             """)
     boolean hasOverlappingSchedule(
