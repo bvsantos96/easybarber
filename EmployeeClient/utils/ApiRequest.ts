@@ -466,3 +466,25 @@ export const getAppointments = async (page?: IPage<AppointmentInfo>, params?: Ap
 export const getEstablishments = async (page?: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>): Promise<IPage<EstablishmentInfo> | undefined> => {
     return await pageGet<EstablishmentInfo>("/employee/establishments", page, params);
 }
+
+export const getTimesheets = async (page?: IPage<TimeSheetItem>, params?: Record<string, string | number | boolean>, establishmentId?: number): Promise<IPage<TimeSheetItem> | undefined> => {
+    if (params === undefined || params === null) {
+        params = {};
+    }
+    if (establishmentId !== undefined) {
+        params.establishmentId = establishmentId;
+    }
+    if (page === undefined || page === null) {
+        page = createPageable();
+    }
+    page.pageSize = 100;
+    return await pageGet<TimeSheetItem>("/employee/schedules", page, params);
+}
+
+export const setTimesheet = async (timeSheet: TimeSheetItem): Promise<BaseResponse | undefined> => {
+    return (await request<BaseResponse>("/employee/schedule", "POST", timeSheet, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).data;
+}
+
+export const deleteSchedule = async (id: number): Promise<boolean> => {
+    return (await request<BaseResponse>(`/employee/schedule/${id}`, "DELETE", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
+}

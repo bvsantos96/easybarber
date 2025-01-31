@@ -49,7 +49,6 @@ const CustomMonth = ({ date }: { date: DateData }) => {
 
 const CustomEvent = (event: PackedEvent) => {
     const styles = getStyles();
-    console.log(event);
     return (
         <View style={styles.eventBlock} >
 

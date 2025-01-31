@@ -327,13 +327,19 @@ declare interface ProductEntity extends ImageEntity {
 }
 
 declare interface TimeSheetItem extends Identifiable {
-    time: {
-        startTime: Date;
-        endTime: Date;
-    };
+    employeeId?: number,
+    establishmentId?: number,
+    day?: string,
+    days: number[],
+    startHour: string,
+    endHour: string
 }
 
 declare interface DailyAppointments {
     date: Date;
     occupancy: number;
+}
+
+declare interface BaseResponse extends Identifiable {
+    responseMessage: string;
 }

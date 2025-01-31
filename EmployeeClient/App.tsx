@@ -54,11 +54,9 @@ const Router = () => {
                 if (await getToken() === null && !await refreshToken()) {
                     defaultPage = Routes.Sign;
                 } else {
-                    defaultPage = Routes.Tabs;
+                    defaultPage = Routes.TimeSheet;
                 }
             }
-
-            defaultPage = Routes.WeekView;
 
             if (defaultPage !== Routes.Sign) {
                 await waitAndResetNavigation(defaultPage);

@@ -1,6 +1,8 @@
 package com.teamsantos.easybarber.controllers;
 
 import java.security.Principal;
+import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,11 +26,13 @@ import com.teamsantos.easybarber.DTO.employee.EmployeeCreateDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.DTO.filters.ServiceFilter;
+import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.service.CreateServiceDTO;
 import com.teamsantos.easybarber.DTO.service.ServiceBaseDTO;
 import com.teamsantos.easybarber.DTO.service.ServiceDTO;
 import com.teamsantos.easybarber.entities.Employee;
+import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.images.EmployeeImage;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
@@ -41,6 +45,8 @@ import com.teamsantos.easybarber.services.SchedulesService;
 import com.teamsantos.easybarber.services.ServiceService;
 import com.teamsantos.easybarber.services.UserService;
 import com.teamsantos.easybarber.services.UserTypeService;
+import com.teamsantos.easybarber.utils.Pair;
+import com.teamsantos.easybarber.utils.Utils;
 
 @RestController
 @RequestMapping("/employee")
@@ -205,6 +211,69 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
             return ResponseEntity.ok(schedulesService.getExceptions(filter, pageable));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/schedules")
+    @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
+    public ResponseEntity<BasePageDTO<ScheduleDTO>> getSchedules(@RequestParam(required = false) Long establishmentId,
+            @RequestParam(required = false) Boolean active,
+            Pageable pageable) {
+        try {
+            if (active == null) {
+                active = true;
+            }
+            ScheduleFilter filter = new ScheduleFilter();
+            if (establishmentId != null) {
+                filter.setEstablishmentId(establishmentId);
+            }
+            filter.setEndHour(Utils.getEndOfDayTime());
+            filter.setEmployeeId(UserContext.getEmployeeId());
+            // filter.setActive(active);
+            filter.setDayOfWeek(Set.of(DAY_OF_WEEK.values()));
+            if (active) {
+                filter.setActive(active);
+            }
+            return ResponseEntity.ok(schedulesService.getSchedules(filter, pageable));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BasePageDTO<>(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/schedule")
+    @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
+    public ResponseEntity<BaseResponseDTO> create(@RequestBody ScheduleDTO obj,
+            @RequestParam(required = false) Boolean forceSave,
+            @RequestParam(required = false) Boolean replaceExisting) {
+        try {
+            if (forceSave == null) {
+                forceSave = true;
+            }
+
+            if (replaceExisting == null) {
+                replaceExisting = true;
+            }
+
+            obj.setEmployeeId(UserContext.getEmployeeId());
+
+            Pair<List<Long>, String> result = schedulesService.create(obj, UserContext.getEmployeeId(),
+                    forceSave,
+                    replaceExisting);
+            return ResponseEntity
+                    .status(HttpStatus.CREATED).body(new BaseResponseDTO(result.getFirst(), result.getSecond()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/schedule/{id}")
+    @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
+    public ResponseEntity<BaseResponseDTO> deleteSchedule(@PathVariable("id") Long id) {
+        try {
+            schedulesService.deleteSchedule(id, UserContext.getEmployeeId());
+            return ResponseEntity.ok(new BaseResponseDTO("Schedule deleted successfully"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
         }
     }
 }

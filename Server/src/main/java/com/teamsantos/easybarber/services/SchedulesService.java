@@ -296,4 +296,25 @@ public class SchedulesService {
                         appointmentDTO.getTime().plusMinutes(duration));
         return !notValid;
     }
+
+    @Transactional(readOnly = false)
+    public void deleteSchedule(Long id, long employeeId) {
+        EmployeeSchedule schedule = employeeScheduleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
+        if (schedule.getEmployee().getId() != employeeId) {
+            throw new IllegalArgumentException("Employee is not authorized to delete this schedule");
+        }
+        employeeScheduleRepository.delete(schedule);
+    }
+
+    @Transactional(readOnly = false)
+    public void deactivateSchedule(Long id, long employeeId) {
+        EmployeeSchedule schedule = employeeScheduleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
+        if (schedule.getEmployee().getId() != employeeId) {
+            throw new IllegalArgumentException("Employee is not authorized to delete this schedule");
+        }
+        schedule.setActive(false);
+        employeeScheduleRepository.save(schedule);
+    }
 }

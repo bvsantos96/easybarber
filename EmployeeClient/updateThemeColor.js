@@ -134,10 +134,8 @@ if (!replaceValue) {
     process.exit(1);
 }
 
-console.log(replaceValue);
 if (!isValidHexColor(replaceValue)) {
     const [r, g, b] = replaceValue.split(', ');
-    console.log(r, g, b);
     replaceValue = rgbToHex(r, g, b);
 }
 

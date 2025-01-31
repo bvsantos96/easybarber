@@ -118,10 +118,11 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
         };
     }, []);
 
-    const resetList = () => {
+    const resetList = async () => {
         firstEndReached.current = true;
         if (resetCache) resetCache(); else { saveCache && saveCache([]); }
-        loadMoreItems(new TimedRequest(createPageable<T>(pageSize), 0));
+        setLoadingMore(true);
+        _loadMoreItems(new TimedRequest(createPageable<T>(pageSize), 0));
         return;
     }
 
@@ -163,12 +164,12 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     contentContainerStyle={{ paddingBottom: styles.listBottom.paddingBottom }}
                     renderItem={renderItem}
                     keyExtractor={(item) => item.id.toString()}
-                    onEndReached={() => {
+                    onEndReached={debounce(() => {
                         if (loadingMore) return;
                         if (preload || (!preload && !firstEndReached.current)) {
-                            _loadMoreItems();
+                            loadMoreItems();
                         }
-                    }}
+                    }, 300)}
                     onEndReachedThreshold={0.3}
                     showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
@@ -198,12 +199,12 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     renderItem={renderItem}
                     nestedScrollEnabled={true}
                     keyExtractor={(item) => item.id.toString()}
-                    onEndReached={() => {
+                    onEndReached={debounce(() => {
                         if (loadingMore) return;
                         if (preload || (!preload && !firstEndReached.current)) {
-                            _loadMoreItems();
+                            loadMoreItems();
                         }
-                    }}
+                    }, 300)}
                     onEndReachedThreshold={0.3}
                     showsVerticalScrollIndicator={true}
                     showsHorizontalScrollIndicator={false}
@@ -268,12 +269,12 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                     ));
                 }}
                 keyExtractor={(item) => item.id.toString()}
-                onEndReached={() => {
+                onEndReached={debounce(() => {
                     if (loadingMore) return;
                     if (preload || (!preload && !firstEndReached.current)) {
-                        _loadMoreItems();
+                        loadMoreItems();
                     }
-                }}
+                }, 300)}
                 onEndReachedThreshold={0.3}
                 showsVerticalScrollIndicator={false}
                 showsHorizontalScrollIndicator={false}

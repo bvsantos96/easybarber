@@ -35,6 +35,12 @@ export const getCalendarReadyTime = (date: Date) => {
     };
 }
 
+
+export const parseServerTime = (time: string) => {
+    const parts = time.split(':');
+    return `${twoDigits(parseInt(parts[0]))}:${twoDigits(parseInt(parts[1]))}`;
+}
+
 export const getDateAsString = (date: Date) => {
     return `${twoDigits(date.getDate())}/${twoDigits(date.getMonth() + 1)}${date.getFullYear() === new Date().getFullYear() ? '' : '/' + date.getFullYear().toString().substring(2, 4)}`;
 }
@@ -67,3 +73,30 @@ export const getTimeDifferenceInMinutesAndSeconds = (start: Date, end: Date): st
 
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
+
+export const getClientDayOfWeekFromString = (dayOfWeek: string): number => {
+    for (let i = 0; i < 7; i++) {
+        if (texts.weekdays[i].toUpperCase() === dayOfWeek.toUpperCase()) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+export const getClientDayOfWeek = (index: number) => {
+    switch (index) {
+        case 6:
+            return 0;
+        default:
+            return index + 1;
+    }
+}
+
+export const getServerDayOfWeek = (index: number) => {
+    switch (index) {
+        case 0:
+            return 6;
+        default:
+            return index - 1;
+    }
+}
