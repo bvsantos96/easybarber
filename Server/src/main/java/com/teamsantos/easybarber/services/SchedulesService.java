@@ -3,6 +3,7 @@ package com.teamsantos.easybarber.services;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,11 +26,13 @@ import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
+import com.teamsantos.easybarber.DTO.schedule.CalendarDayInfoDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.schedule.SchedulesDTO;
 import com.teamsantos.easybarber.DTO.schedule.TimeSlotsDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule;
+import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.ScheduleException;
 import com.teamsantos.easybarber.repositories.AppointmentRepository;
 import com.teamsantos.easybarber.repositories.EmployeeScheduleRepository;
@@ -70,6 +73,7 @@ public class SchedulesService {
             ModelMapper modelMapper, EntityManager entityManager) {
         this.employeeScheduleRepository = employeeScheduleRepository;
         this.establishmentService = establishmentService;
+        this.scheduleRepository = scheduleRepository;
         this.scheduleExceptionRepository = scheduleExceptionRepository;
         this.establishmentStaffRepository = establishmentStaffRepository;
         this.establishmentServiceRepository = establishmentServiceRepository;
@@ -317,5 +321,25 @@ public class SchedulesService {
         }
         schedule.setActive(false);
         employeeScheduleRepository.save(schedule);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<LocalDate, CalendarDayInfoDTO> getCalendarInfo(ScheduleFilter filter) {
+        Map<LocalDate, Long> appointments = appointmentRepository.getAppointmentsCalendar(filter.getFrom(),
+                filter.getTo(), filter.getEmployeeId(), filter.getEstablishmentId());
+        List<LocalDate> exceptions = scheduleExceptionRepository.getExceptionsCalendar(filter.getFrom(),
+                filter.getTo(), filter.getEmployeeId(), filter.getEstablishmentId());
+        List<DAY_OF_WEEK> days = employeeScheduleRepository.getDaysWithNoSchedule(filter.getEmployeeId(),
+                filter.getEstablishmentId());
+
+        Map<LocalDate, CalendarDayInfoDTO> calendarInfo = new HashMap<>();
+        for (LocalDate date = filter.getFrom(); date.isBefore(filter.getTo()); date = date.plusDays(1)) {
+            CalendarDayInfoDTO info = new CalendarDayInfoDTO();
+            info.setNAppointments(appointments.getOrDefault(date, 0L));
+            info.setDisabled(exceptions.contains(date));
+            info.setHasSchedules(days.contains(Utils.getDayOfWeek(date)));
+            calendarInfo.put(date, info);
+        }
+        return calendarInfo;
     }
 }

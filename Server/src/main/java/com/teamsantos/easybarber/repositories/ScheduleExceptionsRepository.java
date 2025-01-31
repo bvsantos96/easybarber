@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
+import com.teamsantos.easybarber.DTO.schedule.CalendarInfoDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.ScheduleException;
@@ -99,4 +100,12 @@ public interface ScheduleExceptionsRepository
             """)
     List<ScheduleExceptionDTO> findAllByEstablishmentIdEmployeeSetFromAndToDTO(Long establishmentId,
             Set<Long> employeeIds, LocalDate from, LocalDate to);
+
+    @Query("""
+            SELECT e.date
+            FROM ScheduleException e
+            WHERE date >= :from AND date <= :to
+            GROUP BY e.date ORDER BY e.date
+            """)
+	List<LocalDate> getExceptionsCalendar(LocalDate from, LocalDate to, Long employeeId, Long establishmentId);
 }

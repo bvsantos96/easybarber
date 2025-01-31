@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teamsantos.easybarber.DTO.schedule.CalendarInfoDTO;
+import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
@@ -129,6 +131,16 @@ public class SchedulesController {
             return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponseDTO(ids));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/schedule/calendar")
+    @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
+    public ResponseEntity<BaseListDTO<CalendarInfoDTO>> listCalendarInfo(@ModelAttribute ScheduleFilter filter) {
+        try {
+            return ResponseEntity.ok(schedulesService.getCalendarInfo(filter));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new BaseListDTO<>(e.getMessage()));
         }
     }
 }

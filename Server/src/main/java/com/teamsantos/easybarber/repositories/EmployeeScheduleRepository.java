@@ -104,6 +104,12 @@ public interface EmployeeScheduleRepository
                 AND (s.active = :#{#filter.active} OR (s.active = true AND :#{#filter.active} IS NULL))
             ORDER BY s.startHour ASC
              """)
-
     List<EmployeeScheduleDTO> findAllDTO(ScheduleFilter filter);
+
+    @Query("""
+            SELECT s.day
+            FROM EmployeeSchedule s
+            WHERE (:employeeId IS NULL OR s.employee.id = :employeeId AND (:establishmentId IS NULL OR s.establishment.id = :establishmentId))
+            """)
+    List<DAY_OF_WEEK> getDaysWithNoSchedule(Long employeeId, Long establishmentId);
 }

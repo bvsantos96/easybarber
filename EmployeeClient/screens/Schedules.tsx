@@ -1,4 +1,4 @@
-import { View, Text, KeyboardAvoidingView, Pressable, TextInput } from 'react-native';
+import { View, Text, Pressable, TextInput } from 'react-native';
 import { Calendar } from "react-native-calendars";
 import { useTheme } from '@styles/ThemeContext';
 import { useEffect, useRef, useState } from 'react';

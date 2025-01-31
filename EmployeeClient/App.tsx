@@ -54,7 +54,7 @@ const Router = () => {
                 if (await getToken() === null && !await refreshToken()) {
                     defaultPage = Routes.Sign;
                 } else {
-                    defaultPage = Routes.TimeSheet;
+                    defaultPage = Routes.Tabs;
                 }
             }
 
