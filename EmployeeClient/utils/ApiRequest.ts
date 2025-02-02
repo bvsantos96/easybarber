@@ -10,6 +10,7 @@ import langs from '@lang/en.json';
 import { ResponseType } from 'enums';
 import { AlertType } from '@components/Alert';
 import { createPageable, parsePage } from './PageHandling';
+import { getCalendarReadyDate } from './Utils';
 
 const getItemsFromRequest = <T>(result: IResult<T>): T => {
     if (result.success) {
@@ -22,11 +23,17 @@ const getItemsFromRequest = <T>(result: IResult<T>): T => {
     throw new Error(result.message ?? langs.apiMessages.failed);
 }
 
-const parsePathParams = (_path: string, params: Record<string, string | number | boolean>): string => {
+const parsePathParams = (_path: string, params: Record<string, string | number | boolean | Date | undefined>): string => {
     let first = true;
     for (const key in params) {
         if (params[key] === null || params[key] === undefined)
             continue;
+        if (params[key] instanceof Date) {
+            params[key] = getCalendarReadyDate(params[key] as Date);
+        } else
+            if (params[key] === undefined) {
+                continue;
+            }
         _path += `${first ? '?' : '&'}${key}=${params[key]}`;
         first = false;
     }
@@ -487,4 +494,15 @@ export const setTimesheet = async (timeSheet: TimeSheetItem): Promise<BaseRespon
 
 export const deleteSchedule = async (id: number): Promise<boolean> => {
     return (await request<BaseResponse>(`/employee/schedule/${id}`, "DELETE", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
+}
+
+export const fetchMonthAppointments = async (month: number, year: number, establishmentId?: number): Promise<MonthCalendar> => {
+    const from = new Date(year, month - 1, 1);
+    const to = new Date(year, month, 0);
+    let params: { from: Date; to: Date; establishmentId?: number } = { from, to };
+    if (establishmentId !== undefined) {
+        params.establishmentId = establishmentId;
+    }
+    const url = parsePathParams(`/schedule/calendar`, params);
+    return await request<MonthCalendar>(url, "GET", { month, year, establishmentId }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
 }

@@ -343,3 +343,14 @@ declare interface DailyAppointments {
 declare interface BaseResponse extends Identifiable {
     responseMessage: string;
 }
+
+declare interface CalendarDay {
+    isDisabled: boolean;
+    hasSchedules: boolean;
+    availability: number;
+    date: string;
+}
+
+declare interface MonthCalendar {
+    [key: Date]: CalendarDay;
+}

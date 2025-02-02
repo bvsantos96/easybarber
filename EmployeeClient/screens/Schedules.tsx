@@ -14,6 +14,9 @@ import Input from '@components/Input';
 import DatePicker from 'react-native-date-picker';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Divider from '@components/Divider';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Params } from '@navigation/Router';
+import { fetchMonthAppointments } from 'utils/ApiRequest';
 
 const AppointmentItem = ({ item }: { item: AppointmentInfo }) => {
     const styles = getStyles();
@@ -31,7 +34,18 @@ const AppointmentItem = ({ item }: { item: AppointmentInfo }) => {
     );
 }
 
-const Schedules = () => {
+export type Route = {
+    establishmentId?: number;
+};
+
+type Props = NativeStackScreenProps<typeof Params, 'Schedules'>;
+
+export default function Schedules({ route, navigation }: Props) {
+    let establishmentId: number | undefined = undefined;
+    if (route.params) {
+        const { establishmentId: _establishmentId } = route.params;
+        establishmentId = _establishmentId;
+    }
     const theme = useTheme();
     const styles = getStyles();
     const [year, setYear] = useState(new Date().getFullYear());
@@ -110,6 +124,11 @@ const Schedules = () => {
         );
     }
 
+    const loadCalendar = async () => {
+        const days = await fetchMonthAppointments(month, year, establishmentId);
+        console.log(days);
+    }
+
     const loadMoreAppointments = () => {
         // const appointments = await fetchAppointments(year, month);
         const yesterday = new Date();
@@ -151,6 +170,7 @@ const Schedules = () => {
     }
 
     useEffect(() => {
+        loadCalendar();
         loadMoreAppointments();
         loadAbsences();
     }, [year, month]);
@@ -294,5 +314,3 @@ const Schedules = () => {
         </View >
     );
 }
-
-export default Schedules;
