@@ -2,6 +2,7 @@ package com.teamsantos.easybarber.controllers;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
@@ -17,11 +18,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.teamsantos.easybarber.DTO.schedule.CalendarInfoDTO;
-import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
+import com.teamsantos.easybarber.DTO.schedule.CalendarDayInfoDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.schedule.SchedulesDTO;
@@ -136,11 +136,14 @@ public class SchedulesController {
 
     @GetMapping("/schedule/calendar")
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
-    public ResponseEntity<BaseListDTO<CalendarInfoDTO>> listCalendarInfo(@ModelAttribute ScheduleFilter filter) {
+    public ResponseEntity<Map<LocalDate, CalendarDayInfoDTO>> listCalendarInfo(@ModelAttribute ScheduleFilter filter) {
         try {
+            if (filter.getEmployeeId() == null) {
+                filter.setEmployeeId(UserContext.getEmployeeId());
+            }
             return ResponseEntity.ok(schedulesService.getCalendarInfo(filter));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new BaseListDTO<>(e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of());
         }
     }
 }

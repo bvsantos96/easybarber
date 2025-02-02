@@ -25,6 +25,9 @@ export const getFullDateAsString = (date: Date) => {
 }
 
 export const getCalendarReadyDate = (date: Date) => {
+    if (!date) {
+        return '';
+    }
     return `${date.getFullYear()}-${twoDigits(date.getMonth() + 1)}-${twoDigits(date.getDate())}`;
 }
 

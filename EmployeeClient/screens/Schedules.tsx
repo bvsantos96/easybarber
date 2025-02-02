@@ -63,28 +63,34 @@ export default function Schedules({ route, navigation }: Props) {
     const [openTo, setOpenTo] = useState(false);
     const modalRef = useRef<CustomModalRef>(null);
 
-    const markAbsence = (dates: Date[]): MarkedDates => {
+    const markDates = (days: MonthCalendar | undefined): void => {
+        if (!days) {
+            setAbsenceDates({});
+            setMarkedDates({});
+            return;
+        }
         let marked: MarkedDates = {};
-        dates.forEach(d => {
-            marked[getCalendarReadyDate(d)] = {
-                startingDay: true,
-                endingDay: true,
-                textColor: theme.colors.text.black,
-                selectedColor: theme.colors.text.lightGray,
-                selected: true
-            };
-        });
-        return marked;
-    }
-
-    const markDates = (dates: DailyAppointments[]): MarkedDates => {
-        let marked: MarkedDates = {};
-        dates.forEach(d => {
-            marked[getCalendarReadyDate(d.date)] = {
-                dots: Array(Math.min(d.occupancy, 3)).fill({ color: d.occupancy >= 3 ? theme.colors.errorColor : d.occupancy === 2 ? theme.colors.warningColor : theme.colors.mainColor }),
-            };
-        });
-        return marked;
+        let absences: MarkedDates = {};
+        for (const dateStr in days) {
+            if (Object.prototype.hasOwnProperty.call(days, dateStr)) {
+                const date = new Date(dateStr);
+                const d: CalendarDay = days[dateStr];
+                if (d.isDisabled || !d.hasSchedules) {
+                    absences[getCalendarReadyDate(date)] = {
+                        startingDay: true,
+                        endingDay: true,
+                        textColor: theme.colors.text.black,
+                        selectedColor: theme.colors.text.lightGray,
+                        selected: true
+                    };
+                }
+                marked[getCalendarReadyDate(date)] = {
+                    dots: Array(Math.min(d.availability, 3)).fill({ color: d.availability >= 3 ? theme.colors.errorColor : d.availability === 2 ? theme.colors.warningColor : theme.colors.mainColor }),
+                };
+            }
+        }
+        setAbsenceDates(absences);
+        setMarkedDates(marked);
     }
 
     const loadAppointmentsByDay = async (_page?: IPage<AppointmentInfo>, _params?: AppointmentFilter) => {
@@ -124,55 +130,12 @@ export default function Schedules({ route, navigation }: Props) {
         );
     }
 
-    const loadCalendar = async () => {
-        const days = await fetchMonthAppointments(month, year, establishmentId);
-        console.log(days);
-    }
-
-    const loadMoreAppointments = () => {
-        // const appointments = await fetchAppointments(year, month);
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const twoDaysFromNow = new Date();
-        twoDaysFromNow.setDate(tomorrow.getDate() + 1);
-        setMarkedDates(markDates([
-            {
-                date: new Date(),
-                occupancy: 1
-            },
-            {
-                date: yesterday,
-                occupancy: 3
-            },
-            {
-                date: tomorrow,
-                occupancy: 1
-            },
-            {
-                date: twoDaysFromNow,
-                occupancy: 2
-            }
-        ]));
-    }
-
-    const loadAbsences = () => {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const twoDaysFromNow = new Date();
-        twoDaysFromNow.setDate(tomorrow.getDate() + 1);
-        setAbsenceDates(markAbsence([
-            tomorrow
-        ]));
+    const load = async () => {
+        markDates(await fetchMonthAppointments(month, year, establishmentId));
     }
 
     useEffect(() => {
-        loadCalendar();
-        loadMoreAppointments();
-        loadAbsences();
+        load();
     }, [year, month]);
 
     useEffect(() => {

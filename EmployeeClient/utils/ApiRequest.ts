@@ -496,7 +496,7 @@ export const deleteSchedule = async (id: number): Promise<boolean> => {
     return (await request<BaseResponse>(`/employee/schedule/${id}`, "DELETE", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
 }
 
-export const fetchMonthAppointments = async (month: number, year: number, establishmentId?: number): Promise<MonthCalendar> => {
+export const fetchMonthAppointments = async (month: number, year: number, establishmentId?: number): Promise<MonthCalendar | undefined> => {
     const from = new Date(year, month - 1, 1);
     const to = new Date(year, month, 0);
     let params: { from: Date; to: Date; establishmentId?: number } = { from, to };
@@ -504,5 +504,5 @@ export const fetchMonthAppointments = async (month: number, year: number, establ
         params.establishmentId = establishmentId;
     }
     const url = parsePathParams(`/schedule/calendar`, params);
-    return await request<MonthCalendar>(url, "GET", { month, year, establishmentId }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    return Promise.resolve((await request<MonthCalendar>(url, "GET", { month, year, establishmentId }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).data);
 }

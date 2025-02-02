@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.DTO.schedule.EmployeeScheduleDTO;
+import com.teamsantos.easybarber.DTO.schedule.MinutesInDay;
 import com.teamsantos.easybarber.entities.EmployeeSchedule;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 
@@ -107,9 +108,14 @@ public interface EmployeeScheduleRepository
     List<EmployeeScheduleDTO> findAllDTO(ScheduleFilter filter);
 
     @Query("""
-            SELECT s.day
+            SELECT new com.teamsantos.easybarber.DTO.schedule.MinutesInDay(
+                s.day as dayOfWeek,
+                SUM(TIMESTAMPDIFF(MINUTE, s.startHour, s.endHour)) as minutesInDay
+            )
             FROM EmployeeSchedule s
-            WHERE (:employeeId IS NULL OR s.employee.id = :employeeId AND (:establishmentId IS NULL OR s.establishment.id = :establishmentId))
+            WHERE (:employeeId IS NULL OR s.employee.id = :employeeId)
+              AND (:establishmentId IS NULL OR s.establishment.id = :establishmentId)
+            GROUP BY s.day
             """)
-    List<DAY_OF_WEEK> getDaysWithNoSchedule(Long employeeId, Long establishmentId);
+    List<MinutesInDay> getDaysWithNoSchedule(Long employeeId, Long establishmentId);
 }

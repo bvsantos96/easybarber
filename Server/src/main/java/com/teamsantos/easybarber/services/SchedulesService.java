@@ -27,6 +27,7 @@ import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.DTO.schedule.CalendarDayInfoDTO;
+import com.teamsantos.easybarber.DTO.schedule.MinutesInDay;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.schedule.SchedulesDTO;
@@ -73,7 +74,6 @@ public class SchedulesService {
             ModelMapper modelMapper, EntityManager entityManager) {
         this.employeeScheduleRepository = employeeScheduleRepository;
         this.establishmentService = establishmentService;
-        this.scheduleRepository = scheduleRepository;
         this.scheduleExceptionRepository = scheduleExceptionRepository;
         this.establishmentStaffRepository = establishmentStaffRepository;
         this.establishmentServiceRepository = establishmentServiceRepository;
@@ -326,18 +326,22 @@ public class SchedulesService {
     @Transactional(readOnly = true)
     public Map<LocalDate, CalendarDayInfoDTO> getCalendarInfo(ScheduleFilter filter) {
         Map<LocalDate, Long> appointments = appointmentRepository.getAppointmentsCalendar(filter.getFrom(),
-                filter.getTo(), filter.getEmployeeId(), filter.getEstablishmentId());
+                filter.getTo(), filter.getEmployeeId(), filter.getEstablishmentId()).stream()
+                .collect(Collectors.toMap(MinutesInDay::getDate, MinutesInDay::getMinutesInDay));
         List<LocalDate> exceptions = scheduleExceptionRepository.getExceptionsCalendar(filter.getFrom(),
                 filter.getTo(), filter.getEmployeeId(), filter.getEstablishmentId());
-        List<DAY_OF_WEEK> days = employeeScheduleRepository.getDaysWithNoSchedule(filter.getEmployeeId(),
-                filter.getEstablishmentId());
+        Map<DAY_OF_WEEK, Long> days = employeeScheduleRepository.getDaysWithNoSchedule(filter.getEmployeeId(),
+                filter.getEstablishmentId()).stream()
+                .collect(Collectors.toMap(MinutesInDay::getDayOfWeek, MinutesInDay::getMinutesInDay));
 
         Map<LocalDate, CalendarDayInfoDTO> calendarInfo = new HashMap<>();
         for (LocalDate date = filter.getFrom(); date.isBefore(filter.getTo()); date = date.plusDays(1)) {
             CalendarDayInfoDTO info = new CalendarDayInfoDTO();
-            info.setNAppointments(appointments.getOrDefault(date, 0L));
+            DAY_OF_WEEK day = Utils.getDayOfWeek(date);
+            Long minutesAvailableInDay = days.containsKey(day) ? days.get(day) : 0L;
+            info.setAvailability(appointments.containsKey(date) ? appointments.get(date) : 0L, minutesAvailableInDay);
             info.setDisabled(exceptions.contains(date));
-            info.setHasSchedules(days.contains(Utils.getDayOfWeek(date)));
+            info.setHasSchedules(minutesAvailableInDay > 0);
             calendarInfo.put(date, info);
         }
         return calendarInfo;

@@ -3,7 +3,6 @@ package com.teamsantos.easybarber.repositories;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -22,7 +21,7 @@ import com.teamsantos.easybarber.DTO.appointment.AppointmentsHashDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.DTO.filters.ProductRequestFilter;
 import com.teamsantos.easybarber.DTO.product.ProductRequestsDTO;
-import com.teamsantos.easybarber.DTO.schedule.CalendarInfoDTO;
+import com.teamsantos.easybarber.DTO.schedule.MinutesInDay;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.entities.Appointment;
 import com.teamsantos.easybarber.entities.ScheduleException;
@@ -300,7 +299,10 @@ public interface AppointmentRepository
     Long getUserIdByAppointmentId(Long appointmentId);
 
     @Query("""
-            SELECT new map(a.date, COUNT(a))
+            SELECT new com.teamsantos.easybarber.DTO.schedule.MinutesInDay(
+                a.date as date,
+                SUM(a.service.service.duration) as minutesInDay
+            )
             FROM Appointment a
             WHERE a.date BETWEEN :dateFrom
             AND :dateTo
@@ -309,8 +311,7 @@ public interface AppointmentRepository
             AND a.active=true
             GROUP BY a.date ORDER BY a.date
             """)
-    Map<LocalDate, Long> getAppointmentsCalendar(@Param("dateFrom") LocalDate dateFrom,
+    List<MinutesInDay> getAppointmentsCalendar(@Param("dateFrom") LocalDate dateFrom,
             @Param("dateTo") LocalDate dateTo, @Param("employeeId") Long employeeId,
             @Param("establishmentId") Long establishmentId);
-
 }

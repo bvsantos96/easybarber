@@ -347,10 +347,10 @@ declare interface BaseResponse extends Identifiable {
 declare interface CalendarDay {
     isDisabled: boolean;
     hasSchedules: boolean;
-    availability: number;
-    date: string;
+    availability: DayOccupancyType;
+    date: Date;
 }
 
 declare interface MonthCalendar {
-    [key: Date]: CalendarDay;
+    [key: string]: CalendarDay;
 }
