@@ -16,7 +16,9 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Divider from '@components/Divider';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Params } from '@navigation/Router';
-import { fetchMonthAppointments } from 'utils/ApiRequest';
+import { createException, fetchMonthAppointments } from 'utils/ApiRequest';
+import { AlertType } from '@components/Alert';
+import useAlertStore from 'storage/stores/AlertStore';
 
 const AppointmentItem = ({ item }: { item: AppointmentInfo }) => {
     const styles = getStyles();
@@ -41,6 +43,7 @@ export type Route = {
 type Props = NativeStackScreenProps<typeof Params, 'Schedules'>;
 
 export default function Schedules({ route, navigation }: Props) {
+    const { alert } = useAlertStore();
     let establishmentId: number | undefined = undefined;
     if (route.params) {
         const { establishmentId: _establishmentId } = route.params;
@@ -53,7 +56,7 @@ export default function Schedules({ route, navigation }: Props) {
     const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
     const [markedDates, setMarkedDates] = useState<MarkedDates>({});
     const [absenceDates, setAbsenceDates] = useState<MarkedDates>({});
-    const [type, setType] = useState('');
+    const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
     const [from, setFrom] = useState<Date | undefined>(undefined);
     const [to, setTo] = useState<Date | undefined>(undefined);
@@ -73,10 +76,10 @@ export default function Schedules({ route, navigation }: Props) {
         let absences: MarkedDates = {};
         for (const dateStr in days) {
             if (Object.prototype.hasOwnProperty.call(days, dateStr)) {
-                const date = new Date(dateStr);
+                const _date = new Date(dateStr);
                 const d: CalendarDay = days[dateStr];
-                if (d.isDisabled || !d.hasSchedules) {
-                    absences[getCalendarReadyDate(date)] = {
+                if (d.disabled || !d.hasSchedules) {
+                    absences[getCalendarReadyDate(_date)] = {
                         startingDay: true,
                         endingDay: true,
                         textColor: theme.colors.text.black,
@@ -84,7 +87,7 @@ export default function Schedules({ route, navigation }: Props) {
                         selected: true
                     };
                 }
-                marked[getCalendarReadyDate(date)] = {
+                marked[getCalendarReadyDate(_date)] = {
                     dots: Array(Math.min(d.availability, 3)).fill({ color: d.availability >= 3 ? theme.colors.errorColor : d.availability === 2 ? theme.colors.warningColor : theme.colors.mainColor }),
                 };
             }
@@ -143,23 +146,77 @@ export default function Schedules({ route, navigation }: Props) {
         setMonth(parseInt(date.split('-')[1]));
     }, [date]);
 
-    const setAbsence = () => {
-        //TODO: Send info to server
+    const resetAbsence = () => {
+        setTitle('');
+        setMessage('');
+        const _from = new Date();
+        _from.setHours(0);
+        _from.setMinutes(0);
+        setFrom(_from);
+        const _to = new Date();
+        _to.setHours(23);
+        _to.setMinutes(59);
+        setTo(_to);
+    }
+
+    const setAbsence = async () => {
+        if (!title) {
+            alert({
+                type: AlertType.Error,
+                message: `${texts.requiredField} ${texts.title}`,
+                buttonText: texts.dismiss,
+                onPress: () => { },
+            });
+            return;
+        }
+        if (!from) {
+            alert({
+                type: AlertType.Error,
+                message: `${texts.requiredField} ${texts.from}`,
+                buttonText: texts.dismiss,
+                onPress: () => { },
+            });
+            return;
+        }
+        if (!to) {
+            alert({
+                type: AlertType.Error,
+                message: `${texts.requiredField} ${texts.to}`,
+                buttonText: texts.dismiss,
+                onPress: () => { },
+            });
+            return;
+        }
+        const absence: Absence = {
+            dateFrom: getCalendarReadyDate(new Date(date)),
+            dateTo: getCalendarReadyDate(new Date(date)),
+            startHour: from ? from.toISOString().split('T')[1].split('.')[0] : '',
+            endHour: to ? to.toISOString().split('T')[1].split('.')[0] : '',
+            establishmentId: establishmentId,
+            title: title,
+            message: message,
+        }
+        if (await createException(absence)) {
+            load();
+            resetAbsence();
+            modalRef.current?.toggleModal();
+        }
     }
 
     const openModal = () => {
-        const selectedDate = new Date(date);
+        const _from = new Date(date);
         const today = new Date();
-        if (selectedDate.getFullYear() === today.getFullYear() && selectedDate.getMonth() === today.getMonth() && selectedDate.getDate() === today.getDate()) {
+        if (_from.getFullYear() === today.getFullYear() && _from.getMonth() === today.getMonth() && _from.getDate() === today.getDate()) {
             setFrom(today);
         } else {
-            selectedDate.setMinutes(0);
-            selectedDate.setHours(0);
-            setFrom(selectedDate);
+            _from.setHours(0);
+            _from.setMinutes(0);
+            setFrom(_from);
         }
-        selectedDate.setHours(23);
-        selectedDate.setMinutes(59);
-        setTo(selectedDate);
+        const _to = new Date(date);
+        _to.setHours(23);
+        _to.setMinutes(59);
+        setTo(_to);
         modalRef.current?.toggleModal();
     }
 
@@ -214,7 +271,7 @@ export default function Schedules({ route, navigation }: Props) {
                     <View style={styles.modal}>
                         <Text style={styles.modalTitle}>{texts.setAbsence}</Text>
                         <View style={styles.modalContent}>
-                            <Input hideTitleIfNoValue title={texts.type} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.type} onInputChange={setType} />
+                            <Input hideTitleIfNoValue title={texts.title} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.title} onInputChange={setTitle} />
                             <Divider size={20} />
                             <Input hideTitleIfNoValue title={texts.messageForClients} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.messageForClients} onInputChange={setMessage} />
                             <Divider size={20} />

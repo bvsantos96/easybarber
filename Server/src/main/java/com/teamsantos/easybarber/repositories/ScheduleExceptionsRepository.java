@@ -106,8 +106,8 @@ public interface ScheduleExceptionsRepository
             WHERE date >= :from AND date <= :to
                 AND (
                 (:employeeId IS NULL OR e.employee.id = :employeeId)
-                OR
-                (:employeeId IS NULL AND ( :establishmentId IS NULL OR e.establishment.id = :establishmentId))
+                AND
+                (:establishmentId IS NULL OR e.establishment.id = :establishmentId)
             )
             GROUP BY e.date ORDER BY e.date
             """)

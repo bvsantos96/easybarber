@@ -506,3 +506,7 @@ export const fetchMonthAppointments = async (month: number, year: number, establ
     const url = parsePathParams(`/schedule/calendar`, params);
     return Promise.resolve((await request<MonthCalendar>(url, "GET", { month, year, establishmentId }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).data);
 }
+
+export const createException = async (exception: Absence): Promise<boolean> => {
+    return (await request<BaseResponse>("/schedule/exception", "POST", exception, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
+}

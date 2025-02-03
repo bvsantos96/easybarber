@@ -30,6 +30,7 @@ import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.services.SchedulesService;
 import com.teamsantos.easybarber.utils.Pair;
+import com.teamsantos.easybarber.utils.Utils;
 
 @RestController
 public class SchedulesController {
@@ -127,6 +128,12 @@ public class SchedulesController {
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
     public ResponseEntity<BaseResponseDTO> createException(@RequestBody ScheduleExceptionDTO exception) {
         try {
+            if (exception.getEmployeeId() == null) {
+                exception.setEmployeeId(UserContext.getEmployeeId());
+            }
+            if (exception.getDays() == null || exception.getDays().isEmpty()) {
+                exception.setDays(Utils.getDaysOfWeek(exception.getDateFrom(), exception.getDateTo()));
+            }
             Set<Long> ids = schedulesService.createException(exception, UserContext.getEmployeeId());
             return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponseDTO(ids));
         } catch (Exception e) {

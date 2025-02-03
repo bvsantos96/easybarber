@@ -90,7 +90,7 @@ public class SchedulesService {
         Boolean isStaff = null;
         Long employee = null;
         if (exception.getEmployeeId() == null && exception.getEstablishmentId() == null) {
-            throw new IllegalArgumentException("Employee or Establishment must be informed");
+            throw new IllegalArgumentException("Employee or Establishment must be filled");
         }
         if (exception.getEmployeeId() != null && exception.getEstablishmentId() != null) {
             isOwner = establishmentService.isAdmin(exception.getEstablishmentId(), employeeId);

@@ -25,6 +25,8 @@ public class ScheduleExceptionDTO extends ScheduleDTO {
     private LocalDate dateFrom;
     private LocalDate dateTo;
     private Boolean active;
+    private String title;
+    private String message;
 
     public ScheduleExceptionDTO() {
         super();

@@ -89,7 +89,7 @@ export const getStyles = () => {
         },
         modalButton: {
             position: 'absolute',
-            bottom: 135 * theme.dimensions.absoluteHeight,
+            bottom: theme.dimensions.tabHeight,
             alignItems: 'center',
             width: theme.dimensions.width,
             height: 60 * theme.dimensions.absoluteHeight,

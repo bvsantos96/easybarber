@@ -211,6 +211,7 @@
   "from": "From",
   "to": "To",
   "setAbsence": "Set Absence",
+  "title": "Title",
   "type": "Type",
   "messageForClients": "Message for clients",
   "absenceFrom": "Absent from",
@@ -247,4 +248,5 @@
     "Sat",
     "Sun"
   ],
+  "requiredField": "This field is required:"
 }

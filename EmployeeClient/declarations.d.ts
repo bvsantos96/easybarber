@@ -345,7 +345,7 @@ declare interface BaseResponse extends Identifiable {
 }
 
 declare interface CalendarDay {
-    isDisabled: boolean;
+    disabled: boolean;
     hasSchedules: boolean;
     availability: DayOccupancyType;
     date: Date;
@@ -353,4 +353,14 @@ declare interface CalendarDay {
 
 declare interface MonthCalendar {
     [key: string]: CalendarDay;
+}
+
+declare interface Absence {
+    establishmentId?: number;
+    startHour: string;
+    endHour: string;
+    dateFrom: string;
+    dateTo: string;
+    title: string;
+    message?: string;
 }
