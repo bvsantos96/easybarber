@@ -140,10 +140,23 @@ declare interface AppointmentInfo extends Identifiable {
     longitude: number;
     date: string;
     time: string;
+    duration: number;
     confirmed: boolean;
     cancelled: boolean;
     photo: string;
     feedback: number;
+}
+
+declare interface AppointmentItemListItem extends Identifiable {
+    id: number;
+    employeeName: string;
+    clientName: string;
+    serviceName: string;
+    serviceTypeId: number;
+    date: string;
+    time: string;
+    confirmed: boolean;
+    cancelled: boolean;
 }
 
 declare interface IFilterRequest {

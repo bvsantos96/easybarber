@@ -510,3 +510,19 @@ export const fetchMonthAppointments = async (month: number, year: number, establ
 export const createException = async (exception: Absence): Promise<boolean> => {
     return (await request<BaseResponse>("/schedule/exception", "POST", exception, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
 }
+
+export const fetchDayAppointments = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter, date?: string, establishmentId?: number): Promise<IPage<AppointmentInfo> | undefined> => {
+    if (params === undefined || params === null) {
+        params = {
+            userView: false
+        };
+        if (date !== undefined) {
+            params.date = date;
+        }
+        if (establishmentId !== undefined) {
+            params.establishmentId = establishmentId;
+        }
+    }
+    params.sort = "date,time";
+    return await pageGet<AppointmentInfo>("/appointment/list", page, params);
+}

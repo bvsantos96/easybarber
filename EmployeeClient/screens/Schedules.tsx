@@ -3,7 +3,7 @@ import { Calendar } from "react-native-calendars";
 import { useTheme } from '@styles/ThemeContext';
 import { useEffect, useRef, useState } from 'react';
 import { MarkedDates } from 'react-native-calendars/src/types';
-import { getCalendarReadyDate, getTimeAsString } from 'utils/Utils';
+import { getCalendarReadyDate, getTimeAsString, parseServerTime, sumTime } from 'utils/Utils';
 import { getStyles } from '@styles/SchedulesStyles';
 import PageList from '@components/PageList';
 import Entypo from '@expo/vector-icons/Entypo';
@@ -16,19 +16,20 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Divider from '@components/Divider';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Params } from '@navigation/Router';
-import { createException, fetchMonthAppointments } from 'utils/ApiRequest';
+import { createException, fetchDayAppointments, fetchMonthAppointments } from 'utils/ApiRequest';
 import { AlertType } from '@components/Alert';
 import useAlertStore from 'storage/stores/AlertStore';
 
 const AppointmentItem = ({ item }: { item: AppointmentInfo }) => {
     const styles = getStyles();
+    console.log(item);
     return (
         <Pressable style={[styles.appointmentController, styles.shadow]}>
             <View style={styles.icon}>
                 <Entypo name="dots-three-horizontal" size={styles.icon.width} color={styles.icon.color} />
             </View>
             <View style={styles.appoitmentTextContainer}>
-                <Text style={styles.timeText}>{item.time}</Text>
+                <Text style={styles.timeText}>{`${parseServerTime(item.time)} - ${sumTime(item.time, item.duration)}`}</Text>
                 <Text style={styles.titleText}>{item.entityName}</Text>
                 <Text style={styles.subTitleText}>{item.serviceName}</Text>
             </View>
@@ -96,41 +97,8 @@ export default function Schedules({ route, navigation }: Props) {
         setMarkedDates(marked);
     }
 
-    const loadAppointmentsByDay = async (_page?: IPage<AppointmentInfo>, _params?: AppointmentFilter) => {
-        const nItems = 3;
-        const arr = Array(nItems).fill(null).map(() => (
-            {
-                date: "2021-09-01",
-                cancelled: false,
-                confirmed: true,
-                id: 1,
-                entityId: 1,
-                serviceName: 'Service Name',
-                entityName: 'Entity Name',
-                establishmentAddress: 'Establishment Address',
-                establishmentId: 1,
-                establishmentName: 'Establishment Name',
-                latitude: 0,
-                longitude: 0,
-                time: '10:00',
-                feedback: 0,
-                photo: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png'
-            }));
-        for (let i = 0; i < arr.length; i++) {
-            arr[i].id = i;
-        }
-        const page = {
-            content: arr,
-            totalPages: 1,
-            totalElements: nItems,
-            currentPage: 1,
-            pageSize: nItems,
-            hasNextPage: false,
-            hasPreviousPage: false,
-        }
-        return Promise.resolve(
-            page
-        );
+    const loadAppointmentsByDay = async (_page?: IPage<AppointmentInfo>, _params?: AppointmentFilter): Promise<IPage<AppointmentInfo> | undefined> => {
+        return await fetchDayAppointments(_page, _params, date, establishmentId);
     }
 
     const load = async () => {

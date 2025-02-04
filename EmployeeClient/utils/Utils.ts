@@ -38,6 +38,12 @@ export const getCalendarReadyTime = (date: Date) => {
     };
 }
 
+export const sumTime = (time: string, minutes: number) => {
+    const parts = time.split(':');
+    const hours = parseInt(parts[0]);
+    const newMinutes = parseInt(parts[1]) + minutes;
+    return `${twoDigits(hours + Math.floor(newMinutes / 60))}:${twoDigits(newMinutes % 60)}`;
+}
 
 export const parseServerTime = (time: string) => {
     const parts = time.split(':');

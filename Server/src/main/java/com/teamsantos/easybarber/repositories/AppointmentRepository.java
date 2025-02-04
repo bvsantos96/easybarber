@@ -81,7 +81,8 @@ public interface AppointmentRepository
                     s.time,
                     s.confirmed,
                     s.active,
-                    s.feedback
+                    s.feedback,
+                    s.service.service.duration
                 )
                 FROM Appointment s
                 LEFT JOIN User u on s.user.id = s.employee.user.id
@@ -120,7 +121,8 @@ public interface AppointmentRepository
                     s.time,
                     s.confirmed,
                     s.active,
-                    s.feedback
+                    s.feedback,
+                    s.service.service.duration
                 )
                 FROM Appointment s
                 LEFT JOIN EstablishmentImage esi on s.establishment.id = esi.entity.id and esi.isMain = true

@@ -102,7 +102,7 @@ public class AppointmentController {
                 }
                 filter.setClientId(UserContext.getUserId());
             } else {
-                if (filter.getEmployeeId() == null && filter.getEmployeeId() == 0
+                if (filter.getEmployeeId() != null && filter.getEmployeeId() != 0
                         && filter.getEmployeeId() != UserContext.getEmployeeId()) {
                     throw new ForbidenException("Employee");
                 }
