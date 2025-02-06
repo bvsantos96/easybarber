@@ -22,7 +22,6 @@ import useAlertStore from 'storage/stores/AlertStore';
 
 const AppointmentItem = ({ item }: { item: AppointmentInfo }) => {
     const styles = getStyles();
-    console.log(item);
     return (
         <Pressable style={[styles.appointmentController, styles.shadow]}>
             <View style={styles.icon}>
