@@ -120,6 +120,7 @@ declare interface AppointmentFilter extends Record<string, string | number | boo
     establishmentId?: number;
     serviceId?: numbe;
     date?: string;
+    endDate?: string;
     time?: string;
     endTime?: string;
     userView?: boolean;

@@ -92,10 +92,10 @@ public class AppointmentController {
             if (filter.getUserView() == null) {
                 filter.setUserView(true);
             }
-            if (filter.getFuture() == null) {
-                filter.setFuture(true);
-            }
             if (filter.getUserView()) {
+                if (filter.getFuture() == null) {
+                    filter.setFuture(true);
+                }
                 if (filter.getClientId() != null && filter.getClientId() != 0
                         && filter.getClientId() != UserContext.getUserId()) {
                     throw new ForbidenException("User");

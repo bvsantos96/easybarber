@@ -54,6 +54,10 @@ export const getDateAsString = (date: Date) => {
     return `${twoDigits(date.getDate())}/${twoDigits(date.getMonth() + 1)}${date.getFullYear() === new Date().getFullYear() ? '' : '/' + date.getFullYear().toString().substring(2, 4)}`;
 }
 
+export const getCalendarDateTime = (date: Date): string => {
+    return `${getCalendarReadyDate(date)}T${twoDigits(date.getHours())}:${twoDigits(date.getMinutes())}:00`;
+}
+
 export const buildCurrencyString = (value: number | string) => {
     return `${parseFloat(value.toString()).toFixed(2)} ${texts.currency}`;
 }

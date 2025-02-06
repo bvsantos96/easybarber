@@ -1,12 +1,15 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useEffect, useState } from 'react';
 import { CalendarProvider, DateData, ExpandableCalendar, Timeline, TimelineList, TimelineProps } from 'react-native-calendars';
-import { getCalendarReadyDate, getCalendarReadyTime, getDateData } from 'utils/Utils';
+import { getCalendarDateTime, getCalendarReadyDate, getCalendarReadyTime, getDateData } from 'utils/Utils';
 import texts from '@lang/en.json';
 import { getStyles } from '@styles/SchedulesStyles';
 import Divider from '@components/Divider';
 import { PackedEvent } from 'react-native-calendars/src/timeline/EventBlock';
 import { DayProps } from 'react-native-calendars/src/calendar/day';
+import { fetchAppointments } from 'utils/ApiRequest';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Params } from '@navigation/Router';
 
 const CustomDay = (props: DayProps & { date?: DateData; }) => {
     const {
@@ -47,7 +50,7 @@ const CustomMonth = ({ date }: { date: DateData }) => {
     );
 }
 
-const CustomEvent = (event: PackedEvent) => {
+const CustomEvent = (_event: PackedEvent) => {
     const styles = getStyles();
     return (
         <View style={styles.eventBlock} >
@@ -56,7 +59,20 @@ const CustomEvent = (event: PackedEvent) => {
     );
 }
 
-const WeekView = () => {
+
+
+export type Route = {
+    establishmentId?: number;
+};
+
+type Props = NativeStackScreenProps<typeof Params, 'WeekView'>;
+
+export default function WeekView({ route, navigation }: Props) {
+    let establishmentId: number | undefined = undefined;
+    if (route.params) {
+        const { establishmentId: _establishmentId } = route.params;
+        establishmentId = _establishmentId;
+    }
     const styles = getStyles();
     const [currentDate, setCurrentDate] = useState(getCalendarReadyDate(new Date()));
     const [eventsByDate, setEventsByDate] = useState<{ [date: string]: TimelineProps['events'] }>({});
@@ -67,22 +83,65 @@ const WeekView = () => {
     };
     const [initialTime, setInitialTime] = useState(INITIAL_TIME);
 
-    useEffect(() => {
-        if (dateData && eventsByDate[dateData.dateString] === undefined) {
-            const exampleEvent = {
-                start: `${dateData.year}-${String(dateData.month).padStart(2, '0')}-${String(dateData.day).padStart(2, '0')}T09:00:00`,
-                end: `${dateData.year}-${String(dateData.month).padStart(2, '0')}-${String(dateData.day).padStart(2, '0')}T10:00:00`,
-                title: 'Example Event',
-                summary: 'This is an example event',
-                color: styles.main.color
-            };
+    // useEffect(() => {
+    //     if (dateData && eventsByDate[dateData.dateString] === undefined) {
+    //         const exampleEvent = {
+    //             start: `${dateData.year}-${String(dateData.month).padStart(2, '0')}-${String(dateData.day).padStart(2, '0')}T09:00:00`,
+    //             end: `${dateData.year}-${String(dateData.month).padStart(2, '0')}-${String(dateData.day).padStart(2, '0')}T10:00:00`,
+    //             title: 'Example Event',
+    //             summary: 'This is an example event',
+    //             color: styles.main.color
+    //         };
+    //
+    //         setEventsByDate((prev) => ({
+    //             ...prev,
+    //             [dateData.dateString]: [...(prev[dateData.dateString] || []), exampleEvent],
+    //         }));
+    //     }
+    // }, [dateData]);
 
-            setEventsByDate((prev) => ({
-                ...prev,
-                [dateData.dateString]: [...(prev[dateData.dateString] || []), exampleEvent],
-            }));
+    const loadEvents = async (startDate: Date) => {
+        let endDate: Date = new Date();
+        endDate.setDate(startDate.getDate() + 7);
+
+        let params: AppointmentFilter = {
+            userView: false,
+            date: startDate.toISOString().split('T')[0],
+            endDate: endDate.toISOString().split('T')[0],
         }
-    }, [dateData]);
+
+        if (establishmentId) {
+            params.establishmentId = establishmentId;
+        }
+        let events: { [date: string]: TimelineProps['events'] } = {};
+
+        const appointments = (await fetchAppointments(undefined, params))?.content;
+        if (appointments) {
+            for (let i = 0; i < appointments.length; i++) {
+                const appointment = appointments[i];
+                const start = new Date(`${appointment.date}T${appointment.time}`);
+                const startStr = getCalendarDateTime(start);
+                let end = new Date(start);
+                end.setMinutes(end.getMinutes() + appointment.duration);
+                const endStr = getCalendarDateTime(end);
+                if (!events[getCalendarReadyDate(start)]) {
+                    events[getCalendarReadyDate(start)] = [];
+                }
+                events[getCalendarReadyDate(start)].push({
+                    start: startStr,
+                    end: endStr,
+                    title: appointment.entityName,
+                    summary: appointment.serviceName,
+                    color: styles.main.color,
+                });
+            }
+        }
+        setEventsByDate(events);
+    }
+
+    useEffect(() => {
+        loadEvents(new Date());
+    }, []);
 
     const onDateChanged = (date: string) => {
         const today = new Date();
@@ -92,6 +151,7 @@ const WeekView = () => {
             setInitialTime(INITIAL_TIME);
         }
         setCurrentDate(date);
+        loadEvents(new Date(date));
     };
 
     return (
@@ -125,5 +185,3 @@ const WeekView = () => {
         </CalendarProvider>
     );
 };
-
-export default WeekView;

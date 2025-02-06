@@ -526,3 +526,18 @@ export const fetchDayAppointments = async (page?: IPage<AppointmentInfo>, params
     params.sort = "date,time";
     return await pageGet<AppointmentInfo>("/appointment/list", page, params);
 }
+
+export const fetchAppointments = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter): Promise<IPage<AppointmentInfo> | undefined> => {
+    if (page === undefined || page === null) {
+        page = createPageable();
+    }
+    page.pageSize = 1000;
+
+    if (params === undefined || params === null) {
+        params = {
+            userView: false
+        };
+    }
+    params.sort = "date,time";
+    return await pageGet<AppointmentInfo>("/appointment/list", page, params);
+}

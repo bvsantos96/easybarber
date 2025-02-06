@@ -92,7 +92,8 @@ public interface AppointmentRepository
                 and (:#{#filter.establishmentId} is null or s.establishment.id = :#{#filter.establishmentId})
                 and (:#{#filter.clientId} is null or s.user.id = :#{#filter.clientId})
                 and (:#{#filter.serviceId} is null or s.service.id = :#{#filter.serviceId})
-                and (:#{#filter.date} is null or s.date = :#{#filter.date})
+                and (:#{#filter.endDate} is null or (s.date <= :#{#filter.endDate}) and (s.date >= :#{#filter.date}))
+                and ((:#{#filter.date} is null or :#{#filter.endDate} is not null) or s.date = :#{#filter.date})
                 and (:#{#filter.time} is null or s.time >= :#{#filter.time})
                 and (:#{#filter.endTime} is null or s.time <= :#{#filter.endTime})
                 and (:#{#filter.future} is null OR (
@@ -130,7 +131,8 @@ public interface AppointmentRepository
                 and (:#{#filter.establishmentId} is null or s.establishment.id = :#{#filter.establishmentId})
                 and (:#{#filter.clientId} is null or s.user.id = :#{#filter.clientId})
                 and (:#{#filter.serviceId} is null or s.service.id = :#{#filter.serviceId})
-                and (:#{#filter.date} is null or s.date = :#{#filter.date})
+                and (:#{#filter.endDate} is null or (s.date <= :#{#filter.endDate}) and (:#{#filter.date} is null or s.date >= :#{#filter.date}))
+                and ((:#{#filter.date} is null or :#{#filter.endDate} is not null) or s.date = :#{#filter.date})
                 and (:#{#filter.time} is null or s.time >= :#{#filter.time})
                 and (:#{#filter.endTime} is null or s.time <= :#{#filter.endTime})
                 and (:#{#filter.future} is null OR (
