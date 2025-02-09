@@ -1,7 +1,6 @@
 import { Route as MobileConfirmationRoute } from "@screens/MobileConfirmation";
 import { Route as ResetPwdRoute } from "@screens/ResetPwd";
 import { Route as EstablishmentRoute } from "@screens/Establishment";
-import { Route as EmployeesRoute } from "@screens/Employees";
 import { Route as TimeSheetRoute } from "@screens/TimeSheet";
 
 export const Params = {
@@ -20,7 +19,7 @@ export const Params = {
     ProductList: undefined,
     TimeSheet: {} as TimeSheetRoute,
     WeekView: undefined,
-    Employees: {} as EmployeesRoute,
+    Employees: undefined,
 } as const;
 
 export const Routes = {

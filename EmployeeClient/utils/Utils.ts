@@ -113,3 +113,16 @@ export const getClientDayOfWeek = (index: number) => {
             return index - 1;
     }
 }
+
+export const parseCountryCode = (countryCode: string): string => {
+    if (countryCode.startsWith('+'))
+        return countryCode;
+    return `+${countryCode}`;
+}
+
+export const parsePhoneNumber = (countryCode: string, phone: string) => {
+    phone = phone.trim();
+    phone = phone.replace(/\s/g, '');
+    const _countryCode = parseCountryCode(countryCode);
+    return `${_countryCode}${phone}`;
+}

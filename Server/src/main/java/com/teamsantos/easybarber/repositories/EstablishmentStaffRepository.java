@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -87,8 +89,8 @@ public interface EstablishmentStaffRepository extends JpaRepository<Establishmen
             AND (:#{#filter.lessThanRating} IS NULL OR
                 (CASE WHEN es.employee.nVotes > 0 THEN (es.employee.sumVotes / es.employee.nVotes) ELSE 0 END) <= :#{#filter.lessThanRating})
             """)
-    List<EmployeeListDTO> findEmployeeListByEstablishmentIdAndActiveFilter(long establishmentId, EmployeeFilter filter,
-            LocalDate date);
+    Page<EmployeeListDTO> findEmployeeListByEstablishmentIdAndActiveFilter(long establishmentId, EmployeeFilter filter,
+            LocalDate date, Pageable pageable);
 
     @Query("""
             SELECT new com.teamsantos.easybarber.DTO.employee.EmployeeDTO(

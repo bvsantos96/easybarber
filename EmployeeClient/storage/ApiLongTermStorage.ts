@@ -1,4 +1,4 @@
-import { getCategories } from "../utils/ApiRequest";
+import { getServiceTypes } from "../utils/ApiRequest";
 import { getArray, store } from "./StorageUtils";
 import { CATEGORY_STORAGE_KEY } from "../utils/Constants";
 
@@ -6,7 +6,7 @@ import { CATEGORY_STORAGE_KEY } from "../utils/Constants";
 // if after that it fails we need to show an error message to the user, this is a critical function
 export const loadLongTermItems = async (): Promise<Boolean> => {
     try {
-        await store(CATEGORY_STORAGE_KEY, JSON.stringify(await getCategories()));
+        await store(CATEGORY_STORAGE_KEY, JSON.stringify(await getServiceTypes()));
         return true;
     } catch (e) {
         if (e instanceof Error) {
@@ -29,7 +29,7 @@ export const retrieveCategories = async (): Promise<ICategory[]> => {
 
 export const loadOnLogin = async () => {
     try {
-        // await store(LOCATIONS_STORAGE_KEY, JSON.stringify(await getLocations()));
+         //await store(LOCATIONS_STORAGE_KEY, JSON.stringify(await getLocations()));
     } catch (e) {
         console.error("Error loading login items", e);
     }

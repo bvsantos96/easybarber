@@ -1,8 +1,6 @@
 import React from 'react';
-import { View } from 'react-native';
 import { getStyles } from '../styles/ProductItem';
 import { Image } from 'expo-image';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Pressable from './Pressable';
 import { useTheme } from '@styles/ThemeContext';
 

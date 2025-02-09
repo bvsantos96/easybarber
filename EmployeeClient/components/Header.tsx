@@ -6,6 +6,7 @@ import { getStyles } from '../styles/HomeNavigator';
 import { NavigationProp } from '@react-navigation/native';
 import { Props as SecondHeaderProps } from '@components/FavoriteHeader';
 import { debounce } from 'lodash';
+import useHeaderStore from 'storage/stores/HeaderStore';
 
 type HeaderProps = {
     navigation: NavigationProp<any, any>;
@@ -17,6 +18,7 @@ type HeaderProps = {
 }
 
 const Header = ({ navigation, title, hasGoBack = true, secondHeader, secondHeaderFunction, selected: _selected }: HeaderProps) => {
+    const { onPress } = useHeaderStore();
     const styles = getStyles();
     const [selected, setSelected] = React.useState(_selected || false);
 
@@ -50,7 +52,10 @@ const Header = ({ navigation, title, hasGoBack = true, secondHeader, secondHeade
                 {secondHeader ? (
                     React.createElement(secondHeader, {
                         selected: selected,
-                        setSelected: onPressSecondFunction
+                        setSelected: () => {
+                            onPressSecondFunction?.(!selected);
+                            onPress?.();
+                        }
                     })) : (
                     <View style={styles.headerFiller} />
                 )}

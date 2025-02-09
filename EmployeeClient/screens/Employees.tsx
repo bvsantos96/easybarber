@@ -1,10 +1,11 @@
 // Libraries
-import React, { useRef, useState } from 'react';
-import { View, Linking } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, Text, Linking } from 'react-native';
+import { Image } from 'expo-image';
 import Fontisto from '@expo/vector-icons/Fontisto';
 
 // Requests
-import { getEmployees } from 'utils/ApiRequest';
+import { getEmployee, getEmployees } from 'utils/ApiRequest';
 
 // Components
 import PageList, { PageListRef } from '@components/PageList';
@@ -19,12 +20,21 @@ import { AlertType } from '@components/Alert';
 
 // Texts
 import texts from '@lang/en.json';
-import { Params, Routes } from '@navigation/Router';
+import { Routes } from '@navigation/Router';
 import { NavigationProp } from '@react-navigation/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import useEstablishmentStore from 'storage/stores/EstablishmentStore';
+import Divider from '@components/Divider';
+import useHeaderStore from 'storage/stores/HeaderStore';
+import CustomModal, { CustomModalRef } from '@components/CustomModal';
+import Button from '@components/Button';
+import PhoneInput from '@components/PhoneInput';
+import { Country } from 'react-native-country-picker-modal';
+import { parsePhoneNumber } from 'utils/Utils';
+import { getDefaultCountryAsync } from 'utils/Constants';
+import CategoryList from '@components/CategoryList';
+import useServiceTypeStore from 'storage/stores/ServiceTypeStore';
 
-const renderEmployee = ({ item, navigation }: { item: EmployeeInfo, navigation: NavigationProp<any, any> }) => {
+const Employee = ({ item, navigation }: { item: EmployeeListInfo, navigation: NavigationProp<any, any> }) => {
     const styles = getStyles();
     const theme = useTheme();
     const { alert } = useAlertStore();
@@ -41,55 +51,193 @@ const renderEmployee = ({ item, navigation }: { item: EmployeeInfo, navigation: 
     }
 
     return (
-        <SlidingItem
-            key={item.id}
-            items={[
-                <Pressable onPress={() => navigation.navigate(Routes.Schedules, { employeeId: item.id })} style={[styles.icon]} >
-                    <Fontisto name="calendar" size={styles.icon.fontSize} color={theme.colors.backgroundColor} />
-                </Pressable>,
-                <Pressable onPress={call} style={[styles.icon]} >
-                    <Fontisto name="phone" size={styles.icon.fontSize} color={theme.colors.backgroundColor} />
-                </Pressable>,
-                <Pressable onPress={async () => {
-                    alert({
-                        type: AlertType.Error,
-                        message: texts.employee.fire,
-                        buttonText: texts.yes,
-                        onPress: async () => {
-                            await fireEmployee(+item.id);
-                        },
-                        onPress2: () => { },
-                        buttonText2: texts.no
-                    });
-                }} style={[styles.icon, styles.redIcon]} >
-                    <Fontisto name="trash" size={styles.icon.fontSize} color={theme.colors.backgroundColor} />
-                </Pressable>
-            ]}
-        >
-            <View style={styles.listItemContainer}>
+        <>
+            <Divider size={5} horizontal={false} />
+            <View style={styles.slidingContainer} key={item.id}>
+                <SlidingItem
+                    items={[
+                        <Pressable key={"calendar"} onPress={() => navigation.navigate(Routes.Schedules, { employeeId: item.id })} style={[styles.icon]} >
+                            <Fontisto name="calendar" size={styles.icon.fontSize} color={theme.colors.backgroundColor} />
+                        </Pressable>,
+                        <Pressable key={"phone"} onPress={call} style={[styles.icon]} >
+                            <Fontisto name="phone" size={styles.icon.fontSize} color={theme.colors.backgroundColor} />
+                        </Pressable>,
+                        <Pressable key={"trash"} onPress={async () => {
+                            alert({
+                                type: AlertType.Error,
+                                message: texts.employee.fire,
+                                buttonText: texts.yes,
+                                onPress: async () => {
+                                    await fireEmployee(+item.id);
+                                },
+                                onPress2: () => { },
+                                buttonText2: texts.no
+                            });
+                        }} style={[styles.icon, styles.redIcon]} >
+                            <Fontisto name="trash" size={styles.icon.fontSize} color={theme.colors.backgroundColor} />
+                        </Pressable>
+                    ]}
+                >
+                    <View style={styles.listItemContainer}>
+                        <View style={styles.imageContainer} >
+                            <Image
+                                cachePolicy="memory"
+                                source={{ uri: item.image }}
+                                style={styles.imageStyle}
+                            />
+                        </View>
+                        <View style={styles.textContainer}>
+                            <Divider size={5} horizontal={false} />
+                            <Text style={styles.titleText}>{item.name}</Text>
+                            <Text style={styles.descriptionText}>{item.name}</Text>
+                            <Divider size={5} horizontal={false} />
+                        </View>
+                        <Text style={styles.statusText}>{item.absent ? texts.status.absent : texts.status.active}</Text>
+                    </View>
+                </SlidingItem>
             </View>
-        </SlidingItem>
+            <Divider size={5} horizontal={false} />
+        </>
+    );
+}
+
+const DisplayEmployee = ({ employee, addFunc }: { employee?: EmployeeBase, addFunc: () => void }) => {
+    const styles = getStyles();
+    const { getServices } = useServiceTypeStore();
+    const categories = useRef(getServices(employee?.serviceTypes || []));
+    return (
+        <View style={styles.displayEmployeeContainer}>
+            <Image
+                cachePolicy="memory"
+                source={{ uri: employee?.image }}
+                style={styles.displayEmployeeImageStyle} />
+            <Text style={styles.displayEmployeeRating}>{`${employee?.rating}/${employee?.nvotes}`}</Text>
+            <Text style={styles.displayEmployeeName}>{employee?.name}</Text>
+            <Text style={styles.displayEmployeeDesc}>{employee?.description}</Text>
+            <View style={styles.servicesContainer}>
+                <CategoryList
+                    categorySize={45}
+                    categories={categories.current}
+                    maxWidth={styles.inputWidth.width} />
+
+            </View>
+            <View style={styles.modalButton}>
+                <Button title={texts.employee.add} onPress={addFunc} />
+            </View>
+        </View>
+    );
+}
+
+const AddEmployee = ({ setEmployee }: { setEmployee: (employee: EmployeeBase) => void }) => {
+    const styles = getStyles();
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [nation, setNation] = useState<Country | null>();
+    const { alert } = useAlertStore();
+
+    useEffect(() => {
+        const fetchDefaultCountry = async () => {
+            try {
+                const DEFAULT_COUNTRY = await getDefaultCountryAsync();
+                setNation(DEFAULT_COUNTRY);
+            } catch (error) {
+                console.error(texts.errors.defaultCountry, error);
+            }
+        };
+
+        fetchDefaultCountry();
+    }, []);
+
+    const searchEmployee = async () => {
+        const employee = await getEmployee(parsePhoneNumber(nation?.callingCode[0] || "", phoneNumber));
+        if (employee) {
+            setEmployee(employee);
+        } else {
+            alert({ type: AlertType.Error, message: texts.employee.notFound });
+        }
+    }
+
+    return (
+        <View style={styles.addEmployeeContainer}>
+            <Text style={styles.addEmployeeText}>{texts.employee.add}</Text>
+            <View style={styles.phoneNumberContainer}>
+                <PhoneInput
+                    username={true}
+                    {...{
+                        setPhone: setPhoneNumber,
+                        setNation,
+                        nation
+                    }}
+                />
+            </View>
+            <View style={styles.modalButton}>
+                <Button
+                    disabled={!nation || !phoneNumber || phoneNumber.length == 0}
+                    title={texts.employee.search}
+                    onPress={searchEmployee} />
+            </View>
+        </View>
     );
 }
 
 export default function Employees({ navigation }: PropNavigation) {
+    const { pressed } = useHeaderStore();
     const { selectedEstablishment } = useEstablishmentStore();
     const styles = getStyles();
     const [resetList, setResetList] = useState(false);
-    const pageListRef = useRef<PageListRef<EmployeeInfo>>(null);
+    const pageListRef = useRef<PageListRef<EmployeeListInfo>>(null);
+    const addEmployeeModal = useRef<CustomModalRef>(null);
+    const displayEmployeeModal = useRef<CustomModalRef>(null);
+    const [employee, setEmployee] = useState<EmployeeBase>();
 
-    const loadEmployees = async (page?: IPage<EmployeeInfo>, params?: EmployeeFilter) => {
-        if (!selectedEstablishment) return;
-        return await getEmployees(page, params, +selectedEstablishment.id);
+    const loadEmployees = async (page?: IPage<EmployeeListInfo>, params?: EmployeeFilter) => {
+        if (!selectedEstablishment?.id) {
+            return;
+        }
+        return await getEmployees(+selectedEstablishment.id, page, params);
+    }
+
+    useEffect(() => {
+        if (employee) {
+            addEmployeeModal.current?.toggleModal();
+            displayEmployeeModal.current?.toggleModal();
+        }
+    }, [employee]);
+
+    useEffect(() => {
+        if (pressed != undefined) {
+            addEmployeeModal.current?.toggleModal();
+        }
+    }, [pressed]);
+
+    const hireEmployee = async () => {
+        //await addEmployeeToEstablishment(employee?.id);
+        displayEmployeeModal.current?.toggleModal();
     }
 
     return (
         <View style={styles.container}>
+            <CustomModal
+                ref={displayEmployeeModal}
+                modalContent={
+                    <DisplayEmployee employee={employee} addFunc={hireEmployee} />
+                }
+                snapPoints={[styles.displayEmployeeContainer.height]}
+                modalHeight={styles.displayEmployeeContainer.height}
+            />
+            <CustomModal
+                ref={addEmployeeModal}
+                modalContent={
+                    <AddEmployee setEmployee={setEmployee} />
+                }
+                snapPoints={[styles.addEmployeeContainer.maxHeight]}
+                modalHeight={styles.addEmployeeContainer.maxHeight}
+            />
             <View style={styles.listContainer}>
-                <PageList<EmployeeInfo>
+                <PageList<EmployeeListInfo>
+                    key={selectedEstablishment?.id}
                     reset={resetList}
                     ref={pageListRef}
-                    renderItem={({ item }) => renderEmployee({ item, navigation })}
+                    renderItem={({ item }) => <Employee item={item} navigation={navigation} />}
                     requestFunction={loadEmployees}
                 />
             </View>

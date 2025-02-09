@@ -10,8 +10,9 @@ import langs from '@lang/en.json';
 import { ResponseType } from 'enums';
 import { AlertType } from '@components/Alert';
 import { createPageable, parsePage } from './PageHandling';
-import { getCalendarReadyDate } from './Utils';
+import { getCalendarReadyDate, parseCountryCode } from './Utils';
 import useEstablishmentStore from 'storage/stores/EstablishmentStore';
+import { downloadToDevice } from 'storage/StorageUtils';
 
 const getItemsFromRequest = <T>(result: IResult<T>): T => {
     if (result.success) {
@@ -312,12 +313,6 @@ export const getApiVersion = async (): Promise<string> => {
     throw new Error(langs.apiMessages.failed);
 }
 
-const parseCountryCode = (countryCode: string): string => {
-    if (countryCode.startsWith('+'))
-        return countryCode;
-    return `+${countryCode}`;
-}
-
 export const getMobileCode = async (phoneCountryCode: string, phoneNr: string): Promise<number | undefined> => {
     const response = await request<number>("/sms/confirmation", "POST", { phoneNr: phoneNr, phoneCountryCode: parseCountryCode(phoneCountryCode) }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.VALUE);
 
@@ -554,10 +549,28 @@ export const fetchAppointments = async (page?: IPage<AppointmentInfo>, params?: 
     return await pageGet<AppointmentInfo>("/appointment/list", page, params);
 }
 
-export const getEmployees = (page?: IPage<EmployeeInfo>, _params?: EmployeeFilter, establishmentId: number): Promise<IPage<EmployeeInfo> | undefined> => {
+export const getEmployees = async (establishmentId: number, page?: IPage<EmployeeListInfo>, _params?: EmployeeFilter): Promise<IPage<EmployeeListInfo> | undefined> => {
     if (page === undefined || page === null) {
         page = createPageable();
-
-        return pageGet<EmployeeInfo>(`/establishment/${establishmentId}/employees/list`, page, _params);
     }
+
+    return await pageGet<EmployeeListInfo>(`/establishment/${establishmentId}/employees/list`, page, _params);
+}
+
+export const getEmployee = async (mobileInformation: string): Promise<EmployeeBase> => {
+    return getItemsFromRequest<EmployeeBase>(await request<EmployeeBase>(`/employee/${mobileInformation}`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT));
+}
+
+export const getServiceTypes = async (): Promise<ICategory[]> => {
+    const response = await request<ICategory[]>("/service/types", "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.FULL_LIST);
+    if (response.hasOwnProperty("data") && response.data !== undefined && response.data !== null) {
+        // TODO: save the retrieve images into device storage and replace the imageUrls with the local paths
+        for (const element of response.data) {
+            if (element.hasOwnProperty("imageURL") && element.imageURL !== undefined && element.imageURL !== null && element.imageURL.length > 0) {
+                element.imageURL = await downloadToDevice(element.name, apiUrlMaker(element.imageURL));
+            }
+        }
+        return response.data;
+    }
+    throw new Error(langs.apiMessages.failed);
 }

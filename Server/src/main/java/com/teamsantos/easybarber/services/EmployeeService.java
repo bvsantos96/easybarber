@@ -87,4 +87,9 @@ public class EmployeeService extends ServiceWithImages<Employee, EmployeeImage> 
     public List<EstablishmentBaseDTO> getEstablishments(long employeeId) {
         return employeeRepository.getEstablishments(employeeId);
     }
+
+    @Transactional(readOnly = true)
+    public EmployeeDTO getEmployeeByMobile(String mobileInformation) {
+        return employeeRepository.getEmployeeByMobile(mobileInformation);
+    }
 }

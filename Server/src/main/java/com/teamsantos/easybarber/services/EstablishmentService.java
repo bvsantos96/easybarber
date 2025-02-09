@@ -296,13 +296,14 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     }
 
     @Transactional(readOnly = true)
-    public List<EmployeeListDTO> getListEmployees(long establishmentId, EmployeeFilter filter, LocalDate date)
+    public Page<EmployeeListDTO> getListEmployees(long establishmentId, EmployeeFilter filter, LocalDate date,
+            Pageable pageable)
             throws NotFoundException {
         if (!repository.existsById(establishmentId)) {
             throw new NotFoundException();
         }
         return establishmentStaffRepository.findEmployeeListByEstablishmentIdAndActiveFilter(establishmentId,
-                filter, date);
+                filter, date, pageable);
     }
 
     @Transactional(readOnly = true)

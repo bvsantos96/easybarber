@@ -11,6 +11,7 @@ import ProductList from "@screens/ProductList";
 import WeekView from "@screens/WeekView";
 import TimeSheet from "@screens/TimeSheet";
 import Employees from "@screens/Employees";
+import AddButton from "@components/AddButton";
 
 const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     Sign: {
@@ -84,6 +85,7 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         hasHeader: true,
         component: Employees,
         containerizedComponent: true,
+        secondHeader: AddButton
     }
 };
 

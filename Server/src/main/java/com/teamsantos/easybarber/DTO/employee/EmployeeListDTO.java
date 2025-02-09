@@ -21,6 +21,7 @@ public class EmployeeListDTO extends BaseResponseDTO {
     private String absentMessage;
 
     public EmployeeListDTO(Employee employee, String imageData, boolean absent, String absentMessage) {
+        super(employee.getId());
         this.name = employee.getUser().getName();
         this.mobileNumber = employee.getUser().getMobileInformation();
         this.image = imageData;

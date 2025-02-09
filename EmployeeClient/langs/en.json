@@ -254,5 +254,12 @@
   "requiredField": "This field is required:",
   "employee": {
     "fire": "Are you sure you want to fire this employee?",
+    "add": "Add Employee",
+    "search": "Search Employee",
+    "notFound": "Employee not found",
   },
+  "status": {
+    "active": "Active",
+    "absent": "Unavailable"
+  }
 }

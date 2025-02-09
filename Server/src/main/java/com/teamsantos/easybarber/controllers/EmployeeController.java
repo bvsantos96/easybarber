@@ -24,6 +24,7 @@ import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.employee.EmployeeCreateDTO;
+import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentBaseDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
@@ -289,4 +290,17 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
+    @GetMapping("/{mobileInformation}")
+    public ResponseEntity<EmployeeDTO> getEmployeeInfo(
+            @PathVariable("mobileInformation") String mobileInformation) {
+        EmployeeDTO employee = new EmployeeDTO();
+        try {
+            return ResponseEntity.ok(employeeService.getEmployeeByMobile(mobileInformation));
+        } catch (Exception e) {
+            employee.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(employee);
+        }
+    }
+
 }

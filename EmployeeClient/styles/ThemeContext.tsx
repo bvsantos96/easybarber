@@ -65,6 +65,7 @@ interface DimensionsData {
         width: number;
         height: number;
     };
+    headerHeight: number;
 }
 
 interface Fonts {
@@ -185,6 +186,7 @@ const defaultTheme: Theme = {
             width: (320 * width) / 390,
             height: (58.75 * height) / 844,
         },
+        headerHeight: 112 * height / 844,
     },
     strongShadow: {
         elevation: 8,

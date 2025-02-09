@@ -293,11 +293,12 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     }
 
     @GetMapping("/{establishmentId}/employees/list")
-    public ResponseEntity<BaseListDTO<EmployeeListDTO>> establishmentEmployeeList(@PathVariable long establishmentId,
+    public ResponseEntity<BasePageDTO<EmployeeListDTO>> establishmentEmployeeList(@PathVariable long establishmentId,
             @ModelAttribute EmployeeFilter filter, Pageable pageable) {
-        BaseListDTO<EmployeeListDTO> response = new BaseListDTO<>();
+        BasePageDTO<EmployeeListDTO> response = new BasePageDTO<>();
         try {
-            response.setItems(establishmentService.getListEmployees(establishmentId, filter, LocalDate.now()));
+            response.setItems(
+                    establishmentService.getListEmployees(establishmentId, filter, LocalDate.now(), pageable));
             return ResponseEntity.ok(response);
         } catch (NotFoundException e) {
             response.setResponseMessage(String.format("Establishment with id %d not found", establishmentId));
