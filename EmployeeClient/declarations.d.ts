@@ -378,3 +378,33 @@ declare interface Absence {
     title: string;
     message?: string;
 }
+
+declare interface EmployeeFilter extends Record<string, string | number | boolean> {
+    name?: string;
+    mobileNumber?: string;
+    establishmentIds?: number[];
+    serviceTypeIds?: number[];
+    greaterThanRating?: number;
+    lessThanRating?: number;
+}
+
+
+declare interface EmployeeListInfo extends Record<string, string | number | boolean> {
+    name: string;
+    mobileNumber: string;
+    photo: string;
+    description: string;
+    nVotes: number;
+    sumVotes: number;
+    absent: boolean;
+    absentMessage: string;
+}
+
+declare interface EstablishmentBase extends Identifiable {
+    name: string;
+    image: string;
+}
+
+declare interface SelectedItem extends Identifiable {
+    idx: number;
+}

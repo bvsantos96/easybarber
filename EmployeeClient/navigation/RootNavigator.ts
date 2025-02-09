@@ -8,8 +8,9 @@ import { Params } from "@navigation/Router";
 import Tabs from "@screens/Tabs";
 import Establishment from "@screens/Establishment";
 import ProductList from "@screens/ProductList";
-import TimeSheet from "@screens/Timesheet";
 import WeekView from "@screens/WeekView";
+import TimeSheet from "@screens/TimeSheet";
+import Employees from "@screens/Employees";
 
 const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     Sign: {
@@ -76,6 +77,12 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         title: texts.navigation.weekView.name,
         hasHeader: true,
         component: WeekView,
+        containerizedComponent: true,
+    },
+    Employees: {
+        title: texts.navigation.employees.name,
+        hasHeader: true,
+        component: Employees,
         containerizedComponent: true,
     }
 };

@@ -3,7 +3,7 @@ import { useTheme } from './ThemeContext';
 
 export const getStyles = (nInputs: number = 1) => {
     const theme = useTheme();
-    const inputWidth = theme.dimensions.input.width / nInputs;
+    const inputWidth = inputWidth / nInputs;
     return StyleSheet.create({
         container: {
             width: inputWidth,

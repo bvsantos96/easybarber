@@ -29,6 +29,9 @@
   "retry": "Retry",
   "phoneNumber": "Phone Number",
   "navigation": {
+    "employees": {
+      "name": "Employees"
+    },
     "weekView": {
       "name": "Week View"
     },
@@ -248,5 +251,8 @@
     "Sat",
     "Sun"
   ],
-  "requiredField": "This field is required:"
+  "requiredField": "This field is required:",
+  "employee": {
+    "fire": "Are you sure you want to fire this employee?",
+  },
 }

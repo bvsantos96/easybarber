@@ -11,6 +11,7 @@ import { ResponseType } from 'enums';
 import { AlertType } from '@components/Alert';
 import { createPageable, parsePage } from './PageHandling';
 import { getCalendarReadyDate } from './Utils';
+import useEstablishmentStore from 'storage/stores/EstablishmentStore';
 
 const getItemsFromRequest = <T>(result: IResult<T>): T => {
     if (result.success) {
@@ -394,6 +395,10 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
         alert
     } = useAlertStore.getState();
 
+    const {
+        setEstablishments
+    } = useEstablishmentStore.getState()
+
     phone = phone.trim();
     phone = phone.replace(/\s/g, '');
     const _countryCode = parseCountryCode(countryCode);
@@ -424,9 +429,16 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
         }
         setMobileInformation(countryCode, phone);
         _setToken(result.message);
+        getMyEstablishment().then((establishments: EstablishmentBase[]) => {
+            setEstablishments(establishments);
+        });
     }
 
     return result;
+}
+
+export const getMyEstablishment = async (): Promise<EstablishmentBase[]> => {
+    return getItemsFromRequest<EstablishmentBase[]>(await request<EstablishmentBase[]>("/employee/establishments/small", "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST));
 }
 
 export const doRegister = async (countryCode: string, phone: string, password: string, confirmPassword: string, name: string, confirmationCode: string): Promise<IResult<any>> => {
@@ -540,4 +552,12 @@ export const fetchAppointments = async (page?: IPage<AppointmentInfo>, params?: 
     }
     params.sort = "date,time";
     return await pageGet<AppointmentInfo>("/appointment/list", page, params);
+}
+
+export const getEmployees = (page?: IPage<EmployeeInfo>, _params?: EmployeeFilter, establishmentId: number): Promise<IPage<EmployeeInfo> | undefined> => {
+    if (page === undefined || page === null) {
+        page = createPageable();
+
+        return pageGet<EmployeeInfo>(`/establishment/${establishmentId}/employees/list`, page, _params);
+    }
 }

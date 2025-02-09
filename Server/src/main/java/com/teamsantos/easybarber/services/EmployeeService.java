@@ -1,11 +1,14 @@
 package com.teamsantos.easybarber.services;
 
+import java.util.List;
+
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.establishment.EstablishmentBaseDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.images.EmployeeImage;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
@@ -78,5 +81,10 @@ public class EmployeeService extends ServiceWithImages<Employee, EmployeeImage> 
             }
             employeeRepository.save(employee);
         });
+    }
+
+    @Transactional(readOnly = true)
+    public List<EstablishmentBaseDTO> getEstablishments(long employeeId) {
+        return employeeRepository.getEstablishments(employeeId);
     }
 }

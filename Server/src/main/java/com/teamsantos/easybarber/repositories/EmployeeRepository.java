@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.repositories;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import com.teamsantos.easybarber.DTO.establishment.EstablishmentBaseDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.Establishment;
 
@@ -37,4 +39,12 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             )
             """)
     boolean existsByUserId(long userId);
+
+    @Query("""
+                SELECT new com.teamsantos.easybarber.DTO.establishment.EstablishmentBaseDTO(es.establishment.id, es.establishment.name, esi.data)
+                FROM EstablishmentStaff es
+                JOIN EstablishmentImage esi ON esi.entity.id = es.establishment.id AND esi.isMain = true
+                WHERE es.employee.id = :employeeId AND es.approved = true AND es.deleted = false
+            """)
+    List<EstablishmentBaseDTO> getEstablishments(long employeeId);
 }

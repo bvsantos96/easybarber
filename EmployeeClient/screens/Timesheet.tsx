@@ -16,7 +16,6 @@ import Fontisto from '@expo/vector-icons/Fontisto';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Params } from '@navigation/Router';
 import { deleteSchedule, getTimesheets, setTimesheet } from 'utils/ApiRequest';
-import { createEmptyPage } from 'utils/PageHandling';
 
 const SelectTimeShett = ({ day, save }: { day: number, save: (day: number, from: Date, to: Date) => void }) => {
     const styles = getStyles();

@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.employee.EmployeeCreateDTO;
+import com.teamsantos.easybarber.DTO.establishment.EstablishmentBaseDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.DTO.filters.ServiceFilter;
@@ -274,6 +276,17 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
             return ResponseEntity.ok(new BaseResponseDTO("Schedule deleted successfully"));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/establishments/small")
+    @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
+    public ResponseEntity<BaseListDTO<EstablishmentBaseDTO>> getEstablishments() {
+        try {
+            return ResponseEntity.ok(new BaseListDTO<EstablishmentBaseDTO>(
+                    employeeService.getEstablishments(UserContext.getEmployeeId())));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
 }

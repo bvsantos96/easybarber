@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.teamsantos.easybarber.DTO.NameIdImagePriceDTO;
 import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.employee.EmployeeInformationDTO;
+import com.teamsantos.easybarber.DTO.employee.EmployeeListDTO;
 import com.teamsantos.easybarber.DTO.establishment.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentInformationDTO;
@@ -290,6 +292,16 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         return Utils.getModelMapper().map(establishmentServiceRepository.findById(id)
                 .orElseThrow(() -> new GenericNotFoundException("Establishment service")),
                 EstablishmentServiceDTO.class);
+    }
+
+    @Transactional(readOnly = true)
+    public List<EmployeeListDTO> getListEmployees(long establishmentId, boolean onlyActive, LocalDate date)
+            throws NotFoundException {
+        if (!repository.existsById(establishmentId)) {
+            throw new NotFoundException();
+        }
+        return establishmentStaffRepository.findEmployeeListByEstablishmentIdAndActiveFilter(establishmentId,
+                onlyActive, date);
     }
 
     @Transactional(readOnly = true)

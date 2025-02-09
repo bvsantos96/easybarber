@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.repositories;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,6 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.employee.EmployeeListDTO;
 import com.teamsantos.easybarber.entities.EstablishmentStaff;
 
 @Repository
@@ -57,6 +59,23 @@ public interface EstablishmentStaffRepository extends JpaRepository<Establishmen
                     AND es.employee.id = :employeeId
             """)
     void deletebyEstablishmentIdAndEmployeeId(long establishmentId, long employeeId);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.employee.EmployeeListDTO(
+                es.employee,
+                ei.data,
+                CASE WHEN ex IS NOT NULL THEN true ELSE false END,
+                COALESCE(ex.message, '')
+            )
+            FROM EstablishmentStaff es
+            LEFT JOIN EmployeeImage ei ON ei.isMain = true AND ei.entity.id = es.employee.id
+            LEFT JOIN es.employee.exceptions ex ON ex.date = :date AND
+                 (ex.establishment IS NULL OR ex.establishment.id = :establishmentId)
+            WHERE es.establishment.id = :establishmentId
+            AND (:onlyActive = false OR (es.deleted = false AND es.approved = true))
+            """)
+    List<EmployeeListDTO> findEmployeeListByEstablishmentIdAndActiveFilter(long establishmentId, boolean onlyActive,
+            LocalDate date);
 
     @Query("""
             SELECT new com.teamsantos.easybarber.DTO.employee.EmployeeDTO(
