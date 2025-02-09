@@ -37,7 +37,7 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
         const fakeLogin = async () => {
             const result: IResult<IAPIResponse> = await doLogin("351", DEBUG_AUTO_LOGIN_PHONE, DEBUG_AUTO_LOGIN_PASSWORD);
             if (result.success)
-                resetNavigation(navigation, Routes.Tabs);
+                resetNavigation(navigation, Routes.Employees);
             else {
                 console.error(result.message);
             }

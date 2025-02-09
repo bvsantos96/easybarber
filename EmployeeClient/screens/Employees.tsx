@@ -80,8 +80,7 @@ export default function Employees({ navigation }: PropNavigation) {
 
     const loadEmployees = async (page?: IPage<EmployeeInfo>, params?: EmployeeFilter) => {
         if (!selectedEstablishment) return;
-        params = { ...params, establishmentIds: [+selectedEstablishment.id] };
-        return await getEmployees(page, params);
+        return await getEmployees(page, params, +selectedEstablishment.id);
     }
 
     return (

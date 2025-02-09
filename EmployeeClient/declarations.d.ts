@@ -382,7 +382,6 @@ declare interface Absence {
 declare interface EmployeeFilter extends Record<string, string | number | boolean> {
     name?: string;
     mobileNumber?: string;
-    establishmentIds?: number[];
     serviceTypeIds?: number[];
     greaterThanRating?: number;
     lessThanRating?: number;
