@@ -31,6 +31,7 @@ import com.teamsantos.easybarber.DTO.establishment.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentInformationDTO;
 import com.teamsantos.easybarber.DTO.establishment.service.CreateEstablishmentServiceDTO;
+import com.teamsantos.easybarber.DTO.filters.EmployeeFilter;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
 import com.teamsantos.easybarber.DTO.filters.ProductFilter;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
@@ -292,11 +293,11 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     }
 
     @GetMapping("/{establishmentId}/employees/list")
-    public ResponseEntity<BaseListDTO<EmployeeListDTO>> establishmentEmployeeList(@PathVariable Long establishmentId,
-            @RequestParam(defaultValue = "true") boolean onlyActive) {
+    public ResponseEntity<BaseListDTO<EmployeeListDTO>> establishmentEmployeeList(@PathVariable long establishmentId,
+            @ModelAttribute EmployeeFilter filter, Pageable pageable) {
         BaseListDTO<EmployeeListDTO> response = new BaseListDTO<>();
         try {
-            response.setItems(establishmentService.getListEmployees(establishmentId, onlyActive, LocalDate.now()));
+            response.setItems(establishmentService.getListEmployees(establishmentId, filter, LocalDate.now()));
             return ResponseEntity.ok(response);
         } catch (NotFoundException e) {
             response.setResponseMessage(String.format("Establishment with id %d not found", establishmentId));

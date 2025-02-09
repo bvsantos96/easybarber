@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.employee.EmployeeListDTO;
+import com.teamsantos.easybarber.DTO.filters.EmployeeFilter;
 import com.teamsantos.easybarber.entities.EstablishmentStaff;
 
 @Repository
@@ -72,9 +73,21 @@ public interface EstablishmentStaffRepository extends JpaRepository<Establishmen
             LEFT JOIN es.employee.exceptions ex ON ex.date = :date AND
                  (ex.establishment IS NULL OR ex.establishment.id = :establishmentId)
             WHERE es.establishment.id = :establishmentId
-            AND (:onlyActive = false OR (es.deleted = false AND es.approved = true))
+            AND (:#{#filter.hideDeleted} IS NULL OR es.deleted = CASE WHEN :#{#filter.hideDeleted} = true THEN false ELSE es.deleted END)
+            AND (:#{#filter.hideNotApproved} IS NULL OR es.approved = :#{#filter.hideNotApproved})
+            AND (:#{#filter.name} IS NULL OR es.employee.user.name LIKE :#{#filter.name})
+            AND (:#{#filter.mobileInformation} IS NULL OR es.employee.user.mobileInformation LIKE :#{#filter.mobileInformation})
+            AND (:#{#filter.serviceTypeIds} IS NULL OR EXISTS (
+                SELECT 1
+                FROM es.employee.services s
+                WHERE s.serviceType.id IN :#{#filter.serviceTypeIds}
+            ))
+            AND (:#{#filter.greaterThanRating} IS NULL OR
+                (CASE WHEN es.employee.nVotes > 0 THEN (es.employee.sumVotes / es.employee.nVotes) ELSE 0 END) >= :#{#filter.greaterThanRating})
+            AND (:#{#filter.lessThanRating} IS NULL OR
+                (CASE WHEN es.employee.nVotes > 0 THEN (es.employee.sumVotes / es.employee.nVotes) ELSE 0 END) <= :#{#filter.lessThanRating})
             """)
-    List<EmployeeListDTO> findEmployeeListByEstablishmentIdAndActiveFilter(long establishmentId, boolean onlyActive,
+    List<EmployeeListDTO> findEmployeeListByEstablishmentIdAndActiveFilter(long establishmentId, EmployeeFilter filter,
             LocalDate date);
 
     @Query("""

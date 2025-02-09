@@ -25,6 +25,7 @@ import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentInformationDTO;
 import com.teamsantos.easybarber.DTO.establishment.service.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.establishment.service.EstablishmentServiceDTO;
+import com.teamsantos.easybarber.DTO.filters.EmployeeFilter;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentServiceFilter;
 import com.teamsantos.easybarber.DTO.service.ServiceDTO;
@@ -295,13 +296,13 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     }
 
     @Transactional(readOnly = true)
-    public List<EmployeeListDTO> getListEmployees(long establishmentId, boolean onlyActive, LocalDate date)
+    public List<EmployeeListDTO> getListEmployees(long establishmentId, EmployeeFilter filter, LocalDate date)
             throws NotFoundException {
         if (!repository.existsById(establishmentId)) {
             throw new NotFoundException();
         }
         return establishmentStaffRepository.findEmployeeListByEstablishmentIdAndActiveFilter(establishmentId,
-                onlyActive, date);
+                filter, date);
     }
 
     @Transactional(readOnly = true)
