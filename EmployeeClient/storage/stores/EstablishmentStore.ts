@@ -12,7 +12,7 @@ const useEstablishmentStore = create<EstablishmentState>()(
         selectedEstablishment: undefined,
         setEstablishments: (establishments: EstablishmentBase[]) =>
             set(() => {
-                return { establishments: establishments, selectedEstablishment: establishments.length === 1 ? { id: establishments[0].id, idx: 0 } : undefined };
+                return { establishments: establishments, selectedEstablishment: establishments.length === 1 ? { id: establishments[0].id, idx: 0, admin: establishments[0].admin } : undefined };
             })
     })
 );

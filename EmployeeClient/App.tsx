@@ -54,7 +54,7 @@ const Router = () => {
                 'Nunito': require('./assets/fonts/Nunito/Nunito-VariableFont_wght.ttf'),
             });
             setServiceTypes(await getServiceTypes());
-            await loadLongTermItems();
+            //await loadLongTermItems();
             if (DEBUG_AUTO_LOGIN) {
                 console.log("DEBUG AUTO LOGIN");
                 defaultPage = Routes.Sign;
@@ -132,7 +132,7 @@ const Router = () => {
                             options={nav.hasHeader ?
                                 {
                                     header: ({ navigation, route }) => (
-                                        <Header navigation={navigation} title={nav.title} hasGoBack={!nav.noGoBack} secondHeader={nav.secondHeader} secondHeaderFunction={(route.params as any)?.onSecondHeaderPressed} />
+                                        <Header navigation={navigation} title={nav.title} hasGoBack={!nav.noGoBack} secondHeader={nav.secondHeader} hideSecondHeader={(route.params as any)?.hideSecondHeader} />
                                     ),
                                 }
                                 :

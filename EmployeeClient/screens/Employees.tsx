@@ -5,7 +5,7 @@ import { Image } from 'expo-image';
 import Fontisto from '@expo/vector-icons/Fontisto';
 
 // Requests
-import { getEmployee, getEmployees } from 'utils/ApiRequest';
+import { addEmployee, fireEmployee, getEmployee, getEmployees } from 'utils/ApiRequest';
 
 // Components
 import PageList, { PageListRef } from '@components/PageList';
@@ -21,7 +21,7 @@ import { AlertType } from '@components/Alert';
 // Texts
 import texts from '@lang/en.json';
 import { Routes } from '@navigation/Router';
-import { NavigationProp } from '@react-navigation/native';
+import { NavigationProp, useRoute } from '@react-navigation/native';
 import useEstablishmentStore from 'storage/stores/EstablishmentStore';
 import Divider from '@components/Divider';
 import useHeaderStore from 'storage/stores/HeaderStore';
@@ -34,15 +34,10 @@ import { getDefaultCountryAsync } from 'utils/Constants';
 import CategoryList from '@components/CategoryList';
 import useServiceTypeStore from 'storage/stores/ServiceTypeStore';
 
-const Employee = ({ item, navigation }: { item: EmployeeListInfo, navigation: NavigationProp<any, any> }) => {
+const Employee = ({ item, fireEmployee, navigation }: { item: EmployeeListInfo, fireEmployee: (id: number) => {}, navigation: NavigationProp<any, any> }) => {
     const styles = getStyles();
     const theme = useTheme();
     const { alert } = useAlertStore();
-
-    const fireEmployee = async (id: number) => {
-        // await fireEmployee(id);
-        console.log('Fired employee with id:', id);
-    }
 
     const call = async () => {
         Linking.openURL(`tel:${item.mobileNumber}`).catch((err) =>
@@ -67,8 +62,8 @@ const Employee = ({ item, navigation }: { item: EmployeeListInfo, navigation: Na
                                 type: AlertType.Error,
                                 message: texts.employee.fire,
                                 buttonText: texts.yes,
-                                onPress: async () => {
-                                    await fireEmployee(+item.id);
+                                onPress: () => {
+                                    fireEmployee(+item.id);
                                 },
                                 onPress2: () => { },
                                 buttonText2: texts.no
@@ -188,6 +183,7 @@ export default function Employees({ navigation }: PropNavigation) {
     const addEmployeeModal = useRef<CustomModalRef>(null);
     const displayEmployeeModal = useRef<CustomModalRef>(null);
     const [employee, setEmployee] = useState<EmployeeBase>();
+    const route = useRoute();
 
     const loadEmployees = async (page?: IPage<EmployeeListInfo>, params?: EmployeeFilter) => {
         if (!selectedEstablishment?.id) {
@@ -195,6 +191,10 @@ export default function Employees({ navigation }: PropNavigation) {
         }
         return await getEmployees(+selectedEstablishment.id, page, params);
     }
+
+    useEffect(() => {
+        navigation.setParams({ hideSecondHeader: !(route.params as any)?.hideSecondHeader });
+    }, [selectedEstablishment]);
 
     useEffect(() => {
         if (employee) {
@@ -210,8 +210,16 @@ export default function Employees({ navigation }: PropNavigation) {
     }, [pressed]);
 
     const hireEmployee = async () => {
-        //await addEmployeeToEstablishment(employee?.id);
+        if (!employee || !selectedEstablishment || employee.id == undefined || selectedEstablishment.id == undefined || employee.id == 0 || selectedEstablishment.id == 0) {
+            return;
+        }
+        await addEmployee(+employee.id, +selectedEstablishment.id);
         displayEmployeeModal.current?.toggleModal();
+    }
+
+    const _fireEmployee = async (id: number) => {
+        if (!selectedEstablishment?.id) return;
+        await fireEmployee(+selectedEstablishment.id, id);
     }
 
     return (
@@ -237,7 +245,7 @@ export default function Employees({ navigation }: PropNavigation) {
                     key={selectedEstablishment?.id}
                     reset={resetList}
                     ref={pageListRef}
-                    renderItem={({ item }) => <Employee item={item} navigation={navigation} />}
+                    renderItem={({ item }) => <Employee fireEmployee={_fireEmployee} item={item} navigation={navigation} />}
                     requestFunction={loadEmployees}
                 />
             </View>

@@ -402,10 +402,12 @@ declare interface EmployeeListInfo extends Identifiable, Record<string, string |
 declare interface EstablishmentBase extends Identifiable {
     name: string;
     image: string;
+    admin: boolean;
 }
 
 declare interface SelectedItem extends Identifiable {
     idx: number;
+    admin?: boolean;
 }
 
 declare interface EmployeeBase extends Identifiable {

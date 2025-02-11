@@ -15,9 +15,10 @@ type HeaderProps = {
     secondHeader?: React.FC<SecondHeaderProps>;
     secondHeaderFunction?: (selected: boolean) => Promise<boolean>;
     selected?: boolean;
+    hideSecondHeader?: boolean;
 }
 
-const Header = ({ navigation, title, hasGoBack = true, secondHeader, secondHeaderFunction, selected: _selected }: HeaderProps) => {
+const Header = ({ navigation, title, hasGoBack = true, secondHeader, secondHeaderFunction, selected: _selected, hideSecondHeader = false }: HeaderProps) => {
     const { onPress } = useHeaderStore();
     const styles = getStyles();
     const [selected, setSelected] = React.useState(_selected || false);
@@ -49,7 +50,7 @@ const Header = ({ navigation, title, hasGoBack = true, secondHeader, secondHeade
                     <View style={styles.headerFiller} />
                 )}
                 <Text style={styles.headerTitle}>{title}</Text>
-                {secondHeader ? (
+                {(secondHeader && !hideSecondHeader) ? (
                     React.createElement(secondHeader, {
                         selected: selected,
                         setSelected: () => {

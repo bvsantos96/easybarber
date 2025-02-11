@@ -574,3 +574,11 @@ export const getServiceTypes = async (): Promise<ICategory[]> => {
     }
     throw new Error(langs.apiMessages.failed);
 }
+
+export const addEmployee = async (establishmentId: number, employeeId: number): Promise<boolean> => {
+    return (await request<BaseResponse>(`/establishment/${establishmentId}/employee/${employeeId}`, "POST", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
+}
+
+export const fireEmployee = async (establishmentId: number, employeeId: number): Promise<boolean> => {
+    return (await request<BaseResponse>(`/establishment/${establishmentId}/employee/${employeeId}`, "DELETE", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
+}

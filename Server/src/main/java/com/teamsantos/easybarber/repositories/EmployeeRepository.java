@@ -42,7 +42,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     boolean existsByUserId(long userId);
 
     @Query("""
-                SELECT new com.teamsantos.easybarber.DTO.establishment.EstablishmentBaseDTO(es.establishment.id, es.establishment.name, esi.data)
+                SELECT new com.teamsantos.easybarber.DTO.establishment.EstablishmentBaseDTO(es.establishment.id, es.establishment.name, esi.data, es.admin)
                 FROM EstablishmentStaff es
                 LEFT JOIN EstablishmentImage esi ON esi.entity.id = es.establishment.id AND esi.isMain = true
                 WHERE es.employee.id = :employeeId AND es.approved = true AND es.deleted = false
