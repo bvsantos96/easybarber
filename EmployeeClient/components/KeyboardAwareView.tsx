@@ -1,7 +1,7 @@
 import { ReactNode, useEffect } from "react";
 import { Keyboard, Platform } from "react-native";
 
-export default function KeyboardAwareView({ children, onKeyboardHide, onKeyboardShow, setKeyboardHeight }: { children: ReactNode, onKeyboardHide?: Function, onKeyboardShow?: Function, setKeyboardHeight?: Function }) {
+export default function KeyboardAwareView({ children, onKeyboardHide, onKeyboardShow, setKeyboardHeight }: { children?: ReactNode, onKeyboardHide?: Function, onKeyboardShow?: Function, setKeyboardHeight?: Function }) {
     useEffect(() => {
         const _onKeyboardShow = (e: any) => {
             const height: number = e.endCoordinates.height;
@@ -32,5 +32,5 @@ export default function KeyboardAwareView({ children, onKeyboardHide, onKeyboard
         }
 
     }, []);
-    return children;
+    return children ? children : null;
 }

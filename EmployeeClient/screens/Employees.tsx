@@ -33,6 +33,7 @@ import { parsePhoneNumber } from 'utils/Utils';
 import { getDefaultCountryAsync } from 'utils/Constants';
 import CategoryList from '@components/CategoryList';
 import useServiceTypeStore from 'storage/stores/ServiceTypeStore';
+import KeyboardAwareView from '@components/KeyboardAwareView';
 
 const Employee = ({ item, fireEmployee, navigation }: { item: EmployeeListInfo, fireEmployee: (id: number) => {}, navigation: NavigationProp<any, any> }) => {
     const styles = getStyles();
@@ -184,6 +185,7 @@ export default function Employees({ navigation }: PropNavigation) {
     const displayEmployeeModal = useRef<CustomModalRef>(null);
     const [employee, setEmployee] = useState<EmployeeBase>();
     const route = useRoute();
+    const [keyboardHeight, setKeyboardHeight] = useState(0);
 
     const loadEmployees = async (page?: IPage<EmployeeListInfo>, params?: EmployeeFilter) => {
         if (!selectedEstablishment?.id) {
@@ -224,6 +226,9 @@ export default function Employees({ navigation }: PropNavigation) {
 
     return (
         <View style={styles.container}>
+            <KeyboardAwareView
+                setKeyboardHeight={setKeyboardHeight}
+            />
             <CustomModal
                 ref={displayEmployeeModal}
                 modalContent={
@@ -233,12 +238,13 @@ export default function Employees({ navigation }: PropNavigation) {
                 modalHeight={styles.displayEmployeeContainer.height}
             />
             <CustomModal
+                log={3}
                 ref={addEmployeeModal}
                 modalContent={
                     <AddEmployee setEmployee={setEmployee} />
                 }
-                snapPoints={[styles.addEmployeeContainer.maxHeight]}
-                modalHeight={styles.addEmployeeContainer.maxHeight}
+                snapPoints={[styles.addEmployeeContainer.maxHeight + keyboardHeight]}
+                modalHeight={styles.addEmployeeContainer.maxHeight + keyboardHeight}
             />
             <View style={styles.listContainer}>
                 <PageList<EmployeeListInfo>
