@@ -38,6 +38,7 @@ import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.images.EmployeeImage;
 import com.teamsantos.easybarber.exceptions.AlreadyExistsException;
+import com.teamsantos.easybarber.exceptions.GenericNotFoundException;
 import com.teamsantos.easybarber.exceptions.UserAlreadyExistsException;
 import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.security.utils.UserContext;
@@ -296,7 +297,11 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
             @PathVariable("mobileInformation") String mobileInformation) {
         EmployeeDTO employee = new EmployeeDTO();
         try {
-            return ResponseEntity.ok(employeeService.getEmployeeByMobile(mobileInformation));
+            employee = employeeService.getEmployeeByMobile(mobileInformation);
+            return ResponseEntity.ok(employee);
+        } catch (GenericNotFoundException e) {
+            employee.setResponseMessage(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(employee);
         } catch (Exception e) {
             employee.setResponseMessage(e.getMessage());
             return ResponseEntity.badRequest().body(employee);

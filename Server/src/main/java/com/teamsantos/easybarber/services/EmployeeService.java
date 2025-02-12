@@ -1,6 +1,7 @@
 package com.teamsantos.easybarber.services;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentBaseDTO;
 import com.teamsantos.easybarber.entities.Employee;
 import com.teamsantos.easybarber.entities.images.EmployeeImage;
+import com.teamsantos.easybarber.exceptions.EmployeeNotFoundException;
 import com.teamsantos.easybarber.exceptions.UserNotFoundException;
 import com.teamsantos.easybarber.repositories.EmployeeRepository;
 import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
@@ -89,7 +91,9 @@ public class EmployeeService extends ServiceWithImages<Employee, EmployeeImage> 
     }
 
     @Transactional(readOnly = true)
-    public EmployeeDTO getEmployeeByMobile(String mobileInformation) {
-        return employeeRepository.getEmployeeByMobile(mobileInformation);
+    public EmployeeDTO getEmployeeByMobile(String mobileInformation) throws EmployeeNotFoundException {
+        return Optional.ofNullable(employeeRepository.getEmployeeByMobile(mobileInformation))
+                .orElseThrow(EmployeeNotFoundException::new);
+
     }
 }
