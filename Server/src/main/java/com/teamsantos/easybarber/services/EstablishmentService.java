@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.services;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,11 +19,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.teamsantos.easybarber.DTO.NameIdImagePriceDTO;
 import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
 import com.teamsantos.easybarber.DTO.employee.EmployeeInformationDTO;
+import com.teamsantos.easybarber.DTO.employee.EmployeeListDTO;
 import com.teamsantos.easybarber.DTO.establishment.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentInformationDTO;
 import com.teamsantos.easybarber.DTO.establishment.service.CreateEstablishmentServiceDTO;
 import com.teamsantos.easybarber.DTO.establishment.service.EstablishmentServiceDTO;
+import com.teamsantos.easybarber.DTO.filters.EmployeeFilter;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentServiceFilter;
 import com.teamsantos.easybarber.DTO.service.ServiceDTO;
@@ -290,6 +293,17 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         return Utils.getModelMapper().map(establishmentServiceRepository.findById(id)
                 .orElseThrow(() -> new GenericNotFoundException("Establishment service")),
                 EstablishmentServiceDTO.class);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<EmployeeListDTO> getListEmployees(long establishmentId, EmployeeFilter filter, LocalDate date,
+            Pageable pageable)
+            throws NotFoundException {
+        if (!repository.existsById(establishmentId)) {
+            throw new NotFoundException();
+        }
+        return establishmentStaffRepository.findEmployeeListByEstablishmentIdAndActiveFilter(establishmentId,
+                filter, date, pageable);
     }
 
     @Transactional(readOnly = true)

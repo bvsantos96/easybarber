@@ -29,6 +29,12 @@
   "retry": "Retry",
   "phoneNumber": "Phone Number",
   "navigation": {
+    "employees": {
+      "name": "Employees"
+    },
+    "weekView": {
+      "name": "Week View"
+    },
     "timeSheet": {
       "name": "Timesheet"
     },
@@ -209,8 +215,52 @@
   "from": "From",
   "to": "To",
   "setAbsence": "Set Absence",
+  "title": "Title",
   "type": "Type",
   "messageForClients": "Message for clients",
   "absenceFrom": "Absent from",
   "absenceTo": "Absent to",
+  "months": [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December"
+  ],
+  "weekdays": [
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+    "Sunday"
+  ],
+  "smallWeekdays": [
+    "Mon",
+    "Tue",
+    "Wed",
+    "Thu",
+    "Fri",
+    "Sat",
+    "Sun"
+  ],
+  "requiredField": "This field is required:",
+  "employee": {
+    "fire": "Are you sure you want to fire this employee?",
+    "add": "Add Employee",
+    "search": "Search Employee",
+    "notFound": "Employee not found",
+  },
+  "status": {
+    "active": "Active",
+    "absent": "Unavailable"
+  }
 }

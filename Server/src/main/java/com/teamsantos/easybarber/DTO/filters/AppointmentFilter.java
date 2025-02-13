@@ -25,10 +25,11 @@ public class AppointmentFilter {
     private Long clientId;
     private Long serviceId;
     private LocalDate date;
+    private LocalDate endDate;
     private LocalTime time;
     private LocalTime endTime;
     Boolean userView = true;
-    Boolean future = true;
+    Boolean future;
     Boolean activeOnly;
 
     public Specification<Appointment> getSpecification() {
@@ -59,8 +60,15 @@ public class AppointmentFilter {
                 predicates.add(criteriaBuilder.equal(root.get("service").get("id"), this.getServiceId()));
             }
 
-            if (this.getDate() != null) {
-                predicates.add(criteriaBuilder.equal(root.get("date"), this.getDate()));
+            if (this.getEndDate() != null) {
+                predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get("date"), this.getEndDate()));
+                if (this.getDate() != null) {
+                    predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get("date"), this.getDate()));
+                }
+            } else {
+                if (this.getDate() != null) {
+                    predicates.add(criteriaBuilder.equal(root.get("date"), this.getDate()));
+                }
             }
 
             if (this.getTime() != null) {

@@ -10,6 +10,18 @@ export const createPageable = <T>(size = 10): IPage<T> => {
     };
 }
 
+export const createEmptyPage = <T>(): IPage<T> => {
+    return {
+        content: [],
+        totalPages: 0,
+        totalElements: 0,
+        currentPage: 0,
+        pageSize: 0,
+        hasNextPage: false,
+        hasPreviousPage: false
+    };
+}
+
 export const parsePage = <T>(page: Pageable<T>): IPage<T> => {
     return {
         content: page.content,

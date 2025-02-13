@@ -1,5 +1,6 @@
 package com.teamsantos.easybarber.controllers;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -25,10 +26,12 @@ import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.NameIdImagePriceDTO;
 import com.teamsantos.easybarber.DTO.employee.EmployeeDTO;
+import com.teamsantos.easybarber.DTO.employee.EmployeeListDTO;
 import com.teamsantos.easybarber.DTO.establishment.BaseEstablishmentDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO;
 import com.teamsantos.easybarber.DTO.establishment.EstablishmentInformationDTO;
 import com.teamsantos.easybarber.DTO.establishment.service.CreateEstablishmentServiceDTO;
+import com.teamsantos.easybarber.DTO.filters.EmployeeFilter;
 import com.teamsantos.easybarber.DTO.filters.EstablishmentFilter;
 import com.teamsantos.easybarber.DTO.filters.ProductFilter;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
@@ -285,6 +288,23 @@ public class EstablishmentController extends ImageController<Establishment, Esta
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @GetMapping("/{establishmentId}/employees/list")
+    public ResponseEntity<BasePageDTO<EmployeeListDTO>> establishmentEmployeeList(@PathVariable long establishmentId,
+            @ModelAttribute EmployeeFilter filter, Pageable pageable) {
+        BasePageDTO<EmployeeListDTO> response = new BasePageDTO<>();
+        try {
+            response.setItems(
+                    establishmentService.getListEmployees(establishmentId, filter, LocalDate.now(), pageable));
+            return ResponseEntity.ok(response);
+        } catch (NotFoundException e) {
+            response.setResponseMessage(String.format("Establishment with id %d not found", establishmentId));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception ex) {
+            response.setResponseMessage(ex.getMessage());
             return ResponseEntity.badRequest().body(response);
         }
     }

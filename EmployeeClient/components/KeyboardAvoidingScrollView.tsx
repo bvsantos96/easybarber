@@ -1,4 +1,4 @@
-import { Animated, Easing, Keyboard, Platform, ScrollView, TextInput, View } from 'react-native';
+import { Animated, Easing, Keyboard, LayoutChangeEvent, Platform, ScrollView, TextInput, View } from 'react-native';
 import { getStyles } from '../styles/KeyboardAvoidingScrollView';
 import { ReactElement, ReactNode, RefObject, Children, cloneElement, createRef, isValidElement, useEffect, useMemo, useState, useRef } from 'react';
 import React from 'react';
@@ -25,12 +25,12 @@ export default function KeyboardAvoidingScrollView({ fixedTopComponent, children
         __setKeyboardHeight(height);
     }
 
-    const handleTopLayout = (event: any) => {
+    const handleTopLayout = (event: LayoutChangeEvent) => {
         if (event.nativeEvent.layout.height > 0)
             setTopHeight(event.nativeEvent.layout.height);
     }
 
-    const handleFixedBottom = (event: any) => {
+    const handleFixedBottom = (event: LayoutChangeEvent) => {
         if (event.nativeEvent.layout.height > 0)
             setBottomHeight(event.nativeEvent.layout.height);
     }

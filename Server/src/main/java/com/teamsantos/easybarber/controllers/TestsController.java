@@ -70,6 +70,7 @@ public class TestsController {
             null,
             null,
             null,
+            null,
             Set.of(
                     DAY_OF_WEEK.MONDAY,
                     DAY_OF_WEEK.TUESDAY,
@@ -80,6 +81,7 @@ public class TestsController {
             LocalTime.parse("12:00"));
 
     private final ScheduleDTO evening = new ScheduleDTO(
+            null,
             null,
             null,
             null,

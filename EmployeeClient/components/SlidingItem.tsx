@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import { Animated, PanResponder, View } from "react-native";
+import { Animated, GestureResponderEvent, LayoutChangeEvent, PanResponder, PanResponderGestureState, View } from "react-native";
 import { getStyles } from "@styles/SlidingItem";
 
 const SlidingItem = ({ children, items }: {
@@ -16,7 +16,7 @@ const SlidingItem = ({ children, items }: {
         value.current = newValue;
     };
 
-    const handleIconsLayout = (event: any) => {
+    const handleIconsLayout = (event: LayoutChangeEvent) => {
         const { width } = event.nativeEvent.layout;
         minValue.current = -width;
     }
@@ -44,7 +44,7 @@ const SlidingItem = ({ children, items }: {
         setValue(newValue);
     }, [isMoving, minValue]);
 
-    const release = (evt: any, gestureState: any) => {
+    const release = (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
         let p = gestureState.x0 > movingRef.current ? gestureState.x0 - movingRef.current : gestureState.x0;
         let x = evt.nativeEvent.pageX - p;
         if (x <= minValue.current / 2) {
