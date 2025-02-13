@@ -67,7 +67,7 @@ export const getStyles = () => {
         },
         timeSheetItemTextContainer: {
             flexDirection: 'row',
-            width: 90 * theme.dimensions.absoluteWidth,
+            width: "100%",
             justifyContent: 'center',
             alignSelf: 'center',
             alignItems: 'center',

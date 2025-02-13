@@ -22,6 +22,7 @@ import lombok.Setter;
 public class ScheduleDTO extends BaseDTO {
     private Long employeeId;
     private Long establishmentId;
+    private DAY_OF_WEEK day;
     private Set<DAY_OF_WEEK> days;
     private LocalTime startHour;
     private LocalTime endHour;
@@ -34,9 +35,21 @@ public class ScheduleDTO extends BaseDTO {
         super();
     }
 
+    public ScheduleDTO(Long id, Long employeeId, Long establishmentId, DAY_OF_WEEK day, Set<DAY_OF_WEEK> days,
+            LocalTime startHour,
+            LocalTime endHour) {
+        super(id);
+        this.employeeId = employeeId;
+        this.establishmentId = establishmentId;
+        this.days = days;
+        this.day = day;
+        this.startHour = startHour;
+        this.endHour = endHour;
+    }
+
     public ScheduleDTO(Long id, Long employeeId, Long establishmentId, DAY_OF_WEEK day, LocalTime startHour,
             LocalTime endHour) {
-        this(id, employeeId, establishmentId, Set.of(day), startHour, endHour);
+        this(id, employeeId, establishmentId, day, Set.of(day), startHour, endHour);
     }
 
     public ScheduleDTO(Long id, Long employeeId, Long establishmentId, Set<DAY_OF_WEEK> day, LocalTime startHour,
@@ -44,6 +57,7 @@ public class ScheduleDTO extends BaseDTO {
         super(id);
         this.employeeId = employeeId;
         this.establishmentId = establishmentId;
+        this.day = day.iterator().next();
         this.days = day;
         this.startHour = startHour;
         this.endHour = endHour;
@@ -68,7 +82,9 @@ public class ScheduleDTO extends BaseDTO {
         for (DAY_OF_WEEK day : this.days) {
             EmployeeSchedule schedule = new EmployeeSchedule();
             schedule.setEmployee(entityManager.getReference(Employee.class, employeeId));
-            schedule.setEstablishment(entityManager.getReference(Establishment.class, establishmentId));
+            if (establishmentId != null) {
+                schedule.setEstablishment(entityManager.getReference(Establishment.class, establishmentId));
+            }
             schedule.setDay(day);
             schedule.setStartHour(startHour);
             schedule.setEndHour(endHour);

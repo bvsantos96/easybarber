@@ -21,6 +21,7 @@ import com.teamsantos.easybarber.DTO.appointment.AppointmentsHashDTO;
 import com.teamsantos.easybarber.DTO.filters.AppointmentFilter;
 import com.teamsantos.easybarber.DTO.filters.ProductRequestFilter;
 import com.teamsantos.easybarber.DTO.product.ProductRequestsDTO;
+import com.teamsantos.easybarber.DTO.schedule.MinutesInDay;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.entities.Appointment;
 import com.teamsantos.easybarber.entities.ScheduleException;
@@ -80,7 +81,8 @@ public interface AppointmentRepository
                     s.time,
                     s.confirmed,
                     s.active,
-                    s.feedback
+                    s.feedback,
+                    s.service.service.duration
                 )
                 FROM Appointment s
                 LEFT JOIN User u on s.user.id = s.employee.user.id
@@ -90,7 +92,8 @@ public interface AppointmentRepository
                 and (:#{#filter.establishmentId} is null or s.establishment.id = :#{#filter.establishmentId})
                 and (:#{#filter.clientId} is null or s.user.id = :#{#filter.clientId})
                 and (:#{#filter.serviceId} is null or s.service.id = :#{#filter.serviceId})
-                and (:#{#filter.date} is null or s.date = :#{#filter.date})
+                and (:#{#filter.endDate} is null or (s.date <= :#{#filter.endDate}) and (s.date >= :#{#filter.date}))
+                and ((:#{#filter.date} is null or :#{#filter.endDate} is not null) or s.date = :#{#filter.date})
                 and (:#{#filter.time} is null or s.time >= :#{#filter.time})
                 and (:#{#filter.endTime} is null or s.time <= :#{#filter.endTime})
                 and (:#{#filter.future} is null OR (
@@ -119,7 +122,8 @@ public interface AppointmentRepository
                     s.time,
                     s.confirmed,
                     s.active,
-                    s.feedback
+                    s.feedback,
+                    s.service.service.duration
                 )
                 FROM Appointment s
                 LEFT JOIN EstablishmentImage esi on s.establishment.id = esi.entity.id and esi.isMain = true
@@ -127,7 +131,8 @@ public interface AppointmentRepository
                 and (:#{#filter.establishmentId} is null or s.establishment.id = :#{#filter.establishmentId})
                 and (:#{#filter.clientId} is null or s.user.id = :#{#filter.clientId})
                 and (:#{#filter.serviceId} is null or s.service.id = :#{#filter.serviceId})
-                and (:#{#filter.date} is null or s.date = :#{#filter.date})
+                and (:#{#filter.endDate} is null or (s.date <= :#{#filter.endDate}) and (:#{#filter.date} is null or s.date >= :#{#filter.date}))
+                and ((:#{#filter.date} is null or :#{#filter.endDate} is not null) or s.date = :#{#filter.date})
                 and (:#{#filter.time} is null or s.time >= :#{#filter.time})
                 and (:#{#filter.endTime} is null or s.time <= :#{#filter.endTime})
                 and (:#{#filter.future} is null OR (
@@ -296,4 +301,21 @@ public interface AppointmentRepository
                 WHERE a.id = :appointmentId
             """)
     Long getUserIdByAppointmentId(Long appointmentId);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.schedule.MinutesInDay(
+                a.date as date,
+                SUM(a.service.service.duration) as minutesInDay
+            )
+            FROM Appointment a
+            WHERE a.date BETWEEN :dateFrom
+            AND :dateTo
+            AND a.employee.id = :employeeId
+            AND a.establishment.id = :establishmentId
+            AND a.active=true
+            GROUP BY a.date ORDER BY a.date
+            """)
+    List<MinutesInDay> getAppointmentsCalendar(@Param("dateFrom") LocalDate dateFrom,
+            @Param("dateTo") LocalDate dateTo, @Param("employeeId") Long employeeId,
+            @Param("establishmentId") Long establishmentId);
 }

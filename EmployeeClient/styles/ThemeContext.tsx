@@ -41,6 +41,7 @@ interface Colors {
         lightGray: string;
         lightWhite: string;
         darkBlueGray: string;
+        altWithColor: string;
     };
     button: {
         main: string;
@@ -64,6 +65,7 @@ interface DimensionsData {
         width: number;
         height: number;
     };
+    headerHeight: number;
 }
 
 interface Fonts {
@@ -160,7 +162,8 @@ const defaultTheme: Theme = {
             lightBlack: `rgba(${textColor}, 0.66)`,
             lightGray: `rgba(${textColor}, 0.2)`,
             lightWhite: `rgba(${textColor}, 0.4)`,
-            darkBlueGray: `rgba(${mainColor}, 0.1)`
+            darkBlueGray: `rgba(${mainColor}, 0.1)`,
+            altWithColor: `rgba(${mainColor}, 0.4)`
         },
         button: {
             main: `rgb(${mainColor})`,
@@ -183,6 +186,7 @@ const defaultTheme: Theme = {
             width: (320 * width) / 390,
             height: (58.75 * height) / 844,
         },
+        headerHeight: 112 * height / 844,
     },
     strongShadow: {
         elevation: 8,

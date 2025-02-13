@@ -22,7 +22,7 @@ export const getStyles = () => {
         header: {
             justifyContent: 'center',
             alignItems: 'center',
-            height: 112 * theme.dimensions.absoluteHeight,
+            height: theme.dimensions.headerHeight,
             ...theme.shadow as any,
             backgroundColor: theme.colors.backgroundColor,
         },

@@ -1,7 +1,7 @@
 import { View, Text } from 'react-native';
 import { getStyles } from '@styles/TimeSheet';
 import texts from '@lang/en.json';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Pressable from '@components/Pressable';
 import PageList from '@components/PageList';
 import { PageListType } from 'enums';
@@ -10,9 +10,12 @@ import { useTheme } from '@styles/ThemeContext';
 import Divider from '@components/Divider';
 import CustomModal, { CustomModalRef } from '@components/CustomModal';
 import DatePicker from 'react-native-date-picker';
-import { getTimeAsString } from 'utils/Utils';
+import { getClientDayOfWeekFromString, getServerDayOfWeek, getTimeAsString, parseServerTime } from 'utils/Utils';
 import SlidingItem from '@components/SlidingItem';
 import Fontisto from '@expo/vector-icons/Fontisto';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Params } from '@navigation/Router';
+import { deleteSchedule, getTimesheets, setTimesheet } from 'utils/ApiRequest';
 
 const SelectTimeShett = ({ day, save }: { day: number, save: (day: number, from: Date, to: Date) => void }) => {
     const styles = getStyles();
@@ -90,6 +93,9 @@ const TimeSheetDay = ({ text, selected = false, select }: { text: string, select
 const TimeSheetComponent = ({ item, maxWidth, deleteItem }: { item: TimeSheetItem, maxWidth: number, deleteItem: () => void }) => {
     const styles = getStyles();
     const theme = useTheme();
+    if (item.day) {
+        item.days = [getClientDayOfWeekFromString(item.day)];
+    }
     return (
         <SlidingItem
             items={
@@ -105,7 +111,7 @@ const TimeSheetComponent = ({ item, maxWidth, deleteItem }: { item: TimeSheetIte
                     <View style={styles.timeSheetItemTextContainer}>
                         <Feather name="clock" size={styles.timeSheetItemSmallIcon.width} color={theme.colors.backgroundColor} />
                         <Divider horizontal size={5} />
-                        <Text style={styles.timeSheetItemText}>{`${getTimeAsString(item.time.startTime)} - ${getTimeAsString(item.time.endTime)}`}</Text>
+                        <Text style={styles.timeSheetItemText}>{`${parseServerTime(item.startHour)} - ${parseServerTime(item.endHour)}`}</Text>
                     </View>
                 </View>
             </View>
@@ -113,7 +119,19 @@ const TimeSheetComponent = ({ item, maxWidth, deleteItem }: { item: TimeSheetIte
     );
 }
 
-const TimeSheet = () => {
+
+export type Route = {
+    establishmentId?: number;
+};
+
+type Props = NativeStackScreenProps<typeof Params, 'TimeSheet'>;
+
+export default function TimeSheet({ route, navigation }: Props) {
+    let establishmentId: number | undefined = undefined;
+    if (route.params) {
+        const { establishmentId: _establishmentId } = route.params;
+        establishmentId = _establishmentId;
+    }
     const styles = getStyles();
     const theme = useTheme();
     const days = useRef([...Array(7).keys()]);
@@ -135,45 +153,71 @@ const TimeSheet = () => {
         }
     }
 
-    const load = async (_page?: IPage<TimeSheetItem>, _params?: Record<string, string | number | boolean>) => {
-        return Promise.resolve(
-            {
-                content: timeSheets[selectedDay] || [],
-                totalPages: 1,
-                totalElements: timeSheets[selectedDay]?.length || 0,
-                currentPage: 1,
-                pageSize: timeSheets[selectedDay]?.length || 0,
-                hasNextPage: false,
-                hasPreviousPage: false,
-            }
-        );
+    const requestFunction = async (_page?: IPage<TimeSheetItem>, _params?: Record<string, string | number | boolean>): Promise<IPage<TimeSheetItem>> => {
+        return Promise.resolve({
+            content: timeSheets[selectedDay] || [],
+            totalPages: 1,
+            totalElements: timeSheets[selectedDay]?.length || 0,
+            currentPage: 1,
+            pageSize: timeSheets[selectedDay]?.length || 0,
+            hasNextPage: false,
+            hasPreviousPage: false
+        });
     }
 
-    const addNewTimesheet = (day: number, from: Date, to: Date) => {
+    const load = async () => {
+        let items = await getTimesheets(undefined, undefined, establishmentId);
+        if (!items || items.content.length <= 0) return;
+        let newTimeSheet: { [key: number]: TimeSheetItem[] } = {};
+        items.content.forEach((item: TimeSheetItem) => {
+            if (item.day && item.day.length >= 0) {
+                const day = getClientDayOfWeekFromString(item.day);
+                if (!newTimeSheet[day]) {
+                    newTimeSheet[day] = [];
+                }
+                newTimeSheet[day].push(item);
+            }
+        });
+        setTimeSheets(newTimeSheet);
+        toggleRefresh(selectedDay);
+    }
+
+    const addNewTimesheet = async (day: number, from: Date, to: Date) => {
+        const serverDay = getServerDayOfWeek(day);
+        let timeSheet: TimeSheetItem = {
+            id: 0,
+            establishmentId: establishmentId,
+            day: texts.weekdays[day].toUpperCase(),
+            days: [serverDay],
+            endHour: getTimeAsString(to),
+            startHour: getTimeAsString(from)
+        };
+        const newTimesheet = await setTimesheet(timeSheet);
+        if (!newTimesheet || !newTimesheet.id) return;
+        timeSheet.id = +newTimesheet.id;
         const newTimeSheet = timeSheets;
         if (!newTimeSheet[day]) {
             newTimeSheet[day] = [];
         }
-        newTimeSheet[day].push({
-            id: newTimeSheet[day].length,
-            time: {
-                startTime: from,
-                endTime: to
-            }
-        });
+        newTimeSheet[day].push(timeSheet);
         setTimeSheets(newTimeSheet);
         filterModalRef.current?.toggleModal();
         toggleRefresh(day);
     }
 
-    const deleteItem = (day: number, id: number) => {
+    const deleteItem = async (day: number, id: number) => {
+        if (!(await deleteSchedule(id))) return;
         const newTimeSheet = timeSheets;
         if (newTimeSheet[day]) {
             newTimeSheet[day] = newTimeSheet[day].filter((item) => item.id !== id);
             setTimeSheets(newTimeSheet);
-            toggleRefresh(day);
         }
+        toggleRefresh(day);
     }
+
+    useEffect(() => {
+        load();
+    }, []);
 
     return (
         <>
@@ -188,15 +232,14 @@ const TimeSheet = () => {
                     gap={5}
                     type={PageListType.MULTI_COL_LIST}
                     renderItem={({ item, index }: { item: TimeSheetItem, index: number }) =>
-                        <View key={index}>
-                            <TimeSheetComponent item={item} maxWidth={maxWidth} deleteItem={() => { deleteItem(selectedDay, +item.id) }} />
-                        </View>
+                        <TimeSheetComponent key={index} item={item} maxWidth={maxWidth} deleteItem={() => { deleteItem(selectedDay, +item.id) }} />
                     }
                     itemMaxWidth={maxWidth}
                     preload={false}
                     initialItems={timeSheets[selectedDay] || []}
-                    requestFunction={load}
+                    requestFunction={requestFunction}
                     dontDisplayLoadMore
+                    reset={refresh}
                 />
             </View>
             <CustomModal
@@ -218,5 +261,3 @@ const TimeSheet = () => {
         </>
     );
 }
-
-export default TimeSheet;

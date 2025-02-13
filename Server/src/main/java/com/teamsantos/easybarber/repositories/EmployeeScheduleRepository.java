@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
 import com.teamsantos.easybarber.DTO.schedule.EmployeeScheduleDTO;
+import com.teamsantos.easybarber.DTO.schedule.MinutesInDay;
 import com.teamsantos.easybarber.entities.EmployeeSchedule;
 import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 
@@ -37,9 +38,8 @@ public interface EmployeeScheduleRepository
                 FROM EmployeeSchedule es
                 WHERE es.employee.id = :id
                 AND es.day IN :days
-                AND es.startHour <= :startHour
-                AND es.endHour >= :endHour
                 AND es.active = :active
+                AND (es.startHour <= :endHour AND es.endHour >= :startHour)
             )
             """)
     boolean hasOverlappingSchedule(
@@ -105,6 +105,17 @@ public interface EmployeeScheduleRepository
                 AND (s.active = :#{#filter.active} OR (s.active = true AND :#{#filter.active} IS NULL))
             ORDER BY s.startHour ASC
              """)
-
     List<EmployeeScheduleDTO> findAllDTO(ScheduleFilter filter);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.schedule.MinutesInDay(
+                s.day as dayOfWeek,
+                SUM(TIMESTAMPDIFF(MINUTE, s.startHour, s.endHour)) as minutesInDay
+            )
+            FROM EmployeeSchedule s
+            WHERE (:employeeId IS NULL OR s.employee.id = :employeeId)
+              AND (:establishmentId IS NULL OR s.establishment.id = :establishmentId)
+            GROUP BY s.day
+            """)
+    List<MinutesInDay> getDaysWithNoSchedule(Long employeeId, Long establishmentId);
 }

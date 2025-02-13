@@ -2,6 +2,7 @@ package com.teamsantos.easybarber.controllers;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.BaseResponseDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
+import com.teamsantos.easybarber.DTO.schedule.CalendarDayInfoDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.schedule.SchedulesDTO;
@@ -28,6 +30,7 @@ import com.teamsantos.easybarber.security.services.PrePermissionEvaluator;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.services.SchedulesService;
 import com.teamsantos.easybarber.utils.Pair;
+import com.teamsantos.easybarber.utils.Utils;
 
 @RestController
 public class SchedulesController {
@@ -125,10 +128,29 @@ public class SchedulesController {
     @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
     public ResponseEntity<BaseResponseDTO> createException(@RequestBody ScheduleExceptionDTO exception) {
         try {
+            if (exception.getEmployeeId() == null) {
+                exception.setEmployeeId(UserContext.getEmployeeId());
+            }
+            if (exception.getDays() == null || exception.getDays().isEmpty()) {
+                exception.setDays(Utils.getDaysOfWeek(exception.getDateFrom(), exception.getDateTo()));
+            }
             Set<Long> ids = schedulesService.createException(exception, UserContext.getEmployeeId());
             return ResponseEntity.status(HttpStatus.CREATED).body(new BaseResponseDTO(ids));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new BaseResponseDTO(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/schedule/calendar")
+    @PreAuthorize(PrePermissionEvaluator.IS_EMPLOYEE)
+    public ResponseEntity<Map<LocalDate, CalendarDayInfoDTO>> listCalendarInfo(@ModelAttribute ScheduleFilter filter) {
+        try {
+            if (filter.getEmployeeId() == null) {
+                filter.setEmployeeId(UserContext.getEmployeeId());
+            }
+            return ResponseEntity.ok(schedulesService.getCalendarInfo(filter));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of());
         }
     }
 }

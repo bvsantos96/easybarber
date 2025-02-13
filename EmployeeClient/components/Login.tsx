@@ -15,7 +15,7 @@ import { getStyles } from '../styles/Sign';
 import { SignInProps } from '../screens/SignIn';
 import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
-import { DEBUG_AUTO_LOGIN, DEBUG_AUTO_LOGIN_PASSWORD, DEBUG_AUTO_LOGIN_PHONE } from '../utils/EnvVariables';
+import { DEBUG_AUTO_LOGIN, DEBUG_AUTO_LOGIN_PASSWORD, DEBUG_AUTO_LOGIN_PHONE, PUBLIC_DEBUG_AUTO_LOGIN_COUNTRY_CODE } from '../utils/EnvVariables';
 import { AlertType } from './Alert';
 import texts from "../langs/en.json";
 import useAlertStore from 'storage/stores/AlertStore';
@@ -34,24 +34,23 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
     const { alert } = useAlertStore();
 
     useEffect(() => {
-        const fakeLogin = async () => {
-            const result: IResult<IAPIResponse> = await doLogin("351", DEBUG_AUTO_LOGIN_PHONE, DEBUG_AUTO_LOGIN_PASSWORD);
-            if (result.success)
-                resetNavigation(navigation, Routes.Tabs);
-            else {
-                console.error(result.message);
-            }
-        }
 
-        if (DEBUG_AUTO_LOGIN) {
-            fakeLogin();
-            return;
-        }
+    }, [nation]);
 
+    useEffect(() => {
         const fetchDefaultCountry = async () => {
             try {
                 const DEFAULT_COUNTRY = await getDefaultCountryAsync();
                 setNation(DEFAULT_COUNTRY);
+                if (DEBUG_AUTO_LOGIN) {
+                    const result: IResult<IAPIResponse> = await doLogin(DEFAULT_COUNTRY?.callingCode[0] || "+351", DEBUG_AUTO_LOGIN_PHONE, DEBUG_AUTO_LOGIN_PASSWORD);
+                    if (result.success)
+                        resetNavigation(navigation, Routes.Employees);
+                    else {
+                        console.error(result.message);
+                    }
+                }
+
             } catch (error) {
                 console.error(texts.errors.defaultCountry, error);
             }
