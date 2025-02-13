@@ -140,6 +140,10 @@ public class Utils {
         if (startDate == null || endDate == null || startDate.isAfter(endDate)) {
             return daysOfWeek;
         }
+        if(startDate.equals(endDate)) {
+            daysOfWeek.add(DAY_OF_WEEK.valueOf(DayOfWeek.from(startDate).name()));
+            return daysOfWeek;
+        }
         for (LocalDate date = startDate; date.isBefore(endDate); date = date.plusDays(1)) {
             daysOfWeek.add(DAY_OF_WEEK.valueOf(DayOfWeek.from(date).name()));
         }

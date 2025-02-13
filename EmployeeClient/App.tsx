@@ -26,18 +26,24 @@ import { DEBUG_AUTO_LOGIN } from 'utils/EnvVariables';
 import useAlertStore from 'storage/stores/AlertStore';
 import { getDefaultCountryString } from 'utils/Constants';
 import DismissKeyboard from '@components/DismissKeyboard';
-import { deleteMobileInformation, deleteToken, getToken, refreshToken } from 'utils/ApiRequest';
+import { deleteMobileInformation, deleteToken, getServiceTypes, getToken, refreshToken } from 'utils/ApiRequest';
 import { validateVersion } from 'utils/VersionValidation';
 import SafeFullScreen from '@components/SafeFullScreen';
+import useHeaderStore from 'storage/stores/HeaderStore';
+import useServiceTypeStore from 'storage/stores/ServiceTypeStore';
+import { loadLongTermItems } from 'storage/ApiLongTermStorage';
 
 const Router = () => {
     const queryClient = useQueryClient()
     const { doLogout } = useAuthStore();
+    const { reset: resetHeaderStore } = useHeaderStore();
 
     const [isLoading, setIsLoading] = useState(true);
 
     const Stack = createNativeStackNavigator<typeof Params>();
     const navigationRef = useRef<NavigationContainerRef<typeof Params> | null>(null);
+
+    const { setServiceTypes } = useServiceTypeStore();
 
     useEffect(() => {
         const loadInitialData = async () => {
@@ -47,6 +53,8 @@ const Router = () => {
                 'Poppins': require('./assets/fonts/Poppins/Poppins-Regular.ttf'),
                 'Nunito': require('./assets/fonts/Nunito/Nunito-VariableFont_wght.ttf'),
             });
+            setServiceTypes(await getServiceTypes());
+            //await loadLongTermItems();
             if (DEBUG_AUTO_LOGIN) {
                 console.log("DEBUG AUTO LOGIN");
                 defaultPage = Routes.Sign;
@@ -68,6 +76,14 @@ const Router = () => {
 
         loadInitialData();
     }, []);
+
+    useEffect(() => {
+        if (navigationRef.current) {
+            navigationRef.current.addListener('state', (e) => {
+                resetHeaderStore();
+            });
+        }
+    }, [navigationRef.current])
 
     const waitAndResetNavigation = async (page: keyof typeof Params, params?: any) => {
         if (navigationRef.current) {
@@ -115,8 +131,8 @@ const Router = () => {
                             name={_key}
                             options={nav.hasHeader ?
                                 {
-                                    header: ({ navigation }) => (
-                                        <Header navigation={navigation} title={nav.title} hasGoBack={!nav.noGoBack} />
+                                    header: ({ navigation, route }) => (
+                                        <Header navigation={navigation} title={nav.title} hasGoBack={!nav.noGoBack} secondHeader={nav.secondHeader} hideSecondHeader={(route.params as any)?.hideSecondHeader} />
                                     ),
                                 }
                                 :

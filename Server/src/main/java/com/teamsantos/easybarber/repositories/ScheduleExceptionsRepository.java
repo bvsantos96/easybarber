@@ -99,4 +99,17 @@ public interface ScheduleExceptionsRepository
             """)
     List<ScheduleExceptionDTO> findAllByEstablishmentIdEmployeeSetFromAndToDTO(Long establishmentId,
             Set<Long> employeeIds, LocalDate from, LocalDate to);
+
+    @Query("""
+            SELECT e.date
+            FROM ScheduleException e
+            WHERE date >= :from AND date <= :to
+                AND (
+                (:employeeId IS NULL OR e.employee.id = :employeeId)
+                AND
+                (:establishmentId IS NULL OR e.establishment.id = :establishmentId)
+            )
+            GROUP BY e.date ORDER BY e.date
+            """)
+    List<LocalDate> getExceptionsCalendar(LocalDate from, LocalDate to, Long employeeId, Long establishmentId);
 }

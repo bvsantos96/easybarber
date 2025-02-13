@@ -25,6 +25,8 @@ public class ScheduleExceptionDTO extends ScheduleDTO {
     private LocalDate dateFrom;
     private LocalDate dateTo;
     private Boolean active;
+    private String title;
+    private String message;
 
     public ScheduleExceptionDTO() {
         super();
@@ -58,7 +60,7 @@ public class ScheduleExceptionDTO extends ScheduleDTO {
     public ScheduleExceptionDTO(Long employeeId, Long establishmentId, Set<DAY_OF_WEEK> days,
             LocalTime startHour,
             LocalTime endHour, LocalDate dateFrom, LocalDate dateTo, Boolean active) {
-        super(employeeId, establishmentId, days, startHour, endHour);
+        super(employeeId, establishmentId, days.iterator().next(), days, startHour, endHour);
         this.dateFrom = dateFrom;
         this.dateTo = dateTo;
         this.active = active;

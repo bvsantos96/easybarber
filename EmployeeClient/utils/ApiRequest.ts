@@ -10,6 +10,9 @@ import langs from '@lang/en.json';
 import { ResponseType } from 'enums';
 import { AlertType } from '@components/Alert';
 import { createPageable, parsePage } from './PageHandling';
+import { getCalendarReadyDate, parseCountryCode } from './Utils';
+import useEstablishmentStore from 'storage/stores/EstablishmentStore';
+import { downloadToDevice } from 'storage/StorageUtils';
 
 const getItemsFromRequest = <T>(result: IResult<T>): T => {
     if (result.success) {
@@ -22,11 +25,17 @@ const getItemsFromRequest = <T>(result: IResult<T>): T => {
     throw new Error(result.message ?? langs.apiMessages.failed);
 }
 
-const parsePathParams = (_path: string, params: Record<string, string | number | boolean>): string => {
+const parsePathParams = (_path: string, params: Record<string, string | number | boolean | Date | undefined>): string => {
     let first = true;
     for (const key in params) {
         if (params[key] === null || params[key] === undefined)
             continue;
+        if (params[key] instanceof Date) {
+            params[key] = getCalendarReadyDate(params[key] as Date);
+        } else
+            if (params[key] === undefined) {
+                continue;
+            }
         _path += `${first ? '?' : '&'}${key}=${params[key]}`;
         first = false;
     }
@@ -304,12 +313,6 @@ export const getApiVersion = async (): Promise<string> => {
     throw new Error(langs.apiMessages.failed);
 }
 
-const parseCountryCode = (countryCode: string): string => {
-    if (countryCode.startsWith('+'))
-        return countryCode;
-    return `+${countryCode}`;
-}
-
 export const getMobileCode = async (phoneCountryCode: string, phoneNr: string): Promise<number | undefined> => {
     const response = await request<number>("/sms/confirmation", "POST", { phoneNr: phoneNr, phoneCountryCode: parseCountryCode(phoneCountryCode) }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.VALUE);
 
@@ -387,6 +390,10 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
         alert
     } = useAlertStore.getState();
 
+    const {
+        setEstablishments
+    } = useEstablishmentStore.getState()
+
     phone = phone.trim();
     phone = phone.replace(/\s/g, '');
     const _countryCode = parseCountryCode(countryCode);
@@ -417,9 +424,16 @@ export const doLogin = async (countryCode: string, phone: string, password: stri
         }
         setMobileInformation(countryCode, phone);
         _setToken(result.message);
+        getMyEstablishment().then((establishments: EstablishmentBase[]) => {
+            setEstablishments(establishments);
+        });
     }
 
     return result;
+}
+
+export const getMyEstablishment = async (): Promise<EstablishmentBase[]> => {
+    return getItemsFromRequest<EstablishmentBase[]>(await request<EstablishmentBase[]>("/employee/establishments/small", "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST));
 }
 
 export const doRegister = async (countryCode: string, phone: string, password: string, confirmPassword: string, name: string, confirmationCode: string): Promise<IResult<any>> => {
@@ -465,4 +479,106 @@ export const getAppointments = async (page?: IPage<AppointmentInfo>, params?: Ap
 
 export const getEstablishments = async (page?: IPage<EstablishmentInfo>, params?: Record<string, string | number | boolean>): Promise<IPage<EstablishmentInfo> | undefined> => {
     return await pageGet<EstablishmentInfo>("/employee/establishments", page, params);
+}
+
+export const getTimesheets = async (page?: IPage<TimeSheetItem>, params?: Record<string, string | number | boolean>, establishmentId?: number): Promise<IPage<TimeSheetItem> | undefined> => {
+    if (params === undefined || params === null) {
+        params = {};
+    }
+    if (establishmentId !== undefined) {
+        params.establishmentId = establishmentId;
+    }
+    if (page === undefined || page === null) {
+        page = createPageable();
+    }
+    page.pageSize = 100;
+    return await pageGet<TimeSheetItem>("/employee/schedules", page, params);
+}
+
+export const setTimesheet = async (timeSheet: TimeSheetItem): Promise<BaseResponse | undefined> => {
+    return (await request<BaseResponse>("/employee/schedule", "POST", timeSheet, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).data;
+}
+
+export const deleteSchedule = async (id: number): Promise<boolean> => {
+    return (await request<BaseResponse>(`/employee/schedule/${id}`, "DELETE", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
+}
+
+export const fetchMonthAppointments = async (month: number, year: number, establishmentId?: number): Promise<MonthCalendar | undefined> => {
+    const from = new Date(year, month - 1, 1);
+    const to = new Date(year, month, 0);
+    let params: { from: Date; to: Date; establishmentId?: number } = { from, to };
+    if (establishmentId !== undefined) {
+        params.establishmentId = establishmentId;
+    }
+    const url = parsePathParams(`/schedule/calendar`, params);
+    return Promise.resolve((await request<MonthCalendar>(url, "GET", { month, year, establishmentId }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).data);
+}
+
+export const createException = async (exception: Absence): Promise<boolean> => {
+    return (await request<BaseResponse>("/schedule/exception", "POST", exception, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
+}
+
+export const fetchDayAppointments = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter, date?: string, establishmentId?: number): Promise<IPage<AppointmentInfo> | undefined> => {
+    if (params === undefined || params === null) {
+        params = {
+            userView: false
+        };
+        if (date !== undefined) {
+            params.date = date;
+        }
+        if (establishmentId !== undefined) {
+            params.establishmentId = establishmentId;
+        }
+    }
+    params.sort = "date,time";
+    return await pageGet<AppointmentInfo>("/appointment/list", page, params);
+}
+
+export const fetchAppointments = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter): Promise<IPage<AppointmentInfo> | undefined> => {
+    if (page === undefined || page === null) {
+        page = createPageable();
+    }
+    page.pageSize = 1000;
+
+    if (params === undefined || params === null) {
+        params = {
+            userView: false
+        };
+    }
+    params.sort = "date,time";
+    return await pageGet<AppointmentInfo>("/appointment/list", page, params);
+}
+
+export const getEmployees = async (establishmentId: number, page?: IPage<EmployeeListInfo>, _params?: EmployeeFilter): Promise<IPage<EmployeeListInfo> | undefined> => {
+    if (page === undefined || page === null) {
+        page = createPageable();
+    }
+
+    return await pageGet<EmployeeListInfo>(`/establishment/${establishmentId}/employees/list`, page, _params);
+}
+
+export const getEmployee = async (mobileInformation: string): Promise<EmployeeBase> => {
+    return getItemsFromRequest<EmployeeBase>(await request<EmployeeBase>(`/employee/${mobileInformation}`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT));
+}
+
+export const getServiceTypes = async (): Promise<ICategory[]> => {
+    const response = await request<ICategory[]>("/service/types", "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.FULL_LIST);
+    if (response.hasOwnProperty("data") && response.data !== undefined && response.data !== null) {
+        // TODO: save the retrieve images into device storage and replace the imageUrls with the local paths
+        for (const element of response.data) {
+            if (element.hasOwnProperty("imageURL") && element.imageURL !== undefined && element.imageURL !== null && element.imageURL.length > 0) {
+                element.imageURL = await downloadToDevice(element.name, apiUrlMaker(element.imageURL));
+            }
+        }
+        return response.data;
+    }
+    throw new Error(langs.apiMessages.failed);
+}
+
+export const addEmployee = async (establishmentId: number, employeeId: number): Promise<boolean> => {
+    return (await request<BaseResponse>(`/establishment/${establishmentId}/employee/${employeeId}`, "POST", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
+}
+
+export const fireEmployee = async (establishmentId: number, employeeId: number): Promise<boolean> => {
+    return (await request<BaseResponse>(`/establishment/${establishmentId}/employee/${employeeId}`, "DELETE", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
 }

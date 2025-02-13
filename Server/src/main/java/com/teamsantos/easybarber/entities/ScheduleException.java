@@ -48,6 +48,10 @@ public class ScheduleException {
     private Boolean active;
     @Column
     private DAY_OF_WEEK day;
+    @Column
+    private String title;
+    @Column(nullable = true)
+    private String message;
 
     public ScheduleException(long employeeId, long establishmentId, LocalDate date, LocalTime start, int duration) {
         this.employee = new Employee();

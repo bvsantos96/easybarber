@@ -3,6 +3,7 @@ package com.teamsantos.easybarber.services;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -25,11 +26,14 @@ import com.teamsantos.easybarber.DTO.BaseListDTO;
 import com.teamsantos.easybarber.DTO.BasePageDTO;
 import com.teamsantos.easybarber.DTO.appointment.AppointmentDTO;
 import com.teamsantos.easybarber.DTO.filters.ScheduleFilter;
+import com.teamsantos.easybarber.DTO.schedule.CalendarDayInfoDTO;
+import com.teamsantos.easybarber.DTO.schedule.MinutesInDay;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleDTO;
 import com.teamsantos.easybarber.DTO.schedule.ScheduleExceptionDTO;
 import com.teamsantos.easybarber.DTO.schedule.SchedulesDTO;
 import com.teamsantos.easybarber.DTO.schedule.TimeSlotsDTO;
 import com.teamsantos.easybarber.entities.EmployeeSchedule;
+import com.teamsantos.easybarber.entities.EmployeeSchedule.DAY_OF_WEEK;
 import com.teamsantos.easybarber.entities.ScheduleException;
 import com.teamsantos.easybarber.repositories.AppointmentRepository;
 import com.teamsantos.easybarber.repositories.EmployeeScheduleRepository;
@@ -86,7 +90,7 @@ public class SchedulesService {
         Boolean isStaff = null;
         Long employee = null;
         if (exception.getEmployeeId() == null && exception.getEstablishmentId() == null) {
-            throw new IllegalArgumentException("Employee or Establishment must be informed");
+            throw new IllegalArgumentException("Employee or Establishment must be filled");
         }
         if (exception.getEmployeeId() != null && exception.getEstablishmentId() != null) {
             isOwner = establishmentService.isAdmin(exception.getEstablishmentId(), employeeId);
@@ -126,7 +130,8 @@ public class SchedulesService {
                         employee,
                         schedule.getDays(), schedule.getStartHour(), schedule.getEndHour(), true)) {
             if (!forceSave) {
-                throw new IllegalArgumentException("Employee already has a schedule for this day/hours");
+                throw new IllegalArgumentException(
+                        "Employee already has a schedule that overlaps with this day/hours combination.");
             } else {
                 response = "Employee already has a schedule for this day/hours;";
                 if (replaceExisting) {
@@ -295,5 +300,50 @@ public class SchedulesService {
                         Utils.getDayOfWeek(appointmentDTO.getDate()), appointmentDTO.getTime(),
                         appointmentDTO.getTime().plusMinutes(duration));
         return !notValid;
+    }
+
+    @Transactional(readOnly = false)
+    public void deleteSchedule(Long id, long employeeId) {
+        EmployeeSchedule schedule = employeeScheduleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
+        if (schedule.getEmployee().getId() != employeeId) {
+            throw new IllegalArgumentException("Employee is not authorized to delete this schedule");
+        }
+        employeeScheduleRepository.delete(schedule);
+    }
+
+    @Transactional(readOnly = false)
+    public void deactivateSchedule(Long id, long employeeId) {
+        EmployeeSchedule schedule = employeeScheduleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Schedule not found"));
+        if (schedule.getEmployee().getId() != employeeId) {
+            throw new IllegalArgumentException("Employee is not authorized to delete this schedule");
+        }
+        schedule.setActive(false);
+        employeeScheduleRepository.save(schedule);
+    }
+
+    @Transactional(readOnly = true)
+    public Map<LocalDate, CalendarDayInfoDTO> getCalendarInfo(ScheduleFilter filter) {
+        Map<LocalDate, Long> appointments = appointmentRepository.getAppointmentsCalendar(filter.getFrom(),
+                filter.getTo(), filter.getEmployeeId(), filter.getEstablishmentId()).stream()
+                .collect(Collectors.toMap(MinutesInDay::getDate, MinutesInDay::getMinutesInDay));
+        List<LocalDate> exceptions = scheduleExceptionRepository.getExceptionsCalendar(filter.getFrom(),
+                filter.getTo(), filter.getEmployeeId(), filter.getEstablishmentId());
+        Map<DAY_OF_WEEK, Long> days = employeeScheduleRepository.getDaysWithNoSchedule(filter.getEmployeeId(),
+                filter.getEstablishmentId()).stream()
+                .collect(Collectors.toMap(MinutesInDay::getDayOfWeek, MinutesInDay::getMinutesInDay));
+
+        Map<LocalDate, CalendarDayInfoDTO> calendarInfo = new HashMap<>();
+        for (LocalDate date = filter.getFrom(); date.isBefore(filter.getTo()); date = date.plusDays(1)) {
+            CalendarDayInfoDTO info = new CalendarDayInfoDTO();
+            DAY_OF_WEEK day = Utils.getDayOfWeek(date);
+            Long minutesAvailableInDay = days.containsKey(day) ? days.get(day) : 0L;
+            info.setAvailability(appointments.containsKey(date) ? appointments.get(date) : 0L, minutesAvailableInDay);
+            info.setDisabled(exceptions.contains(date));
+            info.setHasSchedules(minutesAvailableInDay > 0);
+            calendarInfo.put(date, info);
+        }
+        return calendarInfo;
     }
 }

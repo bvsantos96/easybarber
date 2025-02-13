@@ -1,9 +1,9 @@
-import { View, Text, KeyboardAvoidingView, Pressable, TextInput } from 'react-native';
+import { View, Text, Pressable, TextInput } from 'react-native';
 import { Calendar } from "react-native-calendars";
 import { useTheme } from '@styles/ThemeContext';
 import { useEffect, useRef, useState } from 'react';
 import { MarkedDates } from 'react-native-calendars/src/types';
-import { getCalendarReadyDate, getTimeAsString } from 'utils/Utils';
+import { getCalendarReadyDate, getTimeAsString, parseServerTime, sumTime } from 'utils/Utils';
 import { getStyles } from '@styles/SchedulesStyles';
 import PageList from '@components/PageList';
 import Entypo from '@expo/vector-icons/Entypo';
@@ -14,6 +14,11 @@ import Input from '@components/Input';
 import DatePicker from 'react-native-date-picker';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Divider from '@components/Divider';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { Params } from '@navigation/Router';
+import { createException, fetchDayAppointments, fetchMonthAppointments } from 'utils/ApiRequest';
+import { AlertType } from '@components/Alert';
+import useAlertStore from 'storage/stores/AlertStore';
 
 const AppointmentItem = ({ item }: { item: AppointmentInfo }) => {
     const styles = getStyles();
@@ -23,7 +28,7 @@ const AppointmentItem = ({ item }: { item: AppointmentInfo }) => {
                 <Entypo name="dots-three-horizontal" size={styles.icon.width} color={styles.icon.color} />
             </View>
             <View style={styles.appoitmentTextContainer}>
-                <Text style={styles.timeText}>{item.time}</Text>
+                <Text style={styles.timeText}>{`${parseServerTime(item.time)} - ${sumTime(item.time, item.duration)}`}</Text>
                 <Text style={styles.titleText}>{item.entityName}</Text>
                 <Text style={styles.subTitleText}>{item.serviceName}</Text>
             </View>
@@ -31,7 +36,19 @@ const AppointmentItem = ({ item }: { item: AppointmentInfo }) => {
     );
 }
 
-const Schedules = () => {
+export type Route = {
+    establishmentId?: number;
+};
+
+type Props = NativeStackScreenProps<typeof Params, 'Schedules'>;
+
+export default function Schedules({ route, navigation }: Props) {
+    const { alert } = useAlertStore();
+    let establishmentId: number | undefined = undefined;
+    if (route.params) {
+        const { establishmentId: _establishmentId } = route.params;
+        establishmentId = _establishmentId;
+    }
     const theme = useTheme();
     const styles = getStyles();
     const [year, setYear] = useState(new Date().getFullYear());
@@ -39,7 +56,7 @@ const Schedules = () => {
     const [date, setDate] = useState<string>(new Date().toISOString().split('T')[0]);
     const [markedDates, setMarkedDates] = useState<MarkedDates>({});
     const [absenceDates, setAbsenceDates] = useState<MarkedDates>({});
-    const [type, setType] = useState('');
+    const [title, setTitle] = useState('');
     const [message, setMessage] = useState('');
     const [from, setFrom] = useState<Date | undefined>(undefined);
     const [to, setTo] = useState<Date | undefined>(undefined);
@@ -49,110 +66,46 @@ const Schedules = () => {
     const [openTo, setOpenTo] = useState(false);
     const modalRef = useRef<CustomModalRef>(null);
 
-    const markAbsence = (dates: Date[]): MarkedDates => {
-        let marked: MarkedDates = {};
-        dates.forEach(d => {
-            marked[getCalendarReadyDate(d)] = {
-                startingDay: true,
-                endingDay: true,
-                textColor: theme.colors.text.black,
-                selectedColor: theme.colors.text.lightGray,
-                selected: true
-            };
-        });
-        return marked;
-    }
-
-    const markDates = (dates: DailyAppointments[]): MarkedDates => {
-        let marked: MarkedDates = {};
-        dates.forEach(d => {
-            marked[getCalendarReadyDate(d.date)] = {
-                dots: Array(Math.min(d.occupancy, 3)).fill({ color: d.occupancy >= 3 ? theme.colors.errorColor : d.occupancy === 2 ? theme.colors.warningColor : theme.colors.mainColor }),
-            };
-        });
-        return marked;
-    }
-
-    const loadAppointmentsByDay = async (_page?: IPage<AppointmentInfo>, _params?: AppointmentFilter) => {
-        const nItems = 3;
-        const arr = Array(nItems).fill(null).map(() => (
-            {
-                date: "2021-09-01",
-                cancelled: false,
-                confirmed: true,
-                id: 1,
-                entityId: 1,
-                serviceName: 'Service Name',
-                entityName: 'Entity Name',
-                establishmentAddress: 'Establishment Address',
-                establishmentId: 1,
-                establishmentName: 'Establishment Name',
-                latitude: 0,
-                longitude: 0,
-                time: '10:00',
-                feedback: 0,
-                photo: 'https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png'
-            }));
-        for (let i = 0; i < arr.length; i++) {
-            arr[i].id = i;
+    const markDates = (days: MonthCalendar | undefined): void => {
+        if (!days) {
+            setAbsenceDates({});
+            setMarkedDates({});
+            return;
         }
-        const page = {
-            content: arr,
-            totalPages: 1,
-            totalElements: nItems,
-            currentPage: 1,
-            pageSize: nItems,
-            hasNextPage: false,
-            hasPreviousPage: false,
-        }
-        return Promise.resolve(
-            page
-        );
-    }
-
-    const loadMoreAppointments = () => {
-        // const appointments = await fetchAppointments(year, month);
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const twoDaysFromNow = new Date();
-        twoDaysFromNow.setDate(tomorrow.getDate() + 1);
-        setMarkedDates(markDates([
-            {
-                date: new Date(),
-                occupancy: 1
-            },
-            {
-                date: yesterday,
-                occupancy: 3
-            },
-            {
-                date: tomorrow,
-                occupancy: 1
-            },
-            {
-                date: twoDaysFromNow,
-                occupancy: 2
+        let marked: MarkedDates = {};
+        let absences: MarkedDates = {};
+        for (const dateStr in days) {
+            if (Object.prototype.hasOwnProperty.call(days, dateStr)) {
+                const _date = new Date(dateStr);
+                const d: CalendarDay = days[dateStr];
+                if (d.disabled || !d.hasSchedules) {
+                    absences[getCalendarReadyDate(_date)] = {
+                        startingDay: true,
+                        endingDay: true,
+                        textColor: theme.colors.text.black,
+                        selectedColor: theme.colors.text.lightGray,
+                        selected: true
+                    };
+                }
+                marked[getCalendarReadyDate(_date)] = {
+                    dots: Array(Math.min(d.availability, 3)).fill({ color: d.availability >= 3 ? theme.colors.errorColor : d.availability === 2 ? theme.colors.warningColor : theme.colors.mainColor }),
+                };
             }
-        ]));
+        }
+        setAbsenceDates(absences);
+        setMarkedDates(marked);
     }
 
-    const loadAbsences = () => {
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const tomorrow = new Date();
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        const twoDaysFromNow = new Date();
-        twoDaysFromNow.setDate(tomorrow.getDate() + 1);
-        setAbsenceDates(markAbsence([
-            tomorrow
-        ]));
+    const loadAppointmentsByDay = async (_page?: IPage<AppointmentInfo>, _params?: AppointmentFilter): Promise<IPage<AppointmentInfo> | undefined> => {
+        return await fetchDayAppointments(_page, _params, date, establishmentId);
+    }
+
+    const load = async () => {
+        markDates(await fetchMonthAppointments(month, year, establishmentId));
     }
 
     useEffect(() => {
-        loadMoreAppointments();
-        loadAbsences();
+        load();
     }, [year, month]);
 
     useEffect(() => {
@@ -160,23 +113,77 @@ const Schedules = () => {
         setMonth(parseInt(date.split('-')[1]));
     }, [date]);
 
-    const setAbsence = () => {
-        //TODO: Send info to server
+    const resetAbsence = () => {
+        setTitle('');
+        setMessage('');
+        const _from = new Date();
+        _from.setHours(0);
+        _from.setMinutes(0);
+        setFrom(_from);
+        const _to = new Date();
+        _to.setHours(23);
+        _to.setMinutes(59);
+        setTo(_to);
+    }
+
+    const setAbsence = async () => {
+        if (!title) {
+            alert({
+                type: AlertType.Error,
+                message: `${texts.requiredField} ${texts.title}`,
+                buttonText: texts.dismiss,
+                onPress: () => { },
+            });
+            return;
+        }
+        if (!from) {
+            alert({
+                type: AlertType.Error,
+                message: `${texts.requiredField} ${texts.from}`,
+                buttonText: texts.dismiss,
+                onPress: () => { },
+            });
+            return;
+        }
+        if (!to) {
+            alert({
+                type: AlertType.Error,
+                message: `${texts.requiredField} ${texts.to}`,
+                buttonText: texts.dismiss,
+                onPress: () => { },
+            });
+            return;
+        }
+        const absence: Absence = {
+            dateFrom: getCalendarReadyDate(new Date(date)),
+            dateTo: getCalendarReadyDate(new Date(date)),
+            startHour: from ? from.toISOString().split('T')[1].split('.')[0] : '',
+            endHour: to ? to.toISOString().split('T')[1].split('.')[0] : '',
+            establishmentId: establishmentId,
+            title: title,
+            message: message,
+        }
+        if (await createException(absence)) {
+            load();
+            resetAbsence();
+            modalRef.current?.toggleModal();
+        }
     }
 
     const openModal = () => {
-        const selectedDate = new Date(date);
+        const _from = new Date(date);
         const today = new Date();
-        if (selectedDate.getFullYear() === today.getFullYear() && selectedDate.getMonth() === today.getMonth() && selectedDate.getDate() === today.getDate()) {
+        if (_from.getFullYear() === today.getFullYear() && _from.getMonth() === today.getMonth() && _from.getDate() === today.getDate()) {
             setFrom(today);
         } else {
-            selectedDate.setMinutes(0);
-            selectedDate.setHours(0);
-            setFrom(selectedDate);
+            _from.setHours(0);
+            _from.setMinutes(0);
+            setFrom(_from);
         }
-        selectedDate.setHours(23);
-        selectedDate.setMinutes(59);
-        setTo(selectedDate);
+        const _to = new Date(date);
+        _to.setHours(23);
+        _to.setMinutes(59);
+        setTo(_to);
         modalRef.current?.toggleModal();
     }
 
@@ -231,7 +238,7 @@ const Schedules = () => {
                     <View style={styles.modal}>
                         <Text style={styles.modalTitle}>{texts.setAbsence}</Text>
                         <View style={styles.modalContent}>
-                            <Input hideTitleIfNoValue title={texts.type} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.type} onInputChange={setType} />
+                            <Input hideTitleIfNoValue title={texts.title} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.title} onInputChange={setTitle} />
                             <Divider size={20} />
                             <Input hideTitleIfNoValue title={texts.messageForClients} placeholderTextColor={styles.modalInput.color} containerStyle={styles.modalInput} round={false} placeholder={texts.messageForClients} onInputChange={setMessage} />
                             <Divider size={20} />
@@ -294,5 +301,3 @@ const Schedules = () => {
         </View >
     );
 }
-
-export default Schedules;

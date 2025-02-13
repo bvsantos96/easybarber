@@ -1,21 +1,9 @@
-c:
+clear:
    rm -rf node_modules
    rm package-lock.json
    npm install --legacy-peer-deps
 cs:
     npm run cleanstart
-
-prebuild type:
-    #!/usr/bin/env bash
-    if [[ "{{type}}" == "ios" ]]; then \
-        npx expo prebuild --platform ios && \
-        pod install --project-directory=./ios --clean-install && \
-        rm -rf android; \
-    elif [[ "{{type}}" == "android" ]]; then \
-        npx expo prebuild --platform android; \
-    else \
-        npx expo prebuild --platform all; \
-    fi
 
 start type:
     #!/usr/bin/env bash
@@ -30,8 +18,7 @@ start type:
     fi
 
 run type:
-    #!/usr/bin/env bash
-    if [[ "{{type}}" == "clean" ]]; then \
+    #!/usr/bin/env bash if [[ "{{type}}" == "clean" ]]; then \
         npx expo start -c; \
     elif [[ "{{type}}" == "release" ]]; then \
         npx expo start -c --tunnel --no-dev --minify; \
@@ -40,3 +27,92 @@ run type:
     else \
         npx expo start; \
     fi
+
+timestamp_log command:
+    echo "$(date '+%Y-%m-%d_%H-%M')_{{command}}.log"
+
+prebuild type:
+    #!/usr/bin/env bash
+    LOG_FILE=$(just timestamp_log prebuild)
+    echo "🔄 Prebuilding iOS project... (logging to $LOG_FILE)"
+    {
+        if [[ "{{type}}" == "ios" ]]; then
+            echo "🧹 Cleaning previous build artifacts..."
+            rm -rf ios/build
+            rm -rf ios/Pods
+            
+            echo "🚀 Prebuilding iOS project..."
+            npx expo prebuild --platform ios --clean > "$LOG_FILE" 2>&1
+            
+            echo "📦 Installing node modules..."
+            npm install >> "$LOG_FILE" 2>&1
+            
+            echo "🏗️  Generating codegen files..."
+            cd ios && pod install --repo-update --clean-install >> "$LOG_FILE" 2>&1
+            
+            echo "🔄 Running additional codegen..."
+            RCT_NEW_ARCH_ENABLED=1 pod install --repo-update --clean-install >> "$LOG_FILE" 2>&1
+            
+            cd ..
+            echo "✅ iOS project successfully prebuilt!"
+            rm -rf android
+        elif [[ "{{type}}" == "android" ]]; then
+            npx expo prebuild --platform android > "$LOG_FILE" 2>&1
+        else
+            npx expo prebuild --platform all > "$LOG_FILE" 2>&1
+        fi
+    }
+
+build type: 
+    #!/usr/bin/env bash
+    # just prebuild {{type}}
+    LOG_FILE=$(just timestamp_log build)
+    echo "🧹 Cleaning old iOS build... (logging to $LOG_FILE)"
+    {
+        if [[ "{{type}}" == "ios" ]]; then
+            rm -rf ios/build
+            DEVICE_NAME=$(xcrun simctl list devices available | grep -oE 'iPhone [0-9]+ \([^)]+\)' | tail -n 1 | awk '{print $1, $2}')
+            echo "🚀 Building iOS app for simulator ($DEVICE_NAME)..."
+            
+            # Run xcodebuild and process its output
+            xcodebuild -workspace ios/*.xcworkspace \
+                       -scheme $(ls ios | grep .xcodeproj | sed 's/.xcodeproj//') \
+                       -configuration Debug \
+                       -destination "platform=iOS Simulator,name=$DEVICE_NAME,OS=latest" \
+                       clean build 2>&1 | tee "$LOG_FILE" | \
+            while IFS= read -r line; do
+                # Extract total files when that info appears
+                if [[ $line =~ "Compile.* ([0-9]+) files" ]]; then
+                    TOTAL_FILES=${BASH_REMATCH[1]}
+                fi
+                
+                # Count and display compiled files
+                if [[ $line =~ "Compile.*Swift" ]]; then
+                    ((COMPILED_FILES++))
+                    if [ ! -z "$TOTAL_FILES" ]; then
+                        echo -ne "\r🏗️  Building: $COMPILED_FILES/$TOTAL_FILES files compiled"
+                    fi
+                fi
+                
+                # Show error messages in terminal
+                if [[ $line =~ "error:" ]]; then
+                    echo -e "\n❌ Error: $line"
+                fi
+            done
+            echo # New line after progress
+            
+            APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData -name "*.app" | grep "Build/Products/Debug")
+            DEVICE_ID=$(xcrun simctl list devices available --json | jq -r '.devices | to_entries[].value[] | select(.isAvailable == true) | .udid' | head -n 1)
+            
+            echo "📲 Installing app on simulator..."
+            xcrun simctl install "$DEVICE_ID" "$APP_PATH" >> "$LOG_FILE" 2>&1
+            
+            echo "🚀 Launching app on simulator..."
+            xcrun simctl launch "$DEVICE_ID" com.yourcompany.yourapp >> "$LOG_FILE" 2>&1
+            echo "✅ iOS app successfully built and launched!"
+        elif [[ "{{type}}" == "android" ]]; then
+            echo "⚠️ Building for Android is not yet configured (Update justfile)"
+        else
+            echo "⚠️ Building for all platforms is not yet configured (Update justfile)"
+        fi
+    }
