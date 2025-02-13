@@ -9,7 +9,6 @@ import Tabs from "@screens/Tabs";
 import Establishment from "@screens/Establishment";
 import ProductList from "@screens/ProductList";
 import Product from "@screens/Product";
-import TimeSheet from "@screens/Timesheet";
 import WeekView from "@screens/WeekView";
 import TimeSheet from "@screens/TimeSheet";
 import Employees from "@screens/Employees";
