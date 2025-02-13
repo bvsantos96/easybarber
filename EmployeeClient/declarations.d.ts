@@ -120,6 +120,7 @@ declare interface AppointmentFilter extends Record<string, string | number | boo
     establishmentId?: number;
     serviceId?: numbe;
     date?: string;
+    endDate?: string;
     time?: string;
     endTime?: string;
     userView?: boolean;
@@ -140,10 +141,23 @@ declare interface AppointmentInfo extends Identifiable {
     longitude: number;
     date: string;
     time: string;
+    duration: number;
     confirmed: boolean;
     cancelled: boolean;
     photo: string;
     feedback: number;
+}
+
+declare interface AppointmentItemListItem extends Identifiable {
+    id: number;
+    employeeName: string;
+    clientName: string;
+    serviceName: string;
+    serviceTypeId: number;
+    date: string;
+    time: string;
+    confirmed: boolean;
+    cancelled: boolean;
 }
 
 declare interface IFilterRequest {
@@ -328,13 +342,80 @@ declare interface ProductEntity extends ImageEntity {
 }
 
 declare interface TimeSheetItem extends Identifiable {
-    time: {
-        startTime: Date;
-        endTime: Date;
-    };
+    employeeId?: number,
+    establishmentId?: number,
+    day?: string,
+    days: number[],
+    startHour: string,
+    endHour: string
 }
 
 declare interface DailyAppointments {
     date: Date;
     occupancy: number;
+}
+
+declare interface BaseResponse extends Identifiable {
+    responseMessage: string;
+}
+
+declare interface CalendarDay {
+    disabled: boolean;
+    hasSchedules: boolean;
+    availability: DayOccupancyType;
+    date: Date;
+}
+
+declare interface MonthCalendar {
+    [key: string]: CalendarDay;
+}
+
+declare interface Absence {
+    establishmentId?: number;
+    startHour: string;
+    endHour: string;
+    dateFrom: string;
+    dateTo: string;
+    title: string;
+    message?: string;
+}
+
+declare interface EmployeeFilter extends Record<string, string | number | boolean> {
+    name?: string;
+    mobileNumber?: string;
+    serviceTypeIds?: number[];
+    greaterThanRating?: number;
+    lessThanRating?: number;
+}
+
+
+declare interface EmployeeListInfo extends Identifiable, Record<string, string | number | boolean> {
+    name: string;
+    mobileNumber: string;
+    image: string;
+    description: string;
+    nVotes: number;
+    sumVotes: number;
+    absent: boolean;
+    absentMessage: string;
+}
+
+declare interface EstablishmentBase extends Identifiable {
+    name: string;
+    image: string;
+    admin: boolean;
+}
+
+declare interface SelectedItem extends Identifiable {
+    idx: number;
+    admin?: boolean;
+}
+
+declare interface EmployeeBase extends Identifiable {
+    name: string;
+    description: string;
+    image: string;
+    rating: number;
+    nvotes: number;
+    serviceTypes: number[];
 }

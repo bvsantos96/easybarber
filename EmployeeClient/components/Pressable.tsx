@@ -29,7 +29,7 @@ export default function Pressable({
             style={({ pressed }) => [
                 { opacity: disabled || pressed ? 0.5 : 1 },
                 !useGradient && style,
-                shadow ? theme.shadow : undefined,
+                (!useGradient && shadow) ? theme.shadow : undefined,
             ]}
             onPress={onPress}
             onLayout={onLayout}

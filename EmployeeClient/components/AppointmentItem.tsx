@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef } from "react";
-import { View, Text, Animated, PanResponder } from "react-native";
+import { View, Text, Animated, PanResponder, LayoutChangeEvent, PanResponderGestureState, GestureResponderEvent } from "react-native";
 import { Image } from "expo-image";
 
 import ClockIcon from "@assets/icons/clock.svg";
@@ -38,7 +38,7 @@ export default function AppointmentItem({ appointment, cancel }: Props) {
         value.current = newValue;
     };
 
-    const handleIconsLayout = (event: any) => {
+    const handleIconsLayout = (event: LayoutChangeEvent) => {
         const { width } = event.nativeEvent.layout;
         minValue.current = -width;
     }
@@ -66,7 +66,7 @@ export default function AppointmentItem({ appointment, cancel }: Props) {
         setValue(newValue);
     }, [isMoving, minValue]);
 
-    const release = (evt: any, gestureState: any) => {
+    const release = (evt: GestureResponderEvent, gestureState: PanResponderGestureState) => {
         let p = gestureState.x0 > movingRef.current ? gestureState.x0 - movingRef.current : gestureState.x0;
         let x = evt.nativeEvent.pageX - p;
         if (x <= minValue.current / 2) {

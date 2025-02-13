@@ -27,3 +27,10 @@ export enum MobileConfirmationFunctions {
     CONFIRMATION_CODE = "confirmation_code",
     RESET_PASSWORD = "reset_password",
 }
+
+export enum DayOccupancyType {
+    FREE = 0,
+    AVAILABLE = 1,
+    MEDIUM = 2,
+    FULL = 3
+}
