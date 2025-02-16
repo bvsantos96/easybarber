@@ -34,3 +34,10 @@ export enum DayOccupancyType {
     MEDIUM = 2,
     FULL = 3
 }
+
+export enum TabsVisibleConstraints {
+    ALWAYS = 0,
+    AUTHENTICATED = 1,
+    HAS_ESTABLISHMENTS = 2,
+    HAS_SELECTED_ESTABLISHMENT = 3
+}

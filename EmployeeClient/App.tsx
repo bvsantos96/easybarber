@@ -31,7 +31,6 @@ import { validateVersion } from 'utils/VersionValidation';
 import SafeFullScreen from '@components/SafeFullScreen';
 import useHeaderStore from 'storage/stores/HeaderStore';
 import useServiceTypeStore from 'storage/stores/ServiceTypeStore';
-import { loadLongTermItems } from 'storage/ApiLongTermStorage';
 
 const Router = () => {
     const queryClient = useQueryClient()
@@ -79,7 +78,7 @@ const Router = () => {
 
     useEffect(() => {
         if (navigationRef.current) {
-            navigationRef.current.addListener('state', (e) => {
+            navigationRef.current.addListener('state', (_) => {
                 resetHeaderStore();
             });
         }

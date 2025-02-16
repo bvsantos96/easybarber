@@ -26,6 +26,7 @@ declare type TabsInfo = {
     leftIcon?: React.FC<any>;
     leftAction?: (navigation: NavigationProp<any, any>) => void;
     leftText?: string;
+    visibleConstraint?: TabsVisibleConstraints[]
 }
 
 declare interface Pageable<T> {
@@ -336,7 +337,7 @@ declare interface ImageEntity extends Identifiable {
 
 declare interface ProductEntity extends ImageEntity {
     name: string;
-    brand:string;
+    brand: string;
     description: string;
     price: number;
 }
