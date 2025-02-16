@@ -4,6 +4,7 @@ import java.util.Set;
 
 import org.locationtech.jts.geom.Point;
 
+import com.teamsantos.easybarber.entities.Establishment;
 import com.teamsantos.easybarber.entities.images.EstablishmentImage;
 
 import lombok.AllArgsConstructor;
@@ -17,9 +18,16 @@ public class EstablishmentDTO extends BaseEstablishmentDTO {
     private Double distance;
     private Long nVotes;
     private Long sumVotes;
+    private Boolean admin;
 
     public EstablishmentDTO() {
         super();
+    }
+
+    public EstablishmentDTO(Establishment establishment, boolean admin) {
+        super(establishment.getId(), establishment.getName(), establishment.getDescription(),
+                establishment.getAddress(), establishment.getLocation(), establishment.getImages());
+        this.admin = admin;
     }
 
     public EstablishmentDTO(Long id, String name, String description, String address, Point location) {

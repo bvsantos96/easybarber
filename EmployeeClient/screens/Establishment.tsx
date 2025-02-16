@@ -58,14 +58,17 @@ export default function Establishment({ route, navigation }: Props) {
             <Text style={styles.nameText}>Name</Text>
             <View style={styles.nameInput}>
                 <Input
+                    disabled={_establishment ? !_establishment.admin : false}
                     type="text"
                     placeholder={_establishment?.name || 'Enter establishment name'}
+                    defaultValue={_establishment?.name || ""}
                 />
             </View>
 
             <Text style={styles.phoneText}>Phone</Text>
             <View style={styles.phoneInput}>
                 <Input
+                    disabled={_establishment ? !_establishment.admin : false}
                     type="text"
                     placeholder={'Enter phone number'}
                 />
@@ -74,8 +77,10 @@ export default function Establishment({ route, navigation }: Props) {
             <Text style={styles.addressText}>Address</Text>
             <View style={styles.addressInput}>
                 <Input
+                    disabled={_establishment ? !_establishment.admin : false}
                     type="text"
                     placeholder={_establishment?.address || 'Enter address'}
+                    defaultValue={_establishment?.address || ""}
                 />
             </View>
 

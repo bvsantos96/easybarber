@@ -114,6 +114,7 @@ declare interface EstablishmentInfo extends Identifiable {
     images: IImage[];
     load?: boolean;
     favorite?: boolean;
+    admin?: boolean;
 }
 
 declare interface AppointmentFilter extends Record<string, string | number | boolean> {
@@ -233,21 +234,6 @@ declare interface EmployeeInfo extends Identifiable {
     rating: number;
     nvotes: number;
     images: IImage[];
-}
-
-declare interface EstablishmentInfo extends Identifiable {
-    id: number;
-    name: string;
-    description: string;
-    address: string;
-    latitude: number;
-    longitude: number;
-    distance?: number;
-    nvotes: number;
-    sumVotes: number;
-    images: IImage[];
-    load?: boolean;
-    favorite?: boolean;
 }
 
 declare interface EstablishmentDetail extends Identifiable {
