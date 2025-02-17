@@ -15,7 +15,7 @@ import { getStyles } from '../styles/Sign';
 import { SignInProps } from '../screens/SignIn';
 import PhoneInput from './PhoneInput';
 import { getDefaultCountryAsync } from '../utils/Constants';
-import { DEBUG_AUTO_LOGIN, DEBUG_AUTO_LOGIN_PASSWORD, DEBUG_AUTO_LOGIN_PHONE, PUBLIC_DEBUG_AUTO_LOGIN_COUNTRY_CODE } from '../utils/EnvVariables';
+import { DEBUG_AUTO_LOGIN, DEBUG_AUTO_LOGIN_PASSWORD, DEBUG_AUTO_LOGIN_PHONE } from '../utils/EnvVariables';
 import { AlertType } from './Alert';
 import texts from "../langs/en.json";
 import useAlertStore from 'storage/stores/AlertStore';
@@ -45,7 +45,7 @@ export default function Login({ navigation, toggleNewUser, expand, collapse }: S
                 if (DEBUG_AUTO_LOGIN) {
                     const result: IResult<IAPIResponse> = await doLogin(DEFAULT_COUNTRY?.callingCode[0] || "+351", DEBUG_AUTO_LOGIN_PHONE, DEBUG_AUTO_LOGIN_PASSWORD);
                     if (result.success)
-                        resetNavigation(navigation, Routes.Employees);
+                        resetNavigation(navigation, Routes.Tabs);
                     else {
                         console.error(result.message);
                     }

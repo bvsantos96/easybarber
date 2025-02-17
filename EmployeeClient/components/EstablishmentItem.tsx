@@ -12,8 +12,11 @@ export default function EstablishmentItem({ establishment, onPress }: { establis
     return (
         <View style={styles.itemContainer}>
             <Pressable onPress={() => onPress(establishment.id)} style={[styles.container, styles.shadow]}>
-                <View style={styles.imageContainer} >
-                    <ImageWithRating rating={establishment.sumVotes == 0 ? "0.0" : (establishment.sumVotes / establishment.nvotes).toFixed(1)} nvotes={establishment.nvotes} data={establishment.images ? establishment.images[0]?.data : defaultBarberImage} />
+                <View style={styles.imageContainer}>
+                    <ImageWithRating
+                        favorite={establishment.admin}
+                        data={establishment.images ? establishment.images[0]?.data : defaultBarberImage}
+                    />
                 </View>
                 <View style={styles.textContainer} >
                     <Text numberOfLines={2} style={styles.title}>{establishment.name}</Text>

@@ -26,6 +26,7 @@ declare type TabsInfo = {
     leftIcon?: React.FC<any>;
     leftAction?: (navigation: NavigationProp<any, any>) => void;
     leftText?: string;
+    visibleConstraint?: TabsVisibleConstraints[]
 }
 
 declare interface Pageable<T> {
@@ -113,6 +114,7 @@ declare interface EstablishmentInfo extends Identifiable {
     images: IImage[];
     load?: boolean;
     favorite?: boolean;
+    admin?: boolean;
 }
 
 declare interface AppointmentFilter extends Record<string, string | number | boolean> {
@@ -234,21 +236,6 @@ declare interface EmployeeInfo extends Identifiable {
     images: IImage[];
 }
 
-declare interface EstablishmentInfo extends Identifiable {
-    id: number;
-    name: string;
-    description: string;
-    address: string;
-    latitude: number;
-    longitude: number;
-    distance?: number;
-    nvotes: number;
-    sumVotes: number;
-    images: IImage[];
-    load?: boolean;
-    favorite?: boolean;
-}
-
 declare interface EstablishmentDetail extends Identifiable {
     name: string;
     description: string;
@@ -336,7 +323,7 @@ declare interface ImageEntity extends Identifiable {
 
 declare interface ProductEntity extends ImageEntity {
     name: string;
-    brand:string;
+    brand: string;
     description: string;
     price: number;
 }

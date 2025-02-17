@@ -52,6 +52,9 @@
     },
     "tabs": {
       "name": "Tabs",
+      "home": {
+        "name": "Home"
+      },
       "establishments": {
         "name": "Establishments",
         "new": "New",
@@ -62,6 +65,9 @@
       },
       "schedules": {
         "name": "Schedules"
+      },
+      "products": {
+        "name": "Products"
       },
       "settings": {
         "name": "Settings"
