@@ -3,6 +3,7 @@ import { useTheme } from './ThemeContext';
 
 export const getStyles = () => {
     const theme = useTheme();
+    const itemHeight = 128 * theme.dimensions.absoluteHeight;
     return StyleSheet.create({
         shadow: {
             ...theme.shadow as any,
@@ -14,15 +15,15 @@ export const getStyles = () => {
         container: {
             marginVertical: 10 * theme.dimensions.absoluteHeight,
             width: '95%',
-            height: 138 * theme.dimensions.absoluteHeight,
+            height: itemHeight,
             backgroundColor: theme.colors.backgroundColor,
             borderRadius: 11,
             flexDirection: 'row',
         },
         imageContainer: {
             width: 168 * theme.dimensions.absoluteWidth,
-            height: 138 * theme.dimensions.absoluteHeight,
-            maxHeight: 138 * theme.dimensions.absoluteHeight,
+            height: itemHeight,
+            maxHeight: itemHeight,
         },
         imageStyle: {
             position: 'absolute',
@@ -76,6 +77,12 @@ export const getStyles = () => {
             lineHeight: 18,
             height: 50 * theme.dimensions.absoluteHeight,
         },
+        ratingContainerNoText: {
+            width: 25 * theme.dimensions.absoluteWidth,
+            height: 25 * theme.dimensions.absoluteHeight,
+            justifyContent: 'center',
+            alignItems: 'center',
+        },
         ratingContainerRight: {
             position: 'absolute',
             borderRadius: 50,
@@ -103,7 +110,7 @@ export const getStyles = () => {
         },
         ratingIconContainer: {
             position: 'absolute',
-            left: 1 * theme.dimensions.absoluteWidth,
+            left: 2 * theme.dimensions.absoluteWidth,
             width: 20 * theme.dimensions.absoluteWidth,
             height: 20 * theme.dimensions.absoluteHeight,
             borderRadius: 22,

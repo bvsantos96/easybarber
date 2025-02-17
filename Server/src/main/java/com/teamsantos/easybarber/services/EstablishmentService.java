@@ -49,7 +49,6 @@ import com.teamsantos.easybarber.repositories.establishmentServices.Establishmen
 import com.teamsantos.easybarber.repositories.services.ServiceRepository;
 import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.utils.GeometryUtils;
-import com.teamsantos.easybarber.utils.PageDTO;
 import com.teamsantos.easybarber.utils.Utils;
 
 import jakarta.persistence.EntityManager;
@@ -340,10 +339,10 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     }
 
     @Transactional(readOnly = true)
-    public Page<EstablishmentDTO> getEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable) {
-        return PageDTO.toDTO(modelMapper,
-                establishmentRepository.findEstablishmentsByEmployeeId(employeeId, admin, pageable),
-                EstablishmentDTO.class, pageable);
+    public Page<EstablishmentDTO> getEstablishmentsByEmployeeId(Long employeeId, Boolean admin, Pageable pageable) {
+        if (admin != null)
+            return establishmentRepository.findEstablishmentsByEmployeeId(employeeId, admin, pageable);
+        return establishmentRepository.findEstablishmentsByEmployeeId(employeeId, pageable);
     }
 
     @Transactional(readOnly = true)
