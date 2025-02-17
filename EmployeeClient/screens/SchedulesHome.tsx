@@ -5,7 +5,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import texts from '@lang/en.json';
 import TimeSheetIcon from "@components/icons/TimeSheetIcon";
 import { TabIconNoPadding } from "@components/TabIcon";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import SchedulesIcon from "@components/icons/SchedulesIcon";
 import TimeSheet from "./TimeSheet";
 import WeekView from "./WeekView";
@@ -13,6 +13,7 @@ import SafeFullScreen from "@components/SafeFullScreen";
 import React from "react";
 import Schedules from "./Schedules";
 import useEstablishmentStore from "storage/stores/EstablishmentStore";
+import { hasEnabledSchedules } from "utils/ApiRequest";
 
 export type Route = {
     establishmentId?: number;
@@ -56,6 +57,16 @@ export default function SchedulesHome({ route, navigation }: Props) {
     const SelectedComponent = states[selectedIndex].component;
     const { selectedEstablishment } = useEstablishmentStore();
     const [_establishmentId, _setEstablishmentId] = useState(establishmentId || selectedEstablishment?.id);
+
+    useEffect(() => {
+        const hasSchedules = async () => {
+            if (_establishmentId && !(await hasEnabledSchedules(+_establishmentId))) {
+                setSelectedIndex(1);
+            }
+        }
+
+        if (_establishmentId) hasSchedules();
+    }, [_establishmentId]);
 
     useEffect(() => {
         if (establishmentId === undefined) _setEstablishmentId(selectedEstablishment?.id);
