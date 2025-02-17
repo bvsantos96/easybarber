@@ -170,7 +170,7 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
 
     @GetMapping("/establishments")
     public ResponseEntity<BasePageDTO<EstablishmentDTO>> getEstablishments(
-            @RequestParam(defaultValue = "false") boolean owned, Pageable pageable) {
+            @RequestParam(required = false) Boolean owned, Pageable pageable) {
         try {
             return ResponseEntity
                     .ok(new BasePageDTO<>(establishmentService

@@ -5,15 +5,38 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import TabsNav from '@navigation/TabsNavigator';
 import { Params, Routes } from '@navigation/Router';
 import TabIcon from '@components/TabIcon';
+import useAuthStore from 'storage/stores/AuthStore';
+import useEstablishmentStore from 'storage/stores/EstablishmentStore';
+import { useCallback, useEffect, useState } from 'react';
+import { TabsVisibleConstraints } from 'enums';
 
 export default function Tabs({ navigation }: PropNavigation) {
     const Tab = createBottomTabNavigator<typeof Params>();
     const theme = useTheme();
     const inserts = useSafeAreaInsets();
+    const { token } = useAuthStore();
+    const { establishments, selectedEstablishment } = useEstablishmentStore();
+    const [authenticated, setAuthenticated] = useState(token !== null && token !== undefined);
+    const [hasEstablishments, setHasEstablishments] = useState(establishments && establishments.length > 0);
+    const [hasSelectedEstablishment, setHasSelectedEstablishment] = useState(selectedEstablishment !== undefined && selectedEstablishment !== null);
+
+    useEffect(() => {
+        setAuthenticated(token !== null && token !== undefined);
+        setHasEstablishments(establishments && establishments.length > 0);
+        setHasSelectedEstablishment(selectedEstablishment !== undefined && selectedEstablishment !== null);
+    }, [token, establishments, selectedEstablishment]);
+
+    const tabEnabled = useCallback((tabs: TabsVisibleConstraints[] | undefined) => {
+        if (!tabs || tabs.length === 0) return true;
+        if (tabs.includes(TabsVisibleConstraints.AUTHENTICATED) && !authenticated) return false;
+        if (tabs.includes(TabsVisibleConstraints.HAS_ESTABLISHMENTS) && !hasEstablishments) return false;
+        if (tabs.includes(TabsVisibleConstraints.HAS_SELECTED_ESTABLISHMENT) && !hasSelectedEstablishment) return false;
+        return true;
+    }, [authenticated, hasEstablishments, hasSelectedEstablishment]);
 
     return (
         <Tab.Navigator
-            initialRouteName={Routes.Schedules}
+            initialRouteName={Routes.Home}
             screenOptions={{
                 tabBarActiveTintColor: theme.colors.mainColor,
                 tabBarInactiveTintColor: theme.colors.text.main,
@@ -67,12 +90,13 @@ export default function Tabs({ navigation }: PropNavigation) {
                                     text={tab.rightText}
                                 />
                             ) : undefined,
+                            tabBarButton: tabEnabled(tab.visibleConstraint) ? undefined : () => null,
                         }
                         }>
                         {(props) => (<SafeFullScreen><tab.component {...props} /></SafeFullScreen>)}
                     </Tab.Screen>
                 );
             })}
-        </Tab.Navigator>
+        </Tab.Navigator >
     );
 }
