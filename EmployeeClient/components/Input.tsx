@@ -85,6 +85,7 @@ type InputProps = {
     preventPaste?: boolean;
     nInputs?: number;
     iconBackgroundColor?: string;
+    disabled?: boolean;
 }
 
 // types can be found here: https://reactnative.dev/docs/textinput#autocomplete
@@ -111,7 +112,8 @@ const Input = React.forwardRef<TextInput, InputProps>(({
     hideTitleIfNoValue = false,
     preventPaste = false,
     nInputs = 1,
-    iconBackgroundColor
+    iconBackgroundColor,
+    disabled = false
 }, ref) => {
     const theme = useTheme();
     const styles = getStyles(nInputs);
@@ -164,6 +166,7 @@ const Input = React.forwardRef<TextInput, InputProps>(({
                 )}
                 <TextInput
                     ref={textInputRef}
+                    editable={!disabled}
                     contextMenuHidden={preventPaste}
                     onFocus={onFocus}
                     style={(nIcons === 2) ? styles.textInputWithTwoIcons : (nIcons === 1) ? styles.textInputWithOneIcon : styles.textInput}

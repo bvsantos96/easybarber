@@ -117,8 +117,20 @@ public interface EstablishmentRepository
     Page<EstablishmentDTO> list(@Param("partialName") String partialName, @Param("rating") Double rating,
             Pageable pageable);
 
-    @Query("SELECT es.establishment FROM EstablishmentStaff es WHERE es.employee.id = :employeeId AND (:admin = false OR es.admin = true)")
-    Page<Establishment> findEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable);
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO(es.establishment, es.admin)
+            FROM EstablishmentStaff es
+            WHERE es.employee.id = :employeeId AND (:admin = false OR es.admin = true)
+            """)
+    Page<EstablishmentDTO> findEstablishmentsByEmployeeId(Long employeeId, boolean admin, Pageable pageable);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO(es.establishment, es.admin)
+            FROM EstablishmentStaff es
+            WHERE es.employee.id = :employeeId
+            ORDER BY es.admin DESC
+            """)
+    Page<EstablishmentDTO> findEstablishmentsByEmployeeId(Long employeeId, Pageable pageable);
 
     @Query("""
             SELECT new com.teamsantos.easybarber.DTO.establishment.EstablishmentDTO(e.id, e.name, e.description, e.address, e.location, e.nVotes, e.sumVotes, e.images)
