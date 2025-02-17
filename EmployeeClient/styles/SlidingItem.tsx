@@ -22,5 +22,26 @@ export const getStyles = () => {
         shadow: {
             ...theme.shadow as any,
         },
+        icon: {
+            zIndex: 3,
+            elevation: 2,
+            borderWidth: 1,
+            borderRadius: 50 * theme.dimensions.absoluteWidth,
+            padding: 10 * theme.dimensions.absoluteWidth,
+            height: 50 * theme.dimensions.absoluteWidth,
+            width: 50 * theme.dimensions.absoluteWidth,
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: 24 * theme.dimensions.absoluteWidth,
+        },
+        redIcon: {
+            backgroundColor: theme.colors.mainColor,
+            borderColor: theme.colors.mainColor,
+        },
+        items: {
+            flexDirection: "row",
+            right: 5 * theme.dimensions.absoluteWidth,
+            gap: 5 * theme.dimensions.absoluteWidth,
+        }
     });
 }

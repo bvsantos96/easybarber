@@ -2,8 +2,9 @@ import React from "react";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../styles/ThemeContext";
 import { BottomSheetModalProvider } from "@gorhom/bottom-sheet/src";
+import { View } from "react-native";
 
-export default function SafeFullScreen({ children = <></> }) {
+export default function SafeFullScreen({ children = <></>, fixedButton }: { children?: React.ReactNode, fixedButton?: React.ReactNode }) {
     const theme = useTheme();
     const insets = useSafeAreaInsets();
     return (
@@ -16,6 +17,11 @@ export default function SafeFullScreen({ children = <></> }) {
         }}>
             <BottomSheetModalProvider>
                 {children}
+                {fixedButton && (
+                    <View style={{ position: "absolute", zIndex: 999, right: 15 * theme.dimensions.absoluteWidth, bottom: 15 * theme.dimensions.absoluteHeight }}>
+                        {fixedButton}
+                    </View>
+                )}
             </BottomSheetModalProvider>
         </SafeAreaView>
     );

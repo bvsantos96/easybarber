@@ -15,6 +15,7 @@ declare type StackInfo = {
 }
 
 declare type TabsInfo = {
+    key?: string | number;
     title: string;
     hasHeader: boolean;
     component: React.FC<any>;

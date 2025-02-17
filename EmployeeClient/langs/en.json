@@ -64,7 +64,9 @@
         "name": "Appointments"
       },
       "schedules": {
-        "name": "Schedules"
+        "name": "Schedules",
+        "timesheet": "Timesheet",
+        "weekview": "Week View",
       },
       "products": {
         "name": "Products"

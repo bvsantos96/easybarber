@@ -1,11 +1,9 @@
 import { View, Text } from 'react-native';
 
-const Home = () => {
+export default function Home({ navigation }: PropNavigation) {
     return (
         <View>
             <Text>Home</Text>
         </View>
     );
 }
-
-export default Home;

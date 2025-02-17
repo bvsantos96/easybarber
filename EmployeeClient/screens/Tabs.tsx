@@ -1,18 +1,25 @@
+import { useCallback, useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useTheme } from '../styles/ThemeContext';
-import SafeFullScreen from '@components/SafeFullScreen';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Pressable from '@components/Pressable';
+import TabIcon from '@components/TabIcon';
+import SafeFullScreen from '@components/SafeFullScreen';
+
 import TabsNav from '@navigation/TabsNavigator';
 import { Params, Routes } from '@navigation/Router';
-import TabIcon from '@components/TabIcon';
 import useAuthStore from 'storage/stores/AuthStore';
 import useEstablishmentStore from 'storage/stores/EstablishmentStore';
-import { useCallback, useEffect, useState } from 'react';
 import { TabsVisibleConstraints } from 'enums';
+
+import { useTheme } from '@styles/ThemeContext';
+import { getStyles } from '@styles/Tabs';
 
 export default function Tabs({ navigation }: PropNavigation) {
     const Tab = createBottomTabNavigator<typeof Params>();
     const theme = useTheme();
+    const styles = getStyles();
     const inserts = useSafeAreaInsets();
     const { token } = useAuthStore();
     const { establishments, selectedEstablishment } = useEstablishmentStore();
@@ -93,7 +100,13 @@ export default function Tabs({ navigation }: PropNavigation) {
                             tabBarButton: tabEnabled(tab.visibleConstraint) ? undefined : () => null,
                         }
                         }>
-                        {(props) => (<SafeFullScreen><tab.component {...props} /></SafeFullScreen>)}
+                        {(props) => (<SafeFullScreen
+                            fixedButton={
+                                (<Pressable style={styles.bottomButton} onPress={() => console.log("SwitchEstablishment")}>
+                                    <MaterialCommunityIcons name="home-switch-outline" size={styles.bottomButton.minWidth} color={styles.bottomButton.color} />
+                                </Pressable>
+                                )}
+                        ><tab.component {...props} /></SafeFullScreen>)}
                     </Tab.Screen>
                 );
             })}
