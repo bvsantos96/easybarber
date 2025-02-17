@@ -12,6 +12,7 @@ import WeekView from "./WeekView";
 import SafeFullScreen from "@components/SafeFullScreen";
 import React from "react";
 import Schedules from "./Schedules";
+import useEstablishmentStore from "storage/stores/EstablishmentStore";
 
 export type Route = {
     establishmentId?: number;
@@ -53,10 +54,12 @@ export default function SchedulesHome({ route, navigation }: Props) {
     ];
     const [selectedIndex, setSelectedIndex] = useState(0);
     const SelectedComponent = states[selectedIndex].component;
+    const { selectedEstablishment } = useEstablishmentStore();
+    const [_establishmentId, _setEstablishmentId] = useState(establishmentId || selectedEstablishment?.id);
 
     useEffect(() => {
-        console.log("ScheduleHome useEffect[establishmentId]: ", establishmentId);
-    }, [establishmentId]);
+        if (establishmentId === undefined) _setEstablishmentId(selectedEstablishment?.id);
+    }, [selectedEstablishment]);
 
     return (
         <>
