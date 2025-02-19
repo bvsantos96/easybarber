@@ -5,7 +5,7 @@ import LocationIcon from '@assets/icons/location.svg';
 import { defaultBarberImage } from "../utils/Constants";
 import { ImageWithRating } from "./ImageWithRating";
 
-export default function EstablishmentItem({ establishment, onPress }: { establishment: EstablishmentInfo, onPress?: (employeeId: number) => void }) {
+export default function EstablishmentItem({ establishment, onPress }: { establishment: EstablishmentInfo, onPress: (employeeId: number) => void }) {
     const styles = getStyles();
     const texts = require("../langs/en.json");
 
