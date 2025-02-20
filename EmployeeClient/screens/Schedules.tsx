@@ -14,11 +14,10 @@ import Input from '@components/Input';
 import DatePicker from 'react-native-date-picker';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Divider from '@components/Divider';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Params } from '@navigation/Router';
 import { createException, fetchDayAppointments, fetchMonthAppointments } from 'utils/ApiRequest';
 import { AlertType } from '@components/Alert';
 import useAlertStore from 'storage/stores/AlertStore';
+import useEstablishmentStore from 'storage/stores/EstablishmentStore';
 
 const AppointmentItem = ({ item }: { item: AppointmentInfo }) => {
     const styles = getStyles();
@@ -40,15 +39,9 @@ export type Route = {
     establishmentId?: number;
 };
 
-type Props = NativeStackScreenProps<typeof Params, 'Schedules'>;
-
-export default function Schedules({ route, navigation }: Props) {
+export default function Schedules() {
     const { alert } = useAlertStore();
-    let establishmentId: number | undefined = undefined;
-    if (route.params) {
-        const { establishmentId: _establishmentId } = route.params;
-        establishmentId = _establishmentId;
-    }
+    const { selectedEstablishment } = useEstablishmentStore();
     const theme = useTheme();
     const styles = getStyles();
     const [year, setYear] = useState(new Date().getFullYear());
@@ -65,6 +58,17 @@ export default function Schedules({ route, navigation }: Props) {
     const [openFrom, setOpenFrom] = useState(false);
     const [openTo, setOpenTo] = useState(false);
     const modalRef = useRef<CustomModalRef>(null);
+    const [resetSearch, setResetSearch] = useState(false);
+
+    useEffect(() => {
+        setOpenFrom(false);
+        setOpenTo(false);
+        resetAbsence();
+        setResetSearch(!resetSearch);
+        setMarkedDates({});
+        setAbsenceDates({});
+        load();
+    }, [selectedEstablishment]);
 
     const markDates = (days: MonthCalendar | undefined): void => {
         if (!days) {
@@ -97,11 +101,11 @@ export default function Schedules({ route, navigation }: Props) {
     }
 
     const loadAppointmentsByDay = async (_page?: IPage<AppointmentInfo>, _params?: AppointmentFilter): Promise<IPage<AppointmentInfo> | undefined> => {
-        return await fetchDayAppointments(_page, _params, date, establishmentId);
+        return await fetchDayAppointments(_page, _params, date, selectedEstablishment ? +selectedEstablishment.id : undefined);
     }
 
     const load = async () => {
-        markDates(await fetchMonthAppointments(month, year, establishmentId));
+        markDates(await fetchMonthAppointments(month, year, selectedEstablishment ? +selectedEstablishment.id : undefined));
     }
 
     useEffect(() => {
@@ -159,7 +163,7 @@ export default function Schedules({ route, navigation }: Props) {
             dateTo: getCalendarReadyDate(new Date(date)),
             startHour: from ? from.toISOString().split('T')[1].split('.')[0] : '',
             endHour: to ? to.toISOString().split('T')[1].split('.')[0] : '',
-            establishmentId: establishmentId,
+            establishmentId: selectedEstablishment ? +selectedEstablishment.id : undefined,
             title: title,
             message: message,
         }
@@ -227,6 +231,7 @@ export default function Schedules({ route, navigation }: Props) {
                     key="upcomming"
                     renderItem={({ item, index }) => <AppointmentItem key={index} item={item} />}
                     requestFunction={loadAppointmentsByDay}
+                    reset={resetSearch}
                 />
             </View>
 

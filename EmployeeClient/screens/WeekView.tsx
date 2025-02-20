@@ -1,16 +1,14 @@
 import { View, Text, TouchableOpacity } from 'react-native';
 import { useEffect, useState } from 'react';
 import { CalendarProvider, DateData, ExpandableCalendar, Timeline, TimelineList, TimelineProps } from 'react-native-calendars';
-import { getCalendarDateTime, getCalendarReadyDate, getCalendarReadyTime, getDateData } from 'utils/Utils';
+import { getCalendarDateTime, getCalendarReadyDate, getCalendarReadyTime, getDateData, getDateFromCalendarReadyStringDate } from 'utils/Utils';
 import texts from '@lang/en.json';
 import { getStyles } from '@styles/SchedulesStyles';
 import Divider from '@components/Divider';
 import { PackedEvent } from 'react-native-calendars/src/timeline/EventBlock';
 import { DayProps } from 'react-native-calendars/src/calendar/day';
 import { fetchAppointments } from 'utils/ApiRequest';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Params } from '@navigation/Router';
-import { Props } from './SchedulesHome';
+import useEstablishmentStore from 'storage/stores/EstablishmentStore';
 
 const CustomDay = (props: DayProps & { date?: DateData; }) => {
     const {
@@ -60,12 +58,8 @@ const CustomEvent = (_event: PackedEvent) => {
     );
 }
 
-export default function WeekView({ route, navigation }: Props) {
-    let establishmentId: number | undefined = undefined;
-    if (route.params) {
-        const { establishmentId: _establishmentId } = route.params;
-        establishmentId = _establishmentId;
-    }
+export default function WeekView() {
+    const { selectedEstablishment } = useEstablishmentStore();
     const styles = getStyles();
     const [currentDate, setCurrentDate] = useState(getCalendarReadyDate(new Date()));
     const [eventsByDate, setEventsByDate] = useState<{ [date: string]: TimelineProps['events'] }>({});
@@ -86,8 +80,8 @@ export default function WeekView({ route, navigation }: Props) {
             endDate: endDate.toISOString().split('T')[0],
         }
 
-        if (establishmentId) {
-            params.establishmentId = establishmentId;
+        if (selectedEstablishment) {
+            params.establishmentId = +selectedEstablishment.id;
         }
         let events: { [date: string]: TimelineProps['events'] } = {};
 
@@ -114,6 +108,12 @@ export default function WeekView({ route, navigation }: Props) {
         }
         setEventsByDate(events);
     }
+
+
+    useEffect(() => {
+        setEventsByDate({});
+        loadEvents(getDateFromCalendarReadyStringDate(currentDate));
+    }, [selectedEstablishment]);
 
     useEffect(() => {
         loadEvents(new Date());

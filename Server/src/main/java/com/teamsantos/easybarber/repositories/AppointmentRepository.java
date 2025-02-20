@@ -223,10 +223,12 @@ public interface AppointmentRepository
                     SUM(CASE WHEN (a.active = TRUE AND a.date > CURRENT_DATE OR (a.date = CURRENT_DATE AND a.time >= CURRENT_TIME)) THEN 1 ELSE 0 END) AS future,
                     SUM(CASE WHEN (a.active = FALSE OR a.date < CURRENT_DATE OR (a.date = CURRENT_DATE AND a.time < CURRENT_TIME)) THEN 1 ELSE 0 END) AS past
                 FROM appointment a
-                WHERE (:userView = true AND :userId = a.user_id OR :userView = false AND :userId = a.employee_id)
+                WHERE
+                    (:userView = true AND :userId = a.user_id OR :userView = false AND :userId = a.employee_id)
+                    AND (:establishmentId IS NULL OR a.establishment_id = :establishmentId)
                     AND a.confirmed = true
             """, nativeQuery = true)
-    Optional<Tuple> countAppointments(long userId, boolean userView);
+    Optional<Tuple> countAppointments(long userId, boolean userView, Long establishmentId);
 
     @Query("""
                 SELECT a
