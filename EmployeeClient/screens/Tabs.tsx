@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -13,6 +13,7 @@ import { TabsVisibleConstraints } from 'enums';
 
 import { useTheme } from '@styles/ThemeContext';
 import { ChangeEstablishment } from '@components/ChangeEstablishment';
+import { useFocusEffect } from '@react-navigation/native';
 
 export default function Tabs({ navigation }: PropNavigation) {
     const Tab = createBottomTabNavigator<typeof Params>();
@@ -24,11 +25,13 @@ export default function Tabs({ navigation }: PropNavigation) {
     const [hasEstablishments, setHasEstablishments] = useState(establishments && establishments.length > 0);
     const [hasSelectedEstablishment, setHasSelectedEstablishment] = useState(selectedEstablishment !== undefined && selectedEstablishment !== null);
 
-    useEffect(() => {
-        setAuthenticated(token !== null && token !== undefined);
-        setHasEstablishments(establishments && establishments.length > 0);
-        setHasSelectedEstablishment(selectedEstablishment !== undefined && selectedEstablishment !== null);
-    }, [token, establishments, selectedEstablishment]);
+    useFocusEffect(
+        useCallback(() => {
+            setAuthenticated(token !== null && token !== undefined);
+            setHasEstablishments(establishments && establishments.length > 0);
+            setHasSelectedEstablishment(selectedEstablishment !== undefined && selectedEstablishment !== null);
+        }, [token, establishments, selectedEstablishment])
+    );
 
     const tabEnabled = useCallback((tabs: TabsVisibleConstraints[] | undefined) => {
         if (!tabs || tabs.length === 0) return true;
