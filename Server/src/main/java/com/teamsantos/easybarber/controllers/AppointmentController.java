@@ -73,12 +73,13 @@ public class AppointmentController {
     }
 
     @GetMapping("/appointment/count")
-    public ResponseEntity<AppointmentCountDTO> countAppointments(@RequestParam(required = false) Boolean userView) {
+    public ResponseEntity<AppointmentCountDTO> countAppointments(@RequestParam(required = false) Boolean userView,
+            @RequestParam(required = false) Long establishmentId) {
         try {
             if (userView == null) {
                 userView = true;
             }
-            return ResponseEntity.ok(appointmentService.countAppointments(userView));
+            return ResponseEntity.ok(appointmentService.countAppointments(userView, establishmentId));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new AppointmentCountDTO(e.getMessage()));
         }

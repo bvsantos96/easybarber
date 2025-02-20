@@ -5,7 +5,7 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import texts from '@lang/en.json';
 import TimeSheetIcon from "@components/icons/TimeSheetIcon";
 import { TabIconNoPadding } from "@components/TabIcon";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import SchedulesIcon from "@components/icons/SchedulesIcon";
 import TimeSheet from "./TimeSheet";
 import WeekView from "./WeekView";

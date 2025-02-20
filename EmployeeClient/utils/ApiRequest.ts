@@ -456,14 +456,18 @@ export const cancelAppointment = async (id: number, reason = ""): Promise<boolea
     return false;
 }
 
-export const getAppointmentCount = async (): Promise<AppointmentCounts> => {
+export const getAppointmentCount = async (establishmentId?: number): Promise<AppointmentCounts> => {
     if (await getToken() === null) {
         return {
             upcomming: 0,
             past: 0
         }
     }
-    return getItemsFromRequest<AppointmentCounts>(await request<AppointmentCounts>(`appointment/count?userView=false`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT));
+    const params = {
+        userView: false,
+        establishmentId: establishmentId
+    }
+    return getItemsFromRequest<AppointmentCounts>(await request<AppointmentCounts>(parsePathParams(`appointment/count`, params), "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT));
 }
 
 export const getAppointments = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter): Promise<IPage<AppointmentInfo> | undefined> => {
