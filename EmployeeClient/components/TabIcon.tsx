@@ -11,4 +11,14 @@ const TabIcon = ({ left, icon: Icon, text, func }: { left?: boolean, icon?: Reac
     );
 };
 
+export const TabIconNoPadding = ({ icon: Icon, text, func }: { icon?: React.FC<any>, text?: string, func?: () => void }) => {
+    const theme = useTheme();
+    return (
+        <TouchableOpacity style={{ alignItems: "center" }} onPress={func}>
+            {Icon && <Icon fill={theme.colors.mainColor} width={20 * theme.dimensions.absoluteWidth} />}
+            {text && text.length > 0 && <Text style={{ color: theme.colors.mainColor }}>{text}</Text>}
+        </TouchableOpacity>
+    );
+}
+
 export default TabIcon;
