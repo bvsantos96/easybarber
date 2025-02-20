@@ -41,6 +41,7 @@ import com.teamsantos.easybarber.repositories.EstablishmentStaffRepository;
 import com.teamsantos.easybarber.repositories.ScheduleExceptionsRepository;
 import com.teamsantos.easybarber.repositories.establishmentServices.EstablishmentServiceRepository;
 import com.teamsantos.easybarber.repositories.services.ServiceRepository;
+import com.teamsantos.easybarber.security.utils.UserContext;
 import com.teamsantos.easybarber.services.helper.AvailabilityCalculation;
 import com.teamsantos.easybarber.utils.PageDTO;
 import com.teamsantos.easybarber.utils.Pair;
@@ -345,5 +346,10 @@ public class SchedulesService {
             calendarInfo.put(date, info);
         }
         return calendarInfo;
+    }
+
+    @Transactional(readOnly = true)
+    public boolean hasValidSchedule(long establishmentId) {
+        return employeeScheduleRepository.establishmentHasValidSchedule(establishmentId, UserContext.getEmployeeId());
     }
 }

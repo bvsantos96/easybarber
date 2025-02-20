@@ -12,13 +12,15 @@ type HeaderProps = {
     navigation: NavigationProp<any, any>;
     title: string;
     hasGoBack?: boolean;
+    firstHeader?: React.FC<any>;
+    firstHeaderFunction?: () => void;
     secondHeader?: React.FC<SecondHeaderProps>;
     secondHeaderFunction?: (selected: boolean) => Promise<boolean>;
     selected?: boolean;
     hideSecondHeader?: boolean;
 }
 
-const Header = ({ navigation, title, hasGoBack = true, secondHeader, secondHeaderFunction, selected: _selected, hideSecondHeader = false }: HeaderProps) => {
+const Header = ({ navigation, title, hasGoBack = true, firstHeader, secondHeader, secondHeaderFunction, selected: _selected, hideSecondHeader = false }: HeaderProps) => {
     const { onPress } = useHeaderStore();
     const styles = getStyles();
     const [selected, setSelected] = React.useState(_selected || false);
@@ -46,9 +48,12 @@ const Header = ({ navigation, title, hasGoBack = true, secondHeader, secondHeade
                     }}>
                         <Entypo name="chevron-small-left" size={styles.goBackIcon.width} color="black" />
                     </TouchableOpacity>
-                ) : (
-                    <View style={styles.headerFiller} />
-                )}
+                ) : firstHeader ? (
+                    React.createElement(firstHeader, {})
+                )
+                    : (
+                        <View style={styles.headerFiller} />
+                    )}
                 <Text style={styles.headerTitle}>{title}</Text>
                 {(secondHeader && !hideSecondHeader) ? (
                     React.createElement(secondHeader, {

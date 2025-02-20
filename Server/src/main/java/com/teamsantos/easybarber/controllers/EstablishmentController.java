@@ -435,4 +435,20 @@ public class EstablishmentController extends ImageController<Establishment, Esta
             return ResponseEntity.badRequest().body(response);
         }
     }
+
+    @GetMapping("/{establishmentId}/schedules/valid")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_EMPLOYEE)
+    public ResponseEntity<BaseResponseDTO> hasValidSchedule(@PathVariable Long establishmentId) {
+        BaseResponseDTO response = new BaseResponseDTO();
+        try {
+            if (schedulesService.hasValidSchedule(establishmentId)) {
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            }
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
 }

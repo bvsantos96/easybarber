@@ -41,3 +41,9 @@ export enum TabsVisibleConstraints {
     HAS_ESTABLISHMENTS = 2,
     HAS_SELECTED_ESTABLISHMENT = 3
 }
+
+export enum ButtonType {
+    Fontisto = "fontisto",
+    MaterialCommunityIcons = "material-community-icons",
+    MaterialIcons = "material-icons"
+}

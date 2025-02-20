@@ -161,6 +161,10 @@ export const getStyles = () => {
             right: 0,
             bottom: 0,
             backgroundColor: theme.colors.mainColor,
+        },
+        todayButton: {
+            position: 'absolute',
+            bottom: theme.dimensions.tabHeight,
         }
     });
 }

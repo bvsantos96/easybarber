@@ -1,6 +1,35 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
 import { Animated, GestureResponderEvent, LayoutChangeEvent, PanResponder, PanResponderGestureState, View } from "react-native";
 import { getStyles } from "@styles/SlidingItem";
+import Pressable from "./Pressable";
+import Fontisto from '@expo/vector-icons/Fontisto';
+import { ButtonType } from "enums";
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+
+export const SlidingButton = ({ onPress, backgroundColor, color, type, name }: { onPress: () => void, backgroundColor: string, color: string, type: ButtonType, name: string }) => {
+    const styles = getStyles();
+    switch (type) {
+        case ButtonType.Fontisto:
+            return (
+                <Pressable onPress={onPress} style={[styles.icon, { backgroundColor: backgroundColor, borderColor: backgroundColor }]}>
+                    <Fontisto name={name as any} size={styles.icon.fontSize} color={color} />
+                </Pressable>
+            );
+        case ButtonType.MaterialCommunityIcons:
+            return (
+                <Pressable onPress={onPress} style={[styles.icon, { backgroundColor: backgroundColor, borderColor: backgroundColor }]}>
+                    <MaterialCommunityIcons name={name as any} size={styles.icon.fontSize} color={color} />
+                </Pressable>
+            );
+        case ButtonType.MaterialIcons:
+            return (
+                <Pressable onPress={onPress} style={[styles.icon, { backgroundColor: backgroundColor, borderColor: backgroundColor }]}>
+                    <MaterialIcons name={name as any} size={styles.icon.fontSize} color={color} />
+                </Pressable>
+            );
+    }
+}
 
 const SlidingItem = ({ children, items }: {
     children: ReactNode | ReactNode[], items: ReactNode | ReactNode[]
@@ -89,7 +118,7 @@ const SlidingItem = ({ children, items }: {
                 {children}
             </Animated.View>
             <View style={[styles.itemContainer, styles.shadow, styles.backContainer, { flexDirection: "row" }]} >
-                <View style={{ flexDirection: "row" }} onLayout={handleIconsLayout}>
+                <View style={styles.items} onLayout={handleIconsLayout}>
                     {items}
                 </View>
             </View>
