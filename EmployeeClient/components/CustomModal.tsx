@@ -11,6 +11,7 @@ type CustomModalProps = {
     modalHeight: number;
     buttonStyle?: StyleProp<ViewStyle>;
     snapPoints?: number[];
+    modalClosed?: () => void;
 };
 
 export interface CustomModalRef {
@@ -18,7 +19,7 @@ export interface CustomModalRef {
 }
 
 const CustomModal: React.ForwardRefRenderFunction<CustomModalRef, CustomModalProps> = (
-    { children, modalContent, modalHeight, buttonStyle, snapPoints },
+    { children, modalContent, modalHeight, buttonStyle, snapPoints, modalClosed },
     ref
 ) => {
     const theme = useTheme();
@@ -58,6 +59,7 @@ const CustomModal: React.ForwardRefRenderFunction<CustomModalRef, CustomModalPro
 
     const toggleModal = () => {
         if (isVisible) {
+            modalClosed && modalClosed();
             bottomSheetModalRef.current?.dismiss();
         } else {
             bottomSheetModalRef.current?.present();
@@ -81,7 +83,10 @@ const CustomModal: React.ForwardRefRenderFunction<CustomModalRef, CustomModalPro
             )}
             <BottomSheetModal
                 ref={bottomSheetModalRef}
-                onDismiss={() => setIsVisible(false)}
+                onDismiss={() => {
+                    modalClosed && modalClosed();
+                    setIsVisible(false);
+                }}
                 snapPoints={_snapPoints}
                 backdropComponent={() => (
                     <BottomSheetBackdrop

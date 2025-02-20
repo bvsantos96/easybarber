@@ -397,6 +397,7 @@ declare interface EstablishmentBase extends Identifiable {
 declare interface SelectedItem extends Identifiable {
     idx: number;
     admin?: boolean;
+    name: string;
 }
 
 declare interface EmployeeBase extends Identifiable {

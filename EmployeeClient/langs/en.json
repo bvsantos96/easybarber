@@ -270,5 +270,8 @@
   "status": {
     "active": "Active",
     "absent": "Unavailable"
-  }
+  },
+  "select": "Select",
+  "search": "Search",
+  "selectEstablishment": "Select Establishment",
 }
