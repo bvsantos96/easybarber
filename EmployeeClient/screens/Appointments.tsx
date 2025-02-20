@@ -8,8 +8,10 @@ import PageList, { PageListRef } from '@components/PageList';
 import AnimatedSwitch from '@components/AnimatedSwitch';
 import texts from '@lang/en.json';
 import useAppointmentStore from 'storage/stores/AppointmentStore';
+import useEstablishmentStore from 'storage/stores/EstablishmentStore';
 
 export default function Appointments({ navigation }: PropNavigation) {
+    const { selectedEstablishment } = useEstablishmentStore();
     const styles = getStyles();
     const [resetSearch, setResetSearch] = useState(false);
     const pageListRef = useRef<PageListRef<AppointmentInfo>>(null);
@@ -19,6 +21,8 @@ export default function Appointments({ navigation }: PropNavigation) {
     const [nPast, setNPast] = useState(0);
     const { updateAppointments, resetUpdateAppointments } = useAppointmentStore();
 
+    useEffect(() => { setResetSearch(!resetSearch) }, [selectedEstablishment]);
+
     useEffect(() => {
         if (updateAppointments) {
             resetUpdateAppointments();
@@ -27,15 +31,23 @@ export default function Appointments({ navigation }: PropNavigation) {
     }, [updateAppointments]);
 
     const loadUpcomming = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter) => {
-        return await getAppointments(page, { ...params, future: true, activeOnly: true });
+        let _params = { ...params, future: true, activeOnly: true };
+        if (selectedEstablishment) {
+            _params.establishmentId = +selectedEstablishment.id;
+        }
+        return await getAppointments(page, _params);
     }
 
     const loadPast = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter) => {
+        let _params = { ...params, future: false };
+        if (selectedEstablishment) {
+            _params.establishmentId = +selectedEstablishment.id;
+        }
         return await getAppointments(page, { ...params, future: false });
     }
 
     useEffect(() => {
-        getAppointmentCount().then((conts: AppointmentCounts) => {
+        getAppointmentCount(selectedEstablishment ? +selectedEstablishment.id : undefined).then((conts: AppointmentCounts) => {
             setNUpcomming(conts.upcomming);
             setNPast(conts.past);
         });

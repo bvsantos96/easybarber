@@ -184,8 +184,9 @@ public class AppointmentService {
     }
 
     @Transactional(readOnly = true)
-    public AppointmentCountDTO countAppointments(boolean userView) {
-        Optional<Tuple> count = appointmentRepository.countAppointments(UserContext.getUserId(), userView);
+    public AppointmentCountDTO countAppointments(boolean userView, Long establishmentId) {
+        Optional<Tuple> count = appointmentRepository.countAppointments(UserContext.getUserId(), userView,
+                establishmentId);
         if (count.isEmpty()) {
             return new AppointmentCountDTO(0, 0);
         }

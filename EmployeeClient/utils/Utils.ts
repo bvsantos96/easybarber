@@ -31,6 +31,11 @@ export const getCalendarReadyDate = (date: Date) => {
     return `${date.getFullYear()}-${twoDigits(date.getMonth() + 1)}-${twoDigits(date.getDate())}`;
 }
 
+export const getDateFromCalendarReadyStringDate = (date: string) => {
+    const parts = date.split('-');
+    return new Date(parseInt(parts[0]), parseInt(parts[1]) - 1, parseInt(parts[2]));
+}
+
 export const getCalendarReadyTime = (date: Date) => {
     return {
         hour: date.getHours(),

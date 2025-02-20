@@ -14,7 +14,7 @@ import { getClientDayOfWeekFromString, getServerDayOfWeek, getTimeAsString, pars
 import SlidingItem from '@components/SlidingItem';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import { deleteSchedule, getTimesheets, setTimesheet } from 'utils/ApiRequest';
-import { Props } from './SchedulesHome';
+import useEstablishmentStore from 'storage/stores/EstablishmentStore';
 
 const SelectTimeShett = ({ day, save }: { day: number, save: (day: number, from: Date, to: Date) => void }) => {
     const styles = getStyles();
@@ -118,20 +118,25 @@ const TimeSheetComponent = ({ item, maxWidth, deleteItem }: { item: TimeSheetIte
     );
 }
 
-export default function TimeSheet({ route }: Props) {
-    let establishmentId: number | undefined = undefined;
-    if (route.params) {
-        const { establishmentId: _establishmentId } = route.params;
-        establishmentId = _establishmentId;
-    }
+export default function TimeSheet() {
     const styles = getStyles();
     const theme = useTheme();
+
+    const { selectedEstablishment } = useEstablishmentStore();
     const days = useRef([...Array(7).keys()]);
     const [selectedDay, setSelectedDay] = useState(0);
     const [refresh, setRefresh] = useState(false);
     const [timeSheets, setTimeSheets] = useState<{ [key: number]: TimeSheetItem[] }>({});
     const [maxWidth, setMaxWidth] = useState<number>(styles.timeSheetItemContainer.width);
     const filterModalRef = useRef<CustomModalRef>(null);
+
+    useEffect(() => {
+        setTimeSheets({});
+        setMaxWidth(styles.timeSheetItemContainer.width);
+        setRefresh(!refresh);
+        load();
+    }, [selectedEstablishment]);
+
 
     const toggleRefresh = (day: number) => {
         setMaxWidth(timeSheets[day]?.length > 5 ? (styles.timeSheetItemContainer.width / 2 - 2 * theme.dimensions.absoluteWidth) : styles.timeSheetItemContainer.width);
@@ -158,7 +163,7 @@ export default function TimeSheet({ route }: Props) {
     }
 
     const load = async () => {
-        let items = await getTimesheets(undefined, undefined, establishmentId);
+        let items = await getTimesheets(undefined, undefined, selectedEstablishment ? +selectedEstablishment.id : undefined);
         if (!items || items.content.length <= 0) return;
         let newTimeSheet: { [key: number]: TimeSheetItem[] } = {};
         items.content.forEach((item: TimeSheetItem) => {
@@ -178,7 +183,7 @@ export default function TimeSheet({ route }: Props) {
         const serverDay = getServerDayOfWeek(day);
         let timeSheet: TimeSheetItem = {
             id: 0,
-            establishmentId: establishmentId,
+            establishmentId: selectedEstablishment ? +selectedEstablishment.id : undefined,
             day: texts.weekdays[day].toUpperCase(),
             days: [serverDay],
             endHour: getTimeAsString(to),
