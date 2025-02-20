@@ -10,6 +10,7 @@ import { DayProps } from 'react-native-calendars/src/calendar/day';
 import { fetchAppointments } from 'utils/ApiRequest';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Params } from '@navigation/Router';
+import { Props } from './SchedulesHome';
 
 const CustomDay = (props: DayProps & { date?: DateData; }) => {
     const {
@@ -59,14 +60,6 @@ const CustomEvent = (_event: PackedEvent) => {
     );
 }
 
-
-
-export type Route = {
-    establishmentId?: number;
-};
-
-type Props = NativeStackScreenProps<typeof Params, 'WeekView'>;
-
 export default function WeekView({ route, navigation }: Props) {
     let establishmentId: number | undefined = undefined;
     if (route.params) {
@@ -82,23 +75,6 @@ export default function WeekView({ route, navigation }: Props) {
         minutes: 0,
     };
     const [initialTime, setInitialTime] = useState(INITIAL_TIME);
-
-    // useEffect(() => {
-    //     if (dateData && eventsByDate[dateData.dateString] === undefined) {
-    //         const exampleEvent = {
-    //             start: `${dateData.year}-${String(dateData.month).padStart(2, '0')}-${String(dateData.day).padStart(2, '0')}T09:00:00`,
-    //             end: `${dateData.year}-${String(dateData.month).padStart(2, '0')}-${String(dateData.day).padStart(2, '0')}T10:00:00`,
-    //             title: 'Example Event',
-    //             summary: 'This is an example event',
-    //             color: styles.main.color
-    //         };
-    //
-    //         setEventsByDate((prev) => ({
-    //             ...prev,
-    //             [dateData.dateString]: [...(prev[dateData.dateString] || []), exampleEvent],
-    //         }));
-    //     }
-    // }, [dateData]);
 
     const loadEvents = async (startDate: Date) => {
         let endDate: Date = new Date();
@@ -162,6 +138,7 @@ export default function WeekView({ route, navigation }: Props) {
             showTodayButton
             numberOfDays={7}
             onMonthChange={(date: DateData) => setDateData(date)}
+            todayButtonStyle={styles.todayButton}
         >
             <ExpandableCalendar
                 customHeaderTitle={<CustomMonth date={dateData} />}

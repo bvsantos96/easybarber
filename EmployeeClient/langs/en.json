@@ -64,7 +64,9 @@
         "name": "Appointments"
       },
       "schedules": {
-        "name": "Schedules"
+        "name": "Schedules",
+        "timesheet": "Timesheet",
+        "weekview": "Week View",
       },
       "products": {
         "name": "Products"
@@ -268,5 +270,8 @@
   "status": {
     "active": "Active",
     "absent": "Unavailable"
-  }
+  },
+  "select": "Select",
+  "search": "Search",
+  "selectEstablishment": "Select Establishment",
 }

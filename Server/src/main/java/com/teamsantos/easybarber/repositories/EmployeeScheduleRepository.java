@@ -118,4 +118,16 @@ public interface EmployeeScheduleRepository
             GROUP BY s.day
             """)
     List<MinutesInDay> getDaysWithNoSchedule(Long employeeId, Long establishmentId);
+
+    @Query("""
+            SELECT EXISTS(
+                SELECT 1
+                FROM EmployeeSchedule s
+                WHERE
+                s.establishment.id = :establishmentId
+                AND (:employeeId IS NULL OR s.employee.id = :employeeId)
+                AND s.active = true
+            )
+            """)
+    Boolean establishmentHasValidSchedule(long establishmentId, Long employeeId);
 }

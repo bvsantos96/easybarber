@@ -20,6 +20,7 @@ export const getStyles = () => {
             width: 24 * theme.dimensions.absoluteWidth,
         },
         header: {
+            zIndex: 100,
             justifyContent: 'center',
             alignItems: 'center',
             height: theme.dimensions.headerHeight,

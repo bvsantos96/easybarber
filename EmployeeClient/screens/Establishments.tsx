@@ -1,10 +1,12 @@
 import { View } from 'react-native';
-import { getStyles } from '@styles/Establishments';
+import { useRef, useState } from 'react';
+
 import Divider from '@components/Divider';
 import PageList, { PageListRef } from '@components/PageList';
 import EstablishmentItem from '@components/EstablishmentItem';
-import { useRef, useState } from 'react';
 import { getEstablishments } from 'utils/ApiRequest';
+
+import { getStyles } from '@styles/Establishments';
 import { Routes } from '@navigation/Router';
 
 const Establishments = ({ navigation }: PropNavigation) => {
@@ -25,11 +27,7 @@ const Establishments = ({ navigation }: PropNavigation) => {
                     ref={pageListRef}
                     renderItem={({ item }: { item: EstablishmentInfo }) =>
                         <EstablishmentItem
-                            onPress={
-                                () => {
-                                    navigation.navigate(Routes.Establishment, item);
-                                }
-                            }
+                            onPress={() => navigation.navigate(Routes.Establishment, item)}
                             establishment={item} />
                     }
                     requestFunction={loadMore} />

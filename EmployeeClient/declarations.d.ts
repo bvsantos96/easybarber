@@ -15,6 +15,7 @@ declare type StackInfo = {
 }
 
 declare type TabsInfo = {
+    key?: string | number;
     title: string;
     hasHeader: boolean;
     component: React.FC<any>;
@@ -396,6 +397,7 @@ declare interface EstablishmentBase extends Identifiable {
 declare interface SelectedItem extends Identifiable {
     idx: number;
     admin?: boolean;
+    name: string;
 }
 
 declare interface EmployeeBase extends Identifiable {
