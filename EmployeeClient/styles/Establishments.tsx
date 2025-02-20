@@ -17,5 +17,12 @@ export const getStyles = () => {
             alignItems: 'center',
             flexGrow: 1,
         },
+        THEME: {
+            backgroundColor: theme.colors.mainColor,
+            color: theme.colors.backgroundColor,
+        },
+        THEME_green: {
+            backgroundColor: theme.colors.successColor
+        }
     });
 }

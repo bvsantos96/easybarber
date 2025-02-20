@@ -13,9 +13,8 @@ import DatePicker from 'react-native-date-picker';
 import { getClientDayOfWeekFromString, getServerDayOfWeek, getTimeAsString, parseServerTime } from 'utils/Utils';
 import SlidingItem from '@components/SlidingItem';
 import Fontisto from '@expo/vector-icons/Fontisto';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { Params } from '@navigation/Router';
 import { deleteSchedule, getTimesheets, setTimesheet } from 'utils/ApiRequest';
+import { Props } from './SchedulesHome';
 
 const SelectTimeShett = ({ day, save }: { day: number, save: (day: number, from: Date, to: Date) => void }) => {
     const styles = getStyles();
@@ -119,14 +118,7 @@ const TimeSheetComponent = ({ item, maxWidth, deleteItem }: { item: TimeSheetIte
     );
 }
 
-
-export type Route = {
-    establishmentId?: number;
-};
-
-type Props = NativeStackScreenProps<typeof Params, 'TimeSheet'>;
-
-export default function TimeSheet({ route, navigation }: Props) {
+export default function TimeSheet({ route }: Props) {
     let establishmentId: number | undefined = undefined;
     if (route.params) {
         const { establishmentId: _establishmentId } = route.params;

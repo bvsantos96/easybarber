@@ -1,14 +1,18 @@
+import { useCallback, useEffect, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { useTheme } from '../styles/ThemeContext';
-import SafeFullScreen from '@components/SafeFullScreen';
+
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import TabIcon from '@components/TabIcon';
+import SafeFullScreen from '@components/SafeFullScreen';
+
 import TabsNav from '@navigation/TabsNavigator';
 import { Params, Routes } from '@navigation/Router';
-import TabIcon from '@components/TabIcon';
 import useAuthStore from 'storage/stores/AuthStore';
 import useEstablishmentStore from 'storage/stores/EstablishmentStore';
-import { useCallback, useEffect, useState } from 'react';
 import { TabsVisibleConstraints } from 'enums';
+
+import { useTheme } from '@styles/ThemeContext';
+import { ChangeEstablishment } from '@components/ChangeEstablishment';
 
 export default function Tabs({ navigation }: PropNavigation) {
     const Tab = createBottomTabNavigator<typeof Params>();
@@ -93,7 +97,12 @@ export default function Tabs({ navigation }: PropNavigation) {
                             tabBarButton: tabEnabled(tab.visibleConstraint) ? undefined : () => null,
                         }
                         }>
-                        {(props) => (<SafeFullScreen><tab.component {...props} /></SafeFullScreen>)}
+                        {(props) => (
+                            <SafeFullScreen
+                                fixedButton={
+                                    (<ChangeEstablishment />)}>
+                                <tab.component {...props} />
+                            </SafeFullScreen>)}
                     </Tab.Screen>
                 );
             })}

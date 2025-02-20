@@ -15,6 +15,12 @@ import HomeIcon from "@components/icons/HomeIcon";
 import { TabsVisibleConstraints } from "enums";
 import ProductList from "@screens/ProductList";
 import ProductListIcon from "@components/icons/ProductListIcon";
+import TimeSheetIcon from "@components/icons/TimeSheetIcon";
+import WeekViewIcon from "@components/icons/WeekViewIcon";
+import TimeSheet from "@screens/TimeSheet";
+import CalendarIcon from "@components/icons/CalendarIcon";
+import WeekView from "@screens/WeekView";
+import SchedulesHome from "@screens/SchedulesHome";
 
 const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
     Home: {
@@ -44,9 +50,10 @@ const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
         visibleConstraint: [TabsVisibleConstraints.AUTHENTICATED]
     },
     Schedules: {
+        key: "Schedules",
         title: texts.navigation.tabs.schedules.name,
-        hasHeader: true,
-        component: Schedules,
+        hasHeader: false,
+        component: SchedulesHome,
         tabicon: SchedulesIcon,
         requiresAuth: true,
         visibleConstraint: [TabsVisibleConstraints.AUTHENTICATED, TabsVisibleConstraints.HAS_ESTABLISHMENTS]

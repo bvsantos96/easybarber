@@ -10,12 +10,11 @@ export const getStyles = () => {
         },
         itemContainer: {
             width: '100%',
+            height: itemHeight,
             alignItems: 'center',
         },
         container: {
-            marginVertical: 10 * theme.dimensions.absoluteHeight,
-            width: '95%',
-            height: itemHeight,
+            width: '99%',
             backgroundColor: theme.colors.backgroundColor,
             borderRadius: 11,
             flexDirection: 'row',

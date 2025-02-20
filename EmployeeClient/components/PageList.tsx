@@ -206,7 +206,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
                         }
                     }, 300)}
                     onEndReachedThreshold={0.3}
-                    showsVerticalScrollIndicator={true}
+                    showsVerticalScrollIndicator={false}
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={() =>
                         (dontDisplayLoadMore || firstLoad) ? (

@@ -582,3 +582,7 @@ export const addEmployee = async (establishmentId: number, employeeId: number): 
 export const fireEmployee = async (establishmentId: number, employeeId: number): Promise<boolean> => {
     return (await request<BaseResponse>(`/establishment/${establishmentId}/employee/${employeeId}`, "DELETE", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
 }
+
+export const hasEnabledSchedules = async (establishmentId: number): Promise<boolean> => {
+    return (await request<BaseResponse>(`/establishment/${establishmentId}/schedules/valid`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
+}
