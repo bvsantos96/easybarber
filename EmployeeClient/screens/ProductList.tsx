@@ -1,10 +1,8 @@
-import React, { useState } from "react";
-import { View, Text, FlatList } from "react-native";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import React from "react";
+import { View } from "react-native";
 
 import { getStyles } from "../styles/ProductList";
 import { getStyles as getProductStyles } from "../styles/ProductItem";
-import { Params, Routes } from "@navigation/Router";
 import ProductItem from "@components/ProductItem";
 import PageList from "@components/PageList";
 import { PageListType } from "enums";
@@ -17,13 +15,11 @@ export type Route = {
     availableEmployees?: number[];
 };
 
-type Props = NativeStackScreenProps<typeof Params, 'ProductList'>;
-
-export default function ProductList({ navigation, route }: Props) {
+export default function ProductList() {
     const styles = getStyles();
     const stylesProduct = getProductStyles();
 
-    let data:ProductEntity[] = [
+    let data: ProductEntity[] = [
         {
             name: "Hair Energizer Coffein Shampoo C1",
             description: "image 1 descr",
@@ -89,9 +85,9 @@ export default function ProductList({ navigation, route }: Props) {
             brand: "Alpecine"
         }
     ]
-    
+
     const loadMoreData = async (page?: IPage<ProductEntity>, params?: Record<string, string | number | boolean>) => {
-        const ret ={
+        const ret = {
             content: data,
             totalPages: 1,
             totalElements: 2,
@@ -106,7 +102,7 @@ export default function ProductList({ navigation, route }: Props) {
         <View style={styles.listContainer}>
             <PageList<ProductEntity>
                 type={PageListType.MULTI_COL_LIST}
-                renderItem={({ item }: { item: ProductEntity }) => 
+                renderItem={({ item }: { item: ProductEntity }) =>
                     <ProductItem
                         product={item}
                     />

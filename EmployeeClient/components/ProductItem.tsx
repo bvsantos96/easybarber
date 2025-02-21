@@ -6,7 +6,7 @@ import Pressable from './Pressable';
 import { useTheme } from '@styles/ThemeContext';
 import EditIcon from "@assets/icons/edit.svg";
 
-export default function SelectionItem({ product, onPress }: { product:ProductEntity, onPress?: () => void }) {
+export default function ProductItem({ product, onPress }: { product:ProductEntity, onPress?: () => void }) {
     const styles = getStyles();
     const theme = useTheme();
 
