@@ -472,7 +472,6 @@ export const getAppointmentCount = async (establishmentId?: number): Promise<App
 
 export const getAppointments = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter): Promise<IPage<AppointmentInfo> | undefined> => {
     if (params === undefined || params === null) {
-        console.log("Appointment filter is null");
         params = {
             future: true,
             activeOnly: true,
@@ -483,7 +482,6 @@ export const getAppointments = async (page?: IPage<AppointmentInfo>, params?: Ap
         params.userView = false;
     }
     params.sort = "date,time";
-    console.log(JSON.stringify(params));
     return await pageGet<AppointmentInfo>("/appointment/list", page, params);
 }
 
@@ -595,4 +593,8 @@ export const fireEmployee = async (establishmentId: number, employeeId: number):
 
 export const hasEnabledSchedules = async (establishmentId: number): Promise<boolean> => {
     return (await request<BaseResponse>(`/establishment/${establishmentId}/schedules/valid`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
+}
+
+export const getServices = async (page?: IPage<ServiceDetails>, params?: Record<string, string | number | boolean>): Promise<IPage<ServiceDetails> | undefined> => {
+    return await pageGet<ServiceDetails>("/employee/services", page, params);
 }

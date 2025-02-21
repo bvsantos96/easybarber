@@ -6,10 +6,8 @@ export const getStyles = () => {
     return StyleSheet.create({
         listContainer: {
             position: 'absolute',
-            left: 19 * theme.dimensions.absoluteWidth,
-            top: 40 * theme.dimensions.absoluteHeight,
             width: theme.dimensions.width,
-            height: 520 * theme.dimensions.absoluteHeight,
+            height: theme.dimensions.heightWithoutStatusBar - theme.dimensions.tabHeight - 20 * theme.dimensions.absoluteHeight,
         },
     })
 };

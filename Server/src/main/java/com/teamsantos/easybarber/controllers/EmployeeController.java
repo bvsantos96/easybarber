@@ -147,9 +147,14 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
     }
 
     @GetMapping("/services")
-    public ResponseEntity<BasePageDTO<ServiceBaseDTO>> getServices(Pageable pageable) {
+    public ResponseEntity<BasePageDTO<ServiceBaseDTO>> getMyServices(
+            @RequestParam(required = false) Long establishmentId,
+            Pageable pageable) {
         try {
             ServiceFilter filter = new ServiceFilter();
+            if (establishmentId == null) {
+                filter.setEstablishmentId(establishmentId);
+            }
             filter.setEmployeeId(UserContext.getEmployeeId());
             return ResponseEntity.ok(new BasePageDTO<>(serviceService.listServices(filter, pageable)));
         } catch (Exception e) {
