@@ -1,13 +1,10 @@
 import texts from "@lang/en.json";
 import EstablishmentsIcon from "@components/icons/EstablishmentsIcon";
 import SchedulesIcon from "@components/icons/SchedulesIcon";
-import SettingsIcon from "@components/icons/SettingsIcon";
 import { Params, Routes } from "@navigation/Router";
 import Appointments from "@screens/Appointments";
 import Establishments from "@screens/Establishments";
-import Schedules from "@screens/Schedules";
 import AppointmentsIcon from "@components/icons/AppointmentsIcon";
-import Settings from "@screens/Settings";
 import NewIcon from "@components/icons/NewIcon";
 import { NavigationProp } from "@react-navigation/native";
 import Home from "@screens/Home";
@@ -15,12 +12,9 @@ import HomeIcon from "@components/icons/HomeIcon";
 import { TabsVisibleConstraints } from "enums";
 import ProductList from "@screens/ProductList";
 import ProductListIcon from "@components/icons/ProductListIcon";
-import TimeSheetIcon from "@components/icons/TimeSheetIcon";
-import WeekViewIcon from "@components/icons/WeekViewIcon";
-import TimeSheet from "@screens/TimeSheet";
-import CalendarIcon from "@components/icons/CalendarIcon";
-import WeekView from "@screens/WeekView";
 import SchedulesHome from "@screens/SchedulesHome";
+import ServiceIcon from "@components/icons/ServiceIcon";
+import ServiceList from "@screens/ServiceList";
 
 const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
     Home: {
@@ -49,8 +43,15 @@ const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
         rightText: texts.navigation.tabs.establishments.new,
         visibleConstraint: [TabsVisibleConstraints.AUTHENTICATED]
     },
+    Services: {
+        title: texts.navigation.tabs.services.name,
+        hasHeader: true,
+        component: ServiceList,
+        tabicon: ServiceIcon,
+        requiresAuth: true,
+        visibleConstraint: [TabsVisibleConstraints.AUTHENTICATED, TabsVisibleConstraints.HAS_ESTABLISHMENTS]
+    },
     Schedules: {
-        key: "Schedules",
         title: texts.navigation.tabs.schedules.name,
         hasHeader: false,
         component: SchedulesHome,
@@ -74,14 +75,6 @@ const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
         requiresAuth: true,
         visibleConstraint: [TabsVisibleConstraints.AUTHENTICATED, TabsVisibleConstraints.HAS_ESTABLISHMENTS]
     },
-    Settings: {
-        title: texts.navigation.tabs.settings.name,
-        hasHeader: true,
-        component: Settings,
-        tabicon: SettingsIcon,
-        requiresAuth: true,
-        visibleConstraint: [TabsVisibleConstraints.AUTHENTICATED, TabsVisibleConstraints.HAS_ESTABLISHMENTS]
-    }
 };
 
 export default TabsNav;
