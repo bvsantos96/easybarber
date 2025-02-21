@@ -23,14 +23,14 @@ public class ServiceBaseDTO extends BaseDTO {
     private Double price;
 
     public ServiceBaseDTO(Long id, String name, String description, int duration, String image, Long serviceTypeId,
-            String serviceTypeName, String serviceTypeDescription, String serviceTypeImage, Double price) {
+            String serviceTypeName, String serviceTypeDescription, String serviceTypeImage, Object price) {
         super(id);
         this.name = parseServiceString(name, serviceTypeName);
         this.description = parseServiceString(description, serviceTypeDescription);
         this.duration = duration;
         this.image = parseServiceString(image, serviceTypeImage);
         this.serviceType = new ServiceTypeDTO(serviceTypeId, serviceTypeName, serviceTypeDescription, serviceTypeImage);
-        this.price = price;
+        this.price = (Double) price;
     }
 
     public ServiceBaseDTO(Long id, String name, String description, int duration, String image, Long serviceTypeId,
