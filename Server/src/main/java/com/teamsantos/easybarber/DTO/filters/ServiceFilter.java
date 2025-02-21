@@ -14,6 +14,7 @@ import lombok.Setter;
 public class ServiceFilter {
     private String name;
     private String description;
+    private Long establishmentId;
     private Long serviceTypeId;
     private Long employeeId;
     private boolean includeServiceImage = true;

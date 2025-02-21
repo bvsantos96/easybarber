@@ -131,3 +131,9 @@ export const parsePhoneNumber = (countryCode: string, phone: string) => {
     const _countryCode = parseCountryCode(countryCode);
     return `${_countryCode}${phone}`;
 }
+
+export const fromMinutesToTime = (minutes: number) => {
+    const hours = Math.floor(minutes / 60);
+    const remaining = minutes % 60;
+    return `${twoDigits(hours)}:${twoDigits(remaining)}`;
+}
