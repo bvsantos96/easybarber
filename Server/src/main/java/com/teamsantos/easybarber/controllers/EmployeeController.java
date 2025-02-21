@@ -152,7 +152,7 @@ public class EmployeeController extends ImageController<Employee, EmployeeImage>
             Pageable pageable) {
         try {
             ServiceFilter filter = new ServiceFilter();
-            if (establishmentId == null) {
+            if (establishmentId != null) {
                 filter.setEstablishmentId(establishmentId);
             }
             filter.setEmployeeId(UserContext.getEmployeeId());
