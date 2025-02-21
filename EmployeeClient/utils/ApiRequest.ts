@@ -471,13 +471,19 @@ export const getAppointmentCount = async (establishmentId?: number): Promise<App
 }
 
 export const getAppointments = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter): Promise<IPage<AppointmentInfo> | undefined> => {
-    if (params === undefined || params === null)
+    if (params === undefined || params === null) {
+        console.log("Appointment filter is null");
         params = {
             future: true,
             activeOnly: true,
             userView: false
         };
+    } else {
+        params.activeOnly = true;
+        params.userView = false;
+    }
     params.sort = "date,time";
+    console.log(JSON.stringify(params));
     return await pageGet<AppointmentInfo>("/appointment/list", page, params);
 }
 

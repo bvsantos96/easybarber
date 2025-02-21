@@ -20,8 +20,12 @@ export default function Appointments({ navigation }: PropNavigation) {
     const [nUpcomming, setNUpcomming] = useState(0);
     const [nPast, setNPast] = useState(0);
     const { updateAppointments, resetUpdateAppointments } = useAppointmentStore();
+    const currentEstablishmentRef = useRef(selectedEstablishment);
 
-    useEffect(() => { setResetSearch(!resetSearch) }, [selectedEstablishment]);
+    useEffect(() => {
+        currentEstablishmentRef.current = selectedEstablishment;
+        setResetSearch(!resetSearch);
+    }, [selectedEstablishment]);
 
     useEffect(() => {
         if (updateAppointments) {
@@ -32,18 +36,20 @@ export default function Appointments({ navigation }: PropNavigation) {
 
     const loadUpcomming = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter) => {
         let _params = { ...params, future: true, activeOnly: true };
-        if (selectedEstablishment) {
-            _params.establishmentId = +selectedEstablishment.id;
+        const establishment = currentEstablishmentRef.current;
+        if (establishment) {
+            _params.establishmentId = +establishment.id;
         }
         return await getAppointments(page, _params);
     }
 
     const loadPast = async (page?: IPage<AppointmentInfo>, params?: AppointmentFilter) => {
         let _params = { ...params, future: false };
-        if (selectedEstablishment) {
-            _params.establishmentId = +selectedEstablishment.id;
+        const establishment = currentEstablishmentRef.current;
+        if (establishment) {
+            _params.establishmentId = +establishment.id;
         }
-        return await getAppointments(page, { ...params, future: false });
+        return await getAppointments(page, _params);
     }
 
     useEffect(() => {
