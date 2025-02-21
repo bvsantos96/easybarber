@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from 'react-native';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CalendarProvider, DateData, ExpandableCalendar, Timeline, TimelineList, TimelineProps } from 'react-native-calendars';
 import { getCalendarDateTime, getCalendarReadyDate, getCalendarReadyTime, getDateData, getDateFromCalendarReadyStringDate } from 'utils/Utils';
 import texts from '@lang/en.json';
@@ -69,6 +69,7 @@ export default function WeekView() {
         minutes: 0,
     };
     const [initialTime, setInitialTime] = useState(INITIAL_TIME);
+    const currentEstablishmentRef = useRef(selectedEstablishment);
 
     const loadEvents = async (startDate: Date) => {
         let endDate: Date = new Date();
@@ -80,8 +81,9 @@ export default function WeekView() {
             endDate: endDate.toISOString().split('T')[0],
         }
 
-        if (selectedEstablishment) {
-            params.establishmentId = +selectedEstablishment.id;
+        const establishment = currentEstablishmentRef.current;
+        if (establishment) {
+            params.establishmentId = +establishment.id;
         }
         let events: { [date: string]: TimelineProps['events'] } = {};
 
@@ -111,6 +113,7 @@ export default function WeekView() {
 
 
     useEffect(() => {
+        currentEstablishmentRef.current = selectedEstablishment;
         setEventsByDate({});
         loadEvents(getDateFromCalendarReadyStringDate(currentDate));
     }, [selectedEstablishment]);

@@ -59,8 +59,10 @@ export default function Schedules() {
     const [openTo, setOpenTo] = useState(false);
     const modalRef = useRef<CustomModalRef>(null);
     const [resetSearch, setResetSearch] = useState(false);
+    const currentEstablishmentRef = useRef(selectedEstablishment);
 
     useEffect(() => {
+        currentEstablishmentRef.current = selectedEstablishment;
         setOpenFrom(false);
         setOpenTo(false);
         resetAbsence();
@@ -101,11 +103,13 @@ export default function Schedules() {
     }
 
     const loadAppointmentsByDay = async (_page?: IPage<AppointmentInfo>, _params?: AppointmentFilter): Promise<IPage<AppointmentInfo> | undefined> => {
-        return await fetchDayAppointments(_page, _params, date, selectedEstablishment ? +selectedEstablishment.id : undefined);
+        const establishment = currentEstablishmentRef.current;
+        return await fetchDayAppointments(_page, _params, date, establishment ? +establishment.id : undefined);
     }
 
     const load = async () => {
-        markDates(await fetchMonthAppointments(month, year, selectedEstablishment ? +selectedEstablishment.id : undefined));
+        const establishment = currentEstablishmentRef.current;
+        markDates(await fetchMonthAppointments(month, year, establishment ? +establishment.id : undefined));
     }
 
     useEffect(() => {
@@ -158,12 +162,14 @@ export default function Schedules() {
             });
             return;
         }
+
+        const establishment = currentEstablishmentRef.current;
         const absence: Absence = {
             dateFrom: getCalendarReadyDate(new Date(date)),
             dateTo: getCalendarReadyDate(new Date(date)),
             startHour: from ? from.toISOString().split('T')[1].split('.')[0] : '',
             endHour: to ? to.toISOString().split('T')[1].split('.')[0] : '',
-            establishmentId: selectedEstablishment ? +selectedEstablishment.id : undefined,
+            establishmentId: establishment ? +establishment.id : undefined,
             title: title,
             message: message,
         }

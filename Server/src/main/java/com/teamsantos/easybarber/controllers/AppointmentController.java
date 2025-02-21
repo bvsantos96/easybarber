@@ -65,6 +65,9 @@ public class AppointmentController {
     public ResponseEntity<BasePageDTO<AppointmentDTO>> listAppointments(@ModelAttribute AppointmentFilter filter,
             Pageable pageable) {
         try {
+            if(filter.getUserView() == null) {
+                filter.setUserView(true);
+            }
             BasePageDTO<AppointmentDTO> appointments = appointmentService.listAppointment(filter, pageable);
             return ResponseEntity.ok(appointments);
         } catch (Exception e) {

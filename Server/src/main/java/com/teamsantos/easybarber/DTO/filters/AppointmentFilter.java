@@ -28,7 +28,7 @@ public class AppointmentFilter {
     private LocalDate endDate;
     private LocalTime time;
     private LocalTime endTime;
-    Boolean userView = true;
+    Boolean userView;
     Boolean future;
     Boolean activeOnly;
 
