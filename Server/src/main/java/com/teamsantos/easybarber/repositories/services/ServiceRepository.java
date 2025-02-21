@@ -62,21 +62,36 @@ public interface ServiceRepository extends JpaRepository<Service, Long> {
     Page<ServiceDTO> findAllByEmployeeId(Pageable pageable);
 
     @Query("""
-                SELECT new com.teamsantos.easybarber.DTO.service.ServiceBaseDTO(s.id, s.name, s.description, s.duration, si.data,s.serviceType.id, s.serviceType.name,s.serviceType.description, s.serviceType.imageURL, es.price)
-                FROM Service s
-                LEFT JOIN ServiceImage si ON :#{#filter.includeServiceImage} = true
-                    AND si.isMain = true
-                    AND si.entity.id = s.id
-                LEFT JOIN EstablishmentService es ON (:#{#filter.establishmentId} IS NOT NULL
-                    AND es.service = s
-                    AND es.establishment.id = :#{#filter.establishmentId}
+            SELECT new com.teamsantos.easybarber.DTO.service.ServiceBaseDTO(
+                s.id,
+                s.name,
+                s.description,
+                s.duration,
+                si.data,
+                s.serviceType.id,
+                s.serviceType.name,
+                s.serviceType.description,
+                s.serviceType.imageURL,
+                AVG(es.price)
+            )
+            FROM Service s
+            LEFT JOIN ServiceImage si
+                ON :#{#filter.includeServiceImage} = true
+                AND si.isMain = true
+                AND si.entity.id = s.id
+            LEFT JOIN EstablishmentService es
+                ON (es.service = s
+                    AND (:#{#filter.establishmentId} IS NULL OR es.establishment.id = :#{#filter.establishmentId})
                 )
-                WHERE (:#{#filter.employeeId} is null or s.employee.id = :#{#filter.employeeId})
-                AND (:#{#filter.serviceTypeId} is null or s.serviceType.id = :#{#filter.serviceTypeId})
-                AND (:#{#filter.name} is null or lower(s.name) like lower(concat('%', :#{#filter.name}, '%')))
-                AND (:#{#filter.description} is null or lower(s.description) like lower(concat('%', :#{#filter.description}, '%')))
-                AND (:#{#filter.establishmentId} IS NULL OR es IS NOT NULL)
-            """)
+            WHERE (:#{#filter.employeeId} IS NULL OR s.employee.id = :#{#filter.employeeId})
+            AND (:#{#filter.serviceTypeId} IS NULL OR s.serviceType.id = :#{#filter.serviceTypeId})
+            AND (:#{#filter.name} IS NULL OR lower(s.name) LIKE lower(concat('%', :#{#filter.name}, '%')))
+            AND (:#{#filter.description} IS NULL OR lower(s.description) LIKE lower(concat('%', :#{#filter.description}, '%')))
+            AND (:#{#filter.establishmentId} IS NULL OR es IS NOT NULL)
+            GROUP BY
+                s.id, s.name, s.description, s.duration, si.data,
+                s.serviceType.id, s.serviceType.name, s.serviceType.description, s.serviceType.imageURL
+                        """)
     Page<ServiceBaseDTO> findAllBase(@Param("filter") ServiceFilter filter, Pageable pageable);
 
     @Query("""
