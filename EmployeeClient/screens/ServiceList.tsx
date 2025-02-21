@@ -27,7 +27,6 @@ export default function ServiceList() {
             ...params
         };
         if (establishment) {
-            console.log(establishment.id);
             _params.establishmentId = +establishment.id;
         }
         return await getServices(page, _params);
