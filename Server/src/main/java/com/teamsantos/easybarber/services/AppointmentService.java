@@ -129,6 +129,9 @@ public class AppointmentService {
 
     @Transactional(readOnly = true)
     public BasePageDTO<AppointmentDTO> listAppointment(AppointmentFilter filter, Pageable pageable) {
+        if (filter.getUserView() == null) {
+            filter.setUserView(true);
+        }
         return new BasePageDTO<>(appointmentRepository.findAll(filter.getSpecification(), pageable)
                 .map((element) -> Utils.getModelMapper().map(element, AppointmentDTO.class)));
     }
@@ -185,7 +188,8 @@ public class AppointmentService {
 
     @Transactional(readOnly = true)
     public AppointmentCountDTO countAppointments(boolean userView, Long establishmentId) {
-        Optional<Tuple> count = appointmentRepository.countAppointments(UserContext.getUserId(), userView,
+        Optional<Tuple> count = appointmentRepository.countAppointments(
+                userView ? UserContext.getUserId() : UserContext.getEmployeeId(), userView,
                 establishmentId);
         if (count.isEmpty()) {
             return new AppointmentCountDTO(0, 0);

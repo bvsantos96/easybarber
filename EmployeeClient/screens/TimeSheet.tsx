@@ -129,8 +129,10 @@ export default function TimeSheet() {
     const [timeSheets, setTimeSheets] = useState<{ [key: number]: TimeSheetItem[] }>({});
     const [maxWidth, setMaxWidth] = useState<number>(styles.timeSheetItemContainer.width);
     const filterModalRef = useRef<CustomModalRef>(null);
+    const currentEstablishmentRef = useRef(selectedEstablishment);
 
     useEffect(() => {
+        currentEstablishmentRef.current = selectedEstablishment;
         setTimeSheets({});
         setMaxWidth(styles.timeSheetItemContainer.width);
         setRefresh(!refresh);
@@ -163,7 +165,8 @@ export default function TimeSheet() {
     }
 
     const load = async () => {
-        let items = await getTimesheets(undefined, undefined, selectedEstablishment ? +selectedEstablishment.id : undefined);
+        const establishment = currentEstablishmentRef.current;
+        let items = await getTimesheets(undefined, undefined, establishment ? +establishment.id : undefined);
         if (!items || items.content.length <= 0) return;
         let newTimeSheet: { [key: number]: TimeSheetItem[] } = {};
         items.content.forEach((item: TimeSheetItem) => {
@@ -181,9 +184,10 @@ export default function TimeSheet() {
 
     const addNewTimesheet = async (day: number, from: Date, to: Date) => {
         const serverDay = getServerDayOfWeek(day);
+        const establishment = currentEstablishmentRef.current;
         let timeSheet: TimeSheetItem = {
             id: 0,
-            establishmentId: selectedEstablishment ? +selectedEstablishment.id : undefined,
+            establishmentId: establishment ? +establishment.id : undefined,
             day: texts.weekdays[day].toUpperCase(),
             days: [serverDay],
             endHour: getTimeAsString(to),
