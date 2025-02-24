@@ -2,19 +2,23 @@ import { getAllCountries, FlagType, Country } from 'react-native-country-picker-
 import { getLocales } from 'expo-localization';
 import { DEFAULT_COUNTRY } from './EnvVariables';
 
-export const getDefaultCountryAsync = async (): Promise<Country | undefined> => {
+export const getDefaultCountryAsync = async (country?: string): Promise<Country | undefined> => {
     try {
-        const deviceCountryCode = getLocales()[0].regionCode;
-        if (!deviceCountryCode) {
-            throw new Error("Device country code is undefined.");
+        let deviceCountryCode = getDefaultCountryString();
+        if (country) {
+            deviceCountryCode = country;
         }
-
         const allCountries = await getAllCountries(FlagType.FLAT);
-
         const filteredCountry = allCountries.find((c) => c.cca2 === deviceCountryCode);
-
         return filteredCountry;
     } catch (error) {
+        if (!country) {
+            const deviceCountryCode = getLocales()[0].regionCode;
+            if (!deviceCountryCode) {
+                throw new Error("Device country code is undefined.");
+            }
+            return getDefaultCountryAsync(deviceCountryCode);
+        }
         console.error("Error fetching default country:", error);
         return undefined;
     }
