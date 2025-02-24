@@ -23,6 +23,8 @@ export type Route = {
 type Props = NativeStackScreenProps<typeof Params, 'ResetPwd'>;
 
 export default function ResetPwd({ route, navigation }: Props) {
+    const { mobileInformation, confirmationCode } = route.params;
+
     const { alert } = useAlertStore();
     const styles = getStyles();
     const [password, setPassword] = useState("");
@@ -30,8 +32,6 @@ export default function ResetPwd({ route, navigation }: Props) {
     const [errorMessage, setErrorMessage] = useState<string>('');
     const [keyboardHeight, setKeyboardHeight] = useState<number>(0);
     const translateYAnimation = useRef(new Animated.Value(0)).current;
-
-    const { mobileInformation, confirmationCode } = route.params;
 
     const tiltAnimation = useRef(new Animated.Value(0)).current;
 

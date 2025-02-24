@@ -5,7 +5,7 @@ export const getStyles = () => {
     const theme = useTheme();
     return StyleSheet.create({
         container: {
-            width: 160*theme.dimensions.absoluteWidth,
+            width: 160 * theme.dimensions.absoluteWidth,
             height: 215 * theme.dimensions.absoluteHeight,
             borderRadius: 15,
             backgroundColor: 'white',
@@ -62,12 +62,12 @@ export const getStyles = () => {
             letterSpacing: 0,
             textAlign: 'left',
         },
-        editIcon:{
+        editIcon: {
             position: 'absolute',
             top: 4 * theme.dimensions.absoluteHeight,
             left: 125 * theme.dimensions.absoluteWidth,
-            width: 20 * theme.dimensions.absoluteWidth,
-            height: 20 * theme.dimensions.absoluteWidth,
-        }  
+            width: 30 * theme.dimensions.absoluteWidth,
+            height: 30 * theme.dimensions.absoluteWidth,
+        }
     })
 }
