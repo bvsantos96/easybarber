@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 
 import { getStyles } from "../styles/ProductList";
-import { getStyles as getProductStyles } from "../styles/ProductItem";
+import { getStyles as getServiceStyles } from "../styles/ServiceItem";
 import PageList from "@components/PageList";
 import { PageListType } from "enums";
 import useEstablishmentStore from "storage/stores/EstablishmentStore";
@@ -11,7 +11,7 @@ import ServiceItem from "@components/ServiceItem";
 
 export default function ServiceList({ navigation }: PropNavigation) {
     const styles = getStyles();
-    const stylesProduct = getProductStyles();
+    const stylesProduct = getServiceStyles();
     const { selectedEstablishment } = useEstablishmentStore();
     const currentEstablishmentRef = useRef(selectedEstablishment);
     const [resetSearch, setResetSearch] = useState(false);
