@@ -598,3 +598,7 @@ export const hasEnabledSchedules = async (establishmentId: number): Promise<bool
 export const getServices = async (page?: IPage<ServiceDetails>, params?: Record<string, string | number | boolean>): Promise<IPage<ServiceDetails> | undefined> => {
     return await pageGet<ServiceDetails>("/employee/services", page, params);
 }
+
+export const getImageList = async (urlPrefix: string, page: IPage<IImage>, params?: Record<string, string | number | boolean>): Promise<IPage<IImage> | undefined> => {
+    return await pageGet<IImage>(`${urlPrefix}/images`, page, params);
+}
