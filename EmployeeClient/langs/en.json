@@ -29,6 +29,9 @@
   "retry": "Retry",
   "phoneNumber": "Phone Number",
   "navigation": {
+    "service": {
+      "name": "Service"
+    },
     "employees": {
       "name": "Employees"
     },
