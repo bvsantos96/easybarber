@@ -9,7 +9,7 @@ import useEstablishmentStore from "storage/stores/EstablishmentStore";
 import { getServices } from "utils/ApiRequest";
 import ServiceItem from "@components/ServiceItem";
 
-export default function ServiceList() {
+export default function ServiceList({ navigation }: PropNavigation) {
     const styles = getStyles();
     const stylesProduct = getProductStyles();
     const { selectedEstablishment } = useEstablishmentStore();
@@ -39,6 +39,7 @@ export default function ServiceList() {
                 reset={resetSearch}
                 renderItem={({ item }: { item: ServiceDetails }) =>
                     <ServiceItem
+                        onPress={() => navigation.navigate('Service', { service: item })}
                         service={item}
                     />
                 }

@@ -1,5 +1,6 @@
 import { Route as MobileConfirmationRoute } from "@screens/MobileConfirmation";
 import { Route as ResetPwdRoute } from "@screens/ResetPwd";
+import { Route as ServiceRoute } from "@screens/Service";
 
 export const Params = {
     Sign: undefined,
@@ -20,7 +21,8 @@ export const Params = {
     WeekView: undefined,
     Employees: undefined,
     Home: undefined,
-    Services: undefined
+    Services: undefined,
+    Service: {} as ServiceRoute
 } as const;
 
 export const Routes = {
@@ -42,5 +44,6 @@ export const Routes = {
     WeekView: "WeekView",
     Employees: "Employees",
     Home: "Home",
-    Services: "Services"
+    Services: "Services",
+    Service: "Service"
 } as const;
