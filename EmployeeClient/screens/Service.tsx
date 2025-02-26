@@ -5,7 +5,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import * as ImagePicker from 'expo-image-picker';
 import { Alert } from 'react-native';
 
-import { replaceMainImage, storeServiceDetails, updateServiceDetails } from "utils/ApiRequest";
+import { replaceMainImage, storeImage, storeServiceDetails, updateServiceDetails } from "utils/ApiRequest";
 import { getStyles } from "@styles/Service";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Params } from "@navigation/Router";
@@ -122,7 +122,7 @@ export default function Service({ route }: Props) {
             service.id = response.data.id;
 
             if (service.image && service.image !== "") {
-                if (await replaceMainImage("service", +service.id, image)) {
+                if (await storeImage("service", +service.id, image, true)) {
                     initialItem.current = getHash(service);
                 }
             }
