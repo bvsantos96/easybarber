@@ -41,6 +41,7 @@ export interface PageListRef<T extends Identifiable> {
     request: ITimedRequest<T>;
     setRequest: React.Dispatch<React.SetStateAction<ITimedRequest<any>>>;
     deleteItem: (id: number) => void;
+    updateItem: (id: number, item: T) => void;
 }
 
 const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Ref<PageListRef<T>>) => {
@@ -91,12 +92,21 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
         setRequest(new TimedRequest(request.page, request.lastRequest, request.pathParams));
     }
 
+    const updateItem = (id: number, item: T) => {
+        const index = request.page.content.findIndex((i) => i.id === id);
+        if (index >= 0) {
+            request.page.content[index] = item;
+            setRequest(new TimedRequest(request.page, request.lastRequest, request.pathParams));
+        }
+    }
+
     useImperativeHandle(ref, () => ({
         _loadMoreItems,
         loadMoreItems,
         request,
         setRequest,
         deleteItem,
+        updateItem
     }));
 
     useEffect(() => {

@@ -31,6 +31,7 @@ interface Colors {
     statusBarOnHome: StatusBarStyle;
     logoBackgound: string;
     borderAlt: string;
+    transparentWhite: string;
     text: {
         main: string;
         secondary: string;
@@ -153,6 +154,7 @@ const defaultTheme: Theme = {
         statusBarOnHome: theme,
         logoBackgound: "white",
         borderAlt: `rgba(${borderColor}, 0.1)`,
+        transparentWhite: `rgba(${backgroundColor}, 0.7)`,
         text: {
             main: `rgb(${mainColor})`,
             secondary: `rgba(${textColor}, 0.4)`,

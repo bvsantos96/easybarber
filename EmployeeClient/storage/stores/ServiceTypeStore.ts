@@ -4,6 +4,7 @@ interface ServiceTypeStore {
     serviceTypes: ICategory[];
     setServiceTypes: (serviceTypes: ICategory[]) => void;
     getServices: (serviceTypes: number[]) => ICategory[];
+    getServiceType: (serviceType: number) => ICategory | undefined;
 }
 
 const useServiceTypeStore = create<ServiceTypeStore>(
@@ -13,6 +14,9 @@ const useServiceTypeStore = create<ServiceTypeStore>(
         getServices: (serviceTypes: number[]) => {
             return get().serviceTypes.filter((serviceType) => serviceTypes.includes(serviceType.id));
         },
+        getServiceType: (serviceType: number) => {
+            return get().serviceTypes.find((st) => st.id === serviceType);
+        }
     })
 );
 

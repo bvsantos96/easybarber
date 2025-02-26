@@ -76,6 +76,13 @@ public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Ima
     @Query("SELECT new com.teamsantos.easybarber.DTO.image.ImageDTO(i.id, i.data, i.isMain) FROM #{#entityName} i WHERE i.entity.id = :entityId AND i.isMain = true")
     Optional<ImageDTO> findMainImage(Long entityId);
 
+    @Query("""
+             SELECT i.fileName
+             FROM #{#entityName} i
+             WHERE i.entity.id = :entityId AND i.isMain = true
+            """)
+    Optional<String> findMainImageName(long entityId);
+
     @Modifying
     @Query("""
              UPDATE #{#entityName} i
@@ -83,6 +90,13 @@ public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Ima
              WHERE i.entity.id = :entityId AND i.id = :imageId
             """)
     void setNewMain(long entityId, long imageId);
+
+    @Modifying
+    @Query("""
+             DELETE FROM #{#entityName} i
+             WHERE i.entity.id = :entityId AND i.isMain = true
+            """)
+    void removeMain(long entityId);
 
     @Query("""
              SELECT MIN(i.id)

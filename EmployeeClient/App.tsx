@@ -140,7 +140,6 @@ const Router = () => {
                                 }
                             }
                         >
-
                             {(props) => (
                                 nav.containerizedComponent ? (<SafeFullScreen><nav.component {...props} /></SafeFullScreen>) : (<nav.component {...props} />)
                             )}

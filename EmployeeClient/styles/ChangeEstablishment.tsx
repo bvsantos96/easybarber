@@ -97,7 +97,9 @@ export const getStyles = () => {
             color: theme.colors.text.main,
         },
         placeholderStyle: {
-            fontSize: theme.fonts.size._16,
+            fontSize: theme.fonts.size._15,
+            fontFamily: 'Mazzard',
+            fontWeight: '400',
             color: theme.colors.text.lightBlack,
         },
         selectedPlaceholderStyle: {
