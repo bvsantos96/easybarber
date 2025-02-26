@@ -15,6 +15,8 @@ import Button from "@components/Button";
 import ServiceTypeCombobox from "@components/ServiceTypeCombobox";
 import Pressable from "@components/Pressable";
 import useUpdateStore from "storage/stores/UpdateStore";
+import { AlertType } from "@components/Alert";
+import useAlertStore from "storage/stores/AlertStore";
 
 export type Route = {
     service: ServiceDetails;
@@ -24,6 +26,7 @@ type Props = NativeStackScreenProps<typeof Params, 'Service'>;
 
 export default function Service({ route }: Props) {
     const { setToUpdate } = useUpdateStore();
+    const { alert, setAlertVisible } = useAlertStore();
     const { service: _service } = route.params;
     const styles = getStyles();
     const getDefaultService = (item?: ServiceDetails): ServiceDetails => {
@@ -107,10 +110,12 @@ export default function Service({ route }: Props) {
     }
 
     const storeService = async () => {
+        alert({ type: AlertType.Loading, message: "" });
         if (!service.id) {
             const response = await storeServiceDetails(service);
 
             if (!response.success || !response.data) {
+                setAlertVisible(false);
                 return;
             }
 
@@ -121,6 +126,7 @@ export default function Service({ route }: Props) {
                     initialItem.current = getHash(service);
                 }
             }
+            setAlertVisible(false);
             return;
         }
         const _initialItem = initialItem.current.split("7:");
@@ -140,6 +146,7 @@ export default function Service({ route }: Props) {
             setChanged(false);
             setToUpdate(service);
         }
+        setAlertVisible(false);
     }
 
     return (
