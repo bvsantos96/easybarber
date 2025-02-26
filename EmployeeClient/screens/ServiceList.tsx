@@ -11,6 +11,7 @@ import ServiceItem from "@components/ServiceItem";
 import useUpdateStore from "storage/stores/UpdateStore";
 
 export default function ServiceList({ navigation }: PropNavigation) {
+    const { toUpdate, clearToUpdate } = useUpdateStore();
     const styles = getStyles();
     const stylesProduct = getServiceStyles();
     const { selectedEstablishment } = useEstablishmentStore();
@@ -18,11 +19,13 @@ export default function ServiceList({ navigation }: PropNavigation) {
     const [resetSearch, setResetSearch] = useState(false);
     const ref = useRef<PageListRef<ServiceDetails>>(null);
 
-    const { toUpdate, clearToUpdate } = useUpdateStore();
-
     useEffect(() => {
         if (toUpdate) {
-            ref.current?.updateItem(toUpdate.id, toUpdate);
+            if (toUpdate == "refresh") {
+                setResetSearch(!resetSearch);
+            } else {
+                ref.current?.updateItem(toUpdate.id, toUpdate);
+            }
             clearToUpdate();
         }
     }, [toUpdate]);

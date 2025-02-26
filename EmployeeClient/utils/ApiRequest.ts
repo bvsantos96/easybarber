@@ -604,8 +604,7 @@ export const getImageList = async (urlPrefix: string, page: IPage<IImage>, param
 }
 
 export const storeServiceDetails = async (service: ServiceDetails): Promise<IResult<BaseResponse>> => {
-    const _service: ServiceDTO = {
-        id: 0,
+    const _service: CreateServiceDTO = {
         name: service.name,
         description: service.description,
         duration: service.duration,
