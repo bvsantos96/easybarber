@@ -55,6 +55,24 @@ public abstract class ImageController<T extends EntityWithImages<T, E>, E extend
     }
 
     @Transactional
+    @PutMapping("/{entityId}/images")
+    public ResponseEntity<BaseResponseDTO> replaceMain(@PathVariable("entityId") long entityId,
+            @RequestBody ImageDTO image) {
+        BaseResponseDTO response = new BaseResponseDTO();
+        try {
+            if (!canEdit(entityId)) {
+                return new ResponseEntity<>(response, HttpStatus.FORBIDDEN);
+            }
+            service.replaceMain(entityId, image);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            System.err.println(e.getMessage());
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @Transactional
     @DeleteMapping("/{entityId}/images")
     public ResponseEntity<BaseResponseDTO> deleteImages(@PathVariable("entityId") long entityId,
             @RequestBody Set<Long> imageIds) {
