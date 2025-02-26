@@ -152,8 +152,7 @@ const Input = React.forwardRef<TextInput, InputProps>(({
     }, [leftIcon, rightIcon, singleRightIcon]);
 
     return (
-        <Pressable
-            ref={ref}
+        <Pressable ref={ref}
             style={styles.container} onPress={handleViewPress}>
             <View style={[styles.inputView, !round && styles.inputSmallBorderRadius, containerStyle && { ...containerStyle }]}>
                 {title && showTitle && <Text style={styles.title}>{title}</Text>}

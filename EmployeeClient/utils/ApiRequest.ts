@@ -602,3 +602,36 @@ export const getServices = async (page?: IPage<ServiceDetails>, params?: Record<
 export const getImageList = async (urlPrefix: string, page: IPage<IImage>, params?: Record<string, string | number | boolean>): Promise<IPage<IImage> | undefined> => {
     return await pageGet<IImage>(`${urlPrefix}/images`, page, params);
 }
+
+export const storeServiceDetails = async (service: ServiceDetails): Promise<IResult<BaseResponse>> => {
+    const _service: ServiceDTO = {
+        id: 0,
+        name: service.name,
+        description: service.description,
+        duration: service.duration,
+        price: service.price ?? 0,
+        serviceTypeId: service.serviceType?.id ?? 0
+    }
+
+    return await request<BaseResponse>("/employee/service", "POST", _service, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+}
+
+export const updateServiceDetails = async (service: ServiceDetails): Promise<IResult<BaseResponse>> => {
+    const _service: ServiceDTO = {
+        id: service.id,
+        name: service.name,
+        description: service.description,
+        duration: service.duration,
+        price: service.price ?? 0,
+        serviceTypeId: service.serviceType?.id ?? 0
+    }
+    return await request<BaseResponse>("/employee/service", "PUT", _service, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+}
+
+export const storeImage = async (urlPrefix: string, id: number, image: string, isMain: boolean): Promise<boolean> => {
+    return (await request<BaseResponse>(`${urlPrefix}/${id}/images`, "POST", [{ data: image, main: isMain }], langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
+}
+
+export const replaceMainImage = async (urlPrefix: string, id: number, image: string): Promise<boolean> => {
+    return (await request<BaseResponse>(`${urlPrefix}/${id}/images`, "PUT", { data: image, main: true }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
+}

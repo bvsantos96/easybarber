@@ -7,7 +7,7 @@ export const getStyles = (nInputs: number = 1) => {
     return StyleSheet.create({
         container: {
             width: inputWidth,
-            height: theme.dimensions.input.height,
+            height: theme.dimensions.input.height
         },
         inputSmallBorderRadius: {
             borderRadius: 10 * theme.dimensions.absoluteHeight,
@@ -87,9 +87,12 @@ export const getStyles = (nInputs: number = 1) => {
             fontWeight: '400',
         },
         icon: {
-            width: 25 * theme.dimensions.absoluteHeight,
-            height: 25 * theme.dimensions.absoluteHeight,
+            width: 20 * theme.dimensions.absoluteHeight,
+            height: 20 * theme.dimensions.absoluteHeight,
             resizeMode: 'contain',
+        },
+        smallInput: {
+            height: 50 * theme.dimensions.absoluteHeight,
         }
     })
 };

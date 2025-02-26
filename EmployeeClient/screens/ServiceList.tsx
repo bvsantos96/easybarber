@@ -3,11 +3,12 @@ import { View } from "react-native";
 
 import { getStyles } from "../styles/ProductList";
 import { getStyles as getServiceStyles } from "../styles/ServiceItem";
-import PageList from "@components/PageList";
+import PageList, { PageListRef } from "@components/PageList";
 import { PageListType } from "enums";
 import useEstablishmentStore from "storage/stores/EstablishmentStore";
 import { getServices } from "utils/ApiRequest";
 import ServiceItem from "@components/ServiceItem";
+import useUpdateStore from "storage/stores/UpdateStore";
 
 export default function ServiceList({ navigation }: PropNavigation) {
     const styles = getStyles();
@@ -15,6 +16,16 @@ export default function ServiceList({ navigation }: PropNavigation) {
     const { selectedEstablishment } = useEstablishmentStore();
     const currentEstablishmentRef = useRef(selectedEstablishment);
     const [resetSearch, setResetSearch] = useState(false);
+    const ref = useRef<PageListRef<ServiceDetails>>(null);
+
+    const { toUpdate, clearToUpdate } = useUpdateStore();
+
+    useEffect(() => {
+        if (toUpdate) {
+            ref.current?.updateItem(toUpdate.id, toUpdate);
+            clearToUpdate();
+        }
+    }, [toUpdate]);
 
     useEffect(() => {
         currentEstablishmentRef.current = selectedEstablishment;
@@ -35,6 +46,7 @@ export default function ServiceList({ navigation }: PropNavigation) {
     return (
         <View style={styles.listContainer}>
             <PageList<ServiceDetails>
+                ref={ref}
                 type={PageListType.MULTI_COL_LIST}
                 reset={resetSearch}
                 renderItem={({ item }: { item: ServiceDetails }) =>
