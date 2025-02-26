@@ -56,6 +56,9 @@ export const getStyles = () => {
         },
         input: {
             height: inputHeight
-        }
+        },
+        noImage: {
+            backgroundColor: theme.colors.text.lightGray,
+        },
     });
 }
