@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -111,6 +112,25 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
         }
 
         return new ArrayList<>();
+    }
+
+    @Transactional(readOnly = false)
+    public Long replaceMain(long entityId, ImageDTO image) throws Exception {
+        String fileName = UUID.randomUUID().toString() + ".jpg";
+        E imageEntity = Utils.getModelMapper().map(image, imageClass);
+        imageEntity.setEntity(entityManager.getReference(entityClass, entityId));
+        imageEntity.setFileName(fileName);
+        imageEntity.setData(addImageToBucket(image.getData(), fileName));
+        imageEntity.setMain(true);
+
+        Optional<String> mainImage = imageRepository.findMainImageName(entityId);
+        if (mainImage.isPresent() && !mainImage.get().isEmpty()) {
+            deleteImageFromBucket(mainImage.get());
+            imageRepository.removeMain(entityId);
+        }
+
+        imageEntity = imageRepository.save(imageEntity);
+        return imageEntity.getId();
     }
 
     @Transactional

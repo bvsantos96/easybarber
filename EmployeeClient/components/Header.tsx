@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity } from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
 
@@ -45,7 +45,8 @@ const Header = ({ navigation, title, hasGoBack = true, firstHeader, secondHeader
                 {hasGoBack ? (
                     <TouchableOpacity style={styles.goBack} onPress={() => {
                         navigation.goBack();
-                    }}>
+                    }
+                    }>
                         <Entypo name="chevron-small-left" size={styles.goBackIcon.width} color="black" />
                     </TouchableOpacity>
                 ) : firstHeader ? (
