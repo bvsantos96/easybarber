@@ -253,19 +253,22 @@ declare interface EstablishmentDetail extends Identifiable {
 declare interface ServiceDetails extends Identifiable {
     name: string;
     description: string;
-    duration: number;
+    duration: number | string;
     serviceType: ICategory | undefined;
     images: IImage[];
     image: string;
-    price?: number;
+    price?: number | string;
 }
 
-declare interface ServiceDTO extends Identifiable {
+declare interface CreateServiceDTO {
     serviceTypeId: number;
     name: string;
     description: string;
     duration: number;
     price: number;
+}
+
+declare interface ServiceDTO extends Identifiable, CreateServiceDTO {
 }
 
 declare interface ServiceInfo extends Identifiable {

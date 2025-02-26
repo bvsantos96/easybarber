@@ -5,7 +5,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import * as ImagePicker from 'expo-image-picker';
 import { Alert } from 'react-native';
 
-import { replaceMainImage, storeImage, storeServiceDetails, updateServiceDetails } from "utils/ApiRequest";
+import { replaceMainImage, storeServiceDetails, updateServiceDetails } from "utils/ApiRequest";
 import { getStyles } from "@styles/Service";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Params } from "@navigation/Router";
@@ -19,13 +19,13 @@ import { AlertType } from "@components/Alert";
 import useAlertStore from "storage/stores/AlertStore";
 
 export type Route = {
-    service: ServiceDetails;
+    service?: ServiceDetails;
 };
 
 type Props = NativeStackScreenProps<typeof Params, 'Service'>;
 
 export default function Service({ route }: Props) {
-    const { setToUpdate } = useUpdateStore();
+    const { toUpdate, setToUpdate } = useUpdateStore();
     const { alert, setAlertVisible } = useAlertStore();
     const { service: _service } = route.params;
     const styles = getStyles();
@@ -38,15 +38,15 @@ export default function Service({ route }: Props) {
             id: 0,
             name: "",
             description: "",
-            duration: 0,
+            duration: "",
             serviceType: undefined,
             images: [],
             image: "",
-            price: 0
+            price: ""
         }
     }
 
-    const getHash = (serviceDetails: ServiceDetails): string => {
+    const getHash = (serviceDetails?: ServiceDetails): string => {
         const _serviceDetails = getDefaultService(serviceDetails);
         return `1:${_serviceDetails.name}2:${_serviceDetails.description}3:${_serviceDetails.duration}4:${_serviceDetails.price}5:${_serviceDetails.serviceType?.id}6:${_serviceDetails.duration}7:${_serviceDetails.image}`;
     }
@@ -57,7 +57,7 @@ export default function Service({ route }: Props) {
     const [image, setImage] = useState<string>(service.image);
 
     useEffect(() => {
-        const canStore = service.name.length > 0 && service.description.length > 0 && service.duration > 0 && service.serviceType !== undefined && service.price !== undefined;
+        const canStore = service.name.length > 0 && service.description.length > 0 && +service.duration > 0 && service.serviceType !== undefined && service.price !== undefined && +service.price > 0;
         setChanged(canStore && initialItem.current !== getHash(service));
     }, [service]);
 
@@ -122,10 +122,13 @@ export default function Service({ route }: Props) {
             service.id = response.data.id;
 
             if (service.image && service.image !== "") {
-                if (await storeImage("service", +service.id, service.image, true)) {
+                if (await replaceMainImage("service", +service.id, image)) {
                     initialItem.current = getHash(service);
                 }
             }
+            initialItem.current = getHash(service);
+            setChanged(false);
+            setToUpdate("refresh");
             setAlertVisible(false);
             return;
         }
@@ -144,7 +147,9 @@ export default function Service({ route }: Props) {
         if (valid) {
             initialItem.current = getHash(service);
             setChanged(false);
-            setToUpdate(service);
+            if (toUpdate !== "refresh") {
+                setToUpdate(service);
+            }
         }
         setAlertVisible(false);
     }
@@ -152,15 +157,18 @@ export default function Service({ route }: Props) {
     return (
         <View style={styles.container}>
             <View style={styles.imageContainer} >
-                {service.image &&
+                {service.image ? (
                     <Image
                         cachePolicy="memory-disk"
                         source={{ uri: service.image }}
                         style={styles.imageStyle}
                     />
+                ) : (
+                    <View style={[styles.imageStyle, styles.noImage]} />
+                )
                 }
                 <Pressable style={[styles.addIcon, styles.iconContainer]} onPress={chooseImage}>
-                    <FontAwesome6 name="edit" size={styles.icon.width} color={styles.addIcon.color} />
+                    {service.image ? <FontAwesome6 name="edit" size={styles.icon.width} color={styles.addIcon.color} /> : <FontAwesome6 name="plus" size={styles.icon.width} color={styles.addIcon.color} />}
                 </Pressable>
                 <View style={styles.inputContainer}>
                     <Input hideTitleIfNoValue placeholder={texts.name} containerStyle={styles.input} title={texts.name} round={false} defaultValue={service.name} onInputChange={(name) => { setService({ ...service, name: name }) }} />
@@ -168,8 +176,8 @@ export default function Service({ route }: Props) {
                     <ServiceTypeCombobox defaultValue={service.serviceType} onInputChange={(_serviceType: ICategory) => {
                         setService({ ...service, serviceType: _serviceType });
                     }} />
-                    <Input hideTitleIfNoValue placeholder={texts.price} containerStyle={styles.input} title={texts.price} round={false} defaultValue={`${service.price}`} onInputChange={(price) => setService({ ...service, price: +price })} />
-                    <Input hideTitleIfNoValue placeholder={texts.durationInMinutes} containerStyle={styles.input} title={texts.durationInMinutes} round={false} defaultValue={`${service.duration}`} onInputChange={(duration) => setService({ ...service, duration: +duration })} />
+                    <Input hideTitleIfNoValue placeholder={texts.price} containerStyle={styles.input} title={texts.price} round={false} defaultValue={`${service.price}`} onInputChange={(price) => setService({ ...service, price: +price })} type={"numeric"} />
+                    <Input hideTitleIfNoValue placeholder={texts.durationInMinutes} containerStyle={styles.input} title={texts.durationInMinutes} round={false} defaultValue={`${service.duration}`} onInputChange={(duration) => setService({ ...service, duration: +duration })} type={"numeric"} />
                     <Button disabled={!changed} title={texts.save} onPress={storeService} />
                 </View>
             </View>

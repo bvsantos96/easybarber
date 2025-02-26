@@ -1,9 +1,9 @@
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useTheme } from '@styles/ThemeContext';
 
-const NewIcon = ({ width, fill }: { width: number, height: number, fill?: string }) => {
+const NewEstablishment = ({ width, fill }: { width: number, height: number, fill?: string }) => {
     const theme = useTheme();
-    return (<MaterialIcons name="add-business" size={width} color={fill || theme.colors.text.black} />);
+    return (<MaterialIcons name="add" size={width} color={fill || theme.colors.text.black} />);
 }
 
-export default NewIcon;
+export default NewEstablishment;

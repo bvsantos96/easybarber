@@ -5,6 +5,7 @@ import { Params, Routes } from "@navigation/Router";
 import Appointments from "@screens/Appointments";
 import Establishments from "@screens/Establishments";
 import AppointmentsIcon from "@components/icons/AppointmentsIcon";
+import NewEstablishment from "@components/icons/NewEstablishmentIcon";
 import NewIcon from "@components/icons/NewIcon";
 import { NavigationProp } from "@react-navigation/native";
 import Home from "@screens/Home";
@@ -36,7 +37,7 @@ const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
             navigation.navigate(Routes.Settings);
         },
         leftText: texts.navigation.tabs.establishments.join,
-        rightIcon: NewIcon,
+        rightIcon: NewEstablishment,
         rightAction: (navigation: NavigationProp<any, any>) => {
             navigation.navigate(Routes.NewEstablishment);
         },
@@ -49,6 +50,10 @@ const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
         component: ServiceList,
         tabicon: ServiceIcon,
         requiresAuth: true,
+        rightIcon: NewIcon,
+        rightAction: (navigation: NavigationProp<any, any>) => {
+            navigation.navigate(Routes.Service, { service: undefined });
+        },
         visibleConstraint: [TabsVisibleConstraints.AUTHENTICATED, TabsVisibleConstraints.HAS_ESTABLISHMENTS]
     },
     Schedules: {
