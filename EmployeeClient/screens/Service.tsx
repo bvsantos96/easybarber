@@ -17,6 +17,7 @@ import Pressable from "@components/Pressable";
 import useUpdateStore from "storage/stores/UpdateStore";
 import { AlertType } from "@components/Alert";
 import useAlertStore from "storage/stores/AlertStore";
+import { ServiceAction } from "enums";
 
 export type Route = {
     service?: ServiceDetails;
@@ -128,7 +129,9 @@ export default function Service({ route }: Props) {
             }
             initialItem.current = getHash(service);
             setChanged(false);
-            setToUpdate("refresh");
+            setToUpdate({
+                action: ServiceAction.REFRESH
+            });
             setAlertVisible(false);
             return;
         }
@@ -147,8 +150,8 @@ export default function Service({ route }: Props) {
         if (valid) {
             initialItem.current = getHash(service);
             setChanged(false);
-            if (toUpdate !== "refresh") {
-                setToUpdate(service);
+            if (toUpdate === undefined || toUpdate.action !== ServiceAction.REFRESH) {
+                setToUpdate({action: ServiceAction.UPDATE, obj: service, id: service.id});
             }
         }
         setAlertVisible(false);

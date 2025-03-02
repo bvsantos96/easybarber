@@ -47,3 +47,9 @@ export enum ButtonType {
     MaterialCommunityIcons = "material-community-icons",
     MaterialIcons = "material-icons"
 }
+
+export enum ServiceAction {
+    UPDATE = "update",
+    DELETE = "delete",
+    REFRESH = "refresh"
+}
