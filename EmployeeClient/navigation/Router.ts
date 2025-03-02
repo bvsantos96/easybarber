@@ -1,6 +1,9 @@
 import { Route as MobileConfirmationRoute } from "@screens/MobileConfirmation";
 import { Route as ResetPwdRoute } from "@screens/ResetPwd";
 import { Route as ServiceRoute } from "@screens/Service";
+import { Route as ServiceSelectionRoute } from "@screens/ServiceSelection";
+import { Route as EmployeeSelectionRoute } from "@screens/EmployeeSelection";
+import { Route as AvailabilityRoute } from "@screens/Availability";
 
 export const Params = {
     Sign: undefined,
@@ -22,7 +25,12 @@ export const Params = {
     Employees: undefined,
     Home: undefined,
     Services: undefined,
-    Service: {} as ServiceRoute
+    Service: {} as ServiceRoute,
+    Appointment: undefined,
+    EstablishmentSelection: undefined,
+    EmployeeSelection: {} as EmployeeSelectionRoute,
+    ServiceSelection: {} as ServiceSelectionRoute,
+    Availability: {} as AvailabilityRoute
 } as const;
 
 export const Routes = {
@@ -45,5 +53,10 @@ export const Routes = {
     Employees: "Employees",
     Home: "Home",
     Services: "Services",
-    Service: "Service"
+    Service: "Service",
+    Appointment: "Appointment",
+    EstablishmentSelection: "EstablishmentSelection",
+    EmployeeSelection: "EmployeeSelection",
+    ServiceSelection: "ServiceSelection",
+    Availability: "Availability"
 } as const;

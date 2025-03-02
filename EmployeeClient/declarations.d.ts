@@ -437,3 +437,27 @@ declare interface ServiceActionType {
     obj?: any,
     id?: number | string
 }
+
+declare interface EmployeeEntity extends ImageEntity {
+    name: string;
+    price: number;
+    oldPrice: number;
+}
+
+declare interface TimeSlots {
+    slots: TimeSlot[];
+}
+
+declare interface TimeSlot {
+    start: string;
+    end: string;
+    employeeIds: number[];
+}
+
+declare interface AppointmentCreate extends Identifiable {
+    establishmentStaffId: number;
+    establishmentId: number;
+    establishmentServiceId: number;
+    date: string;
+    time: string;
+}
