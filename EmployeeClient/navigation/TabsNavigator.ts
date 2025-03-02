@@ -70,7 +70,11 @@ const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
         component: Appointments,
         tabicon: AppointmentsIcon,
         requiresAuth: true,
-        visibleConstraint: [TabsVisibleConstraints.AUTHENTICATED, TabsVisibleConstraints.HAS_ESTABLISHMENTS]
+        visibleConstraint: [TabsVisibleConstraints.AUTHENTICATED, TabsVisibleConstraints.HAS_ESTABLISHMENTS],
+        rightIcon: NewIcon,
+        rightAction: (navigation: NavigationProp<any, any>) => {
+            navigation.navigate(Routes.EstablishmentSelection);
+        }
     },
     ProductList: {
         title: texts.navigation.tabs.products.name,

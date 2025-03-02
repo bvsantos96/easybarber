@@ -1,6 +1,7 @@
 import { NavigationProp } from "@react-navigation/native";
 import texts from "@lang/en.json";
 import { DateData } from "react-native-calendars";
+import { ViewStyle, StyleSheet, RegisteredStyle, Falsy, RecursiveArray } from "react-native";
 
 export const getDateData = (date: Date): DateData => {
     return {
@@ -137,3 +138,49 @@ export const fromMinutesToTime = (minutes: number) => {
     const remaining = minutes % 60;
     return `${twoDigits(hours)}:${twoDigits(remaining)}`;
 }
+
+export const getStyleValue = (value: keyof ViewStyle, style: false | ViewStyle | RegisteredStyle<ViewStyle> | RecursiveArray<ViewStyle | Falsy | RegisteredStyle<ViewStyle>> | null): string | undefined => {
+    if (!style) return undefined;
+    const flattenedStyle = StyleSheet.flatten(style);
+    return flattenedStyle?.[value] as string | undefined;
+};
+
+export const getDisabledColor = (color?: string): string | undefined => {
+    if (!color) return undefined;
+
+    let r = 0, g = 0, b = 0, a = 1;
+    if (color.startsWith("#")) {
+        if (color.length === 7) {
+            r = parseInt(color.slice(1, 3), 16);
+            g = parseInt(color.slice(3, 5), 16);
+            b = parseInt(color.slice(5, 7), 16);
+        } else if (color.length === 9) {
+            r = parseInt(color.slice(1, 3), 16);
+            g = parseInt(color.slice(3, 5), 16);
+            b = parseInt(color.slice(5, 7), 16);
+            a = parseInt(color.slice(7, 9), 16) / 255;
+        }
+    } else {
+
+        const rgbaMatch = color.match(/^rgba\((\d+),\s*(\d+),\s*(\d+),\s*[\d.]+\)$/);
+        const rgbMatch = color.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/);
+
+        if (rgbMatch || rgbaMatch) {
+            r = +(rgbMatch?.[1] ?? rgbaMatch?.[1] ?? 0);
+            g = +(rgbMatch?.[2] ?? rgbaMatch?.[2] ?? 0);
+            b = +(rgbMatch?.[3] ?? rgbaMatch?.[3] ?? 0);
+        }
+
+        const greyR = 128;
+        const greyG = 128;
+        const greyB = 128;
+        const opacity = 0.4
+
+        const blendedR = Math.round(r * (1 - opacity) + greyR * opacity);
+        const blendedG = Math.round(g * (1 - opacity) + greyG * opacity);
+        const blendedB = Math.round(b * (1 - opacity) + greyB * opacity);
+
+        return `rgb(${blendedR}, ${blendedG}, ${blendedB})`;
+    }
+};
+
