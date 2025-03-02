@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Text } from 'react-native';
 import Pressable from '../components/Pressable';
 import { getStyles } from '../styles/Button';
 import { useTheme } from '../styles/ThemeContext';
+import { getDisabledColor, getStyleValue } from 'utils/Utils';
 
 export default function Button({
     backgroundColor = "",
@@ -35,6 +36,8 @@ export default function Button({
             onPress();
         }
     };
+
+    const disabledTextColor = useRef(getDisabledColor(_buttonTextColor));
     return (
         <Pressable
             style={[
@@ -53,7 +56,7 @@ export default function Button({
                     handlePress();
                 }
             }}>
-            <Text style={[styles.textButton, { color: _buttonTextColor }]}>{title}</Text>
+            <Text style={[styles.textButton, { color: disabled ? disabledTextColor.current : _buttonTextColor }]}>{title}</Text>
         </Pressable>
     );
 }
