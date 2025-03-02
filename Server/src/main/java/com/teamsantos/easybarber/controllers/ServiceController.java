@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -117,6 +118,20 @@ public class ServiceController extends ImageController<Service, ServiceImage> {
                             establishmentStaffId, future));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(List.of(e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("{serviceId}")
+    @PreAuthorize(PrePermissionEvaluator.SERVICE_OWNER)
+    public ResponseEntity<BaseResponseDTO> deleteService(@PathVariable long serviceId) {
+        BaseResponseDTO response = new BaseResponseDTO();
+        try {
+            serviceService.deleteService(serviceId);
+            response.setResponseMessage("Service deleted successfully");
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 

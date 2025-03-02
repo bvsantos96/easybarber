@@ -104,4 +104,10 @@ public interface ImageRepository<T extends EntityWithImages<T, E>, E extends Ima
              WHERE i.entity.id = :entityId
             """)
     Long findOldestImageId(long entityId);
+
+    @Query("""
+            SELECT i FROM #{#entityName} i
+            WHERE i.entity.id = :entityId
+            """)
+    List<E> findImages(long entityId);
 }

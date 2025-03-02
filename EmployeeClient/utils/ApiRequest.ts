@@ -607,8 +607,8 @@ export const storeServiceDetails = async (service: ServiceDetails): Promise<IRes
     const _service: CreateServiceDTO = {
         name: service.name,
         description: service.description,
-        duration: service.duration,
-        price: service.price ?? 0,
+        duration: +service.duration,
+        price: service.price ? +service.price : 0,
         serviceTypeId: service.serviceType?.id ?? 0
     }
 
@@ -620,8 +620,8 @@ export const updateServiceDetails = async (service: ServiceDetails): Promise<IRe
         id: service.id,
         name: service.name,
         description: service.description,
-        duration: service.duration,
-        price: service.price ?? 0,
+        duration: +service.duration,
+        price: service.price ? +service.price : 0,
         serviceTypeId: service.serviceType?.id ?? 0
     }
     return await request<BaseResponse>("/employee/service", "PUT", _service, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
@@ -633,4 +633,8 @@ export const storeImage = async (urlPrefix: string, id: number, image: string, i
 
 export const replaceMainImage = async (urlPrefix: string, id: number, image: string): Promise<boolean> => {
     return (await request<BaseResponse>(`${urlPrefix}/${id}/images`, "PUT", { data: image, main: true }, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
+}
+
+export const deleteService = async (id: number): Promise<boolean> => {
+    return await request<BaseResponse>(`/service/${id}`, "DELETE", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT).then(response => response.success);
 }

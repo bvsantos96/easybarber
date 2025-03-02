@@ -19,13 +19,13 @@ export default function ServiceItem({ service, onPress }: { service: ServiceDeta
                 source={{ uri: service.image }}
                 style={[styles.image]}
             />
-            <Category style={styles.editIcon} id={service.serviceType} selectedCategory={service.serviceType} size={styles.editIcon.width} />
+            <Category style={styles.editIcon} id={service.serviceType?.id || 0} selectedCategory={service.serviceType?.id || 0} size={styles.editIcon.width} />
             <Divider size={8.75} />
             <View style={styles.textContainer} >
                 <Text style={styles.brandText}>{service.name}</Text>
                 <Text style={styles.nameText} numberOfLines={2}>{service.description}</Text>
                 <Divider size={8.75} />
-                <Text style={[styles.priceText, { fontSize: 11 }]}>{`${fromMinutesToTime(service.duration)}h ${service.price ? ` - ${buildCurrencyString(service.price)}` : ""}`}</Text>
+                <Text style={[styles.priceText, { fontSize: 11 }]}>{`${fromMinutesToTime(+service.duration)}h ${service.price ? ` - ${buildCurrencyString(service.price)}` : ""}`}</Text>
             </View>
             <Divider size={17.5} />
         </Pressable>
