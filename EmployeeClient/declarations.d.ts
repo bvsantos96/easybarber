@@ -12,6 +12,7 @@ declare type StackInfo = {
     containerizedComponent: boolean;
     secondHeader?: React.FC<any>;
     noGoBack?: boolean;
+    route?: string;
 }
 
 declare type TabsInfo = {
@@ -428,3 +429,6 @@ declare interface EmployeeBase extends Identifiable {
     nvotes: number;
     serviceTypes: number[];
 }
+
+type RouteParams = Record<string, { id?: number | undefined }>;
+
