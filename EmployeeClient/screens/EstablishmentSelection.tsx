@@ -26,7 +26,7 @@ export default function EstablishmentSelection({ navigation }: PropNavigation) {
     return (
         <Selection
             setTopPadding={setTopPadding}
-            buttonText={texts.appointments.selectEmployee}
+            buttonText={texts.appointments.selectEstablishment}
             selectionText={texts.appointments.selectEstablishment}
             selected={!!establishmentId}
             onButtonPress={
