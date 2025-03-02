@@ -14,6 +14,7 @@ import TimeSheet from "@screens/TimeSheet";
 import Employees from "@screens/Employees";
 import AddButton from "@components/AddButton";
 import Service from "@screens/Service";
+import DeleteButton from "@components/DeleteButton";
 
 const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     Sign: {
@@ -100,6 +101,8 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         hasHeader: true,
         component: Service,
         containerizedComponent: true,
+        secondHeader: DeleteButton,
+        route: "service"
     }
 };
 

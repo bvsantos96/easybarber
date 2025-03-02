@@ -26,7 +26,7 @@ import { DEBUG_AUTO_LOGIN } from 'utils/EnvVariables';
 import useAlertStore from 'storage/stores/AlertStore';
 import { getDefaultCountryString } from 'utils/Constants';
 import DismissKeyboard from '@components/DismissKeyboard';
-import { deleteMobileInformation, deleteToken, getServiceTypes, getToken, refreshToken } from 'utils/ApiRequest';
+import { deleteMobileInformation, deleteService, deleteToken, getServiceTypes, getToken, refreshToken } from 'utils/ApiRequest';
 import { validateVersion } from 'utils/VersionValidation';
 import SafeFullScreen from '@components/SafeFullScreen';
 import useHeaderStore from 'storage/stores/HeaderStore';
@@ -42,6 +42,7 @@ const Router = () => {
     const Stack = createNativeStackNavigator<typeof Params>();
     const navigationRef = useRef<NavigationContainerRef<typeof Params> | null>(null);
 
+    const { alert } = useAlertStore();
     const { setServiceTypes } = useServiceTypeStore();
 
     useEffect(() => {
@@ -130,9 +131,32 @@ const Router = () => {
                             name={_key}
                             options={nav.hasHeader ?
                                 {
-                                    header: ({ navigation, route }) => (
-                                        <Header navigation={navigation} title={nav.title} hasGoBack={!nav.noGoBack} secondHeader={nav.secondHeader} hideSecondHeader={(route.params as any)?.hideSecondHeader} />
-                                    ),
+                                    header: ({ navigation, route }) => {
+                                        let id: number | undefined = undefined;
+                                        if (nav.route) {
+                                            const _params: RouteParams = (route?.params as RouteParams) ?? {};
+                                            id = _params?.[nav.route]?.id;
+                                        }
+                                        return (
+                                            <Header
+                                                navigation={navigation}
+                                                title={nav.title}
+                                                hasGoBack={!nav.noGoBack}
+                                                secondHeader={_key === Routes.Service ? (id ? nav.secondHeader : undefined) : nav.secondHeader}
+                                                secondHeaderFunction={
+                                                    _key === Routes.Service
+                                                        ? async (_) => {
+                                                            if (id && await deleteService(id)) {
+                                                                alert({ message: texts.serviceDeleted, type: AlertType.Success, onPress: () => navigation.goBack() });
+                                                                return true;
+                                                            }
+  // Adicionando retorno explícito                                                          return false;
+                                                        }
+                                                        : undefined
+                                                }
+                                                hideSecondHeader={(route.params as any)?.hideSecondHeader} />
+                                        );
+                                    },
                                 }
                                 :
                                 {

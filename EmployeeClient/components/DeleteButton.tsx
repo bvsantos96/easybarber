@@ -2,13 +2,12 @@ import { useTheme } from "@styles/ThemeContext";
 import Pressable from "./Pressable";
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
-
 export interface Props {
     selected: boolean;
     setSelected: (value: boolean) => void;
 }
 
-export default function AddButton({ setSelected }: Props) {
+export default function DeleteButton({ setSelected }: Props) {
     const theme = useTheme();
     return (
         <Pressable style={{
@@ -19,9 +18,9 @@ export default function AddButton({ setSelected }: Props) {
             justifyContent: 'center',
             alignItems: 'center',
             borderWidth: 1,
-            borderColor: theme.colors.mainColor,
+            borderColor: theme.colors.errorColor,
         }} onPress={() => setSelected(false)}>
-            <MaterialIcons name="add" size={24 * theme.dimensions.absoluteWidth} color={theme.colors.mainColor} />
+            <MaterialIcons name="delete-outline" size={24 * theme.dimensions.absoluteWidth} color={theme.colors.errorColor} />
         </Pressable >
     )
 }
