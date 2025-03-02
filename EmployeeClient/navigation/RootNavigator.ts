@@ -15,6 +15,9 @@ import Employees from "@screens/Employees";
 import AddButton from "@components/AddButton";
 import Service from "@screens/Service";
 import DeleteButton from "@components/DeleteButton";
+import ServiceSelection from "@screens/ServiceSelection";
+import EstablishmentSelection from "@screens/EstablishmentSelection";
+import EmployeeSelection from "@screens/EmployeeSelection";
 
 const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     Sign: {
@@ -103,6 +106,24 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         containerizedComponent: true,
         secondHeader: DeleteButton,
         route: "service"
+    },
+    EstablishmentSelection: {
+        title: texts.navigation.appointment.create,
+        hasHeader: true,
+        component: EstablishmentSelection,
+        containerizedComponent: true
+    },
+    EmployeeSelection: {
+        title: texts.navigation.appointment.create,
+        hasHeader: true,
+        component: EmployeeSelection,
+        containerizedComponent: true
+    },
+    ServiceSelection: {
+        title: texts.navigation.appointment.create,
+        hasHeader: true,
+        component: ServiceSelection,
+        containerizedComponent: true
     }
 };
 

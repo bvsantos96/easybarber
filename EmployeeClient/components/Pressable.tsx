@@ -1,7 +1,8 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useRef } from 'react';
 import { Pressable as DefaultPressable, StyleProp, ViewStyle, LayoutChangeEvent } from 'react-native';
 import { useTheme } from '../styles/ThemeContext';
 import { LinearGradient } from 'expo-linear-gradient';
+import { getDisabledColor, getStyleValue } from 'utils/Utils';
 
 interface MyPressableProps {
     style?: StyleProp<ViewStyle>;
@@ -23,12 +24,15 @@ export default function Pressable({
     useGradient = false
 }: MyPressableProps) {
     const theme = useTheme();
+    const disabledBackgroundColor = useRef(getDisabledColor(getStyleValue("backgroundColor", style)));
+    const disabledBorderColor = useRef(getDisabledColor(getStyleValue("borderColor", style)));
     return (
         <DefaultPressable
             disabled={disabled}
             style={({ pressed }) => [
-                { opacity: disabled || pressed ? 0.5 : 1 },
+                { opacity: pressed ? 0.5 : 1 },
                 !useGradient && style,
+                (disabled) && { backgroundColor: disabledBackgroundColor.current, borderColor: disabledBorderColor.current },
                 (!useGradient && shadow) ? theme.shadow : undefined,
             ]}
             onPress={onPress}

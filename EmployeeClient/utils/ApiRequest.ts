@@ -639,3 +639,15 @@ export const replaceMainImage = async (urlPrefix: string, id: number, image: str
 export const deleteService = async (id: number): Promise<boolean> => {
     return await request<BaseResponse>(`/service/${id}`, "DELETE", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT).then(response => { console.log(response); return response.success; });
 }
+
+export const getEstablishmentServiceEmployees = async (establishmentId: number, establishmentServiceId: number, date?: string, time?: string): Promise<EmployeeEntity[]> => {
+    const dateTime = `${date}T${time}`;
+    const result = await request<EmployeeEntity[]>(`establishment/${establishmentId}/service/${establishmentServiceId}/employees${(date && time) ? "?date=" + dateTime : ""}`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
+    return getItemsFromRequest<EmployeeEntity[]>(result);
+}
+
+export const getEstablishmentServices = async (establishementId: number): Promise<ServiceInfo[]> => {
+    const result = await request<ServiceInfo[]>(`establishment/${establishementId}/services/list`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
+    return getItemsFromRequest<ServiceInfo[]>(result);
+}
+

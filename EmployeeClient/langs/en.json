@@ -4,7 +4,7 @@
   "no": "No",
   "submit": "Submit",
   "dismiss": "Dismiss",
-  "notNow" : "Not Now",
+  "notNow": "Not Now",
   "reload": "Reload",
   "logout": "Logout",
   "logoutSuccess": "Logout Successful",
@@ -29,6 +29,10 @@
   "retry": "Retry",
   "phoneNumber": "Phone Number",
   "navigation": {
+    "appointment": {
+      "name": "Appointment",
+      "create": "Creating Appointment"
+    },
     "service": {
       "name": "Service"
     },
@@ -69,7 +73,7 @@
       "schedules": {
         "name": "Schedules",
         "timesheet": "Timesheet",
-        "weekview": "Week View",
+        "weekview": "Week View"
       },
       "products": {
         "name": "Products"
@@ -182,8 +186,9 @@
     "seeAppointments": "See Appointments",
     "upcomming": "Upcomming",
     "book": "Book Appointment",
-    "selectBarber": "Select Barber",
-    "selectService": "Select service",
+    "selectEmployee": "Select employee",
+    "selectEstablishment": "Select establishment",
+    "selectService": "Select Service",
     "schedule": "Schedule Date & Time",
     "scheduleSelection": "Click on any date and check available slots.",
     "slotsAvailable": "Slots Avalilable",
@@ -199,7 +204,7 @@
     "resetPwd": "Reset Password"
   },
   "currency": "€",
-  "weekday" : {
+  "weekday": {
     "short": [
       "Mon",
       "Tue",
@@ -208,7 +213,7 @@
       "Fri",
       "Sat",
       "Sun"
-    ], 
+    ],
     "long": [
       "Monday",
       "Tuesday",
@@ -268,7 +273,7 @@
     "fire": "Are you sure you want to fire this employee?",
     "add": "Add Employee",
     "search": "Search Employee",
-    "notFound": "Employee not found",
+    "notFound": "Employee not found"
   },
   "status": {
     "active": "Active",
@@ -288,5 +293,15 @@
   "pickFromGallery": "Pick from Gallery",
   "permissionRequired": "Permission Required",
   "cameraAndGalleryPermissionRequired": "Camera and Gallery permissions are required to take a photo or pick one from the gallery.",
-  "serviceDeleted": "Service deleted successfully"
+  "serviceDeleted": "Service deleted successfully",
+  "services": {
+    "title": "Services",
+    "select": "Select service you want"
+  },
+  "employees": {
+    "title": "Employees",
+    "select": "Select the employee you want\n(or skip and choose the appointment date first)",
+    "selectNot": "Select the employee you want"
+  },
+  "isAdmin": "Admin"
 }
