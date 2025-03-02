@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -145,6 +146,16 @@ public class ServiceWithImages<T extends EntityWithImages<T, E>, E extends Image
                 imageRepository.setNewMain(entityId, id);
             }
         }
+    }
+
+    @Transactional
+    public void deleteEntityImages(long entityId) {
+        List<E> images = imageRepository.findImages(entityId);
+        Set<String> fileNames = images.stream().map(Image::getFileName).collect(Collectors.toSet());
+        Set<Long> imageIds = images.stream().map(Image::getId).collect(Collectors.toSet());
+
+        imageRepository.deleteImages(entityId, imageIds);
+        fileNames.forEach(this::deleteImageFromBucket);
     }
 
     @Transactional

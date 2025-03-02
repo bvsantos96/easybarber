@@ -105,6 +105,7 @@ public class ServiceService extends
     @Transactional
     public void deleteService(Long id) {
         establishmentServiceRepository.deleteByServiceId(id);
+        deleteEntityImages(id);
         serviceRepository.deleteById(id);
     }
 
