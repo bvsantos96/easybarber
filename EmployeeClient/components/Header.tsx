@@ -5,7 +5,7 @@ import Entypo from '@expo/vector-icons/Entypo';
 import { getStyles } from '../styles/HomeNavigator';
 import { NavigationProp } from '@react-navigation/native';
 import { Props as SecondHeaderProps } from '@components/FavoriteHeader';
-import { debounce } from 'lodash';
+import { debounce, throttle } from 'lodash';
 import useHeaderStore from 'storage/stores/HeaderStore';
 
 type HeaderProps = {
@@ -28,9 +28,13 @@ const Header = ({ navigation, title, hasGoBack = true, firstHeader, secondHeader
     useEffect(() => { (_selected !== undefined && selected !== _selected) && setSelected(_selected || false) }, [_selected]);
 
     const debouncedSecond = useCallback(
-        debounce((__selected: boolean) => {
-            secondHeaderFunction && secondHeaderFunction(__selected);
-        }, 1500),
+        throttle(
+            (__selected: boolean) => {
+                secondHeaderFunction && secondHeaderFunction(__selected);
+            },
+            1500,
+            { leading: true, trailing: false }
+        ),
         [secondHeaderFunction]
     );
 

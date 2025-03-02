@@ -4,7 +4,7 @@ import { View } from "react-native";
 import { getStyles } from "../styles/ProductList";
 import { getStyles as getServiceStyles } from "../styles/ServiceItem";
 import PageList, { PageListRef } from "@components/PageList";
-import { PageListType } from "enums";
+import { PageListType, ServiceAction } from "enums";
 import useEstablishmentStore from "storage/stores/EstablishmentStore";
 import { getServices } from "utils/ApiRequest";
 import ServiceItem from "@components/ServiceItem";
@@ -21,10 +21,12 @@ export default function ServiceList({ navigation }: PropNavigation) {
 
     useEffect(() => {
         if (toUpdate) {
-            if (toUpdate == "refresh") {
+            if (toUpdate.action === ServiceAction.REFRESH) {
                 setResetSearch(!resetSearch);
-            } else {
-                ref.current?.updateItem(toUpdate.id, toUpdate);
+            } else if (toUpdate.action === ServiceAction.UPDATE && toUpdate?.id) {
+                ref.current?.updateItem(+toUpdate.id, toUpdate.obj);
+            } else if (toUpdate.action === ServiceAction.DELETE && toUpdate?.id) {
+                ref.current?.deleteItem(+toUpdate.id);
             }
             clearToUpdate();
         }
