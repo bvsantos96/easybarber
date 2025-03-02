@@ -199,7 +199,7 @@ const request = async<T>(url: string, method: string, body: any, successMessage:
 
 const _request = async<T>(url: string, method: string, body: any, successMessage: string = langs.apiMessages.success, errorMessage: string = langs.apiMessages.failed, responseType: ResponseType, first: boolean): Promise<IResult<T>> => {
     const { toggleDoLogout } = useAuthStore.getState();
-    const { alert } = useAlertStore.getState();
+    const { alert, setAlertVisible } = useAlertStore.getState();
 
     let _url = apiUrlMaker(url);
     if (_url.length <= 0)
@@ -252,6 +252,7 @@ const _request = async<T>(url: string, method: string, body: any, successMessage
                 }
                 if (data !== undefined && data !== null) {
                     if (data.responseMessage) {
+                        setAlertVisible(false);
                         alert({ type: AlertType.Error, message: data.responseMessage, buttonText: langs.dismiss });
                         return { success: false, message: data.responseMessage, data: data.value };
                     }
@@ -636,5 +637,5 @@ export const replaceMainImage = async (urlPrefix: string, id: number, image: str
 }
 
 export const deleteService = async (id: number): Promise<boolean> => {
-    return await request<BaseResponse>(`/service/${id}`, "DELETE", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT).then(response => response.success);
+    return await request<BaseResponse>(`/service/${id}`, "DELETE", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT).then(response => { console.log(response); return response.success; });
 }

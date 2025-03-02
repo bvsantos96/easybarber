@@ -21,7 +21,7 @@ import useAuthStore from 'storage/stores/AuthStore';
 import Header from '@components/Header';
 import { ThemeProvider } from '@styles/ThemeContext';
 import CustomAlert, { AlertType } from '@components/Alert';
-import { UpdateType } from 'enums';
+import { UpdateType, ServiceAction } from 'enums';
 import { DEBUG_AUTO_LOGIN } from 'utils/EnvVariables';
 import useAlertStore from 'storage/stores/AlertStore';
 import { getDefaultCountryString } from 'utils/Constants';
@@ -31,6 +31,7 @@ import { validateVersion } from 'utils/VersionValidation';
 import SafeFullScreen from '@components/SafeFullScreen';
 import useHeaderStore from 'storage/stores/HeaderStore';
 import useServiceTypeStore from 'storage/stores/ServiceTypeStore';
+import useUpdateStore from 'storage/stores/UpdateStore';
 
 const Router = () => {
     const queryClient = useQueryClient()
@@ -42,7 +43,8 @@ const Router = () => {
     const Stack = createNativeStackNavigator<typeof Params>();
     const navigationRef = useRef<NavigationContainerRef<typeof Params> | null>(null);
 
-    const { alert } = useAlertStore();
+    const { alert, setAlertVisible } = useAlertStore();
+    const { setToUpdate } = useUpdateStore();
     const { setServiceTypes } = useServiceTypeStore();
 
     useEffect(() => {
@@ -146,11 +148,22 @@ const Router = () => {
                                                 secondHeaderFunction={
                                                     _key === Routes.Service
                                                         ? async (_) => {
-                                                            if (id && await deleteService(id)) {
-                                                                alert({ message: texts.serviceDeleted, type: AlertType.Success, onPress: () => navigation.goBack() });
+                                                            console.log("DELETE SERVICE");
+                                                            if (id) {
+                                                                alert({ type: AlertType.Loading, message: "" });
+                                                                const deleted = await deleteService(id || -1);
+                                                                if (deleted) {
+                                                                    setAlertVisible(false);
+                                                                    alert({
+                                                                        message: texts.serviceDeleted, type: AlertType.Success, onPress: () => {
+                                                                            setToUpdate({ action: ServiceAction.DELETE, id: id });
+                                                                            navigation.goBack();
+                                                                        }
+                                                                    });
+                                                                }
                                                                 return true;
                                                             }
-  // Adicionando retorno explícito                                                          return false;
+                                                            return false;
                                                         }
                                                         : undefined
                                                 }
