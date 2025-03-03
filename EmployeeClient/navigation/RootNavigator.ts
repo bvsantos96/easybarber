@@ -18,6 +18,7 @@ import DeleteButton from "@components/DeleteButton";
 import ServiceSelection from "@screens/ServiceSelection";
 import EstablishmentSelection from "@screens/EstablishmentSelection";
 import EmployeeSelection from "@screens/EmployeeSelection";
+import Availability from "@screens/Availability";
 
 const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     Sign: {
@@ -124,7 +125,13 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         hasHeader: true,
         component: ServiceSelection,
         containerizedComponent: true
-    }
+    },
+    Availability: {
+        title: texts.navigation.appointment.create,
+        hasHeader: true,
+        component: Availability,
+        containerizedComponent: true
+    },
 };
 
 export default RootNav;

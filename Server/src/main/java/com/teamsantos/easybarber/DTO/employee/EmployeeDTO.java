@@ -43,8 +43,9 @@ public class EmployeeDTO extends UserDTO {
         super(employee.getId(), employee.getUser().getCountryMobile(), employee.getUser().getMobile(),
                 employee.getUser().getName());
         this.description = employee.getDescription();
-        this.rating = employee.getNVotes() == null ? 0 : employee.getSumVotes() / employee.getNVotes();
-        this.nVotes = employee.getNVotes() == null ? 0 : employee.getNVotes();
+        this.rating = (employee.getNVotes() == null || employee.getNVotes() == 0) ? 0
+                : employee.getSumVotes() / employee.getNVotes();
+        this.nVotes = (employee.getNVotes() == null || employee.getNVotes() == 0) ? 0 : employee.getNVotes();
     }
 
     public EmployeeDTO(Employee employee, String data) {
