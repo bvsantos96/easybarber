@@ -310,6 +310,23 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         }
     }
 
+    // This is required to avoid missing USERCONTEXT because of public method 
+    @GetMapping("/{establishmentId}/staff")
+    public ResponseEntity<BaseListDTO<EmployeeDTO>> listStaff(@PathVariable Long establishmentId,
+            @RequestParam(defaultValue = "true") boolean onlyActive) {
+        BaseListDTO<EmployeeDTO> response = new BaseListDTO<>();
+        try {
+            response.setItems(establishmentService.getEmployees(establishmentId, onlyActive));
+            return ResponseEntity.ok(response);
+        } catch (NotFoundException e) {
+            response.setResponseMessage(String.format("Establishment with id %d not found", establishmentId));
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        } catch (Exception ex) {
+            response.setResponseMessage(ex.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
     @GetMapping("/{establishmentId}/employees")
     public ResponseEntity<BaseListDTO<EmployeeDTO>> listEmployees(@PathVariable Long establishmentId,
             @RequestParam(defaultValue = "true") boolean onlyActive) {

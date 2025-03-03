@@ -655,7 +655,7 @@ export const deleteService = async (id: number): Promise<boolean> => {
 }
 
 export const getEstablishmentEmployees = async (establishmentId: number): Promise<EmployeeEntity[]> => {
-    return getItemsFromRequest(await request<EmployeeEntity[]>(`establishment/${establishmentId}/employees`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST));
+    return getItemsFromRequest(await request<EmployeeEntity[]>(`establishment/${establishmentId}/staff`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST));
 }
 
 export const getEstablishmentServiceEmployees = async (establishmentId: number, establishmentServiceId: number, date?: string, time?: string): Promise<EmployeeEntity[]> => {
