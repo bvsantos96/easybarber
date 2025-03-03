@@ -18,6 +18,7 @@ public class EmployeeDTO extends UserDTO {
     private long nVotes;
     private String image;
     private Long[] serviceTypes;
+    private Boolean me;
 
     public EmployeeDTO() {
         super();
@@ -30,6 +31,12 @@ public class EmployeeDTO extends UserDTO {
 
     public EmployeeDTO(String description) {
         this.description = description;
+    }
+
+    public EmployeeDTO(Long id, Employee employee, Boolean me) {
+        this(employee);
+        this.me = me;
+        this.setId(id);
     }
 
     public EmployeeDTO(Employee employee) {

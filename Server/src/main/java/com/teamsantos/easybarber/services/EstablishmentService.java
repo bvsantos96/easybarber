@@ -310,6 +310,10 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
         if (!repository.existsById(establishmentId)) {
             throw new NotFoundException();
         }
+        if (UserContext.isEmployee()) {
+            return establishmentStaffRepository.findEmployeeByEstablishmentIdAndActiveFilter(establishmentId,
+                    onlyActive, UserContext.getEmployeeId());
+        }
         return establishmentStaffRepository.findEmployeeByEstablishmentIdAndActiveFilter(establishmentId, onlyActive);
     }
 
@@ -367,7 +371,10 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
     }
 
     @Transactional(readOnly = true)
-    public List<ServiceListDTO> listServices(long establishmentId, LocalDateTime date) {
+    public List<ServiceListDTO> listServices(long establishmentId, LocalDateTime date, Long establishmentStaffId) {
+        if (null != establishmentStaffId) {
+            return establishmentServiceRepository.listServices(establishmentId, date, establishmentStaffId);
+        }
         return establishmentServiceRepository.listServices(establishmentId, date);
     }
 

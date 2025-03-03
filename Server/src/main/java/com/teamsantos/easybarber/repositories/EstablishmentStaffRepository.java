@@ -94,11 +94,25 @@ public interface EstablishmentStaffRepository extends JpaRepository<Establishmen
 
     @Query("""
             SELECT new com.teamsantos.easybarber.DTO.employee.EmployeeDTO(
+                es.id,
+                es.employee,
+                es.employee.id = :employeeId as me
+            ) FROM EstablishmentStaff es
+            WHERE
+                es.establishment.id = :establishmentId
+                AND es.employee.id = :employeeId
+                AND (:onlyActive = false OR es.deleted = false AND es.approved = true)
+            """)
+    List<EmployeeDTO> findEmployeeByEstablishmentIdAndActiveFilter(long establishmentId, boolean onlyActive,
+            long employeeId);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.employee.EmployeeDTO(
                 es.employee
             ) FROM EstablishmentStaff es
             WHERE
                 es.establishment.id = :establishmentId
-            AND (:onlyActive = false OR es.deleted = false AND es.approved = true)
+                AND (:onlyActive = false OR es.deleted = false AND es.approved = true)
             """)
     List<EmployeeDTO> findEmployeeByEstablishmentIdAndActiveFilter(long establishmentId, boolean onlyActive);
 

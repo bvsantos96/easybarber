@@ -35,4 +35,9 @@ public class UserContext {
     public static void clear() {
         CONTEXT.remove();
     }
+
+    public static boolean isEmployee() {
+        UserPrincipal user = CONTEXT.get();
+        return user != null && user.getEmployeeId() != null;
+    }
 }
