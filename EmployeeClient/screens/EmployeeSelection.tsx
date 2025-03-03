@@ -34,7 +34,7 @@ export default function EmployeeSelection({ navigation, route }: Props) {
     const { alert, setAlertVisible } = useAlertStore();
 
     const { data } = useQuery({
-        queryKey: [`establishment/${establishmentId}/employees`, establishmentId],
+        queryKey: [`establishment/${establishmentId}/staff`, establishmentId],
         queryFn: async () => {
             const employees = await getEstablishmentEmployees(establishmentId)
             if (employees) {
@@ -167,33 +167,37 @@ export default function EmployeeSelection({ navigation, route }: Props) {
                             return availableEmployees.includes(+e.id);
                         }) || []}
                         renderItem={
-                            ({ item }: { item: EmployeeEntity }) =>
-                                <SelectionItem
-                                    key={item.id}
-                                    image={item.image}
-                                    selected={item.id == selected}
-                                    onPress={() => {
-                                        if (selected == item.id) {
-                                            setSelected(0);
-                                            return;
-                                        }
-                                        setSelected(item.id);
-                                    }}>
-                                    <View style={styles.titleContainer}>
-                                        <View style={{
-                                            justifyContent: 'center',
-                                            height: styles.titleContainer.height
+                            ({ item }: { item: EmployeeEntity }) => {
+                                return (
+                                    <SelectionItem
+                                        key={item.id}
+                                        image={item.image}
+                                        selected={item.id == selected}
+                                        onPress={() => {
+                                            if (selected == item.id) {
+                                                setSelected(0);
+                                                return;
+                                            }
+                                            setSelected(item.id);
                                         }}>
-                                            <Text style={styles.singleTitle}>{item.name}</Text>
-                                            <View style={{ flexDirection: 'row' }}>
-                                                {item.oldPrice && item.oldPrice > 0 && (
-                                                    <Text style={[styles.description, { textDecorationLine: "line-through" }]}>{`${buildCurrencyString(item.oldPrice)} `}</Text>
-                                                )}
-                                                <Text style={styles.description}>{`${buildCurrencyString(item.price)}`}</Text>
+                                        <View style={styles.titleContainer}>
+                                            <View style={{
+                                                justifyContent: 'center',
+                                                height: styles.titleContainer.height
+                                            }}>
+                                                <Text style={styles.singleTitle}>{item.name}</Text>
+                                                <View style={{ flexDirection: 'row' }}>
+                                                    {item.oldPrice && item.oldPrice > 0 && (
+                                                        <Text style={[styles.description, { textDecorationLine: "line-through" }]}>{`${buildCurrencyString(item.oldPrice)} `}</Text>
+                                                    )}
+                                                    {item.price && item.price > 0 && (
+                                                        <Text style={styles.description}>{`${buildCurrencyString(item.price)}`}</Text>
+                                                    )}
+                                                </View>
                                             </View>
                                         </View>
-                                    </View>
-                                </SelectionItem>
+                                    </SelectionItem>)
+                            }
                         }
                         keyExtractor={(item) => item.id.toString()}
                         showsVerticalScrollIndicator={false}

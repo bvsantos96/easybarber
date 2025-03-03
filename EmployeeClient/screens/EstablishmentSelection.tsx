@@ -20,7 +20,7 @@ export default function EstablishmentSelection({ navigation }: PropNavigation) {
     const [establishmentId, setEstablishmentId] = useState<number | undefined>(selectedEstablishment ? +selectedEstablishment.id : undefined);
 
     useQuery({
-        queryKey: [`establishment/${establishmentId}/employees`, establishmentId],
+        queryKey: [`establishment/${establishmentId}/staff`, establishmentId],
         queryFn: async () => {
             if (establishmentId) {
                 const employees = await getEstablishmentEmployees(establishmentId)

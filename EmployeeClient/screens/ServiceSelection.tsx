@@ -65,13 +65,7 @@ export default function ServiceSelection({ navigation, route }: Props) {
             onButtonPress={
                 () => {
                     if (establishmentId) {
-                        navigation.navigate(
-                            Routes.EmployeeSelection,
-                            {
-                                establishmentId: establishmentId,
-                                serviceId: selected as number
-                            }
-                        );
+                        navigation.navigate(Routes.Availability, { establishmentId, serviceId: +selected, employeeId: employeeId || 0 });
                     }
                 }
             }>
@@ -98,6 +92,6 @@ export default function ServiceSelection({ navigation, route }: Props) {
                     />
                 )}
             </View>
-        </Selection>
+        </Selection >
     );
 }
