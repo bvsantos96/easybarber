@@ -19,6 +19,7 @@ export enum AlertType {
     Info = 'info',
     Voting = 'voting',
     Loading = 'loading',
+    GetInfo = 'getInfo'
 }
 
 export interface AlertProps {
@@ -31,6 +32,7 @@ export interface AlertProps {
     buttonText2?: string;
     fontSize?: number;
     defaultVoting?: number;
+    inputs?: React.ReactNode[];
 }
 
 interface Props extends AlertProps {
@@ -51,7 +53,8 @@ export const CustomAlert: React.FC<Props> = ({
     buttonText2,
     onPress2,
     type,
-    defaultVoting
+    defaultVoting,
+    inputs
 }) => {
     const fadeAnim = useRef(new Animated.Value(0)).current;
     const scaleAnim = useRef(new Animated.Value(0.8)).current;
@@ -138,6 +141,8 @@ export const CustomAlert: React.FC<Props> = ({
                 return <Voting style={styles.image} />
             case AlertType.Loading:
                 return <></>
+            case AlertType.GetInfo:
+                return <Info style={styles.image} />
             case AlertType.Success:
             default:
                 return <Success style={styles.image} />
@@ -199,6 +204,13 @@ export const CustomAlert: React.FC<Props> = ({
                                         </View>
                                         <Divider size={10} horizontal={false} />
                                     </>
+                                ) : _type === AlertType.GetInfo ? (
+                                    <>
+                                        <Divider size={10} horizontal={false} />
+                                        {inputs && inputs.map((input, index) => (
+                                            <React.Fragment key={index}>{input}</React.Fragment>
+                                        ))}
+                                    </>
                                 ) : (
                                     <Divider size={10} horizontal={false} />
                                 )}
@@ -221,7 +233,7 @@ export const CustomAlert: React.FC<Props> = ({
                                         />
                                     </View>
                                     {onPress2 &&
-                                        <View style={[styles.buttonWrapperRight, theme.shadow]} >
+                                        <View style={[styles.buttonWrapperRight]} >
                                             <Button
                                                 buttonTextColor={color}
                                                 backgroundColor={styles.button2.backgroundColor}

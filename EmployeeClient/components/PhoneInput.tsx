@@ -3,7 +3,7 @@ import { SetStateAction, Dispatch } from 'react';
 import Input from '../components/Input';
 import CountryPicker, { Country } from 'react-native-country-picker-modal';
 import texts from '@lang/en.json';
-import { TextInput } from 'react-native';
+import { TextInput, ViewStyle } from 'react-native';
 
 interface NationSelectionProps {
     setNation: Dispatch<SetStateAction<Country | null | undefined>>;
@@ -14,11 +14,13 @@ interface PhoneInputProps extends NationSelectionProps {
     setPhone: Dispatch<SetStateAction<string>>;
     onFocus?: () => void,
     username?: boolean
+    containerStyle?: ViewStyle;
 }
 
-const PhoneInput = forwardRef<TextInput, PhoneInputProps>(({ onFocus, setPhone, setNation, nation, username = false }, ref) => {
+const PhoneInput = forwardRef<TextInput, PhoneInputProps>(({ onFocus, setPhone, setNation, nation, username = false, containerStyle }, ref) => {
     return (
         <Input
+            containerStyle={containerStyle}
             onFocus={onFocus}
             ref={ref}
             leftIcon={<NationPicker {...{ setNation, nation }} />}

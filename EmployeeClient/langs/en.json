@@ -1,5 +1,6 @@
 {
   "appName": "EasyBarbers",
+  "confirm": "Confirm",
   "yes": "Yes",
   "no": "No",
   "submit": "Submit",
@@ -197,7 +198,9 @@
     "failed": "Failed to schedule appointment, please try again on a different date.",
     "success": "Your booking has been confirmed successfully.",
     "cancel": "Are you sure you want to cancel this appointment?",
-    "signin": "Please sign in to see your appointments"
+    "signin": "Please sign in to see your appointments",
+    "dynamicPrice": "The service price may have been adjusted due to high demand on the selected day.",
+    "dynamicPriceConfirmation": "The price for this appointment has been adjusted to {price}, due to high demand. Do you want to continue?"
   },
   "noItems": "No items found.",
   "settings": {
@@ -303,5 +306,6 @@
     "select": "Select the employee you want\n(or skip and choose the appointment date first)",
     "selectNot": "Select the employee you want"
   },
-  "isAdmin": "Admin"
+  "isAdmin": "Admin",
+  "fillUserInfo": "Please fill in the user information"
 }

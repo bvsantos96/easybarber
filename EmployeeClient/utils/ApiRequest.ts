@@ -10,7 +10,7 @@ import langs from '@lang/en.json';
 import { ResponseType } from 'enums';
 import { AlertType } from '@components/Alert';
 import { createPageable, parsePage } from './PageHandling';
-import { getCalendarReadyDate, parseCountryCode } from './Utils';
+import { getCalendarReadyDate, parseCountryCode, twoDigits } from './Utils';
 import useEstablishmentStore from 'storage/stores/EstablishmentStore';
 import { downloadToDevice } from 'storage/StorageUtils';
 
@@ -386,6 +386,20 @@ export const validateRegister = async (countryCode: string, phone: string, passw
     return { success: true, message: "" };
 }
 
+export const parsePhone = (phone: string | undefined, countryCode: string): string | undefined => {
+    if (!phone) {
+        return undefined;
+    }
+    phone = phone.trim();
+    phone = phone.replace(/\s/g, '');
+    const _countryCode = parseCountryCode(countryCode);
+    const mobileInfo = `${_countryCode}${phone}`;
+    if (!isValidNumberString(mobileInfo)) {
+        return mobileInfo;
+    }
+    return undefined;
+}
+
 export const doLogin = async (countryCode: string, phone: string, password: string): Promise<IResult<any>> => {
     const {
         alert
@@ -640,14 +654,99 @@ export const deleteService = async (id: number): Promise<boolean> => {
     return await request<BaseResponse>(`/service/${id}`, "DELETE", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT).then(response => { console.log(response); return response.success; });
 }
 
+export const getEstablishmentEmployees = async (establishmentId: number): Promise<EmployeeEntity[]> => {
+    return getItemsFromRequest(await request<EmployeeEntity[]>(`establishment/${establishmentId}/employees`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST));
+}
+
 export const getEstablishmentServiceEmployees = async (establishmentId: number, establishmentServiceId: number, date?: string, time?: string): Promise<EmployeeEntity[]> => {
     const dateTime = `${date}T${time}`;
-    const result = await request<EmployeeEntity[]>(`establishment/${establishmentId}/service/${establishmentServiceId}/employees${(date && time) ? "?date=" + dateTime : ""}`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
-    return getItemsFromRequest<EmployeeEntity[]>(result);
+    return getItemsFromRequest(await request<EmployeeEntity[]>(`establishment/${establishmentId}/service/${establishmentServiceId}/employees${(date && time) ? "?date=" + dateTime : ""}`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST));
 }
 
-export const getEstablishmentServices = async (establishementId: number): Promise<ServiceInfo[]> => {
-    const result = await request<ServiceInfo[]>(`establishment/${establishementId}/services/list`, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST);
-    return getItemsFromRequest<ServiceInfo[]>(result);
+export const getEstablishmentServices = async (establishementId: number, establishmentStaffId?: number): Promise<ServiceInfo[]> => {
+    let params: { establishmentEmployeeId?: number } = {};
+    if (establishmentStaffId !== undefined) {
+        params.establishmentEmployeeId = establishmentStaffId;
+    }
+    return getItemsFromRequest(await request<ServiceInfo[]>(parsePathParams(`establishment/${establishementId}/services/list`, params), "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.LIST));
 }
 
+export const setAppointment = async (appointment: AppointmentCreate): Promise<string> => {
+    const result = await request<number>("appointment", "POST", appointment, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    try {
+        getItemsFromRequest<number>(result);
+        return "";
+    } catch (e: any) {
+        return e.message;
+    }
+}
+
+export const getDynamicSlots = async (establishmentId: number, serviceId: number, employeeId: number | undefined, year: number, month: number): Promise<string[]> => {
+    const params = {
+        establishmentId: establishmentId,
+        establishmentServiceId: serviceId,
+        ...((!employeeId || employeeId == 0) ? {} : { establishmentStaffId: employeeId }),
+        future: true
+    };
+    const url = parsePathParams(`service/list/dynamicprices/year/${year}/month/${month}`, params);
+    const result = await request<string[]>(url, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    return getItemsFromRequest<string[]>(result);
+}
+
+export const getAvailability = async (establishmentId: number, serviceId: number, employeeId: number | undefined, date: string, startHour: string): Promise<TimeSlots> => {
+    const params = {
+        establishmentId: establishmentId,
+        establishmentServiceId: serviceId,
+        from: date,
+        startHour: startHour,
+        ...((!employeeId || employeeId == 0) ? {} : { establishmentStaffId: employeeId }),
+    };
+    const url = parsePathParams("schedules/day", params);
+    const result = await request<TimeSlots>(url, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    try {
+        return getItemsFromRequest<TimeSlots>(result);
+    } catch (e) {
+        return {
+            slots: []
+        };
+    }
+}
+
+export const getNowHourAndMinutes = () => {
+    const today = new Date();
+    return twoDigits(today.getHours()) + ":" + twoDigits(today.getMinutes());
+}
+
+export const getStartingHour = (today: Date, date: string): string => {
+    const todayHourAndMinute = getNowHourAndMinutes();
+    return date == today.toISOString().split('T')[0] ? todayHourAndMinute : "00:01";
+}
+
+export const getUnavailableDates = async (establishmentId: number, serviceId: number, employeeId: number | undefined, year: number, month: number, startHour: string): Promise<string[]> => {
+    const params = {
+        establishmentId: establishmentId,
+        establishmentServiceId: serviceId,
+        ...((!employeeId || employeeId == 0) ? {} : { establishmentStaffId: employeeId }),
+        available: false,
+        startHour: startHour,
+    };
+    const url = parsePathParams(`schedules/availabledays/year/${year}/month/${month}`, params);
+    const result = await request<string[]>(url, "GET", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    return getItemsFromRequest<string[]>(result);
+}
+
+export const hasDynamicPrice = async (serviceId: number, employeeId: number, date: string, time: string): Promise<number> => {
+    const params = {
+        establishmentServiceId: serviceId,
+        establishmentStaffId: employeeId,
+        date: date,
+        time: time
+    };
+    const url = parsePathParams("dynamicprice/validate", params);
+    const result = await request<number>(url, "GET", params, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    try {
+        return getItemsFromRequest<number>(result);
+    } catch (e) {
+        return 0;
+    }
+}
