@@ -141,7 +141,7 @@ export default function EmployeeSelection({ navigation, route }: Props) {
                                             <Text style={styles.singleTitle}>{item.name}</Text>
                                             <View style={{ flexDirection: 'row' }}>
                                                 {item.oldPrice && item.oldPrice > 0 && (
-                                                    <Text style={[styles.description, { textDecorationLine: "line-through" }]}>{`${buildCurrencyString(item.oldPrice)} `}</Text>
+                                                    <Text style={[styles.description, { textDecorationLine: "line-through" }]}>{`${buildCurrencyString(item.price)} `}</Text>
                                                 )}
                                                 <Text style={styles.description}>{`${buildCurrencyString(item.price)}`}</Text>
                                             </View>

@@ -58,6 +58,11 @@ export const getStyles = () => {
         },
         listContentContainer: {
             paddingBottom: theme.dimensions.input.height
+        },
+        alertInput: {
+            height: 48.75 * theme.dimensions.absoluteHeight,
+            width: "90%",
+            alignSelf: "center"
         }
     })
 };

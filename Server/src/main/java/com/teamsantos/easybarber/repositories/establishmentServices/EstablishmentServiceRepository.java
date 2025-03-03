@@ -201,6 +201,25 @@ public interface EstablishmentServiceRepository
 
     @Query("""
             SELECT new com.teamsantos.easybarber.DTO.service.ServiceListDTO(
+                se.service.service.id,
+                se.service.service.serviceType.id,
+                se.service.service.name,
+                se.service.service.description,
+                CASE
+                    WHEN dpe IS NOT NULL THEN dpe.price
+                    ELSE se.service.price
+                END,
+                img
+            )
+            FROM EstablishmentServiceEmployee se
+            LEFT JOIN se.service.service.images img ON img.isMain = true
+            LEFT JOIN se.service.dynamicPrices dpe ON dpe.validFrom <= :date AND (dpe.validTo IS NULL OR dpe.validTo >= :date) AND dpe.establishmentServiceEmployee IS NULL
+            WHERE se.establishment.id = :establishmentId AND se.employee.id = :establishmentStaffId
+            """)
+    List<ServiceListDTO> listServices(long establishmentId, LocalDateTime date, long establishmentStaffId);
+
+    @Query("""
+            SELECT new com.teamsantos.easybarber.DTO.service.ServiceListDTO(
                 se.service.id,
                 se.service.serviceType.id,
                 se.service.name,

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, FlatList } from "react-native";
 import { useQuery } from "@tanstack/react-query";
 
-import { getEstablishmentServiceEmployees, getEstablishmentServices } from "../utils/ApiRequest";
+import { getDynamicSlots, getEstablishmentServices, getNowHourAndMinutes, getStartingHour, getUnavailableDates } from "../utils/ApiRequest";
 import { getStyles } from "../styles/ServiceSelection";
 import SelectionItem from "../components/SelectionItems";
 import Selection from './Selection';
@@ -10,42 +10,49 @@ import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Params, Routes } from "@navigation/Router";
 import texts from "@lang/en.json";
 import Divider from "@components/Divider";
-import useEstablishmentStore from "storage/stores/EstablishmentStore";
 
 export type Route = {
-    establishmentId?: number
+    establishmentId: number,
+    employeeId?: number
 };
 
 type Props = NativeStackScreenProps<typeof Params, 'ServiceSelection'>;
 
-export default function ServiceSelection({ navigation }: Props) {
+export default function ServiceSelection({ navigation, route }: Props) {
     const styles = getStyles();
-    const { selectedEstablishment, establishments } = useEstablishmentStore();
-    const [establishmentId, setEstablishmentId] = useState<number | undefined>(selectedEstablishment ? +selectedEstablishment.id : undefined);
+    const { establishmentId, employeeId } = route.params;
     const [selected, setSelected] = useState<number | string>(0);
     const [topPadding, setTopPadding] = useState(0);
     const { data } = useQuery({
-        queryKey: [`/establishment/${establishmentId}/services/list`],
+        queryKey: [`/establishment/${establishmentId}/services/list`, employeeId],
         queryFn: async () => {
             if (establishmentId)
-                return await getEstablishmentServices(establishmentId);
+                return await getEstablishmentServices(establishmentId, employeeId);
         },
         enabled: (!!establishmentId),
-
         networkMode: 'offlineFirst',
         staleTime: 60000
     });
 
+
+    const today = new Date();
+    const month = today.getMonth() + 1;
+    const year = today.getFullYear();
+
     useQuery({
-        queryKey: [`establishment/${establishmentId}/service/${selected}/employees`, selected, undefined, undefined],
-        queryFn: async () => {
-            if (establishmentId) {
-                return getEstablishmentServiceEmployees(establishmentId, +selected);
-            }
-        },
-        enabled: (!!selected && selected !== 0 && selected !== ''),
+        queryKey: [`getDynamicSlots`, establishmentId, selected, employeeId, year, month],
+        queryFn: async () => await getDynamicSlots(establishmentId, +selected, employeeId, year, month),
+        enabled: !!(establishmentId) && !!(selected) && +selected != 0,
+        staleTime: 60000
+    });
+
+    useQuery({
+        queryKey: [`getUnavailableDates`, establishmentId, selected, employeeId, year, month],
+        queryFn: async () =>
+            await getUnavailableDates(establishmentId, +selected, employeeId, year, month, getStartingHour(today, getNowHourAndMinutes())),
+        enabled: !!(establishmentId) && !!(selected) && +selected != 0,
         networkMode: 'offlineFirst',
-        staleTime: 60000,
+        staleTime: 60000
     });
 
     return (

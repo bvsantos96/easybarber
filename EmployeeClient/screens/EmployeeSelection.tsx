@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View, Text, FlatList } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 
-import { getDynamicSlots, getEstablishmentServiceEmployees, getNowHourAndMinutes, getStartingHour, getToken, getUnavailableDates, setAppointment } from "../utils/ApiRequest";
+import { getEstablishmentEmployees, getEstablishmentServices, getToken, setAppointment } from "../utils/ApiRequest";
 import { getStyles } from "../styles/ServiceSelection";
 import SelectionItem from "../components/SelectionItems";
 import Selection from "./Selection";
@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Params, Routes } from "@navigation/Router";
 import Divider from "@components/Divider";
 import { buildCurrencyString } from "utils/Utils";
+import Input from "@components/Input";
 
 export type Route = {
     establishmentId: number;
@@ -29,36 +30,59 @@ export default function EmployeeSelection({ navigation, route }: Props) {
     const { establishmentId, serviceId, date, startHour, availableEmployees } = route.params;
     const [selected, setSelected] = useState<number | string>(0);
     const [topPadding, setTopPadding] = useState(0);
-    const { alert } = useAlertStore();
+    const name = useRef<string>("");
+    const { alert, setAlertVisible } = useAlertStore();
+
     const { data } = useQuery({
-        queryKey: [`establishment/${establishmentId}/service/${serviceId}/employees`, serviceId, startHour, date],
+        queryKey: [`establishment/${establishmentId}/employees`, establishmentId],
         queryFn: async () => {
-            return getEstablishmentServiceEmployees(establishmentId, serviceId, date, startHour)
+            const employees = await getEstablishmentEmployees(establishmentId)
+            if (employees) {
+                let me: EmployeeEntity | undefined = undefined;
+                let list: EmployeeEntity[] = [];
+                for (let i = 0; i < employees.length; i++) {
+                    const em = employees[i];
+                    if (em.me && !me) {
+                        me = em;
+                        setSelected(me.id);
+                    } else {
+                        list.push(em);
+                    }
+                }
+                if (me) {
+                    list.unshift(me);
+                }
+                return employees;
+            }
+            return employees;
         },
-        enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0,
+        enabled: !!(establishmentId),
         networkMode: 'offlineFirst',
         staleTime: 60000
     });
 
-    const today = new Date();
-    const month = today.getMonth() + 1;
-    const year = today.getFullYear();
-
     useQuery({
-        queryKey: [`getDynamicSlots`, establishmentId, serviceId, selected, year, month],
-        queryFn: async () => await getDynamicSlots(establishmentId, serviceId, +selected, year, month),
-        enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0 && (availableEmployees == undefined || availableEmployees == null || availableEmployees.length == 0),
-        staleTime: 60000
-    });
-
-    useQuery({
-        queryKey: [`getUnavailableDates`, establishmentId, serviceId, selected, year, month],
-        queryFn: async () =>
-            await getUnavailableDates(establishmentId, serviceId, +selected, year, month, getStartingHour(new Date(), getNowHourAndMinutes())),
-        enabled: !!(establishmentId) && !!(serviceId) && serviceId != 0 && (availableEmployees == undefined || availableEmployees == null || availableEmployees.length == 0),
+        queryKey: [`/establishment/${establishmentId}/services/list`, selected],
+        queryFn: async () => {
+            if (establishmentId)
+                return await getEstablishmentServices(establishmentId, +selected);
+        },
+        enabled: (!!establishmentId),
         networkMode: 'offlineFirst',
         staleTime: 60000
     });
+
+    useEffect(() => {
+        if (data && data.length > 0) {
+            if (data[0].me) {
+                setSelected(data[0].id);
+            }
+            if (data.length === 1) {
+                setSelected(data[0].id);
+                navigation.navigate(Routes.ServiceSelection, { establishmentId, employeeId: +data[0].id });
+            }
+        }
+    }, [data]);
 
     return (
         <Selection
@@ -82,33 +106,55 @@ export default function EmployeeSelection({ navigation, route }: Props) {
 
                             return;
                         }
-                        alert({ type: AlertType.Loading, message: "" });
-                        const msg = await setAppointment({
-                            id: 0,
-                            establishmentId,
-                            establishmentServiceId: serviceId,
-                            establishmentStaffId: +selected,
-                            date,
-                            time: startHour
-                        });
-                        if (msg.length === 0) {
-                            alert({ type: AlertType.Loading, message: "" });
-                            alert({
-                                type: AlertType.Success, message: texts.appointments.success,
-                                buttonText: texts.dismiss, onPress: () => {
-                                    navigation.navigate(Routes.Appointments);
+
+                        alert({
+                            type: AlertType.GetInfo,
+                            message: texts.fillUserInfo,
+                            onPress: async () => {
+                                if ((name && name.current && name.current.length > 0)) {
+                                    alert({ type: AlertType.Loading, message: "" });
+                                    const msg = await setAppointment({
+                                        id: 0,
+                                        establishmentId,
+                                        establishmentServiceId: serviceId,
+                                        establishmentStaffId: +selected,
+                                        date,
+                                        time: startHour,
+                                        nonRegisteredUser: name.current,
+                                    });
+                                    if (msg.length === 0) {
+                                        setAlertVisible(false);
+                                        alert({
+                                            type: AlertType.Success, message: texts.appointments.success,
+                                            buttonText: texts.dismiss, onPress: () => {
+                                                navigation.navigate(Routes.Appointments);
+                                            }
+                                        });
+                                        return;
+                                    } else {
+                                        setAlertVisible(false);
+                                        alert({
+                                            type: AlertType.Error, message: msg,
+                                            buttonText: texts.dismiss, onPress: () => { }
+                                        });
+                                    }
                                 }
-                            });
-                            return;
-                        } else {
-                            alert({ type: AlertType.Loading, message: "" });
-                            alert({
-                                type: AlertType.Error, message: msg,
-                                buttonText: texts.dismiss, onPress: () => { }
-                            });
-                        }
+                            },
+                            inputs: [
+                                <Input
+                                    containerStyle={styles.alertInput}
+                                    placeholder={texts.name}
+                                    hideTitleIfNoValue
+                                    title={texts.name}
+                                    onInputChange={(text) => { name.current = text; }}
+                                />
+                            ],
+                            buttonText: texts.save,
+                            onPress2: () => { },
+                            buttonText2: texts.dismiss
+                        });
                     } else if (!(date && startHour)) {
-                        navigation.navigate(Routes.Availability, { establishmentId, serviceId, employeeId: selected as number });
+                        navigation.navigate(Routes.ServiceSelection, { establishmentId, employeeId: selected as number });
                     }
                 }
             }>

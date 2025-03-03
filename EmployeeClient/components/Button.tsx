@@ -3,7 +3,7 @@ import { Text } from 'react-native';
 import Pressable from '../components/Pressable';
 import { getStyles } from '../styles/Button';
 import { useTheme } from '../styles/ThemeContext';
-import { getDisabledColor, getStyleValue } from 'utils/Utils';
+import { getDisabledColor } from 'utils/Utils';
 
 export default function Button({
     backgroundColor = "",

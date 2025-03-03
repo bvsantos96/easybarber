@@ -10,12 +10,44 @@ import { getStyles } from "@styles/ServiceSelection";
 
 import texts from "@lang/en.json";
 import useEstablishmentStore from "storage/stores/EstablishmentStore";
+import { useQuery } from "@tanstack/react-query";
+import { getEstablishmentEmployees } from "utils/ApiRequest";
 
 export default function EstablishmentSelection({ navigation }: PropNavigation) {
     const styles = getStyles();
     const [topPadding, setTopPadding] = useState(0);
     const { selectedEstablishment, establishments } = useEstablishmentStore();
     const [establishmentId, setEstablishmentId] = useState<number | undefined>(selectedEstablishment ? +selectedEstablishment.id : undefined);
+
+    useQuery({
+        queryKey: [`establishment/${establishmentId}/employees`, establishmentId],
+        queryFn: async () => {
+            if (establishmentId) {
+                const employees = await getEstablishmentEmployees(establishmentId)
+                if (employees) {
+                    let me: EmployeeEntity | undefined = undefined;
+                    let list: EmployeeEntity[] = [];
+                    for (let i = 0; i < employees.length; i++) {
+                        const em = employees[i];
+                        if (em.me && !me) {
+                            me = em;
+                        } else {
+                            list.push(em);
+                        }
+                    }
+                    if (me) {
+                        list.unshift(me);
+                    }
+                    return employees;
+                }
+                return employees;
+            }
+        },
+        enabled: !!(establishmentId),
+        networkMode: 'offlineFirst',
+        staleTime: 60000
+    });
+
 
     useEffect(() => {
         if (establishments.length === 1) {
