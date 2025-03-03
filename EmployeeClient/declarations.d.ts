@@ -301,6 +301,7 @@ declare interface AppointmentCreate extends Identifiable {
     establishmentServiceId: number;
     date: string;
     time: string;
+    nonRegisteredUser?: string;
 }
 
 declare interface Appointment extends Identifiable {
@@ -442,6 +443,7 @@ declare interface EmployeeEntity extends ImageEntity {
     name: string;
     price: number;
     oldPrice: number;
+    me: boolean;
 }
 
 declare interface TimeSlots {

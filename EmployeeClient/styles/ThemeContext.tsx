@@ -27,6 +27,8 @@ interface Colors {
     backgroundColor: string;
     iconBackground: string;
     imageBackground: string;
+    dynamicPrice: 'rgba(255, 140, 50, 0.6)',
+    dynamicPriceSelected: 'rgb(255, 140, 50)',
     modalBackdrop: string;
     statusBarOnHome: StatusBarStyle;
     logoBackgound: string;

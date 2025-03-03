@@ -169,10 +169,11 @@ public class EstablishmentController extends ImageController<Establishment, Esta
 
     @GetMapping("/{id}/services/list")
     public ResponseEntity<BaseListDTO<ServiceListDTO>> listServices(@PathVariable Long id,
-            @RequestParam(required = false) LocalDateTime date) {
+            @RequestParam(required = false) LocalDateTime date,
+            @RequestParam(required = false) Long establishmentStaffId) {
         BaseListDTO<ServiceListDTO> response = new BaseListDTO<>();
         try {
-            response.setItems(establishmentService.listServices(id, date));
+            response.setItems(establishmentService.listServices(id, date, establishmentStaffId));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             response.setResponseMessage(e.getMessage());
