@@ -420,6 +420,21 @@ public class EstablishmentController extends ImageController<Establishment, Esta
             return ResponseEntity.badRequest().body(response);
         }
     }
+    
+    @PutMapping("/{establishmentId}/product")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    public ResponseEntity<BaseResponseDTO> updateProduct(@PathVariable Long establishmentId,
+            @RequestBody ProductDTO product) {
+        BaseResponseDTO response = new BaseResponseDTO();
+        try {
+            product.setEstablishmentId(establishmentId);
+            response.setId(productService.update(product));
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
 
     @PutMapping("/{establishmentId}/product/{productId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)

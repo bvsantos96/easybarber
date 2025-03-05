@@ -4,6 +4,7 @@ import { Route as ServiceRoute } from "@screens/Service";
 import { Route as ServiceSelectionRoute } from "@screens/ServiceSelection";
 import { Route as EmployeeSelectionRoute } from "@screens/EmployeeSelection";
 import { Route as AvailabilityRoute } from "@screens/Availability";
+import { Route as ProductRoute } from "@screens/_Product";
 
 export const Params = {
     Sign: undefined,
@@ -20,7 +21,7 @@ export const Params = {
     NewEstablishment: undefined,
     ProductList: undefined,
     TimeSheet: undefined,
-    Product: undefined,
+    Product: {} as ProductRoute,
     WeekView: undefined,
     Employees: undefined,
     Home: undefined,

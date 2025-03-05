@@ -8,7 +8,7 @@ import { Params } from "@navigation/Router";
 import Tabs from "@screens/Tabs";
 import Establishment from "@screens/Establishment";
 import ProductList from "@screens/ProductList";
-import Product from "@screens/Product";
+import Product from "@screens/_Product";
 import WeekView from "@screens/WeekView";
 import TimeSheet from "@screens/TimeSheet";
 import Employees from "@screens/Employees";
@@ -80,6 +80,8 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         hasHeader: true,
         component: Product,
         containerizedComponent: true,
+        secondHeader: DeleteButton,
+        route: "product"
     },
     TimeSheet: {
         title: texts.navigation.timeSheet.name,

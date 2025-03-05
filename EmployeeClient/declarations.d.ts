@@ -261,6 +261,16 @@ declare interface ServiceDetails extends Identifiable {
     price?: number | string;
 }
 
+declare interface ProductDetails extends Identifiable {
+    employeeId: number;
+    establishmentId: number;
+    productTypeIds: number[];
+    name: string;
+    description: string;
+    price: number;
+    images: IImage[];
+}
+
 declare interface CreateServiceDTO {
     serviceTypeId: number;
     name: string;

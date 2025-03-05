@@ -614,6 +614,10 @@ export const getServices = async (page?: IPage<ServiceDetails>, params?: Record<
     return await pageGet<ServiceDetails>("/employee/services", page, params);
 }
 
+export const getProducts = async (establishmentID: number, page?: IPage<ProductDetails>, params?: Record<string, string | number | boolean>): Promise<IPage<ProductDetails> | undefined> => {
+    return await pageGet<ProductDetails>(`/establishment/${establishmentID}/products`, page, params);
+}
+
 export const getImageList = async (urlPrefix: string, page: IPage<IImage>, params?: Record<string, string | number | boolean>): Promise<IPage<IImage> | undefined> => {
     return await pageGet<IImage>(`${urlPrefix}/images`, page, params);
 }
@@ -640,6 +644,14 @@ export const updateServiceDetails = async (service: ServiceDetails): Promise<IRe
         serviceTypeId: service.serviceType?.id ?? 0
     }
     return await request<BaseResponse>("/employee/service", "PUT", _service, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+}
+
+export const storeProductDetails = async (product: ProductDetails): Promise<IResult<BaseResponse>> => {
+    return await request<BaseResponse>(`/establishment/${product.establishmentId}/service`, "POST", product, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+}
+
+export const updateProductDetails = async (product: ProductDetails): Promise<IResult<BaseResponse>> => {
+    return await request<BaseResponse>(`/establishment/${product.establishmentId}/service`, "PUT", product, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
 }
 
 export const storeImage = async (urlPrefix: string, id: number, image: string, isMain: boolean): Promise<boolean> => {

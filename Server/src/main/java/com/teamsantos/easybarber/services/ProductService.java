@@ -95,4 +95,18 @@ public class ProductService extends ServiceWithImages<Product, ProductImage> {
     public Page<ProductDTO> getProducts(ProductFilter filter, Pageable pageable) {
         return productRepository.getProducts(filter, pageable);
     }
+
+	public Long update(ProductDTO product) {
+        Product entity = repository.findById(product.getId()).get();
+        entity.setName(product.getName());
+        entity.setDescription(product.getDescription());
+        entity.setPrice(product.getPrice());
+        entity.setAvailable(true);
+        entity.setProductTypes(Set.of());
+        for (Long ids : product.getProductTypeIds()) {
+            entity.addProductType(entityManager.getReference(ProductType.class, ids));
+        }
+        repository.save(entity);
+        return entity.getId();
+	}
 }
