@@ -82,7 +82,11 @@ const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
         component: ProductList,
         tabicon: ProductListIcon,
         requiresAuth: true,
-        visibleConstraint: [TabsVisibleConstraints.AUTHENTICATED, TabsVisibleConstraints.HAS_ESTABLISHMENTS]
+        visibleConstraint: [TabsVisibleConstraints.AUTHENTICATED, TabsVisibleConstraints.HAS_ESTABLISHMENTS],
+        rightIcon: NewIcon,
+        rightAction: (navigation: NavigationProp<any, any>) => {
+            navigation.navigate(Routes.Product, { product: undefined });
+        },
     },
 };
 
