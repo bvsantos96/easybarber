@@ -1,28 +1,27 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 import { Country } from 'react-native-country-picker-modal';
 
+import Button from '../components/Button';
+import Divider from '../components/Divider';
+import { HidePasswordIcon, PasswordIcon, ShowPasswordIcon } from '../components/Icons';
 import Input from '../components/Input';
 import Title from '../components/Title';
-import { HidePasswordIcon, PasswordIcon, ShowPasswordIcon } from '../components/Icons';
-import Divider from '../components/Divider';
-import Button from '../components/Button';
 
 import { doLogin } from '../utils/ApiRequest';
 
-import { getStyles } from '../styles/Sign';
+import { Routes } from '@navigation/Router';
+import { useTheme } from '@styles/ThemeContext';
+import useAlertStore from 'storage/stores/AlertStore';
+import { resetNavigation } from 'utils/Utils';
+import texts from "../langs/en.json";
 import { SignInProps } from '../screens/SignIn';
-import PhoneInput from './PhoneInput';
+import { getStyles } from '../styles/Sign';
 import { getDefaultCountryAsync } from '../utils/Constants';
 import { DEBUG_AUTO_LOGIN, DEBUG_AUTO_LOGIN_PASSWORD, DEBUG_AUTO_LOGIN_PHONE } from '../utils/EnvVariables';
 import { AlertType } from './Alert';
-import texts from "../langs/en.json";
-import useAlertStore from 'storage/stores/AlertStore';
-import { Routes } from '@navigation/Router';
-import { resetNavigation } from 'utils/Utils';
 import KeyboardAvoidingScrollView from './KeyboardAvoidingScrollView';
-import { useTheme } from '@styles/ThemeContext';
+import PhoneInput from './PhoneInput';
 
 export default function Login({ navigation, toggleNewUser, expand, collapse }: SignInProps) {
     const theme = useTheme();

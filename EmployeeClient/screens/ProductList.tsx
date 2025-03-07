@@ -1,15 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 
-import { getStyles } from "../styles/ProductList";
-import { getStyles as getProductStyles } from "../styles/ProductItem";
 import PageList, { PageListRef } from "@components/PageList";
+import ProductItem from "@components/ProductItem";
 import { PageListType, ServiceAction } from "enums";
 import useEstablishmentStore from "storage/stores/EstablishmentStore";
-import { getProducts, getServices } from "utils/ApiRequest";
-import ServiceItem from "@components/ServiceItem";
 import useUpdateStore from "storage/stores/UpdateStore";
-import ProductItem from "@components/ProductItem";
+import { getProducts } from "utils/ApiRequest";
+import { getStyles as getProductStyles } from "../styles/ProductItem";
+import { getStyles } from "../styles/ProductList";
 
 export default function ProductList({ navigation }: PropNavigation) {
     const { toUpdate, clearToUpdate } = useUpdateStore();
@@ -52,6 +51,7 @@ export default function ProductList({ navigation }: PropNavigation) {
         <View style={styles.listContainer}>
             <PageList<ProductDetails>
                 ref={ref}
+
                 type={PageListType.MULTI_COL_LIST}
                 reset={resetSearch}
                 renderItem={({ item }: { item: ProductDetails }) =>

@@ -1,8 +1,8 @@
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet/src";
 import React from "react";
+import { View } from "react-native";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "../styles/ThemeContext";
-import { BottomSheetModalProvider } from "@gorhom/bottom-sheet/src";
-import { View } from "react-native";
 
 export default function SafeFullScreen({ children = <></>, fixedButton }: { children?: React.ReactNode, fixedButton?: React.ReactNode }) {
     const theme = useTheme();

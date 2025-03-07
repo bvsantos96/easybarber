@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
-import { View, Text } from 'react-native';
-import { Dropdown, IDropdownRef } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import { useEffect, useRef, useState } from 'react';
+import { Text, View } from 'react-native';
+import { Dropdown, IDropdownRef } from 'react-native-element-dropdown';
 
 import texts from '@lang/en.json';
-import { getStyles } from '@styles/Input';
 import { getStyles as getStylesCE } from "@styles/ChangeEstablishment";
-import Pressable from './Pressable';
-import Divider from './Divider';
+import { getStyles } from '@styles/Input';
 import useEstablishmentStore from 'storage/stores/EstablishmentStore';
+import Divider from './Divider';
+import Pressable from './Pressable';
 
 const EstablishmentCombobox = ({ defaultValue, onInputChange }: { defaultValue?: number, onInputChange: Function }) => {
     const styles = getStyles();

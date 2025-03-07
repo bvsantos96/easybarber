@@ -1,10 +1,10 @@
-import { View, Text } from "react-native";
-import { getStyles } from "../styles/List";
-import Pressable from "./Pressable";
 import LocationIcon from '@assets/icons/location.svg';
+import { Text, View } from "react-native";
+import { getStyles } from "../styles/List";
 import { defaultBarberImage } from "../utils/Constants";
-import { ImageWithRating } from "./ImageWithRating";
 import Divider from "./Divider";
+import { ImageWithRating } from "./ImageWithRating";
+import Pressable from "./Pressable";
 
 export default function EstablishmentItem({ establishment, onPress }: { establishment: EstablishmentInfo, onPress: (employeeId: number) => void }) {
     const styles = getStyles();

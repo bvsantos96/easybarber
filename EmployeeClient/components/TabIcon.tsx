@@ -1,5 +1,5 @@
 import { useTheme } from "@styles/ThemeContext";
-import { TouchableOpacity, Text } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 
 const TabIcon = ({ left, icon: Icon, text, func }: { left?: boolean, icon?: React.FC<any>, text?: string, func?: () => void }) => {
     const theme = useTheme();

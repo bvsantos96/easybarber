@@ -1,6 +1,6 @@
+import { getStyles } from "@styles/TimeSlotView";
 import { View } from "react-native";
 import TimeSlot from "./TimeSlot";
-import { getStyles } from "@styles/TimeSlotView";
 
 export interface TimeSlotProps {
     slot: TimeSlot,

@@ -1,16 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Stars from 'react-native-stars';
-import { View, Text, Animated, ActivityIndicator } from 'react-native';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import React, { useEffect, useRef, useState } from 'react';
+import { ActivityIndicator, Animated, Text, View } from 'react-native';
+import Stars from 'react-native-stars';
 
-import { getStyles } from '../styles/Alert';
-import Button from './Button';
-import Success from '@assets/images/success.svg';
-import Info from '@assets/images/info.svg';
 import Error from '@assets/images/error.svg';
+import Info from '@assets/images/info.svg';
+import Success from '@assets/images/success.svg';
 import Voting from '@assets/images/voting.svg';
 import texts from '@lang/en.json';
 import { useTheme } from '@styles/ThemeContext';
+import { getStyles } from '../styles/Alert';
+import Button from './Button';
 import Divider from './Divider';
 
 export enum AlertType {

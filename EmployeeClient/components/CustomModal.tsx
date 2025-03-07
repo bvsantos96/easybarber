@@ -1,6 +1,6 @@
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet/src';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { View, StyleProp, ViewStyle } from 'react-native';
-import { BottomSheetModal, BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet/src';
+import { StyleProp, View, ViewStyle } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
 import { useTheme } from '../styles/ThemeContext';
 import Pressable from './Pressable';

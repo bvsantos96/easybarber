@@ -1,18 +1,18 @@
-import { View, Text } from "react-native";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { Text, View } from "react-native";
+import { Dropdown } from 'react-native-element-dropdown';
 
-import Pressable from "./Pressable";
 import Divider from "./Divider";
+import Pressable from "./Pressable";
 
 import { getStyles } from "@styles/ChangeEstablishment";
 
-import useEstablishmentStore from "storage/stores/EstablishmentStore";
-import CustomModal, { CustomModalRef } from "./CustomModal";
-import { useRef, useState } from "react";
-import Button from "./Button";
 import texts from "@lang/en.json";
+import { useRef, useState } from "react";
+import useEstablishmentStore from "storage/stores/EstablishmentStore";
+import Button from "./Button";
+import CustomModal, { CustomModalRef } from "./CustomModal";
 
 const SelectEstablishments = ({ selected: _selected, establishments, closeModal }: { selected?: SelectedItem, establishments: EstablishmentBase[], closeModal: () => void }) => {
     const styles = getStyles();

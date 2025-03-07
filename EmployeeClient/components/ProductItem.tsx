@@ -1,17 +1,17 @@
-import React from 'react';
-import { View, Text} from 'react-native';
-import { getStyles } from '../styles/ProductItem';
-import { Image } from 'expo-image';
-import Pressable from './Pressable';
-import { useTheme } from '@styles/ThemeContext';
 import EditIcon from "@assets/icons/edit.svg";
+import { useTheme } from '@styles/ThemeContext';
+import { Image } from 'expo-image';
+import React from 'react';
+import { Text, View } from 'react-native';
+import { getStyles } from '../styles/ProductItem';
+import Pressable from './Pressable';
 
-export default function ProductItem({ product, onPress }: { product:ProductDetails, onPress?: () => void }) {
+export default function ProductItem({ product, onPress }: { product: ProductDetails, onPress?: () => void }) {
     const styles = getStyles();
     const theme = useTheme();
 
     return (
-        <Pressable style={[styles.container, theme.shadow]} onPress={onPress? onPress: ()=> console.log("test")}>
+        <Pressable style={[styles.container, theme.shadow]} onPress={onPress ? onPress : () => console.log("test")}>
             <Image source={{ uri: product.images[0].data }} style={styles.image} />
             <EditIcon style={styles.editIcon} />
             <View style={styles.textContainer} >
