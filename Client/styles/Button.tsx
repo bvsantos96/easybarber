@@ -19,7 +19,7 @@ export const getStyles = () => {
             textAlign: 'center',
             fontSize: theme.fonts.size._18,
             fontFamily: 'Mazzard',
-            fontWeight: '900',
+            fontWeight: 'bold',
         },
         smallButton: {
             borderRadius: 9 * theme.dimensions.absoluteMinDimension,
@@ -39,13 +39,13 @@ export const getStyles = () => {
             color: 'black',
             fontSize: theme.fonts.size._9,
             fontFamily: 'Poppins',
-            fontWeight: '400',
+            fontWeight: 'normal',
         },
         brandTextButton: {
             color: 'black',
             fontSize: theme.fonts.size._13,
             fontFamily: 'Poppins',
-            fontWeight: '400',
+            fontWeight: 'normal',
         },
         button11: {
             position: 'absolute',
@@ -92,7 +92,7 @@ export const getStyles = () => {
         brandButtonText: {
             fontFamily: 'Poppins',
             fontSize: theme.fonts.size._9,
-            fontWeight: '500',
+            fontWeight: 'normal',
             color: theme.colors.text.black,
         },
         brandButtonNameContainer: {
@@ -103,7 +103,7 @@ export const getStyles = () => {
         brandText: {
             fontFamily: 'Poppins',
             fontSize: theme.fonts.size._13,
-            fontWeight: '500',
+            fontWeight: 'normal',
             color: theme.colors.text.black,
         },
     })

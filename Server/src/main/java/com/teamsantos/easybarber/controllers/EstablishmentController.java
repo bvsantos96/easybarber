@@ -310,7 +310,7 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         }
     }
 
-    // This is required to avoid missing USERCONTEXT because of public method 
+    // This is required to avoid missing USERCONTEXT because of public method
     @GetMapping("/{establishmentId}/staff")
     public ResponseEntity<BaseListDTO<EmployeeDTO>> listStaff(@PathVariable Long establishmentId,
             @RequestParam(defaultValue = "true") boolean onlyActive) {
@@ -420,7 +420,7 @@ public class EstablishmentController extends ImageController<Establishment, Esta
             return ResponseEntity.badRequest().body(response);
         }
     }
-    
+
     @PutMapping("/{establishmentId}/product")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> updateProduct(@PathVariable Long establishmentId,

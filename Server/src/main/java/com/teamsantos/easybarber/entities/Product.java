@@ -39,9 +39,6 @@ public class Product extends EntityWithImages<Product, ProductImage> {
     @JoinTable(name = "product_types", joinColumns = @JoinColumn(name = "product_id"), inverseJoinColumns = @JoinColumn(name = "product_type_id"))
     @BatchSize(size = 10)
     private Set<ProductType> productTypes = new HashSet<>();
-    @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "employee", referencedColumnName = "id")
-    private Employee employee;
     @Column(nullable = false)
     private String name;
     @Column(nullable = true)

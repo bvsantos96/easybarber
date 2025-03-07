@@ -49,8 +49,8 @@ public class ProductService extends ServiceWithImages<Product, ProductImage> {
         for (Long ids : productDTO.getProductTypeIds()) {
             product.addProductType(entityManager.getReference(ProductType.class, ids));
         }
+        product.setImages(Set.of());
         product = repository.save(product);
-        this.saveImages(product.getId(), productDTO.getImages());
         return product.getId();
     }
 
@@ -96,7 +96,7 @@ public class ProductService extends ServiceWithImages<Product, ProductImage> {
         return productRepository.getProducts(filter, pageable);
     }
 
-	public Long update(ProductDTO product) {
+    public Long update(ProductDTO product) {
         Product entity = repository.findById(product.getId()).get();
         entity.setName(product.getName());
         entity.setDescription(product.getDescription());
@@ -108,5 +108,5 @@ public class ProductService extends ServiceWithImages<Product, ProductImage> {
         }
         repository.save(entity);
         return entity.getId();
-	}
+    }
 }

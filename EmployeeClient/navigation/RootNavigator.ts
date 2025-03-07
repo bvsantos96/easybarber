@@ -8,7 +8,6 @@ import { Params } from "@navigation/Router";
 import Tabs from "@screens/Tabs";
 import Establishment from "@screens/Establishment";
 import ProductList from "@screens/ProductList";
-import Product from "@screens/_Product";
 import WeekView from "@screens/WeekView";
 import TimeSheet from "@screens/TimeSheet";
 import Employees from "@screens/Employees";
@@ -19,6 +18,7 @@ import ServiceSelection from "@screens/ServiceSelection";
 import EstablishmentSelection from "@screens/EstablishmentSelection";
 import EmployeeSelection from "@screens/EmployeeSelection";
 import Availability from "@screens/Availability";
+import Product from "@screens/Product";
 
 const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     Sign: {

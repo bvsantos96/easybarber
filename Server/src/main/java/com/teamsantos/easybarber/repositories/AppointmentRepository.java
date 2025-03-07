@@ -278,7 +278,6 @@ public interface AppointmentRepository
                     (SELECT new com.teamsantos.easybarber.DTO.product.ProductDTO(
                             p.id,
                             p.establishment.id,
-                            p.employee.id,
                             (SELECT pt.id FROM p.productTypes pt),
                             p.name,
                             p.description,
@@ -291,7 +290,6 @@ public interface AppointmentRepository
                 )
                 FROM ProductRequest pq
                 WHERE (:#{#filter.appointmentId} IS NULL OR pq.appointment.id = :#{#filter.appointmentId})
-                    AND (:#{#filter.employeeId} IS NULL OR pq.appointment.employee.id = :#{#filter.employeeId})
                     AND (:#{#filter.establishmentId} IS NULL OR pq.appointment.establishment.id = :#{#filter.establishmentId})
                     AND (:#{#filter.productId} IS NULL OR :#{#filter.productId} IN (SELECT p.id FROM pq.products p))
             """)

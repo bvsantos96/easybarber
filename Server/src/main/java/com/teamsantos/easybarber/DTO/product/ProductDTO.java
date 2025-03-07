@@ -16,7 +16,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ProductDTO {
     private Long id;
-    private Long employeeId;
     private long establishmentId;
     private Set<Long> productTypeIds;
     private String name;
@@ -24,10 +23,9 @@ public class ProductDTO {
     private Double price;
     private Set<ImageDTO> images;
 
-    public ProductDTO(Long id, long establishmentId, Long employeeId, Set<Long> productTypeIds, String name,
+    public ProductDTO(Long id, long establishmentId, Set<Long> productTypeIds, String name,
             String description, Double price, ProductImage image) {
         this.id = id;
-        this.employeeId = employeeId;
         this.establishmentId = establishmentId;
         this.productTypeIds = productTypeIds;
         this.name = name;

@@ -17,6 +17,8 @@ import useUpdateStore from "storage/stores/UpdateStore";
 import { AlertType } from "@components/Alert";
 import useAlertStore from "storage/stores/AlertStore";
 import { ServiceAction } from "enums";
+import Divider from "@components/Divider";
+import EstablishmentCombobox from "@components/EstablishmentCombobox";
 
 export type Route = {
     product?: ProductDetails;
@@ -47,13 +49,13 @@ export default function Product({ route }: Props) {
 
     const getHash = (productDetails?: ProductDetails): string => {
         const _productDetails = getDefaultProduct(productDetails);
-        return `1:${_productDetails.name}2:${_productDetails.description}3:${_productDetails.employeeId};4:${_productDetails.price}5:${_productDetails.productTypeIds.join(',')}6:${_productDetails.establishmentId}7:${_productDetails.images[0].data}`;
+        return `1:${_productDetails.name}2:${_productDetails.description}3:${_productDetails.employeeId};4:${_productDetails.price}5:${_productDetails.productTypeIds.join(',')}6:${_productDetails.establishmentId}7:${_productDetails.images?.[0]?.data}`;
     }
 
     const initialItem = useRef<string>(getHash(_product));
     const [changed, setChanged] = useState<boolean>(false);
     const [product, setProduct] = useState<ProductDetails>(getDefaultProduct(_product));
-    const [image, setImage] = useState<string>(product.images[0].data);
+    const [image, setImage] = useState<string>(product.images?.[0]?.data);
 
     useEffect(() => {
         //const canStore = service.name.length > 0 && service.description.length > 0 && +service.duration > 0 && service.serviceType !== undefined && service.price !== undefined && +service.price > 0;
@@ -159,7 +161,7 @@ export default function Product({ route }: Props) {
     return (
         <View style={styles.container}>
             <View style={styles.imageContainer} >
-                {(product.images && product.images.length>0) ? (
+                {(product.images && product.images.length > 0) ? (
                     <Image
                         cachePolicy="memory-disk"
                         source={{ uri: product.images[0].data }}
@@ -172,16 +174,19 @@ export default function Product({ route }: Props) {
                 <Pressable style={[styles.addIcon, styles.iconContainer]} onPress={chooseImage}>
                     {(product.images && product.images.length > 0) ? <FontAwesome6 name="edit" size={styles.icon.width} color={styles.addIcon.color} /> : <FontAwesome6 name="plus" size={styles.icon.width} color={styles.addIcon.color} />}
                 </Pressable>
-                <View style={styles.inputContainer}>
+                <View style={[styles.inputContainer, { height: styles.inputContainer.minHeight }]}>
+                    <Divider />
                     <Input hideTitleIfNoValue placeholder={texts.name} containerStyle={styles.input} title={texts.name} round={false} defaultValue={product.name} onInputChange={(name) => { setProduct({ ...product, name: name }) }} />
                     <Input hideTitleIfNoValue placeholder={texts.description} containerStyle={styles.input} title={texts.description} round={false} defaultValue={product.description} onInputChange={(description) => setProduct({ ...product, description: description })} />
-                    {/*<ServiceTypeCombobox defaultValue={product.productTypeIds} onInputChange={(_serviceType: ICategory) => {
-                        setProduct({ ...product, serviceType: _serviceType });
-                    }} />*/}
                     <Input hideTitleIfNoValue placeholder={texts.price} containerStyle={styles.input} title={texts.price} round={false} defaultValue={`${product.price}`} onInputChange={(price) => setProduct({ ...product, price: +price })} type={"numeric"} />
+                    <EstablishmentCombobox defaultValue={product.establishmentId} onInputChange={(establishment: SelectedItem) => {
+                        setProduct({ ...product, establishmentId: establishment ? +establishment.id : undefined });
+                    }} />
                     {/*<Input hideTitleIfNoValue placeholder={texts.durationInMinutes} containerStyle={styles.input} title={texts.durationInMinutes} round={false} defaultValue={`${product.duration}`} onInputChange={(duration) => setProduct({ ...product, duration: +duration })} type={"numeric"} />*/}
-                    <Button disabled={!changed} title={texts.save} onPress={storeService} />
                 </View>
+            </View>
+            <View style={styles.buttonContainer}>
+                <Button disabled={!changed} title={texts.save} onPress={storeService} />
             </View>
         </View>
     );

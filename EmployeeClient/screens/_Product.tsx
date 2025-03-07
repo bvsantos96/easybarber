@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, Text } from "react-native";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { Image } from 'expo-image';
 
 import { getStyles } from "../styles/Product";
-import { Params, Routes } from "@navigation/Router";
+import { Params } from "@navigation/Router";
 import Input from "@components/Input";
 import Button from "@components/Button";
 
@@ -18,14 +18,14 @@ export default function Product({ navigation, route }: Props) {
     const styles = getStyles();
 
     let data =
-        {
-            name: "Hair Energizer Coffein Shampoo C1",
-            description: "image 1 descr",
-            price: 20,
-            image: "https://bucket-barber-staging.s3.eu-south-2.amazonaws.com/product1_bg_removed.png.png",
-            id: "1",
-            brand: "Alpecine"
-        }
+    {
+        name: "Hair Energizer Coffein Shampoo C1",
+        description: "image 1 descr",
+        price: 20,
+        image: "https://bucket-barber-staging.s3.eu-south-2.amazonaws.com/product1_bg_removed.png.png",
+        id: "1",
+        brand: "Alpecine"
+    }
 
     return (
         <View>

@@ -17,7 +17,7 @@ export const getStyles = () => {
         title: {
             fontSize: theme.fonts.size._20,
             fontFamily: 'Poppins',
-            fontWeight: '600',
+            fontWeight: 'bold',
             lineHeight: 25 * theme.dimensions.absoluteHeight,
             letterSpacing: 0.17 * theme.dimensions.absoluteWidth,
             color: theme.colors.text.black,

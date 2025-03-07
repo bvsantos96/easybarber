@@ -58,7 +58,7 @@ export const getStyles = () => {
             textAlign: "right",
             fontSize: theme.fonts.size._17,
             fontFamily: 'Mazzard',
-            fontWeight: '500',
+            fontWeight: 'normal',
             lineHeight: 20 * theme.dimensions.absoluteHeight,
         },
         buttonContainer: {
@@ -81,14 +81,14 @@ export const getStyles = () => {
             color: theme.colors.text.lightBlack,
             fontSize: theme.fonts.size._16,
             fontFamily: 'Mazzard',
-            fontWeight: '500',
+            fontWeight: 'normal',
             lineHeight: 19 * theme.dimensions.absoluteHeight,
         },
         newUserRedText: {
             color: theme.colors.text.link,
             fontSize: theme.fonts.size._18,
             fontFamily: 'Mazzard',
-            fontWeight: '600',
+            fontWeight: 'bold',
             lineHeight: 21 * theme.dimensions.absoluteHeight,
         },
         appleButtonContainer: {

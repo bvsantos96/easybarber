@@ -263,7 +263,7 @@ declare interface ServiceDetails extends Identifiable {
 
 declare interface ProductDetails extends Identifiable {
     employeeId: number;
-    establishmentId: number;
+    establishmentId?: number;
     productTypeIds: number[];
     name: string;
     description: string;

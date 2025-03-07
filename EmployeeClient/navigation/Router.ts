@@ -4,7 +4,7 @@ import { Route as ServiceRoute } from "@screens/Service";
 import { Route as ServiceSelectionRoute } from "@screens/ServiceSelection";
 import { Route as EmployeeSelectionRoute } from "@screens/EmployeeSelection";
 import { Route as AvailabilityRoute } from "@screens/Availability";
-import { Route as ProductRoute } from "@screens/_Product";
+import { Route as ProductRoute } from "@screens/Product";
 
 export const Params = {
     Sign: undefined,

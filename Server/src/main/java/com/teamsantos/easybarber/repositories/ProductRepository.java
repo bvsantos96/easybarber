@@ -18,7 +18,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                 SELECT new com.teamsantos.easybarber.DTO.product.ProductDTO(
                     p.id,
                     p.establishment.id,
-                    p.employee.id,
                     (SELECT pt.id FROM p.productTypes pt),
                     p.name,
                     p.description,
@@ -27,8 +26,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                 )
                 FROM Product p
                 LEFT JOIN ProductImage i ON i.isMain = true and i.entity.id = p.id
-                WHERE (:#{#filter.employeeId} is null or p.employee.id = :#{#filter.employeeId})
-                AND (:#{#filter.establishmentId} is null or p.establishment.id = :#{#filter.establishmentId})
+                WHERE (:#{#filter.establishmentId} is null or p.establishment.id = :#{#filter.establishmentId})
                 AND (:#{#filter.name} is null or lower(p.name) like lower(:#{#filter.name}))
                 AND (:#{#filter.description} is null or lower(p.description) like lower(:#{#filter.description}))
             """)

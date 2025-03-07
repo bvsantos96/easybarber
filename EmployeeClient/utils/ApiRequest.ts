@@ -647,11 +647,11 @@ export const updateServiceDetails = async (service: ServiceDetails): Promise<IRe
 }
 
 export const storeProductDetails = async (product: ProductDetails): Promise<IResult<BaseResponse>> => {
-    return await request<BaseResponse>(`/establishment/${product.establishmentId}/service`, "POST", product, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    return await request<BaseResponse>(`/establishment/${product.establishmentId}/product`, "POST", product, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
 }
 
 export const updateProductDetails = async (product: ProductDetails): Promise<IResult<BaseResponse>> => {
-    return await request<BaseResponse>(`/establishment/${product.establishmentId}/service`, "PUT", product, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+    return await request<BaseResponse>(`/establishment/${product.establishmentId}/product`, "PUT", product, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
 }
 
 export const storeImage = async (urlPrefix: string, id: number, image: string, isMain: boolean): Promise<boolean> => {
