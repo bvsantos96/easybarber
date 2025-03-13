@@ -34,7 +34,7 @@ const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
         requiresAuth: true,
         leftIcon: EstablishmentsIcon,
         leftAction: (navigation) => {
-            navigation.navigate(Routes.Settings);
+            navigation.navigate(Routes.EditEstablishment);
         },
         leftText: texts.navigation.tabs.establishments.join,
         rightIcon: NewEstablishment,

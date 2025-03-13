@@ -63,12 +63,6 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         component: Establishment,
         containerizedComponent: true,
     },
-    NewEstablishment: {
-        title: texts.navigation.establishment.newName,
-        hasHeader: true,
-        component: Establishment,
-        containerizedComponent: true,
-    },
     ProductList: {
         title: texts.navigation.product.name,
         hasHeader: true,

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Text, View, TouchableOpacity } from 'react-native';
-import { Params } from "@navigation/Router";
+import { Params, Routes } from "@navigation/Router";
 import { NativeStackScreenProps } from "@react-navigation/native-stack";
 import { getStyles } from '@styles/Establishment';
 import { Image } from 'expo-image';
@@ -9,14 +9,18 @@ import Input from '@components/Input';
 import Button from '@components/Button';
 import { Ionicons } from '@expo/vector-icons';
 
+export type Route = {
+    Establishment?: EstablishmentInfo;
+}
+
 type Props = NativeStackScreenProps<typeof Params, 'Establishment'>;
 
 export default function Establishment({ route, navigation }: Props) {
-    const _establishment: EstablishmentInfo | undefined = route.params;
     const styles = getStyles();
+    const {Establishment:_establishment}= route.params;
     const isNew = !_establishment;
-
-    const [images, setImages] = useState<string[]>(_establishment?.images?.map(img => img.data) || []);
+    const [images, setImages] = useState<string[]>([]);
+    _establishment?.images?.map(img => img.data )|| [];
 
     const openNativeImagePicker = async () => {
         try {
