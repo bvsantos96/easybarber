@@ -46,7 +46,6 @@ export const Routes = {
     Appointments: "Appointments",
     Settings: "Settings",
     Establishment: "Establishment",
-    NewEstablishment: "NewEstablishment",
     EditEstablishment: "EditEstablishment",
     ProductList: "ProductList",
     TimeSheet: "TimeSheet",

@@ -39,7 +39,7 @@ const TabsNav: Partial<Record<keyof typeof Params, TabsInfo>> = {
         leftText: texts.navigation.tabs.establishments.join,
         rightIcon: NewEstablishment,
         rightAction: (navigation: NavigationProp<any, any>) => {
-            navigation.navigate(Routes.NewEstablishment);
+            navigation.navigate(Routes.Establishment);
         },
         rightText: texts.navigation.tabs.establishments.new,
         visibleConstraint: [TabsVisibleConstraints.AUTHENTICATED]
