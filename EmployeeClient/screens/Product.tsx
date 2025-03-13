@@ -1,24 +1,23 @@
-import { useEffect, useRef, useState } from "react";
-import { View } from "react-native";
-import { Image } from 'expo-image';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { Alert } from 'react-native';
+import { useEffect, useRef, useState } from "react";
+import { Alert, View } from "react-native";
 
-import { replaceMainImage, storeImage, storeProductDetails, updateProductDetails } from "utils/ApiRequest";
-import { getStyles } from "@styles/Service";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Params } from "@navigation/Router";
-import Input from "@components/Input";
-import texts from "@lang/en.json";
-import Button from "@components/Button";
-import Pressable from "@components/Pressable";
-import useUpdateStore from "storage/stores/UpdateStore";
 import { AlertType } from "@components/Alert";
-import useAlertStore from "storage/stores/AlertStore";
-import { ServiceAction } from "enums";
+import Button from "@components/Button";
 import Divider from "@components/Divider";
 import EstablishmentCombobox from "@components/EstablishmentCombobox";
+import Input from "@components/Input";
+import Pressable from "@components/Pressable";
+import texts from "@lang/en.json";
+import { Params } from "@navigation/Router";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { getStyles } from "@styles/Service";
+import { ServiceAction } from "enums";
+import useAlertStore from "storage/stores/AlertStore";
+import useUpdateStore from "storage/stores/UpdateStore";
+import { replaceMainImage, storeImage, storeProductDetails, updateProductDetails } from "utils/ApiRequest";
 
 export type Route = {
     product?: ProductDetails;
@@ -58,8 +57,13 @@ export default function Product({ route }: Props) {
     const [image, setImage] = useState<string>(product.images?.[0]?.data);
 
     useEffect(() => {
-        //const canStore = service.name.length > 0 && service.description.length > 0 && +service.duration > 0 && service.serviceType !== undefined && service.price !== undefined && +service.price > 0;
-        const canStore = true;
+        const canStore = product.name.length > 0 &&
+            product.description.length > 0 &&
+            product.establishmentId !== undefined &&
+            product.establishmentId > 0 &&
+            //product.productTypeIds !== undefined &&
+            product.price !== undefined &&
+            +product.price > 0;
         setChanged(canStore && initialItem.current !== getHash(product));
     }, [product]);
 
@@ -154,8 +158,9 @@ export default function Product({ route }: Props) {
             if (toUpdate === undefined || toUpdate.action !== ServiceAction.REFRESH) {
                 setToUpdate({ action: ServiceAction.UPDATE, obj: product, id: product.id });
             }
+
+            setAlertVisible(false);
         }
-        setAlertVisible(false);
     }
 
     return (
@@ -182,7 +187,6 @@ export default function Product({ route }: Props) {
                     <EstablishmentCombobox defaultValue={product.establishmentId} onInputChange={(establishment: SelectedItem) => {
                         setProduct({ ...product, establishmentId: establishment ? +establishment.id : undefined });
                     }} />
-                    {/*<Input hideTitleIfNoValue placeholder={texts.durationInMinutes} containerStyle={styles.input} title={texts.durationInMinutes} round={false} defaultValue={`${product.duration}`} onInputChange={(duration) => setProduct({ ...product, duration: +duration })} type={"numeric"} />*/}
                 </View>
             </View>
             <View style={styles.buttonContainer}>
@@ -191,3 +195,4 @@ export default function Product({ route }: Props) {
         </View>
     );
 }
+

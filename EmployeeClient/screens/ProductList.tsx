@@ -42,16 +42,14 @@ export default function ProductList({ navigation }: PropNavigation) {
         let _params = {
             ...params
         };
-        if (establishment) {
-            return await getProducts(+establishment.id, page, _params);
-        }
+
+        return await getProducts(establishment ? +establishment.id : 0, page, _params);
     }
 
     return (
         <View style={styles.listContainer}>
             <PageList<ProductDetails>
                 ref={ref}
-
                 type={PageListType.MULTI_COL_LIST}
                 reset={resetSearch}
                 renderItem={({ item }: { item: ProductDetails }) =>
