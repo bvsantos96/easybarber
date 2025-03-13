@@ -1,18 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as SecureStore from 'expo-secure-store';
 import * as LocalAuthentication from 'expo-local-authentication';
+import * as SecureStore from 'expo-secure-store';
 
-import useAlertStore from "storage/stores/AlertStore";
-import { API_URL, DEBUG_SERVER_REQUESTS } from "./EnvVariables";
-import useAuthStore from "storage/stores/AuthStore";
-import { LOCATIONS_STORAGE_KEY, MOBILE_INFORMATION, SECURE_STORAGE_LOGIN_KEY, TOKEN_STORAGE_KEY } from './Constants';
+import { AlertType } from '@components/Alert';
 import langs from '@lang/en.json';
 import { ResponseType } from 'enums';
-import { AlertType } from '@components/Alert';
+import { downloadToDevice } from 'storage/StorageUtils';
+import useAlertStore from "storage/stores/AlertStore";
+import useAuthStore from "storage/stores/AuthStore";
+import useEstablishmentStore from 'storage/stores/EstablishmentStore';
+import { LOCATIONS_STORAGE_KEY, MOBILE_INFORMATION, SECURE_STORAGE_LOGIN_KEY, TOKEN_STORAGE_KEY } from './Constants';
+import { API_URL, DEBUG_SERVER_REQUESTS } from "./EnvVariables";
 import { createPageable, parsePage } from './PageHandling';
 import { getCalendarReadyDate, parseCountryCode, twoDigits } from './Utils';
-import useEstablishmentStore from 'storage/stores/EstablishmentStore';
-import { downloadToDevice } from 'storage/StorageUtils';
 
 const getItemsFromRequest = <T>(result: IResult<T>): T => {
     if (result.success) {

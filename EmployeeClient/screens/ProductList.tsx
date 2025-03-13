@@ -3,6 +3,7 @@ import { View } from "react-native";
 
 import PageList, { PageListRef } from "@components/PageList";
 import ProductItem from "@components/ProductItem";
+import { Routes } from "@navigation/Router";
 import { PageListType, ServiceAction } from "enums";
 import useEstablishmentStore from "storage/stores/EstablishmentStore";
 import useUpdateStore from "storage/stores/UpdateStore";
@@ -33,12 +34,19 @@ export default function ProductList({ navigation }: PropNavigation) {
     }, [toUpdate]);
 
     useEffect(() => {
+        if (!selectedEstablishment) {
+            navigation.reset({
+                index: 0,
+                routes: [{ name: Routes.Tabs }],
+            });
+        }
         currentEstablishmentRef.current = selectedEstablishment;
         setResetSearch(!resetSearch);
     }, [selectedEstablishment]);
 
     const loadMoreData = async (page?: IPage<ProductDetails>, params?: Record<string, string | number | boolean>) => {
         const establishment = currentEstablishmentRef.current;
+        if (establishment === undefined) return;
         let _params = {
             ...params
         };

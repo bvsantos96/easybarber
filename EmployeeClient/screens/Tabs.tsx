@@ -1,19 +1,19 @@
-import { useCallback, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useCallback, useState } from 'react';
 
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import TabIcon from '@components/TabIcon';
 import SafeFullScreen from '@components/SafeFullScreen';
+import TabIcon from '@components/TabIcon';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import TabsNav from '@navigation/TabsNavigator';
 import { Params, Routes } from '@navigation/Router';
+import TabsNav from '@navigation/TabsNavigator';
+import { TabsVisibleConstraints } from 'enums';
 import useAuthStore from 'storage/stores/AuthStore';
 import useEstablishmentStore from 'storage/stores/EstablishmentStore';
-import { TabsVisibleConstraints } from 'enums';
 
-import { useTheme } from '@styles/ThemeContext';
 import { ChangeEstablishment } from '@components/ChangeEstablishment';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTheme } from '@styles/ThemeContext';
 
 export default function Tabs({ navigation }: PropNavigation) {
     const Tab = createBottomTabNavigator<typeof Params>();
