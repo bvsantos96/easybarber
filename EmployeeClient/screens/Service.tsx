@@ -1,23 +1,22 @@
-import { useEffect, useRef, useState } from "react";
-import { View } from "react-native";
-import { Image } from 'expo-image';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
-import { Alert } from 'react-native';
+import { useEffect, useRef, useState } from "react";
+import { Alert, View } from "react-native";
 
-import { replaceMainImage, storeImage, storeServiceDetails, updateServiceDetails } from "utils/ApiRequest";
-import { getStyles } from "@styles/Service";
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
-import { Params } from "@navigation/Router";
-import Input from "@components/Input";
-import texts from "@lang/en.json";
-import Button from "@components/Button";
-import ServiceTypeCombobox from "@components/ServiceTypeCombobox";
-import Pressable from "@components/Pressable";
-import useUpdateStore from "storage/stores/UpdateStore";
 import { AlertType } from "@components/Alert";
-import useAlertStore from "storage/stores/AlertStore";
+import Button from "@components/Button";
+import Input from "@components/Input";
+import Pressable from "@components/Pressable";
+import ServiceTypeCombobox from "@components/ServiceTypeCombobox";
+import texts from "@lang/en.json";
+import { Params } from "@navigation/Router";
+import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { getStyles } from "@styles/Service";
 import { ServiceAction } from "enums";
+import useAlertStore from "storage/stores/AlertStore";
+import useUpdateStore from "storage/stores/UpdateStore";
+import { replaceMainImage, storeImage, storeServiceDetails, updateServiceDetails } from "utils/ApiRequest";
 
 export type Route = {
     service?: ServiceDetails;
@@ -151,7 +150,7 @@ export default function Service({ route }: Props) {
             initialItem.current = getHash(service);
             setChanged(false);
             if (toUpdate === undefined || toUpdate.action !== ServiceAction.REFRESH) {
-                setToUpdate({action: ServiceAction.UPDATE, obj: service, id: service.id});
+                setToUpdate({ action: ServiceAction.UPDATE, obj: service, id: service.id });
             }
         }
         setAlertVisible(false);

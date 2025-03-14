@@ -93,6 +93,7 @@ const PageList = <T extends Identifiable>(props: PageListProps<T>, ref: React.Re
     }
 
     const updateItem = (id: number, item: T) => {
+        console.log("update item", id, item);
         const index = request.page.content.findIndex((i) => i.id === id);
         if (index >= 0) {
             request.page.content[index] = item;

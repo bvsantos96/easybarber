@@ -453,13 +453,10 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     @GetMapping("/{establishmentId}/products")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_EMPLOYEE)
     public ResponseEntity<BasePageDTO<ProductDTO>> listProducts(@PathVariable Long establishmentId,
-            @RequestBody ProductFilter filter, Pageable pageable) {
+            Pageable pageable) {
         BasePageDTO<ProductDTO> response = new BasePageDTO<>();
         try {
-            if (filter == null) {
-                filter = new ProductFilter();
-            }
-
+            ProductFilter filter = new ProductFilter();
             filter.setEstablishmentId(establishmentId);
             response.setItems(productService.getProducts(filter, pageable));
             return ResponseEntity.ok(response);

@@ -147,7 +147,6 @@ const Router = () => {
                                                 secondHeaderFunction={
                                                     _key === Routes.Service
                                                         ? async (_) => {
-                                                            console.log("DELETE SERVICE");
                                                             if (id) {
                                                                 alert({ type: AlertType.Loading, message: "" });
                                                                 const deleted = await deleteService(id || -1);

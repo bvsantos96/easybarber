@@ -22,7 +22,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                     p.name,
                     p.description,
                     p.price,
-                    i.data
+                    i
                 )
                 FROM Product p
                 LEFT JOIN ProductImage i ON i.isMain = true and i.entity.id = p.id

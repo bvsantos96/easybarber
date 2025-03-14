@@ -115,51 +115,56 @@ export default function Product({ route }: Props) {
         );
     }
 
-    const storeService = async () => {
-        alert({ type: AlertType.Loading, message: "" });
-        if (!product.id) {
-            const response = await storeProductDetails(product);
+    const storeProduct = async () => {
+        try {
+            alert({ type: AlertType.Loading, message: "" });
+            if (!product.id) {
+                const response = await storeProductDetails(product);
 
-            if (!response.success || !response.data) {
+                if (!response.success || !response.data) {
+                    setAlertVisible(false);
+                    return;
+                }
+
+                product.id = response.data.id;
+
+                if (product.images && product.images.length > 0 && product.images[0].data !== "") {
+                    if (await storeImage("product", +product.id, image, true)) {
+                        initialItem.current = getHash(product);
+                    }
+                }
+                initialItem.current = getHash(product);
+                setChanged(false);
+                setToUpdate({
+                    action: ServiceAction.REFRESH
+                });
                 setAlertVisible(false);
                 return;
             }
-
-            product.id = response.data.id;
-
-            if (product.images && product.images.length > 0 && product.images[0].data !== "") {
-                if (await storeImage("service", +product.id, image, true)) {
-                    initialItem.current = getHash(product);
+            const _initialItem = initialItem.current.split("7:");
+            const _item = getHash(product).split("7:");
+            let valid = true;
+            if (_initialItem[0] !== _item[0]) {
+                if (!await updateProductDetails(product)) {
+                    valid = false;
                 }
             }
-            initialItem.current = getHash(product);
-            setChanged(false);
-            setToUpdate({
-                action: ServiceAction.REFRESH
-            });
-            setAlertVisible(false);
-            return;
-        }
-        const _initialItem = initialItem.current.split("7:");
-        const _item = getHash(product).split("7:");
-        let valid = true;
-        if (_initialItem[0] !== _item[0]) {
-            if (!await updateProductDetails(product)) {
-                valid = false;
-            }
-        }
-        if (_initialItem[1] !== _item[1]) {
-            valid &&= await replaceMainImage("service", +product.id, image);
-        }
-
-        if (valid) {
-            initialItem.current = getHash(product);
-            setChanged(false);
-            if (toUpdate === undefined || toUpdate.action !== ServiceAction.REFRESH) {
-                setToUpdate({ action: ServiceAction.UPDATE, obj: product, id: product.id });
+            if (_initialItem[1] !== _item[1]) {
+                valid &&= await replaceMainImage("product", +product.id, image);
             }
 
+            if (valid) {
+                initialItem.current = getHash(product);
+                setChanged(false);
+                if (toUpdate === undefined || toUpdate.action !== ServiceAction.REFRESH) {
+                    setToUpdate({ action: ServiceAction.UPDATE, obj: product, id: product.id });
+                }
+
+            }
             setAlertVisible(false);
+        } catch (error: any) {
+            setAlertVisible(false);
+            alert({ type: AlertType.Error, message: error.message });
         }
     }
 
@@ -184,13 +189,16 @@ export default function Product({ route }: Props) {
                     <Input hideTitleIfNoValue placeholder={texts.name} containerStyle={styles.input} title={texts.name} round={false} defaultValue={product.name} onInputChange={(name) => { setProduct({ ...product, name: name }) }} />
                     <Input hideTitleIfNoValue placeholder={texts.description} containerStyle={styles.input} title={texts.description} round={false} defaultValue={product.description} onInputChange={(description) => setProduct({ ...product, description: description })} />
                     <Input hideTitleIfNoValue placeholder={texts.price} containerStyle={styles.input} title={texts.price} round={false} defaultValue={`${product.price}`} onInputChange={(price) => setProduct({ ...product, price: +price })} type={"numeric"} />
-                    <EstablishmentCombobox defaultValue={product.establishmentId} onInputChange={(establishment: SelectedItem) => {
-                        setProduct({ ...product, establishmentId: establishment ? +establishment.id : undefined });
-                    }} />
+                    <EstablishmentCombobox
+                        defaultValue={product.establishmentId}
+                        onInputChange={(establishment: SelectedItem) => {
+                            setProduct({ ...product, establishmentId: establishment ? +establishment.id : undefined });
+                        }}
+                    />
                 </View>
             </View>
             <View style={styles.buttonContainer}>
-                <Button disabled={!changed} title={texts.save} onPress={storeService} />
+                <Button disabled={!changed} title={texts.save} onPress={storeProduct} />
             </View>
         </View>
     );

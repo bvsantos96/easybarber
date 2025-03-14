@@ -62,7 +62,7 @@ export default function ProductList({ navigation }: PropNavigation) {
                 reset={resetSearch}
                 renderItem={({ item }: { item: ProductDetails }) =>
                     <ProductItem
-                        onPress={() => navigation.navigate('Product', { service: item })}
+                        onPress={() => navigation.navigate('Product', { product: item })}
                         product={item}
                     />
                 }
