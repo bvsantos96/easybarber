@@ -29,6 +29,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                 WHERE (:#{#filter.establishmentId} is null or p.establishment.id = :#{#filter.establishmentId})
                 AND (:#{#filter.name} is null or lower(p.name) like lower(:#{#filter.name}))
                 AND (:#{#filter.description} is null or lower(p.description) like lower(:#{#filter.description}))
+                AND (:#{#filter.available} is null or p.available = :#{#filter.available})
             """)
     Page<ProductDTO> getProducts(@Param("filter") ProductFilter filter, Pageable pageable);
 }

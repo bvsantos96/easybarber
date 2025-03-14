@@ -299,6 +299,7 @@
   "permissionRequired": "Permission Required",
   "cameraAndGalleryPermissionRequired": "Camera and Gallery permissions are required to take a photo or pick one from the gallery.",
   "serviceDeleted": "Service deleted successfully",
+  "productDeleted": "Product deleted successfully",
   "services": {
     "title": "Services",
     "select": "Select service you want"

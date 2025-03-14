@@ -27,7 +27,7 @@ import useAuthStore from 'storage/stores/AuthStore';
 import useHeaderStore from 'storage/stores/HeaderStore';
 import useServiceTypeStore from 'storage/stores/ServiceTypeStore';
 import useUpdateStore from 'storage/stores/UpdateStore';
-import { deleteMobileInformation, deleteService, deleteToken, getServiceTypes, getToken, refreshToken } from 'utils/ApiRequest';
+import { deleteMobileInformation, deleteProduct, deleteService, deleteToken, getServiceTypes, getToken, refreshToken } from 'utils/ApiRequest';
 import { getDefaultCountryString } from 'utils/Constants';
 import { DEBUG_AUTO_LOGIN } from 'utils/EnvVariables';
 import { validateVersion } from 'utils/VersionValidation';
@@ -134,10 +134,13 @@ const Router = () => {
                                 {
                                     header: ({ navigation, route }) => {
                                         let id: number | undefined = undefined;
+                                        let establishmentId: number | undefined = undefined;
                                         if (nav.route) {
                                             const _params: RouteParams = (route?.params as RouteParams) ?? {};
                                             id = _params?.[nav.route]?.id;
+                                            establishmentId = _params?.[nav.route]?.establishmentId;
                                         }
+
                                         return (
                                             <Header
                                                 navigation={navigation}
@@ -163,7 +166,26 @@ const Router = () => {
                                                             }
                                                             return false;
                                                         }
-                                                        : undefined
+                                                        :
+                                                        _key === Routes.Product
+                                                            ? async (_) => {
+                                                                if (id) {
+                                                                    alert({ type: AlertType.Loading, message: "" });
+                                                                    const deleted = await deleteProduct(id || -1, establishmentId || -1);
+                                                                    if (deleted) {
+                                                                        setAlertVisible(false);
+                                                                        alert({
+                                                                            message: texts.productDeleted, type: AlertType.Success, onPress: () => {
+                                                                                setToUpdate({ action: ServiceAction.DELETE, id: id });
+                                                                                navigation.goBack();
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                    return true;
+                                                                }
+                                                                return false;
+                                                            }
+                                                            : undefined
                                                 }
                                                 hideSecondHeader={(route.params as any)?.hideSecondHeader} />
                                         );

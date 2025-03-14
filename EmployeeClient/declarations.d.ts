@@ -441,7 +441,7 @@ declare interface EmployeeBase extends Identifiable {
     serviceTypes: number[];
 }
 
-type RouteParams = Record<string, { id?: number | undefined }>;
+type RouteParams = Record<string, { id?: number | undefined, establishmentId?: number | undefined }>;
 
 declare interface ServiceActionType {
     action: ServiceAction,

@@ -436,7 +436,7 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         }
     }
 
-    @PutMapping("/{establishmentId}/product/{productId}")
+    @DeleteMapping("/{establishmentId}/product/{productId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> disableProduct(@PathVariable Long establishmentId,
             @PathVariable Long productId) {
@@ -458,6 +458,7 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         try {
             ProductFilter filter = new ProductFilter();
             filter.setEstablishmentId(establishmentId);
+            filter.setAvailable(true);
             response.setItems(productService.getProducts(filter, pageable));
             return ResponseEntity.ok(response);
         } catch (Exception e) {
