@@ -1,4 +1,5 @@
 import LocationIcon from '@assets/icons/location.svg';
+import React from 'react';
 import { Text, View } from "react-native";
 import { getStyles } from "../styles/List";
 import { defaultBarberImage } from "../utils/Constants";
