@@ -27,7 +27,7 @@ const Establishments = ({ navigation }: PropNavigation) => {
                     ref={pageListRef}
                     renderItem={({ item }: { item: EstablishmentInfo }) =>
                         <EstablishmentItem
-                            onPress={() => navigation.navigate(Routes.Establishment, { Establishment: item })}
+                            onPress={() => navigation.navigate(Routes.Establishment, { establishment: item })}
                             establishment={item} />
                     }
                     requestFunction={loadMore} />
