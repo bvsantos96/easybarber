@@ -127,55 +127,37 @@ const Router = () => {
                         const _key = key as keyof typeof Params;
                         const nav = RootNav[_key];
                         if (!nav) return null;
-                        return (<Stack.Screen
-                            key={_key}
-                            name={_key}
-                            options={nav.hasHeader ?
-                                {
-                                    header: ({ navigation, route }) => {
-                                        let id: number | undefined = undefined;
-                                        let establishmentId: number | undefined = undefined;
-                                        if (nav.route) {
-                                            const _params: RouteParams = (route?.params as RouteParams) ?? {};
-                                            id = _params?.[nav.route]?.id;
-                                            establishmentId = _params?.[nav.route]?.establishmentId;
-                                        }
+                        return (
+                            <Stack.Screen
+                                key={_key}
+                                name={_key}
+                                options={nav.hasHeader ?
+                                    {
+                                        header: ({ navigation, route }) => {
+                                            let id: number | undefined = undefined;
+                                            let establishmentId: number | undefined = undefined;
+                                            if (nav.route) {
+                                                const _params: RouteParams = (route?.params as RouteParams) ?? {};
+                                                id = _params?.[nav.route]?.id;
+                                                establishmentId = _params?.[nav.route]?.establishmentId;
+                                            }
 
-                                        return (
-                                            <Header
-                                                navigation={navigation}
-                                                title={nav.title}
-                                                hasGoBack={!nav.noGoBack}
-                                                secondHeader={(_key === Routes.Service || _key === Routes.Product) ? (id ? nav.secondHeader : undefined) : nav.secondHeader}
-                                                secondHeaderFunction={
-                                                    _key === Routes.Service
-                                                        ? async (_) => {
-                                                            if (id) {
-                                                                alert({ type: AlertType.Loading, message: "" });
-                                                                const deleted = await deleteService(id || -1);
-                                                                if (deleted) {
-                                                                    setAlertVisible(false);
-                                                                    alert({
-                                                                        message: texts.serviceDeleted, type: AlertType.Success, onPress: () => {
-                                                                            setToUpdate({ action: ServiceAction.DELETE, id: id });
-                                                                            navigation.goBack();
-                                                                        }
-                                                                    });
-                                                                }
-                                                                return true;
-                                                            }
-                                                            return false;
-                                                        }
-                                                        :
-                                                        _key === Routes.Product
+                                            return (
+                                                <Header
+                                                    navigation={navigation}
+                                                    title={nav.title}
+                                                    hasGoBack={!nav.noGoBack}
+                                                    secondHeader={(_key === Routes.Service || _key === Routes.Product) ? (id ? nav.secondHeader : undefined) : nav.secondHeader}
+                                                    secondHeaderFunction={
+                                                        _key === Routes.Service
                                                             ? async (_) => {
-                                                                if (id && id !== -1 && id !== 0) {
+                                                                if (id) {
                                                                     alert({ type: AlertType.Loading, message: "" });
-                                                                    const deleted = await deleteProduct(id || -1, establishmentId || -1);
+                                                                    const deleted = await deleteService(id || -1);
                                                                     if (deleted) {
                                                                         setAlertVisible(false);
                                                                         alert({
-                                                                            message: texts.productDeleted, type: AlertType.Success, onPress: () => {
+                                                                            message: texts.serviceDeleted, type: AlertType.Success, onPress: () => {
                                                                                 setToUpdate({ action: ServiceAction.DELETE, id: id });
                                                                                 navigation.goBack();
                                                                             }
@@ -185,22 +167,41 @@ const Router = () => {
                                                                 }
                                                                 return false;
                                                             }
-                                                            : undefined
-                                                }
-                                                hideSecondHeader={(route.params as any)?.hideSecondHeader} />
-                                        );
-                                    },
+                                                            :
+                                                            _key === Routes.Product
+                                                                ? async (_) => {
+                                                                    if (id && id !== -1 && id !== 0) {
+                                                                        alert({ type: AlertType.Loading, message: "" });
+                                                                        const deleted = await deleteProduct(id || -1, establishmentId || -1);
+                                                                        if (deleted) {
+                                                                            setAlertVisible(false);
+                                                                            alert({
+                                                                                message: texts.productDeleted, type: AlertType.Success, onPress: () => {
+                                                                                    setToUpdate({ action: ServiceAction.DELETE, id: id });
+                                                                                    navigation.goBack();
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                        return true;
+                                                                    }
+                                                                    return false;
+                                                                }
+                                                                : undefined
+                                                    }
+                                                    hideSecondHeader={(route.params as any)?.hideSecondHeader} />
+                                            );
+                                        },
+                                    }
+                                    :
+                                    {
+                                        headerShown: false
+                                    }
                                 }
-                                :
-                                {
-                                    headerShown: false
-                                }
-                            }
-                        >
-                            {(props) => (
-                                nav.containerizedComponent ? (<SafeFullScreen><nav.component {...props} /></SafeFullScreen>) : (<nav.component {...props} />)
-                            )}
-                        </Stack.Screen>);
+                            >
+                                {(props) => (
+                                    nav.containerizedComponent ? (<SafeFullScreen><nav.component {...props} /></SafeFullScreen>) : (<nav.component {...props} />)
+                                )}
+                            </Stack.Screen>);
                     })}
                 </Stack.Navigator>
             </NavigationContainer>

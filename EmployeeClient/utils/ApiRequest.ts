@@ -646,6 +646,14 @@ export const updateServiceDetails = async (service: ServiceDetails): Promise<IRe
     return await request<BaseResponse>("/employee/service", "PUT", _service, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
 }
 
+export const storeEstablishmentDetails = async (establishment: EstablishmentDetail): Promise<IResult<BaseResponse>> => {
+    return await request<BaseResponse>(`/establishment`, "POST", establishment, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+}
+
+export const updateEstablishmentDetails = async (establishment: EstablishmentDetail): Promise<IResult<BaseResponse>> => {
+    return await request<BaseResponse>(`/establishment/${establishment.id}`, "PUT", establishment, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+}
+
 export const storeProductDetails = async (product: ProductDetails): Promise<IResult<BaseResponse>> => {
     return await request<BaseResponse>(`/establishment/${product.establishmentId}/product`, "POST", product, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
 }
@@ -765,4 +773,37 @@ export const hasDynamicPrice = async (serviceId: number, employeeId: number, dat
     } catch (e) {
         return 0;
     }
+}
+
+export const getLocationList = async (page: IPage<ILocation>, params?: Record<string, string | number | boolean>): Promise<IPage<ILocation> | undefined> => {
+    const {
+        locations,
+        hasMoreLocations
+    } = useLocationStore.getState();
+
+    if (await getToken() === null) {
+        return undefined;
+    }
+
+    if (!hasMoreLocations) {
+        page.hasNextPage = false;
+        return page;
+    }
+
+    if (page && page.content.length === 0 && page.currentPage === 0 && locations.length > 0) {
+        page.content = locations;
+        page.totalElements = locations.length;
+        page.currentPage = 1;
+        page.pageSize = locations.length;
+        page.hasNextPage = true;
+        page.hasPreviousPage = false;
+        return page;
+    }
+    const _locations = await getLocationsRequest(page, params);
+
+    if (_locations?.hasNextPage === false) {
+        useLocationStore.setState({ hasMoreLocations: false });
+    }
+
+    return _locations;
 }

@@ -95,6 +95,25 @@ public class EstablishmentService extends ServiceWithImages<Establishment, Estab
                 .map((element) -> modelMapper.map(element, EstablishmentDTO.class)).toList();
     }
 
+    @Transactional(readOnly = false)
+    public Long update(BaseEstablishmentDTO establishmentDTO) throws NotFoundException, ParseException {
+        Establishment establishment = getEstablishment(establishmentDTO.getId());
+        if (establishmentDTO.getName() != null) {
+            establishment.setName(establishmentDTO.getName());
+        }
+        if (establishmentDTO.getDescription() != null) {
+            establishment.setDescription(establishmentDTO.getDescription());
+        }
+        if (establishmentDTO.getAddress() != null) {
+            establishment.setAddress(establishmentDTO.getAddress());
+        }
+        if (establishmentDTO.getLatitude() != null && establishmentDTO.getLongitude() != null) {
+            establishment.setLocation(GeometryUtils.parseLocation(establishmentDTO.getLatitude(),
+                    establishmentDTO.getLongitude()));
+        }
+        return repository.save(establishment).getId();
+    }
+
     public Long create(BaseEstablishmentDTO establishmentDTO) throws Exception {
         return create(establishmentDTO, UserContext.getEmployeeId());
     }
