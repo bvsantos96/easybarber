@@ -89,7 +89,7 @@ const getStyles = () => {
         textTitle: {
             fontSize: 20 * theme.dimensions.absoluteWidth,
             fontFamily: 'Poppins',
-            fontWeight: '600',
+            fontWeight: 'bold',
             lineHeight: 30 * theme.dimensions.absoluteHeight,
             letterSpacing: 0.17,
             alignSelf: 'center',
@@ -99,7 +99,7 @@ const getStyles = () => {
         textBold: {
             fontSize: 20 * theme.dimensions.absoluteWidth,
             fontFamily: 'Poppins',
-            fontWeight: '900',
+            fontWeight: 'bold',
             lineHeight: 30 * theme.dimensions.absoluteHeight,
             letterSpacing: 0.17,
             alignSelf: 'center',
@@ -118,7 +118,7 @@ const getStyles = () => {
         textSubtitle: {
             fontSize: 14 * theme.dimensions.absoluteWidth,
             fontFamily: 'Poppins',
-            fontWeight: '400',
+            fontWeight: 'normal',
             lineHeight: 21 * theme.dimensions.absoluteHeight,
             color: theme.colors.text.alt,
             alignSelf: 'center',

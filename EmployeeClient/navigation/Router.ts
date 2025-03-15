@@ -4,6 +4,8 @@ import { Route as ServiceRoute } from "@screens/Service";
 import { Route as ServiceSelectionRoute } from "@screens/ServiceSelection";
 import { Route as EmployeeSelectionRoute } from "@screens/EmployeeSelection";
 import { Route as AvailabilityRoute } from "@screens/Availability";
+import { Route as ProductRoute } from "@screens/Product";
+import { Route as EstablishmentRoute } from "@screens/Establishment";
 
 export const Params = {
     Sign: undefined,
@@ -16,11 +18,10 @@ export const Params = {
     Schedules: undefined,
     Appointments: undefined,
     Settings: undefined,
-    Establishment: undefined,
-    NewEstablishment: undefined,
+    Establishment: {} as EstablishmentRoute,
     ProductList: undefined,
     TimeSheet: undefined,
-    Product: undefined,
+    Product: {} as ProductRoute,
     WeekView: undefined,
     Employees: undefined,
     Home: undefined,
@@ -45,7 +46,7 @@ export const Routes = {
     Appointments: "Appointments",
     Settings: "Settings",
     Establishment: "Establishment",
-    NewEstablishment: "NewEstablishment",
+    EditEstablishment: "EditEstablishment",
     ProductList: "ProductList",
     TimeSheet: "TimeSheet",
     Product: "Product",

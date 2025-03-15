@@ -39,7 +39,7 @@ const getStyles = () => {
         textTitle: {
             fontSize: 17 * theme.dimensions.absoluteWidth,
             fontFamily: 'Poppins',
-            fontWeight: '600',
+            fontWeight: 'bold',
             lineHeight: 25 * theme.dimensions.absoluteHeight,
             letterSpacing: 0.17,
             color: theme.colors.text.black,
@@ -47,7 +47,7 @@ const getStyles = () => {
         textSubtitle: {
             fontSize: 13 * theme.dimensions.absoluteWidth,
             fontFamily: 'Poppins',
-            fontWeight: '400',
+            fontWeight: 'normal',
             lineHeight: 25 * theme.dimensions.absoluteHeight,
             color: theme.colors.text.black,
         },

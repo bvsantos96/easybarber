@@ -1,8 +1,8 @@
-import React, { ReactNode, useRef } from 'react';
-import { Pressable as DefaultPressable, StyleProp, ViewStyle, LayoutChangeEvent } from 'react-native';
-import { useTheme } from '../styles/ThemeContext';
 import { LinearGradient } from 'expo-linear-gradient';
+import React, { ReactNode, useRef } from 'react';
+import { Pressable as DefaultPressable, LayoutChangeEvent, StyleProp, ViewStyle } from 'react-native';
 import { getDisabledColor, getStyleValue } from 'utils/Utils';
+import { useTheme } from '../styles/ThemeContext';
 
 interface MyPressableProps {
     style?: StyleProp<ViewStyle>;

@@ -36,7 +36,7 @@ export const getStyles = () => {
             color: theme.colors.text.main,
             fontSize: 18 * theme.dimensions.absoluteWidth,
             fontFamily: 'Poppins',
-            fontWeight: '900',
+            fontWeight: 'bold',
         },
         itemContainer: {
             width: '100%',
@@ -57,13 +57,13 @@ export const getStyles = () => {
             color: theme.colors.text.main,
             fontSize: 14 * theme.dimensions.absoluteWidth,
             fontFamily: 'Poppins',
-            fontWeight: '900',
+            fontWeight: 'bold',
         },
         itemSubtitle: {
             color: theme.colors.text.lightBlack,
             fontSize: 11 * theme.dimensions.absoluteWidth,
             fontFamily: 'Poppins',
-            fontWeight: '400',
+            fontWeight: 'normal',
         },
         rowContainer: {
             flexDirection: 'row',

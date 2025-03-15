@@ -1,27 +1,26 @@
-import React from 'react';
-import { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 
+import Button from '../components/Button';
+import Divider from '../components/Divider';
+import { HidePasswordIcon, NameIcon, PasswordIcon, ShowPasswordIcon } from '../components/Icons';
 import Input from '../components/Input';
 import Title from '../components/Title';
-import { PasswordIcon, NameIcon, ShowPasswordIcon, HidePasswordIcon } from '../components/Icons';
-import Divider from '../components/Divider';
-import Button from '../components/Button';
 
-import { getStyles } from '../styles/Sign';
-import { SignInProps } from '../screens/SignIn';
-import { getMobileCode, validateRegister } from '../utils/ApiRequest';
-import { Country } from 'react-native-country-picker-modal';
-import PhoneInput from './PhoneInput';
-import { getDefaultCountryAsync } from '../utils/Constants';
-import texts from "../langs/en.json";
 import { Routes } from '@navigation/Router';
-import KeyboardAvoidingScrollView from './KeyboardAvoidingScrollView';
-import { AlertType } from './Alert';
-import useAlertStore from 'storage/stores/AlertStore';
-import { MobileConfirmationFunctions } from 'enums';
-import useMobileConfirmationStore from 'storage/stores/MobileConfirmationStore';
 import { useTheme } from '@styles/ThemeContext';
+import { MobileConfirmationFunctions } from 'enums';
+import { Country } from 'react-native-country-picker-modal';
+import useAlertStore from 'storage/stores/AlertStore';
+import useMobileConfirmationStore from 'storage/stores/MobileConfirmationStore';
+import texts from "../langs/en.json";
+import { SignInProps } from '../screens/SignIn';
+import { getStyles } from '../styles/Sign';
+import { getMobileCode, validateRegister } from '../utils/ApiRequest';
+import { getDefaultCountryAsync } from '../utils/Constants';
+import { AlertType } from './Alert';
+import KeyboardAvoidingScrollView from './KeyboardAvoidingScrollView';
+import PhoneInput from './PhoneInput';
 
 export default function Register({ navigation, toggleNewUser, expand, collapse }: SignInProps) {
     const theme = useTheme();

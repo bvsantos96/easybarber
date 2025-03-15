@@ -1,9 +1,8 @@
-import React, { forwardRef } from 'react';
-import { SetStateAction, Dispatch } from 'react';
-import Input from '../components/Input';
-import CountryPicker, { Country } from 'react-native-country-picker-modal';
 import texts from '@lang/en.json';
+import React, { Dispatch, forwardRef, SetStateAction } from 'react';
 import { TextInput, ViewStyle } from 'react-native';
+import CountryPicker, { Country } from 'react-native-country-picker-modal';
+import Input from '../components/Input';
 
 interface NationSelectionProps {
     setNation: Dispatch<SetStateAction<Country | null | undefined>>;

@@ -1,12 +1,12 @@
-import React from 'react';
-import { View, Text } from 'react-native';
-import { getStyles } from '../styles/ServiceItem';
-import { Image } from 'expo-image';
-import Pressable from './Pressable';
 import { useTheme } from '@styles/ThemeContext';
+import { Image } from 'expo-image';
+import React from 'react';
+import { Text, View } from 'react-native';
 import { buildCurrencyString, fromMinutesToTime } from 'utils/Utils';
+import { getStyles } from '../styles/ServiceItem';
 import Category from './Category';
 import Divider from './Divider';
+import Pressable from './Pressable';
 
 export default function ServiceItem({ service, onPress }: { service: ServiceDetails, onPress: () => void }) {
     const styles = getStyles();

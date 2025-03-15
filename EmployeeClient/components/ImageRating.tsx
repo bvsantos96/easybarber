@@ -2,8 +2,8 @@ import React from "react";
 import { Text, View } from "react-native";
 
 import StarIcon from '@assets/icons/star.svg';
-import { getStyles } from "../styles/List";
 import { useTheme } from "@styles/ThemeContext";
+import { getStyles } from "../styles/List";
 
 export const ImageRating = ({ rating, nvotes, right }: { rating: string, nvotes: number, right?: boolean }) => {
     const styles = getStyles();

@@ -1,17 +1,17 @@
+import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@styles/ThemeContext';
+import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
 import {
-    View,
+    Image,
+    Platform,
+    ScrollView,
+    StyleSheet,
     Text,
     TextInput,
     TouchableOpacity,
-    ScrollView,
-    Image,
-    StyleSheet,
-    Platform
+    View
 } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@styles/ThemeContext';
 
 
 const theme = useTheme();
@@ -58,9 +58,8 @@ const PictureUploadForm: React.FC = () => {
             return;
         }
 
-        console.log('Form Submitted', { name, description, address, images });
         alert('Form Submitted Successfully!');
-    };
+    }
 
     return (
         <ScrollView style={styles.container}>

@@ -1,7 +1,7 @@
-import { View } from "react-native";
+import StarIcon from '@assets/icons/star.svg';
 import { getStyles } from "@styles/List";
 import { useTheme } from "@styles/ThemeContext";
-import StarIcon from '@assets/icons/star.svg';
+import { View } from "react-native";
 
 export const StarImage = ({ right }: { right?: boolean }) => {
     const styles = getStyles();

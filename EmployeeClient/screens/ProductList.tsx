@@ -1,109 +1,61 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { View } from "react-native";
 
-import { getStyles } from "../styles/ProductList";
-import { getStyles as getProductStyles } from "../styles/ProductItem";
+import PageList, { PageListRef } from "@components/PageList";
 import ProductItem from "@components/ProductItem";
-import PageList from "@components/PageList";
-import { PageListType } from "enums";
+import { PageListType, ServiceAction } from "enums";
+import useEstablishmentStore from "storage/stores/EstablishmentStore";
+import useUpdateStore from "storage/stores/UpdateStore";
+import { getProducts } from "utils/ApiRequest";
+import { getStyles as getProductStyles } from "../styles/ProductItem";
+import { getStyles } from "../styles/ProductList";
 
-export type Route = {
-    establishmentId: number;
-    serviceId: number;
-    date?: string;
-    startHour?: string;
-    availableEmployees?: number[];
-};
-
-export default function ProductList() {
+export default function ProductList({ navigation }: PropNavigation) {
+    const { toUpdate, clearToUpdate } = useUpdateStore();
     const styles = getStyles();
     const stylesProduct = getProductStyles();
+    const { selectedEstablishment } = useEstablishmentStore();
+    const currentEstablishmentRef = useRef(selectedEstablishment);
+    const [resetSearch, setResetSearch] = useState(false);
+    const ref = useRef<PageListRef<ProductDetails>>(null);
 
-    let data: ProductEntity[] = [
-        {
-            name: "Hair Energizer Coffein Shampoo C1",
-            description: "image 1 descr",
-            price: 20,
-            image: "https://bucket-barber-staging.s3.eu-south-2.amazonaws.com/product1_bg_removed.png.png",
-            id: "1",
-            brand: "Alpecine"
-        },
-        {
-            name: "Hair Energizer Coffein Shampoo C1",
-            description: "image 2 descpr",
-            price: 15,
-            image: "https://bucket-barber-staging.s3.eu-south-2.amazonaws.com/product1_bg_removed.png.png",
-            id: "2",
-            brand: "Alpecine"
-        },
-        {
-            name: "Hair Energizer Coffein Shampoo C1",
-            description: "image 2 descpr",
-            price: 15,
-            image: "https://bucket-barber-staging.s3.eu-south-2.amazonaws.com/product1_bg_removed.png.png",
-            id: "3",
-            brand: "Alpecine"
-        },
-        {
-            name: "Hair Energizer Coffein Shampoo C1",
-            description: "image 2 descpr",
-            price: 15,
-            image: "https://bucket-barber-staging.s3.eu-south-2.amazonaws.com/product1_bg_removed.png.png",
-            id: "4",
-            brand: "Alpecine"
-        },
-        {
-            name: "Hair Energizer Coffein Shampoo C1",
-            description: "image 2 descpr",
-            price: 15,
-            image: "https://bucket-barber-staging.s3.eu-south-2.amazonaws.com/product1_bg_removed.png.png",
-            id: "5",
-            brand: "Alpecine"
-        },
-        {
-            name: "Hair Energizer Coffein Shampoo C1",
-            description: "image 2 descpr",
-            price: 15,
-            image: "https://bucket-barber-staging.s3.eu-south-2.amazonaws.com/product1_bg_removed.png.png",
-            id: "6",
-            brand: "Alpecine"
-        },
-        {
-            name: "Hair Energizer Coffein Shampoo C1",
-            description: "image 2 descpr",
-            price: 15,
-            image: "https://bucket-barber-staging.s3.eu-south-2.amazonaws.com/product1_bg_removed.png.png",
-            id: "7",
-            brand: "Alpecine"
-        },
-        {
-            name: "Hair Energizer Coffein Shampoo C1",
-            description: "image 2 descpr",
-            price: 15,
-            image: "https://bucket-barber-staging.s3.eu-south-2.amazonaws.com/product1_bg_removed.png.png",
-            id: "8",
-            brand: "Alpecine"
+    useEffect(() => {
+        if (toUpdate) {
+            if (toUpdate.action === ServiceAction.REFRESH) {
+                setResetSearch(!resetSearch);
+            } else if (toUpdate.action === ServiceAction.UPDATE && toUpdate?.id) {
+                ref.current?.updateItem(+toUpdate.id, toUpdate.obj);
+            } else if (toUpdate.action === ServiceAction.DELETE && toUpdate?.id) {
+                ref.current?.deleteItem(+toUpdate.id);
+            }
+            clearToUpdate();
         }
-    ]
+    }, [toUpdate]);
 
-    const loadMoreData = async (page?: IPage<ProductEntity>, params?: Record<string, string | number | boolean>) => {
-        const ret = {
-            content: data,
-            totalPages: 1,
-            totalElements: 2,
-            currentPage: 1,
-            pageSize: 2,
-            hasNextPage: false,
-            hasPreviousPage: false
-        }
-        return Promise.resolve(ret);
+    useEffect(() => {
+        currentEstablishmentRef.current = selectedEstablishment;
+        setResetSearch(!resetSearch);
+    }, [selectedEstablishment]);
+
+    const loadMoreData = async (page?: IPage<ProductDetails>, params?: Record<string, string | number | boolean>) => {
+        const establishment = currentEstablishmentRef.current;
+        if (establishment === undefined) return;
+        let _params = {
+            ...params
+        };
+
+        return await getProducts(establishment ? +establishment.id : 0, page, _params);
     }
+
     return (
         <View style={styles.listContainer}>
-            <PageList<ProductEntity>
+            <PageList<ProductDetails>
+                ref={ref}
                 type={PageListType.MULTI_COL_LIST}
-                renderItem={({ item }: { item: ProductEntity }) =>
+                reset={resetSearch}
+                renderItem={({ item }: { item: ProductDetails }) =>
                     <ProductItem
+                        onPress={() => navigation.navigate('Product', { product: item })}
                         product={item}
                     />
                 }

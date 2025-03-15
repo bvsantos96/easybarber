@@ -1,10 +1,9 @@
+import { useTheme } from '@styles/ThemeContext';
+import React, { Children, cloneElement, createRef, isValidElement, ReactElement, ReactNode, RefObject, useEffect, useMemo, useRef, useState } from 'react';
 import { Animated, Easing, Keyboard, LayoutChangeEvent, Platform, ScrollView, TextInput, View } from 'react-native';
 import { getStyles } from '../styles/KeyboardAvoidingScrollView';
-import { ReactElement, ReactNode, RefObject, Children, cloneElement, createRef, isValidElement, useEffect, useMemo, useState, useRef } from 'react';
-import React from 'react';
-import PhoneInput from './PhoneInput';
 import Input from './Input';
-import { useTheme } from '@styles/ThemeContext';
+import PhoneInput from './PhoneInput';
 
 export default function KeyboardAvoidingScrollView({ fixedTopComponent, children, fixedBottomComponent, maxHeight, keyboardShow, keyboardHide, setKeyboardHeight }: { fixedTopComponent?: ReactNode, children: ReactNode, fixedBottomComponent?: ReactNode, maxHeight: number, keyboardShow?: () => void, keyboardHide?: () => void, setKeyboardHeight?: (height: number) => void }) {
     const theme = useTheme();

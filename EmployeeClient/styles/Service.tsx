@@ -52,6 +52,7 @@ export const getStyles = () => {
             top: imageContainerSize + inputSpaceInBetween,
             width: "100%",
             height: (inputHeight + inputSpaceInBetween) * 5 + inputSpaceInBetween + theme.dimensions.input.height,
+            minHeight: (inputHeight + inputSpaceInBetween) * 4 + 10 * theme.dimensions.absoluteHeight,
             justifyContent: "space-between",
         },
         input: {
@@ -60,5 +61,11 @@ export const getStyles = () => {
         noImage: {
             backgroundColor: theme.colors.text.lightGray,
         },
+        buttonContainer: {
+            position: "absolute",
+            bottom: 20 * theme.dimensions.absoluteHeight,
+            width: "100%",
+            alignItems: 'center',
+        }
     });
 }

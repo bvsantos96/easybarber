@@ -75,7 +75,7 @@ public class Establishment extends EntityWithImages<Establishment, Establishment
         if (sumVotes == null) {
             sumVotes = 0L;
         }
-            if (getServices() == null)
+        if (getServices() == null)
             setServices(new HashSet<>());
         if (getStaff() == null)
             setStaff(new HashSet<>());

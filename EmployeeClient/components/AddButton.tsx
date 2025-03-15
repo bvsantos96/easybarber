@@ -1,6 +1,6 @@
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useTheme } from "@styles/ThemeContext";
 import Pressable from "./Pressable";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 
 export interface Props {

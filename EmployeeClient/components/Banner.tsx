@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Animated, PanResponder, Text, Dimensions, TouchableOpacity } from 'react-native';
+import { Animated, Dimensions, PanResponder, Text, TouchableOpacity } from 'react-native';
 
 import { getStyles } from '@styles/Banner';
 import useAlertStore from 'storage/stores/AlertStore';

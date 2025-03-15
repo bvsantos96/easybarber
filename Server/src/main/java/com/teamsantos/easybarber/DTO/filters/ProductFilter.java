@@ -19,6 +19,7 @@ public class ProductFilter {
     private Long establishmentId;
     private Long employeeId;
     private List<Long> productTypeId;
+    private boolean available;
 
     public String getName() {
         return Utils.formatStringToLIKE(name);

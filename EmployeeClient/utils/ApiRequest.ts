@@ -1,18 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as SecureStore from 'expo-secure-store';
 import * as LocalAuthentication from 'expo-local-authentication';
+import * as SecureStore from 'expo-secure-store';
 
-import useAlertStore from "storage/stores/AlertStore";
-import { API_URL, DEBUG_SERVER_REQUESTS } from "./EnvVariables";
-import useAuthStore from "storage/stores/AuthStore";
-import { LOCATIONS_STORAGE_KEY, MOBILE_INFORMATION, SECURE_STORAGE_LOGIN_KEY, TOKEN_STORAGE_KEY } from './Constants';
+import { AlertType } from '@components/Alert';
 import langs from '@lang/en.json';
 import { ResponseType } from 'enums';
-import { AlertType } from '@components/Alert';
+import { downloadToDevice } from 'storage/StorageUtils';
+import useAlertStore from "storage/stores/AlertStore";
+import useAuthStore from "storage/stores/AuthStore";
+import useEstablishmentStore from 'storage/stores/EstablishmentStore';
+import { LOCATIONS_STORAGE_KEY, MOBILE_INFORMATION, SECURE_STORAGE_LOGIN_KEY, TOKEN_STORAGE_KEY } from './Constants';
+import { API_URL, DEBUG_SERVER_REQUESTS } from "./EnvVariables";
 import { createPageable, parsePage } from './PageHandling';
 import { getCalendarReadyDate, parseCountryCode, twoDigits } from './Utils';
-import useEstablishmentStore from 'storage/stores/EstablishmentStore';
-import { downloadToDevice } from 'storage/StorageUtils';
 
 const getItemsFromRequest = <T>(result: IResult<T>): T => {
     if (result.success) {
@@ -614,6 +614,10 @@ export const getServices = async (page?: IPage<ServiceDetails>, params?: Record<
     return await pageGet<ServiceDetails>("/employee/services", page, params);
 }
 
+export const getProducts = async (establishmentID: number, page?: IPage<ProductDetails>, params?: Record<string, string | number | boolean>): Promise<IPage<ProductDetails> | undefined> => {
+    return await pageGet<ProductDetails>(`/establishment/${establishmentID}/products`, page, params);
+}
+
 export const getImageList = async (urlPrefix: string, page: IPage<IImage>, params?: Record<string, string | number | boolean>): Promise<IPage<IImage> | undefined> => {
     return await pageGet<IImage>(`${urlPrefix}/images`, page, params);
 }
@@ -642,6 +646,14 @@ export const updateServiceDetails = async (service: ServiceDetails): Promise<IRe
     return await request<BaseResponse>("/employee/service", "PUT", _service, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
 }
 
+export const storeProductDetails = async (product: ProductDetails): Promise<IResult<BaseResponse>> => {
+    return await request<BaseResponse>(`/establishment/${product.establishmentId}/product`, "POST", product, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+}
+
+export const updateProductDetails = async (product: ProductDetails): Promise<IResult<BaseResponse>> => {
+    return await request<BaseResponse>(`/establishment/${product.establishmentId}/product`, "PUT", product, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT);
+}
+
 export const storeImage = async (urlPrefix: string, id: number, image: string, isMain: boolean): Promise<boolean> => {
     return (await request<BaseResponse>(`${urlPrefix}/${id}/images`, "POST", [{ data: image, main: isMain }], langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT)).success;
 }
@@ -651,7 +663,11 @@ export const replaceMainImage = async (urlPrefix: string, id: number, image: str
 }
 
 export const deleteService = async (id: number): Promise<boolean> => {
-    return await request<BaseResponse>(`/service/${id}`, "DELETE", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT).then(response => { console.log(response); return response.success; });
+    return await request<BaseResponse>(`/service/${id}`, "DELETE", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT).then(response => response.success);
+}
+
+export const deleteProduct = async (id: number, establishmentId: number): Promise<boolean> => {
+    return await request<BaseResponse>(`/establishment/${establishmentId}/product/${id}`, "DELETE", null, langs.apiMessages.success, langs.apiMessages.failed, ResponseType.OBJECT).then(response => response.success);
 }
 
 export const getEstablishmentEmployees = async (establishmentId: number): Promise<EmployeeEntity[]> => {
