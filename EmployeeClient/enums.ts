@@ -39,7 +39,8 @@ export enum TabsVisibleConstraints {
     ALWAYS = 0,
     AUTHENTICATED = 1,
     HAS_ESTABLISHMENTS = 2,
-    HAS_SELECTED_ESTABLISHMENT = 3
+    HAS_SELECTED_ESTABLISHMENT = 3,
+    FORCE_ESTABLISHMENT_SELECTION = 4
 }
 
 export enum ButtonType {

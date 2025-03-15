@@ -9,7 +9,7 @@ import Pressable from "./Pressable";
 import { getStyles } from "@styles/ChangeEstablishment";
 
 import texts from "@lang/en.json";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useEstablishmentStore from "storage/stores/EstablishmentStore";
 import Button from "./Button";
 import CustomModal, { CustomModalRef } from "./CustomModal";
@@ -38,6 +38,7 @@ const SelectEstablishments = ({ selected: _selected, establishments, closeModal 
     return (
         <View style={styles.modal}>
             <Dropdown
+                mode="modal"
                 style={styles.dropdown}
                 placeholderStyle={[styles.placeholderStyle, selected ? styles.selectedPlaceholderStyle : undefined]}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -68,26 +69,41 @@ const SelectEstablishments = ({ selected: _selected, establishments, closeModal 
     );
 }
 
-export const ChangeEstablishment = () => {
+export const ChangeEstablishment = ({ canClose = true, autoOpen = false }: { canClose?: boolean, autoOpen?: boolean }) => {
     const styles = getStyles();
     const { establishments, selectedEstablishment, clearSelectedEstablishment } = useEstablishmentStore();
     const modal = useRef<CustomModalRef>(null);
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(autoOpen);
+
+    useEffect(() => {
+        if (autoOpen && !modalVisible && !selectedEstablishment) {
+            setModalVisible(true);
+            modal.current?.showModal();
+        }
+    }, [selectedEstablishment]);
 
     return (
         <View style={styles.container}>
             <CustomModal
+                autoOpen={autoOpen}
                 ref={modal}
                 modalContent={
                     <SelectEstablishments
                         establishments={establishments}
-                        closeModal={() => modal.current?.toggleModal()}
+                        closeModal={() => { setModalVisible(false); modal.current?.hideModal(); }}
                         selected={selectedEstablishment}
                     />
                 }
                 snapPoints={[styles.modal.maxHeight]}
                 modalHeight={styles.modal.maxHeight}
-                modalClosed={() => { setModalVisible(false) }}
+                modalClosed={() => {
+                    if (!canClose && !selectedEstablishment) {
+                        modal.current?.showModal();
+                        setModalVisible(true);
+                        return;
+                    }
+                    setModalVisible(false);
+                }}
             />
             {(selectedEstablishment && !modalVisible) &&
                 <View style={styles.selected}>

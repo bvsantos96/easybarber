@@ -53,8 +53,10 @@ export const getStyles = () => {
         },
         modal: {
             width: 328 * theme.dimensions.absoluteWidth,
-            height: dropDownMaxHeight + 2 * theme.dimensions.input.height + 32 * theme.dimensions.absoluteHeight,
-            maxHeight: dropDownMaxHeight + 2 * theme.dimensions.input.height + 32 * theme.dimensions.absoluteHeight,
+            //height: dropDownMaxHeight + 2 * theme.dimensions.input.height + 32 * theme.dimensions.absoluteHeight,
+            //maxHeight: dropDownMaxHeight + 2 * theme.dimensions.input.height + 32 * theme.dimensions.absoluteHeight,
+            height: theme.dimensions.input.height * 3,
+            maxHeight: theme.dimensions.input.height * 3,
             alignSelf: 'center',
             alignItems: 'center',
         },

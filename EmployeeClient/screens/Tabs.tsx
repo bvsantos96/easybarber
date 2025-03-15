@@ -41,6 +41,15 @@ export default function Tabs({ navigation }: PropNavigation) {
         return true;
     }, [authenticated, hasEstablishments, hasSelectedEstablishment]);
 
+    const forceEstablishmentSelection = useCallback((tabs: TabsVisibleConstraints[] | undefined) => {
+        if (!tabs || tabs.length === 0) return false;
+        return tabs.includes(TabsVisibleConstraints.FORCE_ESTABLISHMENT_SELECTION);
+    }, [hasSelectedEstablishment]);
+
+    const canExecuteHeaderButton = useCallback((tab: TabsInfo) => {
+        return tabEnabled(tab.visibleConstraint) && !(forceEstablishmentSelection(tab.visibleConstraint) && !hasSelectedEstablishment);
+    }, [authenticated, hasEstablishments, hasSelectedEstablishment]);
+
     return (
         <Tab.Navigator
             initialRouteName={Routes.Home}
@@ -86,14 +95,14 @@ export default function Tabs({ navigation }: PropNavigation) {
                                 <TabIcon
                                     left
                                     icon={tab.leftIcon}
-                                    func={() => tab.leftAction && tab.leftAction(navigation)}
+                                    func={() => canExecuteHeaderButton(tab) && tab.leftAction && tab.leftAction(navigation)}
                                     text={tab.leftText}
                                 />
                             ) : undefined,
                             headerRight: tab.rightIcon ? () => (
                                 <TabIcon
                                     icon={tab.rightIcon}
-                                    func={() => tab.rightAction && tab.rightAction(navigation)}
+                                    func={() => canExecuteHeaderButton(tab) && tab.rightAction && tab.rightAction(navigation)}
                                     text={tab.rightText}
                                 />
                             ) : undefined,
@@ -103,7 +112,7 @@ export default function Tabs({ navigation }: PropNavigation) {
                         {(props) => (
                             <SafeFullScreen
                                 fixedButton={
-                                    (<ChangeEstablishment />)}>
+                                    (<ChangeEstablishment autoOpen={forceEstablishmentSelection(tab.visibleConstraint)} canClose={!forceEstablishmentSelection(tab.visibleConstraint)} />)}>
                                 <tab.component {...props} />
                             </SafeFullScreen>)}
                     </Tab.Screen>

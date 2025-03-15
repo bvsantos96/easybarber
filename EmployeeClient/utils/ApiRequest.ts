@@ -207,15 +207,15 @@ const _request = async<T>(url: string, method: string, body: any, successMessage
     let token = await getToken();
     if (DEBUG_SERVER_REQUESTS) {
         console.log(_url);
-        //console.log({
-        //    method: method,
-        //    mode: 'cors',
-        //    headers: {
-        //        ...(token && { 'Authorization': `Bearer ${token}` }),
-        //        ...(method !== "GET" && body && { 'Content-Type': 'application/json' }),
-        //    },
-        //    ...(method !== "GET" && body && { body: JSON.stringify(body) }),
-        //});
+        console.log({
+            method: method,
+            mode: 'cors',
+            headers: {
+                ...(token && { 'Authorization': `Bearer ${token}` }),
+                ...(method !== "GET" && body && { 'Content-Type': 'application/json' }),
+            },
+            ...(method !== "GET" && body && { body: JSON.stringify(body) }),
+        });
     }
 
     return fetch(_url, {
