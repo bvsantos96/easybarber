@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Text, Pressable, View, TextInput, InputModeOptions, ReturnKeyTypeOptions, NativeSyntheticEvent, TextInputSubmitEditingEventData, TextInputFocusEventData, ViewStyle } from 'react-native';
+import { InputModeOptions, NativeSyntheticEvent, Pressable, ReturnKeyTypeOptions, Text, TextInput, TextInputFocusEventData, TextInputSubmitEditingEventData, View, ViewStyle } from 'react-native';
 import { getStyles } from '../styles/Input';
 import { useTheme } from '../styles/ThemeContext';
 import Divider from './Divider';

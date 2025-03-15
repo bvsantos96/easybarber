@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
 import Entypo from '@expo/vector-icons/Entypo';
+import React, { useCallback, useEffect } from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
 
-import { getStyles } from '../styles/HomeNavigator';
-import { NavigationProp } from '@react-navigation/native';
 import { Props as SecondHeaderProps } from '@components/FavoriteHeader';
-import { debounce, throttle } from 'lodash';
+import { NavigationProp } from '@react-navigation/native';
+import { throttle } from 'lodash';
 import useHeaderStore from 'storage/stores/HeaderStore';
+import { getStyles } from '../styles/HomeNavigator';
 
 type HeaderProps = {
     navigation: NavigationProp<any, any>;

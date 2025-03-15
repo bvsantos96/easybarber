@@ -46,7 +46,7 @@ export const getStyles = () => {
             color: theme.colors.text.darkBlueGray,
             fontSize: theme.fonts.size._16,
             fontFamily: 'Poppins',
-            fontWeight: '700',
+            fontWeight: 'bold',
             lineHeight: 28 * theme.dimensions.absoluteHeight,
             textAlign: 'center'
         },
@@ -65,7 +65,7 @@ export const getStyles = () => {
             color: 'red',
             textAlign: 'center',
             fontSize: theme.fonts.size._12,
-            fontWeight: '500'
+            fontWeight: 'normal'
         },
     })
 };

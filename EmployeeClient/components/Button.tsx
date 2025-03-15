@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { Text } from 'react-native';
+import { getDisabledColor } from 'utils/Utils';
 import Pressable from '../components/Pressable';
 import { getStyles } from '../styles/Button';
 import { useTheme } from '../styles/ThemeContext';
-import { getDisabledColor } from 'utils/Utils';
 
 export default function Button({
     backgroundColor = "",

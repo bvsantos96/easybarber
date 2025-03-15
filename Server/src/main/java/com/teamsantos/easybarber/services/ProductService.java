@@ -21,6 +21,7 @@ import com.teamsantos.easybarber.entities.images.ProductImage;
 import com.teamsantos.easybarber.exceptions.GenericNotFoundException;
 import com.teamsantos.easybarber.repositories.ProductRepository;
 import com.teamsantos.easybarber.repositories.images.ProductImageRepository;
+import com.teamsantos.easybarber.security.utils.UserContext;
 
 import jakarta.persistence.EntityManager;
 
@@ -29,6 +30,7 @@ public class ProductService extends ServiceWithImages<Product, ProductImage> {
     private final ProductRepository productRepository;
     private final UserService userService;
     private final AppointmentService appointmentService;
+    private final EstablishmentService establishmentService;
 
     @Autowired
     public ProductService(ProductRepository repository,
@@ -36,11 +38,13 @@ public class ProductService extends ServiceWithImages<Product, ProductImage> {
             ModelMapper modelMapper,
             EntityManager entityManager,
             UserService userService,
-            AppointmentService appointmentService) {
+            AppointmentService appointmentService,
+            EstablishmentService establishmentService) {
         super(repository, imageRepository, modelMapper, entityManager);
         this.userService = userService;
         this.appointmentService = appointmentService;
         this.productRepository = repository;
+        this.establishmentService = establishmentService;
     }
 
     @Transactional(readOnly = false)
@@ -49,8 +53,8 @@ public class ProductService extends ServiceWithImages<Product, ProductImage> {
         for (Long ids : productDTO.getProductTypeIds()) {
             product.addProductType(entityManager.getReference(ProductType.class, ids));
         }
+        product.setImages(Set.of());
         product = repository.save(product);
-        this.saveImages(product.getId(), productDTO.getImages());
         return product.getId();
     }
 
@@ -94,5 +98,34 @@ public class ProductService extends ServiceWithImages<Product, ProductImage> {
     @Transactional(readOnly = true)
     public Page<ProductDTO> getProducts(ProductFilter filter, Pageable pageable) {
         return productRepository.getProducts(filter, pageable);
+    }
+
+    @Transactional(readOnly = false)
+    public Long update(ProductDTO product) {
+        Product entity = repository.findById(product.getId()).get();
+        entity.setName(product.getName());
+        entity.setDescription(product.getDescription());
+        entity.setPrice(product.getPrice());
+        entity.setAvailable(true);
+        entity.setProductTypes(Set.of());
+        for (Long ids : product.getProductTypeIds()) {
+            entity.addProductType(entityManager.getReference(ProductType.class, ids));
+        }
+        repository.save(entity);
+        return entity.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public boolean canEdit(long productId) {
+        if (UserContext.isEmployee()) {
+            Long establishmentId = repository.findById(productId).get().getEstablishment().getId();
+
+            if (establishmentId == null) {
+                return false;
+            }
+
+            return establishmentService.isAdmin(establishmentId, UserContext.getEmployeeId());
+        }
+        return false;
     }
 }

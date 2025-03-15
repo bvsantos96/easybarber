@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableWithoutFeedback, Keyboard, View } from 'react-native';
+import { Keyboard, TouchableWithoutFeedback, View } from 'react-native';
 
 interface DismissKeyboardProps {
     children: React.ReactNode;

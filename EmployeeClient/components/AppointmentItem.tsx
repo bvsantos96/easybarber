@@ -1,20 +1,20 @@
-import React, { useCallback, useEffect, useRef } from "react";
-import { View, Text, Animated, PanResponder, LayoutChangeEvent, PanResponderGestureState, GestureResponderEvent } from "react-native";
 import { Image } from "expo-image";
+import React, { useCallback, useEffect, useRef } from "react";
+import { Animated, GestureResponderEvent, LayoutChangeEvent, PanResponder, PanResponderGestureState, Text, View } from "react-native";
 
 import ClockIcon from "@assets/icons/clock.svg";
-import { getStyles } from "../styles/Appointments";
-import { getDateAsString, getTimeAsString } from "../utils/Utils";
 import Fontisto from '@expo/vector-icons/Fontisto';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import texts from "@lang/en.json";
+import { useTheme } from "@styles/ThemeContext";
+import useAlertStore from "storage/stores/AlertStore";
+import { cancelAppointment } from "utils/ApiRequest";
+import { gotoLocation } from "utils/Location";
+import { getStyles } from "../styles/Appointments";
+import { getDateAsString, getTimeAsString } from "../utils/Utils";
+import { AlertType } from "./Alert";
 import Divider from "./Divider";
 import Pressable from "./Pressable";
-import { gotoLocation } from "utils/Location";
-import { cancelAppointment } from "utils/ApiRequest";
-import texts from "@lang/en.json";
-import useAlertStore from "storage/stores/AlertStore";
-import { AlertType } from "./Alert";
-import { useTheme } from "@styles/ThemeContext";
 
 interface Props extends PropNavigation {
     appointment: AppointmentInfo;

@@ -1,7 +1,7 @@
-import { TouchableOpacity, View, Text } from "react-native";
+import Entypo from '@expo/vector-icons/Entypo';
+import { Text, TouchableOpacity, View } from "react-native";
 import { getStyles } from "../styles/Settings";
 import Divider from "./Divider";
-import Entypo from '@expo/vector-icons/Entypo';
 
 interface Props {
     onPress: () => void;

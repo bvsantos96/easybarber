@@ -58,21 +58,21 @@ export const getStyles = () => {
             color: theme.colors.text.darkBlueGray,
             fontSize: theme.fonts.size._16,
             fontFamily: 'Poppins',
-            fontWeight: '500',
+            fontWeight: 'normal',
             lineHeight: 24 * theme.dimensions.absoluteHeight,
         },
         resendCodeRedText: {
             color: theme.colors.text.link,
             fontSize: theme.fonts.size._16,
             fontFamily: 'Poppins',
-            fontWeight: '500',
+            fontWeight: 'normal',
             lineHeight: 24 * theme.dimensions.absoluteHeight,
         },
         insertCode: {
             color: theme.colors.text.darkBlueGray,
             fontSize: theme.fonts.size._16,
             fontFamily: 'Poppins',
-            fontWeight: '700',
+            fontWeight: 'bold',
             lineHeight: 28 * theme.dimensions.absoluteHeight,
             textAlign: 'center'
         },
@@ -87,7 +87,7 @@ export const getStyles = () => {
             color: theme.colors.text.black,
             fontSize: theme.fonts.size._16,
             fontFamily: 'Poppins',
-            fontWeight: '600',
+            fontWeight: 'bold',
             lineHeight: 25.2 * theme.dimensions.absoluteHeight,
             textAlign: 'center'
         },
@@ -134,7 +134,7 @@ export const getStyles = () => {
             color: 'red',
             textAlign: 'center',
             fontSize: theme.fonts.size._10,
-            fontWeight: '500'
+            fontWeight: 'normal'
         },
     })
 };

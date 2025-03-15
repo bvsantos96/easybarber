@@ -1,11 +1,11 @@
-import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
-import { Animated, GestureResponderEvent, LayoutChangeEvent, PanResponder, PanResponderGestureState, View } from "react-native";
-import { getStyles } from "@styles/SlidingItem";
-import Pressable from "./Pressable";
 import Fontisto from '@expo/vector-icons/Fontisto';
-import { ButtonType } from "enums";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { getStyles } from "@styles/SlidingItem";
+import { ButtonType } from "enums";
+import { ReactNode, useCallback, useEffect, useRef, useState } from "react";
+import { Animated, GestureResponderEvent, LayoutChangeEvent, PanResponder, PanResponderGestureState, View } from "react-native";
+import Pressable from "./Pressable";
 
 export const SlidingButton = ({ onPress, backgroundColor, color, type, name }: { onPress: () => void, backgroundColor: string, color: string, type: ButtonType, name: string }) => {
     const styles = getStyles();

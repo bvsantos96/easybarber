@@ -44,7 +44,7 @@ export const getStyles = () => {
             color: theme.colors.text.main,
             fontSize: theme.fonts.size._15,
             fontFamily: 'Mazzard',
-            fontWeight: '400',
+            fontWeight: 'normal',
         },
         textInputWithShowPasswordIcon: {
             width: theme.dimensions.input.width-(1.6 * theme.dimensions.input.height)-10 * theme.dimensions.absoluteHeight-20 * theme.dimensions.absoluteWidth,
@@ -53,7 +53,7 @@ export const getStyles = () => {
             color: theme.colors.text.main,
             fontSize: theme.fonts.size._15,
             fontFamily: 'Mazzard',
-            fontWeight: '400',
+            fontWeight: 'normal',
         },
         icon: {
             width: 25 * theme.dimensions.absoluteHeight,

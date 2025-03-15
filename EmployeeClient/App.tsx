@@ -1,37 +1,36 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import Constants from 'expo-constants';
-import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
-import { Platform, Linking } from 'react-native';
 import { NavigationContainer, NavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { QueryClient, QueryClientProvider, useQueryClient } from '@tanstack/react-query';
+import Constants from 'expo-constants';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { Linking, LogBox, Platform } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 SplashScreen.preventAutoHideAsync();
-import { LogBox } from 'react-native';
 LogBox.ignoreLogs([
     'Support for defaultProps will be removed from function components',
 ]);
 
-import texts from '@lang/en.json';
-import { Params, Routes } from '@navigation/Router';
-import RootNav from '@navigation/RootNavigator';
-import useAuthStore from 'storage/stores/AuthStore';
-import Header from '@components/Header';
-import { ThemeProvider } from '@styles/ThemeContext';
 import CustomAlert, { AlertType } from '@components/Alert';
-import { UpdateType, ServiceAction } from 'enums';
-import { DEBUG_AUTO_LOGIN } from 'utils/EnvVariables';
-import useAlertStore from 'storage/stores/AlertStore';
-import { getDefaultCountryString } from 'utils/Constants';
 import DismissKeyboard from '@components/DismissKeyboard';
-import { deleteMobileInformation, deleteService, deleteToken, getServiceTypes, getToken, refreshToken } from 'utils/ApiRequest';
-import { validateVersion } from 'utils/VersionValidation';
+import Header from '@components/Header';
 import SafeFullScreen from '@components/SafeFullScreen';
+import texts from '@lang/en.json';
+import RootNav from '@navigation/RootNavigator';
+import { Params, Routes } from '@navigation/Router';
+import { ThemeProvider } from '@styles/ThemeContext';
+import { ServiceAction, UpdateType } from 'enums';
+import useAlertStore from 'storage/stores/AlertStore';
+import useAuthStore from 'storage/stores/AuthStore';
 import useHeaderStore from 'storage/stores/HeaderStore';
 import useServiceTypeStore from 'storage/stores/ServiceTypeStore';
 import useUpdateStore from 'storage/stores/UpdateStore';
+import { deleteMobileInformation, deleteProduct, deleteService, deleteToken, getServiceTypes, getToken, refreshToken } from 'utils/ApiRequest';
+import { getDefaultCountryString } from 'utils/Constants';
+import { DEBUG_AUTO_LOGIN } from 'utils/EnvVariables';
+import { validateVersion } from 'utils/VersionValidation';
 
 const Router = () => {
     const queryClient = useQueryClient()
@@ -135,20 +134,22 @@ const Router = () => {
                                 {
                                     header: ({ navigation, route }) => {
                                         let id: number | undefined = undefined;
+                                        let establishmentId: number | undefined = undefined;
                                         if (nav.route) {
                                             const _params: RouteParams = (route?.params as RouteParams) ?? {};
                                             id = _params?.[nav.route]?.id;
+                                            establishmentId = _params?.[nav.route]?.establishmentId;
                                         }
+
                                         return (
                                             <Header
                                                 navigation={navigation}
                                                 title={nav.title}
                                                 hasGoBack={!nav.noGoBack}
-                                                secondHeader={_key === Routes.Service ? (id ? nav.secondHeader : undefined) : nav.secondHeader}
+                                                secondHeader={(_key === Routes.Service || _key === Routes.Product) ? (id ? nav.secondHeader : undefined) : nav.secondHeader}
                                                 secondHeaderFunction={
                                                     _key === Routes.Service
                                                         ? async (_) => {
-                                                            console.log("DELETE SERVICE");
                                                             if (id) {
                                                                 alert({ type: AlertType.Loading, message: "" });
                                                                 const deleted = await deleteService(id || -1);
@@ -165,7 +166,26 @@ const Router = () => {
                                                             }
                                                             return false;
                                                         }
-                                                        : undefined
+                                                        :
+                                                        _key === Routes.Product
+                                                            ? async (_) => {
+                                                                if (id && id !== -1 && id !== 0) {
+                                                                    alert({ type: AlertType.Loading, message: "" });
+                                                                    const deleted = await deleteProduct(id || -1, establishmentId || -1);
+                                                                    if (deleted) {
+                                                                        setAlertVisible(false);
+                                                                        alert({
+                                                                            message: texts.productDeleted, type: AlertType.Success, onPress: () => {
+                                                                                setToUpdate({ action: ServiceAction.DELETE, id: id });
+                                                                                navigation.goBack();
+                                                                            }
+                                                                        });
+                                                                    }
+                                                                    return true;
+                                                                }
+                                                                return false;
+                                                            }
+                                                            : undefined
                                                 }
                                                 hideSecondHeader={(route.params as any)?.hideSecondHeader} />
                                         );

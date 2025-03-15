@@ -42,7 +42,7 @@ export const getStyles = () => {
             color: theme.colors.text.main,
             fontSize: 18,
             fontFamily: 'Poppins',
-            fontWeight: '600',
+            fontWeight: 'bold',
         },
         locationContainer: {
             position: 'relative',
@@ -54,7 +54,7 @@ export const getStyles = () => {
             color: theme.colors.text.lightBlack,
             fontSize: 11,
             fontFamily: 'Nunito',
-            fontWeight: '400',
+            fontWeight: 'normal',
         },
         locationIcon: {
             width: 13 * theme.dimensions.absoluteMinDimension,
@@ -72,7 +72,7 @@ export const getStyles = () => {
             color: theme.colors.text.lightBlack,
             fontSize: 10,
             fontFamily: 'Poppins',
-            fontWeight: '400',
+            fontWeight: 'normal',
             lineHeight: 18,
             height: 50 * theme.dimensions.absoluteHeight,
         },
@@ -121,7 +121,7 @@ export const getStyles = () => {
             color: theme.colors.backgroundColor,
             fontSize: 13.05,
             fontFamily: 'Mazzard',
-            fontWeight: '500',
+            fontWeight: 'normal',
             justifyContent: 'center',
             alignItems: 'center',
         },
@@ -131,7 +131,7 @@ export const getStyles = () => {
             color: theme.colors.backgroundColor,
             fontSize: 8.12,
             fontFamily: 'Mazzard',
-            fontWeight: '500',
+            fontWeight: 'normal',
         },
     })
 };
