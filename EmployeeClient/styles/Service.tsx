@@ -55,6 +55,9 @@ export const getStyles = () => {
             minHeight: (inputHeight + inputSpaceInBetween) * 4 + 10 * theme.dimensions.absoluteHeight,
             justifyContent: "space-between",
         },
+        inputContainer3Items: {
+            height: (inputHeight + inputSpaceInBetween) * 3 + 10 * theme.dimensions.absoluteHeight,
+        },
         input: {
             height: inputHeight
         },
