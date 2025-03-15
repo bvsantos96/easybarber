@@ -20,7 +20,7 @@ export const getStyles = () => {
             justifyContent: 'center',
             alignItems: 'center',
             backgroundColor: theme.colors.backgroundColor,
-            height: theme.dimensions.height, 
+            height: theme.dimensions.height,
         },
         containerMax: {
             flex: 1,
@@ -99,7 +99,7 @@ export const getStyles = () => {
         },
         redBold: {
             color: theme.colors.mainColor,
-            fontWeight: '900',
+            fontWeight: 'bold',
         },
         padding15px: {
             padding: 15,
@@ -107,7 +107,7 @@ export const getStyles = () => {
         normalText: {
             fontSize: 16,
             fontFamily: 'Mazzard',
-            fontWeight: '500',
+            fontWeight: 'normal',
         },
         fontSize19: {
             fontSize: 19,
@@ -146,13 +146,13 @@ export const getStyles = () => {
             fontFamily: 'Poppins',
         },
         fontWeight400: {
-            fontWeight: '400',
+            fontWeight: 'normal',
         },
         fontWeight600: {
-            fontWeight: '600',
+            fontWeight: 'bold',
         },
         fontWeight700: {
-            fontWeight: '700',
+            fontWeight: 'bold',
         },
         fonstSize18: {
             fontSize: 18,

@@ -40,7 +40,7 @@ export const getStyles = () => {
             color: theme.colors.text.black,
             fontSize: theme.fonts.size._18,
             fontFamily: 'Poppins',
-            fontWeight: '600',
+            fontWeight: 'bold',
             lineHeight: 25.2 * theme.dimensions.absoluteHeight,
             textAlign: 'center'
         },

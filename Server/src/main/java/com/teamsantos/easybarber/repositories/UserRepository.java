@@ -95,7 +95,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
                 SELECT new com.teamsantos.easybarber.DTO.product.ProductDTO(
                     ps.product.id,
                     ps.product.establishment.id,
-                    ps.product.employee.id,
                     (SELECT pt.id FROM ps.product.productTypes pt),
                     ps.product.name,
                     ps.product.description,

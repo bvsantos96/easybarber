@@ -40,7 +40,7 @@ export const getStyles = () => {
             color: theme.colors.text.alt,
             fontSize: theme.fonts.size._19,
             fontFamily: 'Poppins',
-            fontWeight: '400',
+            fontWeight: 'normal',
             lineHeight: 21,
         },
         textColor: {
@@ -106,7 +106,7 @@ export const getStyles = () => {
             color: theme.colors.text.main,
             fontSize: theme.fonts.size._15,
             fontFamily: 'Mazzard',
-            fontWeight: '400',
+            fontWeight: 'normal',
         },
         iconView: {
             position: 'absolute',
@@ -172,7 +172,7 @@ export const getStyles = () => {
             color: theme.colors.text.black,
             fontSize: theme.fonts.size._13,
             fontFamily: 'Mazzard',
-            fontWeight: '500',
+            fontWeight: 'normal',
             textAlign: 'center',
         },
         viewAllContainer: {

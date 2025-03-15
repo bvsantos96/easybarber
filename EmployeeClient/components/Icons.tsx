@@ -1,11 +1,10 @@
 import React from 'react';
 
-import Phone from "@assets/icons/phone.svg";
 import Password from "@assets/icons/password.svg";
+import Phone from "@assets/icons/phone.svg";
 import User from "@assets/icons/user.svg";
+import { AntDesign, Entypo } from '@expo/vector-icons';
 import { useTheme } from '@styles/ThemeContext';
-import { AntDesign } from '@expo/vector-icons';
-import { Entypo } from '@expo/vector-icons';
 
 export const PhoneIcon = () => {
     const theme = useTheme();

@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useRef } from 'react';
-import { Animated, View, Text, Pressable, PanResponder } from 'react-native';
 import { getStyles } from '@styles/AnimatedSwitch';
 import { useTheme } from '@styles/ThemeContext';
+import React, { useCallback, useEffect, useRef } from 'react';
+import { Animated, PanResponder, Pressable, Text, View } from 'react-native';
 
 export default function AnimatedSwitch({ text1, text2, setSelected }: { text1: string, text2: string, setSelected: (selected: boolean) => void }) {
     const theme = useTheme();

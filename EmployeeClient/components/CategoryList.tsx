@@ -3,10 +3,10 @@ import { View } from "react-native";
 import PagerView from "react-native-pager-view";
 import { SvgUri } from "react-native-svg";
 
-import { getStyles as topBarGetStyles } from '../styles/TopBar';
-import { getStyles as getHomeGetStyles } from '../styles/Home';
-import Category from "./Category";
 import { useTheme } from "@styles/ThemeContext";
+import { getStyles as getHomeGetStyles } from '../styles/Home';
+import { getStyles as topBarGetStyles } from '../styles/TopBar';
+import Category from "./Category";
 
 interface CategoriesListProps {
     categories: ICategory[];
