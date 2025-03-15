@@ -146,7 +146,7 @@ const Router = () => {
                                                 navigation={navigation}
                                                 title={nav.title}
                                                 hasGoBack={!nav.noGoBack}
-                                                secondHeader={_key === Routes.Service ? (id ? nav.secondHeader : undefined) : nav.secondHeader}
+                                                secondHeader={(_key === Routes.Service || _key === Routes.Product) ? (id ? nav.secondHeader : undefined) : nav.secondHeader}
                                                 secondHeaderFunction={
                                                     _key === Routes.Service
                                                         ? async (_) => {
@@ -169,7 +169,7 @@ const Router = () => {
                                                         :
                                                         _key === Routes.Product
                                                             ? async (_) => {
-                                                                if (id) {
+                                                                if (id && id !== -1 && id !== 0) {
                                                                     alert({ type: AlertType.Loading, message: "" });
                                                                     const deleted = await deleteProduct(id || -1, establishmentId || -1);
                                                                     if (deleted) {
