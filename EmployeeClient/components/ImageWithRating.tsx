@@ -1,5 +1,5 @@
-import React from "react";
 import { Image } from "expo-image";
+import React from "react";
 
 import { getStyles } from "../styles/List";
 import { defaultBarberImage } from "../utils/Constants";

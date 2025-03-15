@@ -1,18 +1,18 @@
-import { View, Text } from "react-native";
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { Dropdown } from 'react-native-element-dropdown';
 import AntDesign from '@expo/vector-icons/AntDesign';
+import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import { Text, View } from "react-native";
+import { Dropdown } from 'react-native-element-dropdown';
 
-import Pressable from "./Pressable";
 import Divider from "./Divider";
+import Pressable from "./Pressable";
 
 import { getStyles } from "@styles/ChangeEstablishment";
 
-import useEstablishmentStore from "storage/stores/EstablishmentStore";
-import CustomModal, { CustomModalRef } from "./CustomModal";
-import { useRef, useState } from "react";
-import Button from "./Button";
 import texts from "@lang/en.json";
+import { useEffect, useRef, useState } from "react";
+import useEstablishmentStore from "storage/stores/EstablishmentStore";
+import Button from "./Button";
+import CustomModal, { CustomModalRef } from "./CustomModal";
 
 const SelectEstablishments = ({ selected: _selected, establishments, closeModal }: { selected?: SelectedItem, establishments: EstablishmentBase[], closeModal: () => void }) => {
     const styles = getStyles();
@@ -38,6 +38,7 @@ const SelectEstablishments = ({ selected: _selected, establishments, closeModal 
     return (
         <View style={styles.modal}>
             <Dropdown
+                mode="modal"
                 style={styles.dropdown}
                 placeholderStyle={[styles.placeholderStyle, selected ? styles.selectedPlaceholderStyle : undefined]}
                 selectedTextStyle={styles.selectedTextStyle}
@@ -68,26 +69,41 @@ const SelectEstablishments = ({ selected: _selected, establishments, closeModal 
     );
 }
 
-export const ChangeEstablishment = () => {
+export const ChangeEstablishment = ({ canClose = true, autoOpen = false }: { canClose?: boolean, autoOpen?: boolean }) => {
     const styles = getStyles();
     const { establishments, selectedEstablishment, clearSelectedEstablishment } = useEstablishmentStore();
     const modal = useRef<CustomModalRef>(null);
-    const [modalVisible, setModalVisible] = useState(false);
+    const [modalVisible, setModalVisible] = useState(autoOpen);
+
+    useEffect(() => {
+        if (autoOpen && !modalVisible && !selectedEstablishment) {
+            setModalVisible(true);
+            modal.current?.showModal();
+        }
+    }, [selectedEstablishment]);
 
     return (
         <View style={styles.container}>
             <CustomModal
+                autoOpen={autoOpen}
                 ref={modal}
                 modalContent={
                     <SelectEstablishments
                         establishments={establishments}
-                        closeModal={() => modal.current?.toggleModal()}
+                        closeModal={() => { setModalVisible(false); modal.current?.hideModal(); }}
                         selected={selectedEstablishment}
                     />
                 }
                 snapPoints={[styles.modal.maxHeight]}
                 modalHeight={styles.modal.maxHeight}
-                modalClosed={() => { setModalVisible(false) }}
+                modalClosed={() => {
+                    if (!canClose && !selectedEstablishment) {
+                        modal.current?.showModal();
+                        setModalVisible(true);
+                        return;
+                    }
+                    setModalVisible(false);
+                }}
             />
             {(selectedEstablishment && !modalVisible) &&
                 <View style={styles.selected}>

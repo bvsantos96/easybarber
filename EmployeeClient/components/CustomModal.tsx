@@ -1,6 +1,6 @@
+import { BottomSheetBackdrop, BottomSheetModal, BottomSheetView } from '@gorhom/bottom-sheet/src';
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
-import { View, StyleProp, ViewStyle } from 'react-native';
-import { BottomSheetModal, BottomSheetBackdrop, BottomSheetView } from '@gorhom/bottom-sheet/src';
+import { StyleProp, View, ViewStyle } from 'react-native';
 import { useSharedValue } from 'react-native-reanimated';
 import { useTheme } from '../styles/ThemeContext';
 import Pressable from './Pressable';
@@ -12,18 +12,21 @@ type CustomModalProps = {
     buttonStyle?: StyleProp<ViewStyle>;
     snapPoints?: number[];
     modalClosed?: () => void;
+    autoOpen?: boolean;
 };
 
 export interface CustomModalRef {
     toggleModal: () => void;
+    showModal: () => void;
+    hideModal: () => void;
 }
 
 const CustomModal: React.ForwardRefRenderFunction<CustomModalRef, CustomModalProps> = (
-    { children, modalContent, modalHeight, buttonStyle, snapPoints, modalClosed },
+    { children, modalContent, modalHeight, buttonStyle, snapPoints, modalClosed, autoOpen },
     ref
 ) => {
     const theme = useTheme();
-    const [isVisible, setIsVisible] = useState(false);
+    const [isVisible, setIsVisible] = useState(autoOpen || false);
     const bottomSheetModalRef = useRef<BottomSheetModal>(null);
     const sharedVal = useSharedValue(0);
     const modalBottomPadding = 20 * theme.dimensions.absoluteHeight;
@@ -37,6 +40,12 @@ const CustomModal: React.ForwardRefRenderFunction<CustomModalRef, CustomModalPro
     const [_snapPoints, setSnapPoints] = useState(snapPoints || calculateSnapPoints());
 
     const prevSnapPointsRef = useRef(snapPoints);
+
+    useEffect(() => {
+        if (autoOpen) {
+            bottomSheetModalRef.current?.present();
+        }
+    }, []);
 
     useEffect(() => {
         if (JSON.stringify(prevSnapPointsRef.current) !== JSON.stringify(snapPoints)) {
@@ -55,6 +64,14 @@ const CustomModal: React.ForwardRefRenderFunction<CustomModalRef, CustomModalPro
 
     useImperativeHandle(ref, () => ({
         toggleModal,
+        showModal: () => {
+            setIsVisible(true);
+            bottomSheetModalRef.current?.present();
+        },
+        hideModal: () => {
+            setIsVisible(false);
+            bottomSheetModalRef.current?.dismiss();
+        }
     }));
 
     const toggleModal = () => {

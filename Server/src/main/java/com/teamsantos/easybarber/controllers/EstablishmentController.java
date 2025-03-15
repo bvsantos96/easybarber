@@ -310,7 +310,7 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         }
     }
 
-    // This is required to avoid missing USERCONTEXT because of public method 
+    // This is required to avoid missing USERCONTEXT because of public method
     @GetMapping("/{establishmentId}/staff")
     public ResponseEntity<BaseListDTO<EmployeeDTO>> listStaff(@PathVariable Long establishmentId,
             @RequestParam(defaultValue = "true") boolean onlyActive) {
@@ -421,7 +421,22 @@ public class EstablishmentController extends ImageController<Establishment, Esta
         }
     }
 
-    @PutMapping("/{establishmentId}/product/{productId}")
+    @PutMapping("/{establishmentId}/product")
+    @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
+    public ResponseEntity<BaseResponseDTO> updateProduct(@PathVariable Long establishmentId,
+            @RequestBody ProductDTO product) {
+        BaseResponseDTO response = new BaseResponseDTO();
+        try {
+            product.setEstablishmentId(establishmentId);
+            response.setId(productService.update(product));
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            response.setResponseMessage(e.getMessage());
+            return ResponseEntity.badRequest().body(response);
+        }
+    }
+
+    @DeleteMapping("/{establishmentId}/product/{productId}")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_ADMIN)
     public ResponseEntity<BaseResponseDTO> disableProduct(@PathVariable Long establishmentId,
             @PathVariable Long productId) {
@@ -438,14 +453,12 @@ public class EstablishmentController extends ImageController<Establishment, Esta
     @GetMapping("/{establishmentId}/products")
     @PreAuthorize(PrePermissionEvaluator.ESTABLISHMENT_EMPLOYEE)
     public ResponseEntity<BasePageDTO<ProductDTO>> listProducts(@PathVariable Long establishmentId,
-            @RequestBody ProductFilter filter, Pageable pageable) {
+            Pageable pageable) {
         BasePageDTO<ProductDTO> response = new BasePageDTO<>();
         try {
-            if (filter == null) {
-                filter = new ProductFilter();
-            }
-
+            ProductFilter filter = new ProductFilter();
             filter.setEstablishmentId(establishmentId);
+            filter.setAvailable(true);
             response.setItems(productService.getProducts(filter, pageable));
             return ResponseEntity.ok(response);
         } catch (Exception e) {

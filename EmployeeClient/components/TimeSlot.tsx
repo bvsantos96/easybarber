@@ -1,6 +1,6 @@
+import { getStyles } from "@styles/Availability";
 import { Text } from 'react-native';
 import Pressable from "./Pressable";
-import { getStyles } from "@styles/Availability";
 
 interface TimeSlotProps {
     slot: TimeSlot,

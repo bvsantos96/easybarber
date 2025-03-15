@@ -8,7 +8,6 @@ import { Params } from "@navigation/Router";
 import Tabs from "@screens/Tabs";
 import Establishment from "@screens/Establishment";
 import ProductList from "@screens/ProductList";
-import Product from "@screens/Product";
 import WeekView from "@screens/WeekView";
 import TimeSheet from "@screens/TimeSheet";
 import Employees from "@screens/Employees";
@@ -19,6 +18,7 @@ import ServiceSelection from "@screens/ServiceSelection";
 import EstablishmentSelection from "@screens/EstablishmentSelection";
 import EmployeeSelection from "@screens/EmployeeSelection";
 import Availability from "@screens/Availability";
+import Product from "@screens/Product";
 
 const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
     Sign: {
@@ -63,12 +63,6 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         component: Establishment,
         containerizedComponent: true,
     },
-    NewEstablishment: {
-        title: texts.navigation.establishment.newName,
-        hasHeader: true,
-        component: Establishment,
-        containerizedComponent: true,
-    },
     ProductList: {
         title: texts.navigation.product.name,
         hasHeader: true,
@@ -80,6 +74,8 @@ const RootNav: Partial<Record<keyof typeof Params, StackInfo>> = {
         hasHeader: true,
         component: Product,
         containerizedComponent: true,
+        secondHeader: DeleteButton,
+        route: "product"
     },
     TimeSheet: {
         title: texts.navigation.timeSheet.name,

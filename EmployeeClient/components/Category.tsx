@@ -1,9 +1,9 @@
 import React from "react";
-import { View, Text, ViewStyle } from "react-native";
-import Pressable from "./Pressable";
-import Divider from "./Divider";
-import { getStyles as topBarGetStyles } from "../styles/TopBar";
+import { Text, View, ViewStyle } from "react-native";
 import { useTheme } from "../styles/ThemeContext";
+import { getStyles as topBarGetStyles } from "../styles/TopBar";
+import Divider from "./Divider";
+import Pressable from "./Pressable";
 
 interface CategoryProps {
     id: number;

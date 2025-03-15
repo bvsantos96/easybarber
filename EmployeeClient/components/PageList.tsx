@@ -1,17 +1,17 @@
-import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
-import { FlatList, View, Text, ViewStyle, NativeSyntheticEvent, LayoutChangeEvent } from "react-native";
-import PagerView from "react-native-pager-view";
 import { BottomSheetFlatList } from "@gorhom/bottom-sheet/src";
+import React, { useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
+import { FlatList, LayoutChangeEvent, NativeSyntheticEvent, Text, View, ViewStyle } from "react-native";
+import PagerView from "react-native-pager-view";
 
-import { getStyles } from "@styles/Home";
-import { TimedRequest } from "../utils/TimedRequest";
-import { createPageable } from "../utils/PageHandling";
-import { PageListType } from "../enums";
-import { debounce } from "lodash";
 import texts from "@lang/en.json";
+import { getStyles } from "@styles/Home";
+import { useTheme } from "@styles/ThemeContext";
+import { debounce } from "lodash";
+import { PageListType } from "../enums";
+import { createPageable } from "../utils/PageHandling";
+import { TimedRequest } from "../utils/TimedRequest";
 import Button from "./Button";
 import Divider from "./Divider";
-import { useTheme } from "@styles/ThemeContext";
 
 interface PageListProps<T extends Identifiable> {
     renderItem: (item: { item: T, index: number }) => React.JSX.Element;

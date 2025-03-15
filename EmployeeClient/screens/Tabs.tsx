@@ -1,19 +1,19 @@
-import { useCallback, useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { useCallback, useState } from 'react';
 
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import TabIcon from '@components/TabIcon';
 import SafeFullScreen from '@components/SafeFullScreen';
+import TabIcon from '@components/TabIcon';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import TabsNav from '@navigation/TabsNavigator';
 import { Params, Routes } from '@navigation/Router';
+import TabsNav from '@navigation/TabsNavigator';
+import { TabsVisibleConstraints } from 'enums';
 import useAuthStore from 'storage/stores/AuthStore';
 import useEstablishmentStore from 'storage/stores/EstablishmentStore';
-import { TabsVisibleConstraints } from 'enums';
 
-import { useTheme } from '@styles/ThemeContext';
 import { ChangeEstablishment } from '@components/ChangeEstablishment';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTheme } from '@styles/ThemeContext';
 
 export default function Tabs({ navigation }: PropNavigation) {
     const Tab = createBottomTabNavigator<typeof Params>();
@@ -39,6 +39,15 @@ export default function Tabs({ navigation }: PropNavigation) {
         if (tabs.includes(TabsVisibleConstraints.HAS_ESTABLISHMENTS) && !hasEstablishments) return false;
         if (tabs.includes(TabsVisibleConstraints.HAS_SELECTED_ESTABLISHMENT) && !hasSelectedEstablishment) return false;
         return true;
+    }, [authenticated, hasEstablishments, hasSelectedEstablishment]);
+
+    const forceEstablishmentSelection = useCallback((tabs: TabsVisibleConstraints[] | undefined) => {
+        if (!tabs || tabs.length === 0) return false;
+        return tabs.includes(TabsVisibleConstraints.FORCE_ESTABLISHMENT_SELECTION);
+    }, [hasSelectedEstablishment]);
+
+    const canExecuteHeaderButton = useCallback((tab: TabsInfo) => {
+        return tabEnabled(tab.visibleConstraint) && !(forceEstablishmentSelection(tab.visibleConstraint) && !hasSelectedEstablishment);
     }, [authenticated, hasEstablishments, hasSelectedEstablishment]);
 
     return (
@@ -86,14 +95,14 @@ export default function Tabs({ navigation }: PropNavigation) {
                                 <TabIcon
                                     left
                                     icon={tab.leftIcon}
-                                    func={() => tab.leftAction && tab.leftAction(navigation)}
+                                    func={() => canExecuteHeaderButton(tab) && tab.leftAction && tab.leftAction(navigation)}
                                     text={tab.leftText}
                                 />
                             ) : undefined,
                             headerRight: tab.rightIcon ? () => (
                                 <TabIcon
                                     icon={tab.rightIcon}
-                                    func={() => tab.rightAction && tab.rightAction(navigation)}
+                                    func={() => canExecuteHeaderButton(tab) && tab.rightAction && tab.rightAction(navigation)}
                                     text={tab.rightText}
                                 />
                             ) : undefined,
@@ -103,7 +112,7 @@ export default function Tabs({ navigation }: PropNavigation) {
                         {(props) => (
                             <SafeFullScreen
                                 fixedButton={
-                                    (<ChangeEstablishment />)}>
+                                    (<ChangeEstablishment autoOpen={forceEstablishmentSelection(tab.visibleConstraint)} canClose={!forceEstablishmentSelection(tab.visibleConstraint)} />)}>
                                 <tab.component {...props} />
                             </SafeFullScreen>)}
                     </Tab.Screen>

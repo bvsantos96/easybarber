@@ -6,17 +6,35 @@ import { Dropdown, IDropdownRef } from 'react-native-element-dropdown';
 import texts from '@lang/en.json';
 import { getStyles as getStylesCE } from "@styles/ChangeEstablishment";
 import { getStyles } from '@styles/Input';
-import useServiceTypeStore from 'storage/stores/ServiceTypeStore';
+import useEstablishmentStore from 'storage/stores/EstablishmentStore';
 import Divider from './Divider';
 import Pressable from './Pressable';
 
-const ServiceTypeCombobox = ({ defaultValue, onInputChange }: { defaultValue?: ICategory, onInputChange: Function }) => {
+const EstablishmentCombobox = ({ defaultValue, onInputChange }: { defaultValue?: number, onInputChange: Function }) => {
     const styles = getStyles();
     const stylesCE = getStylesCE();
-    const { serviceTypes } = useServiceTypeStore();
-    const [selected, setSelected] = useState<ICategory | undefined>(defaultValue);
+    const { selectedEstablishment, establishments } = useEstablishmentStore();
+    const [selected, setSelected] = useState<SelectedItem | undefined>(undefined);
     const [showTitle, setShowTitle] = useState(!!defaultValue);
     const dropDownRef = useRef<IDropdownRef>(null);
+
+    useEffect(() => {
+        if (defaultValue) {
+            for (let i = 0; i < establishments.length; i++) {
+                if (establishments[i].id === defaultValue) {
+                    setSelected({
+                        id: establishments[i].id,
+                        idx: i,
+                        admin: establishments[i].admin,
+                        name: establishments[i].name
+                    });
+                    return;
+                }
+            }
+        } else {
+            setSelected(selectedEstablishment);
+        }
+    }, []);
 
     const handleViewPress = () => {
         dropDownRef.current?.open();
@@ -43,17 +61,17 @@ const ServiceTypeCombobox = ({ defaultValue, onInputChange }: { defaultValue?: I
         <Pressable style={[styles.container]} onPress={handleViewPress}>
             <View style={[styles.inputView, styles.inputSmallBorderRadius, styles.smallInput]}>
                 <Divider horizontal size={styles.iconView.margin + styles.iconView.marginRight} />
-                {showTitle && <Text style={styles.title}>{texts.serviceType}</Text>}
+                {showTitle && <Text style={styles.title}>{texts.navigation.establishment.name}</Text>}
                 <Dropdown
                     ref={dropDownRef}
                     style={styles.textInput}
                     placeholderStyle={[stylesCE.placeholderStyle, selected ? stylesCE.selectedPlaceholderStyle : undefined]}
                     selectedTextStyle={stylesCE.selectedTextStyle}
                     inputSearchStyle={styles.textInputWithTwoIcons}
-                    data={serviceTypes.map(est => ({ label: est.name, value: est }))}
+                    data={establishments.map(est => ({ label: est.name, value: est }))}
                     labelField="label"
                     valueField="value"
-                    placeholder={defaultValue?.name || texts.serviceType}
+                    placeholder={selected?.name || texts.navigation.establishment.name}
                     value={selected}
                     onChange={item => {
                         if (item.value.id === selected?.id)
@@ -68,4 +86,4 @@ const ServiceTypeCombobox = ({ defaultValue, onInputChange }: { defaultValue?: I
     );
 }
 
-export default ServiceTypeCombobox;
+export default EstablishmentCombobox;

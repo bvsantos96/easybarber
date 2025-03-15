@@ -18,7 +18,7 @@ export const getStyles = () => {
             left: 36 * theme.dimensions.absoluteWidth,
             fontSize: 17 * theme.dimensions.absoluteWidth,
             fontFamily: 'Poppins',
-            fontWeight: '600',
+            fontWeight: 'bold',
             lineHeight: 25.5 * theme.dimensions.absoluteHeight,
             color: theme.colors.text.black,
         },
@@ -28,7 +28,7 @@ export const getStyles = () => {
             color: theme.colors.mainColor,
             fontSize: 16 * theme.dimensions.absoluteWidth,
             fontFamily: 'Poppins',
-            fontWeight: '400',
+            fontWeight: 'normal',
             lineHeight: 24 * theme.dimensions.absoluteHeight,
         },
         input: {
@@ -45,7 +45,7 @@ export const getStyles = () => {
         ratingTitle: {
             fontSize: 16 * theme.dimensions.absoluteWidth,
             fontFamily: 'Poppins',
-            fontWeight: '600',
+            fontWeight: 'bold',
             lineHeight: 24 * theme.dimensions.absoluteHeight,
             color: theme.colors.text.black,
             position: 'absolute',
@@ -56,7 +56,7 @@ export const getStyles = () => {
             left: 310 * theme.dimensions.absoluteWidth,
             fontSize: 14 * theme.dimensions.absoluteWidth,
             fontFamily: 'Poppins',
-            fontWeight: '400',
+            fontWeight: 'normal',
             lineHeight: 21 * theme.dimensions.absoluteHeight,
         },
         starsContainer: {
@@ -70,7 +70,7 @@ export const getStyles = () => {
             left: 36 * theme.dimensions.absoluteWidth,
             fontSize: 16 * theme.dimensions.absoluteWidth,
             fontFamily: 'Mazzard',
-            fontWeight: '600',
+            fontWeight: 'bold',
             lineHeight: 24 * theme.dimensions.absoluteHeight,
         },
         timeSelectionContainer: {
@@ -100,7 +100,7 @@ export const getStyles = () => {
             width: '100%',
             fontSize: 14 * theme.dimensions.absoluteWidth,
             fontFamily: 'Poppins',
-            fontWeight: '400',
+            fontWeight: 'normal',
             lineHeight: 21 * theme.dimensions.absoluteHeight,
         },
         pickerLabelContainer: {
@@ -112,7 +112,7 @@ export const getStyles = () => {
         pickerLabel: {
             fontSize: 12 * theme.dimensions.absoluteWidth,
             fontFamily: 'Poppins',
-            fontWeight: '600',
+            fontWeight: 'bold',
             lineHeight: 18 * theme.dimensions.absoluteHeight,
         },
         from: {
