@@ -25,6 +25,7 @@ public class MessageLoader {
     @Autowired
     public MessageLoader(ResourcePatternResolver resourcePatternResolver) {
         this.resourcePatternResolver = resourcePatternResolver;
+        //test
     }
 
     @PostConstruct
