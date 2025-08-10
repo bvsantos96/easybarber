@@ -38,7 +38,7 @@ const SelectEstablishments = ({ selected: _selected, establishments, closeModal 
     return (
         <View style={styles.modal}>
             <Dropdown
-                mode="modal"
+                dropdownPosition='top'
                 style={styles.dropdown}
                 placeholderStyle={[styles.placeholderStyle, selected ? styles.selectedPlaceholderStyle : undefined]}
                 selectedTextStyle={styles.selectedTextStyle}

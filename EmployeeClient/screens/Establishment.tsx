@@ -4,6 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useRef, useState } from "react";
 import { Alert, View } from "react-native";
 
+import AddressInput from '@components/AddressInput';
 import { AlertType } from "@components/Alert";
 import Button from "@components/Button";
 import Divider from '@components/Divider';
@@ -27,7 +28,13 @@ type Props = NativeStackScreenProps<typeof Params, 'Establishment'>;
 export default function Establishment({ route }: Props) {
     const { toUpdate, setToUpdate } = useUpdateStore();
     const { alert, setAlertVisible } = useAlertStore();
-    const { establishment: _establishment } = route.params;
+    let _establishment: EstablishmentDetail | undefined;
+    if (route.params) {
+        const { establishment: __establishment } = route.params
+        _establishment = __establishment;
+    } else {
+        _establishment = undefined;
+    }
     const styles = getStyles();
     const getDefaultEstablishment = (item?: EstablishmentDetail): EstablishmentDetail => {
         if (item) {
@@ -188,7 +195,7 @@ export default function Establishment({ route }: Props) {
                     <Input hideTitleIfNoValue placeholder={texts.name} containerStyle={styles.input} title={texts.name} round={false} defaultValue={establishment?.name || ""} onInputChange={(name) => { setEstablishment({ ...establishment, name: name }) }} />
                     <Input hideTitleIfNoValue placeholder={texts.description} containerStyle={styles.input} title={texts.description} round={false} defaultValue={establishment.description} onInputChange={(description) => setEstablishment({ ...establishment, description: description })} />
                     {/* Address input */}
-                    <AddressSearchInput hideTitleIfNoValue placeholder={texts.address} containerStyle={styles.input} title={texts.address} round={false} defaultValue={establishment.address} onInputChange={(address, lat, long) => setEstablishment({ ...establishment, address: address, latitude: lat, longitude: long })} />
+                    <AddressInput defaultValue={establishment.address} onInputChange={(address: string) => setEstablishment({ ...establishment, address: address })} />
                 </View>
             </View>
             <View style={styles.buttonContainer}>

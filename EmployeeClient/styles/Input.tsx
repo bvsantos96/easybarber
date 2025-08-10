@@ -7,7 +7,7 @@ export const getStyles = (nInputs: number = 1) => {
     return StyleSheet.create({
         container: {
             width: inputWidth,
-            height: theme.dimensions.input.height
+            height: theme.dimensions.input.height,
         },
         inputSmallBorderRadius: {
             borderRadius: 10 * theme.dimensions.absoluteHeight,
@@ -59,6 +59,14 @@ export const getStyles = (nInputs: number = 1) => {
             marginRight: 10 * theme.dimensions.absoluteWidth,
             zIndex: 9999
         },
+        hiddenInput: {
+            display: 'none',
+        },
+        offscreen: {
+            position: 'absolute',
+            left: -1000,
+            top: -1000,
+        },
         textInput: {
             width: inputWidth - (30 * theme.dimensions.absoluteWidth),
             height: 40 * theme.dimensions.absoluteHeight,
@@ -93,6 +101,6 @@ export const getStyles = (nInputs: number = 1) => {
         },
         smallInput: {
             height: 50 * theme.dimensions.absoluteHeight,
-        }
+        },
     })
 };
