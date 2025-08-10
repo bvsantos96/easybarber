@@ -1,17 +1,16 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text } from 'react-native';
-import SearchBar from './SearchBar';
-import { useTheme } from '../styles/ThemeContext';
-import { getStyles } from '../styles/LocationModal';
-import Divider from './Divider';
-import PageList from './PageList';
-import LocationItem from './LocationItem';
-import { getLocationList } from '../utils/ApiRequest';
-import useLocationStore from '../storage/stores/LocationStore';
-import { fetchSuggestions, suggestionsInputValidation } from '../utils/Location';
 import { debounce } from 'lodash';
+import React, { useState } from 'react';
+import { Text, View } from 'react-native';
 import { PageListType } from '../enums';
-import Pressable from './Pressable';
+import useLocationStore from '../storage/stores/LocationStore';
+import { getStyles } from '../styles/LocationModal';
+import { useTheme } from '../styles/ThemeContext';
+import { getLocationList } from '../utils/ApiRequest';
+import { fetchSuggestions, suggestionsInputValidation } from '../utils/Location';
+import Divider from './Divider';
+import LocationItem from './LocationItem';
+import PageList from './PageList';
+import SearchBar from './SearchBar';
 
 interface LocationModalProps {
     toggleModal: () => void;
