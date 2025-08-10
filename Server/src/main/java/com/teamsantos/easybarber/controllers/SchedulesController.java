@@ -2,6 +2,8 @@ package com.teamsantos.easybarber.controllers;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.domain.Pageable;
@@ -43,13 +45,8 @@ public class SchedulesController {
             @RequestParam(required = false) Boolean forceSave,
             @RequestParam(required = false) Boolean replaceExisting) {
         try {
-            if (forceSave == null) {
-                forceSave = true;
-            }
-
-            if (replaceExisting == null) {
-                replaceExisting = true;
-            }
+            forceSave = forceSave == null ? true : forceSave;
+            replaceExisting = replaceExisting == null ? true : replaceExisting;
 
             if (obj.getEmployeeId() == null) {
                 obj.setEmployeeId(UserContext.getEmployeeId());
@@ -79,9 +76,8 @@ public class SchedulesController {
     @GetMapping("/schedules/day")
     public ResponseEntity<TimeSlotsDTO> listSchedulesByDay(@ModelAttribute ScheduleFilter filter) {
         try {
-            if (filter.getFrom() == null) {
-                throw new IllegalArgumentException("From date needs to be provided");
-            }
+            Objects.requireNonNull(filter.getFrom(), "From date needs to be provided");
+            
             filter.setTo(filter.getFrom());
             return ResponseEntity.ok(schedulesService.getSchedulesByDay(filter));
         } catch (Exception e) {
